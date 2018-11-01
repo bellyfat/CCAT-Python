@@ -1,0 +1,18 @@
+# Created by paul
+
+# data
+# data
+
+# config
+config
+
+# Logs
+logs
+*.log
+
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build/Release
+
+# dist & docs
+dist
+docs
