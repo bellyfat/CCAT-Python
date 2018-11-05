@@ -22,10 +22,7 @@
 - [CCAT-Python](#ccat-python)
 	- [( Crypto Currency Arbitrage Trading )](#-crypto-currency-arbitrage-trading-)
 	- [Catalogue](#catalogue)
-	- [0. Project Status ( Developing )](#0-project-status-developing-)
-		- [0.1 Schedules Timeline](#01-schedules-timeline)
-			- [2018.11.04](#20181104)
-		- [0.2 Bugs and issues](#02-bugs-and-issues)
+	- [Developing Status](#developing-status)
 	- [1. Abstract](#1-abstract)
 	- [2. Install](#2-install)
 	- [3. Usage](#3-usage)
@@ -36,17 +33,9 @@
 
 <!-- /TOC -->
 
-## 0. Project Status ( Developing )
+## Developing Status
 
-### 0.1 Schedules Timeline
-
-#### 2018.11.04
-
-- [x] Start part-time job coding, based on ccxt and other python api
-
-### 0.2 Bugs and issues
-
-- [ ] Crypto market api issues, [see here](https://github.com/OpenInfoCrypto/CCAT-Python/issues)
+[![Throughput Graph](https://graphs.waffle.io/OpenInfoCrypto/CCAT-Python/throughput.svg)](https://waffle.io/OpenInfoCrypto/CCAT-Python/metrics/throughput)
 
 ## 1. Abstract
 
