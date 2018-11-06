@@ -1,84 +1,106 @@
+# encoding:utf8
+
 # coin class
 # super class of all coins
 
- from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod
 
 Class Coin:
     __metaclass__ = ABCMeta
 
-    def __init__(self, exchange, api_key, api_secret, **kwargs):
-        self.exchange = exchange
-        self.api_key = api_key
-        self.api_secret = api_secret
-        if "proxies" in kwargs.keys():
-            self.proxies = kwargs["proxies"]
-        else:
-            self.proxies = ""
+    def __init__(self, exchange, api_key, api_secret, proxise=''):
+        self._exchange = exchange
+        self._api_key = api_keys
+        self._api_secret = api_secret
+        self._proxies = proxies
 
-    def getConfig(self): # get config
-        return {"exchange":self.exchange, "api_key":self.api_key, "api_secret":self.api_secret, "proxies":self.proxies}
+    # get config
+    def getConfig(self):
+        return {"exchange": self._exchange, "api_key": self._api_key, "api_secret": self._api_secret, "proxies": self._proxies}
+
+    # set proxy
+    def setProxy(self, proxies):
+        self._proxies = proxies
 
     @abstractmethod
-    def getServerTime(**kwargs): # UTC Zone, Unix timestamp in millseconds
+    # UTC Zone, Unix timestamp in millseconds
+    def getServerTime(self):
         pass
 
     @abstractmethod
-    def getServerLimits(**kwargs): # perseconds qurry and orders rate limits
+    # perseconds qurry and orders rate limits
+    def getServerLimits(self):
         pass
 
     @abstractmethod
-    def getSymbols(**kwargs): # all symbols in pairs list baseSymbol quoteSymbol
+    # all symbols in pairs list baseSymbol quoteSymbol
+    def getSymbols(self, **kwargs):
         pass
 
     @abstractmethod
-    def getSymbolsLimits(symbol, **kwargs): # buy or sell a specific symbol's rate limits
+    # buy or sell a specific symbol's rate limits
+    def getSymbolsLimits(self, symbol, **kwargs):
         pass
 
     @abstractmethod
-    def getMarketOrderbookTicker(symbol, **kwargs): # a specific symbol's tiker with bid 1 and ask 1 info
+    # a specific symbol's tiker with bid 1 and ask 1 info
+    def getMarketOrderbookTicker(self, symbol, **kwargs):
         pass
 
     @abstractmethod
-    def getMarketOrderbookDepth(symbol, **kwargs): # a specific symbol's orderbook with depth
+    # a specific symbol's orderbook with depth
+    def getMarketOrderbookDepth(self, symbol, **kwargs):
         pass
 
     @abstractmethod
-    def getMarketKline(symbol, **kwargs): # a specific symbols kline/candlesticks
+    # a specific symbols kline/candlesticks
+    def getMarketKline(self, symbol, **kwargs):
         pass
 
     @abstractmethod
-    def getTradeOpen(**kwargs): # get current trade
+    # get current trade
+    def getTradeOpen(self, **kwargs):
 
     @abstractmethod
-    def getTradeHistory(**kwargs): # get history trade
+    # get history trade
+    def getTradeHistory(self, **kwargs):
 
     @abstractmethod
-    def getTradeSucceed(**kwargs): # get succeed trade
+    # get succeed trade
+    def getTradeSucceed(self, **kwargs):
         pass
 
     @abstractmethod
-    def getAccountBalances(**kwargs): # get account all asset balance
+    # get account all asset balance
+    def getAccountBalances(self, **kwargs):
         pass
 
     @abstractmethod
-    def getAccountAssetBalance(asset, **kwargs): # get account asset balance
+    # get account asset balance
+    def getAccountAssetBalance(self, asset, **kwargs):
         pass
 
     @abstractmethod
-    def getAccountAssetDetail(asset, **kwargs): # get account asset deposit and withdraw detail
+    # get account asset deposit and withdraw detail
+    def getAccountAssetDetail(self, asset, **kwargs):
         pass
 
-    def setProxy(self, proxies): # set proxy
-        self.proxies = proxies
+    # @abstractmethod
+    # # withdraw account asset
+    # def getAccountAssetWithDraw(self, asset, **kwargs):
+    #     pass
 
     @abstractmethod
-    def createOrder(symbol, quantity, price, type="limit", **kwargs):
+    # create orders default limit
+    def createOrder(self, symbol, quantity, price, type="limit", **kwargs):
         pass
 
     @abstractmethod
-    def checkOrder(symbol, orderID, **kwargs):
+    # check orders done or undone
+    def checkOrder(self, symbol, orderID, **kwargs):
         pass
 
     @abstractmethod
-    def cancleOrder(symbol, orderID, **kwargs):
+    # cancle the specific orders
+    def cancleOrder(self, symbol, orderID, **kwargs):
         pass
