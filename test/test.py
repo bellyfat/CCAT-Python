@@ -1,3 +1,8 @@
-# encoding:utf8
+# -*- coding: utf-8 -*-
 
-import unittest
+import os
+import sys
+sys.path.append(os.getcwd())
+
+# unnit test in src/coin
+from test_coin import *

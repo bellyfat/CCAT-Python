@@ -1,4 +1,4 @@
-# encoding:utf8
+# -*- coding: utf-8 -*-
 
 # Binance class
 # URL https://python-binance.readthedocs.io/en/latest/overview.html

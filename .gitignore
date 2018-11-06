@@ -10,9 +10,13 @@ config
 log
 *.log
 
-# Compiled binary addons (http://nodejs.org/api/addons.html)
+# Compiled binary addons
 build/Release
 
 # dist & docs
 dist
 docs
+
+# _pycache_
+__pycache__/
+*.py[cod]

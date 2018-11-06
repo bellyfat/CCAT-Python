@@ -1,4 +1,4 @@
-# encoding:utf8
+# -*- coding: utf-8 -*-
 
 # 多目标的记录日志
 # debug 级别的详细记录到日志文件中
