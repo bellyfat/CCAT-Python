@@ -1,0 +1,29 @@
+{
+  proxies: {
+    name: 'proxies',
+    url: {
+        'http': 'http://10.10.1.10:8123',
+        'https': 'http://10.10.1.10:8123'
+    }
+  },
+  okex: {
+    name: 'okex',
+    key: '',
+    secret: ''
+  },
+  binance: {
+    name: 'binance',
+    key: '',
+    secret: ''
+  },
+  huobi: {
+    name: 'huobi',
+    key: '',
+    secret: ''
+  },
+  gate: {
+    name: 'gate',
+    key: '',
+    secret: ''
+  }
+}

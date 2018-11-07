@@ -12,8 +12,8 @@ from binance.exceptions import BinanceAPIException, BinanceRequestException, Bin
 
 class Binance(Coin):
 
-    def __init__(self, exchange, api_key, api_secret, proxise=''):
-        super(Binance, self).__init__(exchange, api_key, api_secret, proxise)
+    def __init__(self, exchange, api_key, api_secret, proxies=''):
+        super(Binance, self).__init__(exchange, api_key, api_secret, proxies)
         if self._proxies != '':
             self._restAPI = Client(self._api_key, self._api_secret, {
                                    "proxies": self._proxies, "verify": False, "timeout": 20})

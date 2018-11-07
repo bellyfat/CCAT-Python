@@ -1,24 +1,31 @@
 # -*- coding: utf-8 -*-
 
+import os
+import sys
+sys.path.append(os.getcwd())
+
 import unittest
 from tests.coin.test_binance import TestBinance
 
+# list of test_coin
+# okex test items
+test_okex = []
+# binance test items
+test_binance = [TestBinance("test_getConfig")]
+# huobi test items
+test_huobi = []
+# gate test items
+test_gate = []
 
-class TestCoin():
-    def _init_(self):
-        self.test_okex = []
-        self.test_binance = [TestBinance("test_getConfig"),
-                             TestBinance("test_getConfig"),
-                             TestBinance("test_getConfig")]
-        self.test_huobi = []
-        self.test_gate = []
 
-    def run(self):
-        suite = unittest.TestSuite()
-        # suite.addTests(self.test_okex)
-        suite.addTests(self.test_binance)
-        # suite.addTests(self.test_huobi)
-        # suite.addTests(self.test_gate)
+# Begin Test
+if __name__ == '__main__':
+    suite = unittest.TestSuite()
+    runner = unittest.TextTestRunner(verbosity=1)
 
-        runner = unittest.TextTestRunner(verbosity=2)
-        runner.run(suite)
+    # suite.addTests(test_okex)
+    suite.addTests(test_binance)
+    # suite.addTests(test_huobi)
+    # suite.addTests(test_gate)
+
+    runner.run(suite)

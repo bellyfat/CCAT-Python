@@ -4,11 +4,8 @@ import os
 import sys
 sys.path.append(os.getcwd())
 
-from tests.test_coin import TestCoin
-
+# Begin Test
 if __name__ == '__main__':
-    # Begin Test
     # 1. unit test for test_coin
-    print("1. unit test for test_coin")
-    testCoin = TestCoin()
-    testCoin.run()
+    print("\033[0;33;40m\n1. python3 -m unittest tests/test_coin.py\n\033[0m")
+    os.system("python3 -m unittest tests/test_coin.py")
