@@ -13,7 +13,7 @@ class TestBinance(unittest.TestCase):
 
     def test_getConfig(self):
         conf = Config()
-        print(conf)
+        conf
         # binance = Binance(binanceStr.exchange,
         #                   binanceStr.api_key, binanceStr.api_secret)
         # res = binance.getConfig()
