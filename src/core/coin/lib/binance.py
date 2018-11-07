@@ -20,17 +20,21 @@ class Binance(Coin):
         else:
             self._restAPI = Client(self._api_key, self._api_secret, {
                                    "verify": False, "timeout": 20})
+        self._restAPI.session.close()
 
     # set proxy
     def setProxy(self, proxies):
         self._proxies = proxies
         self._restAPI = Client(self._api_key, self._api_secret, {
                                "proxies": self._proxies, "verify": False, "timeout": 20})
+        self._restAPI.session.close()
 
     # UTC Zone, Unix timestamp in millseconds
     def getServerTime(self):
         try:
-            return self._restAPI.get_server_time()
+            res = self._restAPI.get_server_time()
+            self._restAPI.session.close()
+            return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             # log BinanceException
             pass

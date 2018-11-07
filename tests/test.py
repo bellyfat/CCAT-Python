@@ -4,8 +4,12 @@ import os
 import sys
 sys.path.append(os.getcwd())
 
+from src.core.util.log import Logger
+
+logger = Logger()
+
 # Begin Test
 if __name__ == '__main__':
     # 1. unit test for test_coin
-    print("\033[0;33;40m\n1. python3 -m unittest tests/test_coin.py\n\033[0m")
+    logger.info("1. python3 -m unittest tests/test_coin.py")
     os.system("python3 -m unittest tests/test_coin.py")

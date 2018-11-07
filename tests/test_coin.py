@@ -2,16 +2,22 @@
 
 import os
 import sys
+import unittest
+
+from tests.coin.test_binance import TestBinance
+
 sys.path.append(os.getcwd())
 
-import unittest
-from tests.coin.test_binance import TestBinance
 
 # list of test_coin
 # okex test items
 test_okex = []
 # binance test items
-test_binance = [TestBinance("test_getConfig")]
+test_binance = [
+    TestBinance("test_getConfig"),
+    TestBinance("test_setProxy"),
+    TestBinance("test_getServerTime")
+]
 # huobi test items
 test_huobi = []
 # gate test items
