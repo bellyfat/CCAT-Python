@@ -3,7 +3,6 @@
 import unittest
 from src.core.coin.lib.binance import Binance
 
-
 class TestBinance(unittest.TestCase):
 
     def test_getConfig(self):

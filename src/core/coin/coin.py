@@ -5,7 +5,7 @@
 
 from abc import ABCMeta, abstractmethod
 
-Class Coin:
+class Coin(object):
     __metaclass__ = ABCMeta
 
     def __init__(self, exchange, api_key, api_secret, proxise=''):
@@ -60,10 +60,12 @@ Class Coin:
     @abstractmethod
     # get current trade
     def getTradeOpen(self, **kwargs):
+        pass
 
     @abstractmethod
     # get history trade
     def getTradeHistory(self, **kwargs):
+        pass
 
     @abstractmethod
     # get succeed trade

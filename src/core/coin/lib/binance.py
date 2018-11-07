@@ -5,12 +5,12 @@
 
 import logging
 import json
-from ../coin import Coin
-from ../../util/exceptions import BinanceException
+from src.core.coin.coin import Coin
+from src.core.util.exceptions import BinanceException
 from binance.client import Client
 from binance.exceptions import BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException
 
-Class Binance(Coin):
+class Binance(Coin):
 
     def __init__(self, exchange, api_key, api_secret, proxise=''):
         super(Binance, self).__init__(exchange, api_key, api_secret, proxise)
@@ -33,7 +33,7 @@ Class Binance(Coin):
             return self._restAPI.get_server_time()
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             # log BinanceException
-            continue
+            pass
 
 
     # perseconds qurry and orders rate limits
@@ -42,7 +42,7 @@ Class Binance(Coin):
             return self._restAPI.getget_exchange_info()
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             # log BinanceException
-            continue
+            pass
 
     # all symbols in pairs list baseSymbol quoteSymbol
     def getSymbols(self, **kwargs):
@@ -50,7 +50,7 @@ Class Binance(Coin):
             return self._restAPI.getget_exchange_info()
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             # log BinanceException
-            continue
+            pass
 
     # buy or sell a specific symbol's rate limits
     def getSymbolsLimits(self, symbol, **kwargs):
@@ -70,9 +70,11 @@ Class Binance(Coin):
 
     # get current trade
     def getTradeOpen(self, **kwargs):
+        pass
 
         # get history trade
     def getTradeHistory(self, **kwargs):
+        pass
 
         # get succeed trade
     def getTradeSucceed(self, **kwargs):
