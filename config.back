@@ -1,29 +1,29 @@
 {
-  proxies: {
-    name: 'proxies',
-    url: {
-        'http': 'http://10.10.1.10:8123',
-        'https': 'http://10.10.1.10:8123'
+  "proxies": {
+    "type": "http",
+    "url": {
+        "http": "http://127.0.0.1:8118",
+        "https": "http://127.0.0.1:8118"
     }
   },
-  okex: {
-    name: 'okex',
-    key: '',
-    secret: ''
+  "okex": {
+    "exchange": "okex",
+    "api_key": "",
+    "api_secret": ""
   },
-  binance: {
-    name: 'binance',
-    key: '',
-    secret: ''
+  "binance": {
+    "exchange": "binance",
+    "api_key": "",
+    "api_secret": ""
   },
-  huobi: {
-    name: 'huobi',
-    key: '',
-    secret: ''
+  "huobi": {
+    "exchange": "huobi",
+    "api_key": "",
+    "api_secret": ""
   },
-  gate: {
-    name: 'gate',
-    key: '',
-    secret: ''
+  "gate": {
+    "exchange": "gate",
+    "api_key": "",
+    "api_secret": ""
   }
 }

@@ -1,15 +1,22 @@
 # -*- coding: utf-8 -*-
-
+import os
 import json
 
+
 class Config(object):
-    def _init_(self):
-        self._confStr = "./config"
-        with open(self._confStr,'r') as f:
+
+    _confStr = os.path.join(os.getcwd(),"config")
+    _proxies = ""
+    _okex = ""
+    _binance = ""
+    _huobi = ""
+    _gate = ""
+
+    def __init__(self):
+        with open(Config._confStr, 'r') as f:
             jsonStr = json.load(f)
-        print(jsonStr)
-        self._proxies = json.loads(jsonStr.proxies)
-        self._okex = json.loads(json.dump(jsonStr.okex))
-        self._binance = json.loads(jsonStr.binance)
-        self._huobi = json.loads(json.dump(jsonStr.huobi))
-        self._gate = json.loads(json.dump(jsonStr.gate))
+        Config._proxies = jsonStr["proxies"]
+        Config._okex = jsonStr["okex"]
+        Config._binance = jsonStr["binance"]
+        Config._huobi = jsonStr["huobi"]
+        Config._gate = jsonStr["gate"]
