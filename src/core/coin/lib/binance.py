@@ -12,21 +12,15 @@ from binance.exceptions import BinanceAPIException, BinanceRequestException, Bin
 
 class Binance(Coin):
 
-    def __init__(self, exchange="Binance", api_key, api_secret, proxies=None):
+    def __init__(self, exchange, api_key, api_secret, proxies=None):
         super(Binance, self).__init__(exchange, api_key, api_secret, proxies)
-        if self._proxies != None:
-            self._client = Client(self._api_key, self._api_secret, {
-                                   "proxies": self._proxies, "verify": False, "timeout": 20})
-        else:
-            self._client = Client(self._api_key, self._api_secret, {
-                                   "verify": False, "timeout": 20})
+        self._client = Client(api_key, api_secret, {"proxies": proxies, "verify": False, "timeout": 20})
         self._client.session.close()
 
     # set proxy
     def setProxy(self, proxies):
         self._proxies = proxies
-        self._client = Client(self._api_key, self._api_secret, {
-                               "proxies": self._proxies, "verify": False, "timeout": 20})
+        self._client = Client(self._api_key, self._api_secret, {"proxies": self._proxies, "verify": False, "timeout": 20})
         self._client.session.close()
 
     # UTC Zone, Unix timestamp in millseconds

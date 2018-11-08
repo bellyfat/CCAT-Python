@@ -6,11 +6,14 @@ import unittest
 sys.path.append(os.getcwd())
 
 from tests.coin.test_binance import TestBinance
+from tests.coin.test_okex import TestOkex
 
 
 # list of test_coin
 # okex test items
-test_okex = []
+test_okex = [
+    TestOkex("test_getConfig")
+]
 # binance test items
 test_binance = [
     TestBinance("test_getConfig"),
@@ -30,8 +33,8 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
     runner = unittest.TextTestRunner(verbosity=2)
     # add tests
-    suite.addTests(test_okex)
-    # suite.addTests(test_binance)
+    # suite.addTests(test_okex)
+    suite.addTests(test_binance)
     # suite.addTests(test_huobi)
     # suite.addTests(test_gate)
     # run test

@@ -8,7 +8,7 @@ from abc import ABCMeta, abstractmethod
 class Coin(object):
     __metaclass__ = ABCMeta
 
-    def __init__(self, exchange, api_key, api_secret, proxies=''):
+    def __init__(self, exchange, api_key, api_secret, proxies):
         self._exchange = exchange
         self._api_key = api_key
         self._api_secret = api_secret

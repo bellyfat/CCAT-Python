@@ -14,3 +14,4 @@ logger = Logger()
 class TestOkex(unittest.TestCase):
 
     def test_getConfig(self):
+        pass
