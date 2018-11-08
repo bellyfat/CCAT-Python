@@ -17,15 +17,18 @@ test_okex = [
     # TestOkex("test_getServerTime"),
     # TestOkex("test_getServerLimits"),
     # TestOkex("test_getServerSymbols"),
-    TestOkex("test_getSymbolsLimits")
+    # TestOkex("test_getSymbolsLimits"),
+    TestOkex("test_getMarketOrderbookTicker")
 ]
 # binance test items
 test_binance = [
-    TestBinance("test_getConfig"),
-    TestBinance("test_setProxy"),
-    TestBinance("test_getServerTime"),
-    TestBinance("test_getServerLimits"),
-    TestBinance("test_getServerSymbols")
+    # TestBinance("test_getConfig"),
+    # TestBinance("test_setProxy"),
+    # TestBinance("test_getServerTime"),
+    # TestBinance("test_getServerLimits"),
+    # TestBinance("test_getServerSymbols"),
+    # TestBinance("test_getSymbolsLimits"),
+    TestBinance("test_getMarketOrderbookTicker")
 ]
 # huobi test items
 test_huobi = []
@@ -39,8 +42,8 @@ if __name__ == '__main__':
     runner = unittest.TextTestRunner(verbosity=2)
     # add tests
     suite.addTests(test_okex)
-    # suite.addTests(test_binance)
-    # suite.addTests(test_huobi)
-    # suite.addTests(test_gate)
+    suite.addTests(test_binance)
+    suite.addTests(test_huobi)
+    suite.addTests(test_gate)
     # run test
     runner.run(suite)

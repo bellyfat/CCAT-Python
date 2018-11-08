@@ -44,17 +44,17 @@ class Coin(object):
 
     @abstractmethod
     # a specific symbol's tiker with bid 1 and ask 1 info
-    def getMarketOrderbookTicker(self, symbol, **kwargs):
+    def getMarketOrderbookTicker(self, fSymbol, tSymbol, **kwargs):
         pass
 
     @abstractmethod
     # a specific symbol's orderbook with depth
-    def getMarketOrderbookDepth(self, symbol, **kwargs):
+    def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit,**kwargs):
         pass
 
     @abstractmethod
     # a specific symbols kline/candlesticks
-    def getMarketKline(self, symbol, **kwargs):
+    def getMarketKline(self, fSymbol, tSymbol, **kwargs):
         pass
 
     @abstractmethod
@@ -94,15 +94,15 @@ class Coin(object):
 
     @abstractmethod
     # create orders default limit
-    def createOrder(self, symbol, quantity, price, type="limit", **kwargs):
+    def createOrder(self, fSymbol, tSymbol, quantity, price, type="limit", **kwargs):
         pass
 
     @abstractmethod
     # check orders done or undone
-    def checkOrder(self, symbol, orderID, **kwargs):
+    def checkOrder(self, fSymbol, tSymbol, orderID, **kwargs):
         pass
 
     @abstractmethod
     # cancle the specific orders
-    def cancleOrder(self, symbol, orderID, **kwargs):
+    def cancleOrder(self, fSymbol, tSymbol, orderID, **kwargs):
         pass

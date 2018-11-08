@@ -41,8 +41,8 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getServerTime()
-        # logger.debug(type(res))
-        self.assertIsInstance(res["serverTime"], int)
+        # logger.debug(res)
+        self.assertIsInstance(res, int)
 
     def test_getServerLimits(self):
         proxies = Config()._proxies
@@ -61,6 +61,26 @@ class TestBinance(unittest.TestCase):
         res = binance.getServerSymbols()
         # logger.debug(type(res))
         self.assertIsInstance(res, dict)
+
+    def test_getSymbolsLimits(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.getSymbolsLimits("IOST","BTC")
+        # logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_getMarketOrderbookTicker(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.getMarketOrderbookTicker("IOST","BTC")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+
 
 
 if __name__ == "__main__":

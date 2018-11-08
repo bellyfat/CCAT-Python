@@ -39,6 +39,7 @@ class Logger(object):
         console.setFormatter(self._console_formatter)
         console.setLevel(logging.DEBUG)
         # 添加至logger
+        self._logger.handlers = []
         self._logger.addHandler(handler)
         self._logger.addHandler(console)
         self._logger.setLevel(logging.DEBUG)

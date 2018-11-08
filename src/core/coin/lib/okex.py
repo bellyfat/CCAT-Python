@@ -3,7 +3,6 @@
 # Okex Class
 
 import json
-import logging
 import requests
 
 from src.core.coin.coin import Coin
@@ -14,7 +13,7 @@ from src.core.coin.lib.okex_v3_api.exceptions import (OkexAPIException,
                                                       OkexRequestException)
 from src.core.coin.lib.okex_v3_api.spot_api import SpotAPI
 from src.core.util.exceptions import OkexException
-
+from src.core.util.helper import date_to_milliseconds
 
 class Okex(Coin):
 
@@ -37,7 +36,7 @@ class Okex(Coin):
     def getServerTime(self):
         try:
             res = self._client._get_timestamp(self._proxies)
-            return res
+            return date_to_milliseconds(res)
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
 
@@ -70,24 +69,63 @@ class Okex(Coin):
     # buy or sell a specific symbol's rate limits
     def getSymbolsLimits(self, fSymbol, tSymbol, **kwargs):
         try:
-            res = self._spotAPI.get_coin_info(self._proxies)
-            for r in res:
-                if r["base_currency"] == fSymbol and r["quote_currency"] == tSymbol:
-                    return r
-            raise OkexException 
+            base = self._spotAPI.get_coin_info(self._proxies)
+            for b in base:
+                if b["base_currency"] == fSymbol and b["quote_currency"] == tSymbol:
+                    tSymbol_price_precision = float(b["quote_increment"])
+                    tSymbol_price_max = None
+                    tSymbol_price_min = None
+                    tSymbol_price_step = float(b["quote_increment"])
+                    fSymbol_size_precision = float(b["base_increment"])
+                    fSymbol_size_max = None
+                    fSymbol_size_min = float(b["base_min_size"])
+                    fSymbol_size_step = float(b["base_increment"])
+                    res={
+                        "tSymbol_price": {
+                        "precision": tSymbol_price_precision,
+                        "max": tSymbol_price_max,
+                        "min": tSymbol_price_min,
+                        "step": tSymbol_price_step
+                        },
+                        "fSymbol_size": {
+                        "precision": fSymbol_size_precision,
+                        "max": fSymbol_size_max,
+                        "min": fSymbol_size_min,
+                        "step": fSymbol_size_step
+                        }
+                    }
+                    return res
+            raise OkexException
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
 
     # a specific symbol's tiker with bid 1 and ask 1 info
-    def getMarketOrderbookTicker(self, symbol, **kwargs):
-        pass
+    def getMarketOrderbookTicker(self, fSymbol, tSymbol, **kwargs):
+        try:
+            ticker = self._spotAPI.get_depth(fSymbol+"-"+tSymbol, '1',  '',self._proxies)
+            res = {
+                "timeStamp" : date_to_milliseconds(ticker["timestamp"]),
+                "fSymbol" : fSymbol,
+                "tSymbol" : tSymbol,
+                "bid_one_price" : ticker["bids"][0][0],
+                "bid_one_pize" : ticker["bids"][0][1],
+                "ask_one_price" : ticker["asks"][0][0],
+                "ask_one_pize" : ticker["asks"][0][1]
+            }
+            return res
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
 
     # a specific symbol's orderbook with depth
-    def getMarketOrderbookDepth(self, symbol, **kwargs):
-        pass
+    def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit='', **kwargs):
+        try:
+            res = self._spotAPI.get_depth(fSymbol+"-"+tSymbol, limit,  '',self._proxies)
+            return res
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
 
     # a specific symbols kline/candlesticks
-    def getMarketKline(self, symbol, **kwargs):
+    def getMarketKline(self, fSymbol, tSymbol, **kwargs):
         pass
 
     # get current trade
@@ -115,13 +153,13 @@ class Okex(Coin):
         pass
 
     # create orders default limit
-    def createOrder(self, symbol, quantity, price, type="limit", **kwargs):
+    def createOrder(self, fSymbol, tSymbol, quantity, price, type="limit", **kwargs):
         pass
 
     # check orders done or undone
-    def checkOrder(self, symbol, orderID, **kwargs):
+    def checkOrder(self, fSymbol, tSymbol, orderID, **kwargs):
         pass
 
     # cancle the specific orders
-    def cancleOrder(self, symbol, orderID, **kwargs):
+    def cancleOrder(self, fSymbol, tSymbol, orderID, **kwargs):
         pass

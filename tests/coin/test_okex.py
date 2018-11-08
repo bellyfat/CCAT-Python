@@ -42,7 +42,7 @@ class TestOkex(unittest.TestCase):
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
         res = okex.getServerTime()
         # logger.debug(res)
-        self.assertIsInstance(res, str)
+        self.assertIsInstance(res, int)
 
     def test_getServerLimits(self):
         proxies = Config()._proxies
@@ -67,6 +67,15 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        res = okex.getSymbolsLimits("STORJ","BTC")
-        # logger.debug(type(res))
+        res = okex.getSymbolsLimits("STC","BTC")
+        # logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_getMarketOrderbookTicker(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        res = okex.getMarketOrderbookTicker("STC","BTC")
+        logger.debug(res)
         self.assertIsInstance(res, dict)

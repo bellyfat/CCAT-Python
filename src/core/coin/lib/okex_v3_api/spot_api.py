@@ -84,7 +84,6 @@ class SpotAPI(Client):
             params['size'] = size
         if depth:
             params['depth'] = depth
-        print(params)
         return self._request_with_params(GET, SPOT_DEPTH + str(instrument_id) + '/book', params, False, proxies)
 
     # query ticker info
