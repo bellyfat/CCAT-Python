@@ -3,6 +3,7 @@
 # Okex Class
 
 import json
+
 import requests
 
 from src.core.coin.coin import Coin
@@ -13,7 +14,8 @@ from src.core.coin.lib.okex_v3_api.exceptions import (OkexAPIException,
                                                       OkexRequestException)
 from src.core.coin.lib.okex_v3_api.spot_api import SpotAPI
 from src.core.util.exceptions import OkexException
-from src.core.util.helper import date_to_milliseconds
+from src.core.util.helper import date_to_milliseconds, interval_to_milliseconds
+
 
 class Okex(Coin):
 
@@ -80,18 +82,18 @@ class Okex(Coin):
                     fSymbol_size_max = None
                     fSymbol_size_min = float(b["base_min_size"])
                     fSymbol_size_step = float(b["base_increment"])
-                    res={
+                    res = {
                         "tSymbol_price": {
-                        "precision": tSymbol_price_precision,
-                        "max": tSymbol_price_max,
-                        "min": tSymbol_price_min,
-                        "step": tSymbol_price_step
+                            "precision": tSymbol_price_precision,
+                            "max": tSymbol_price_max,
+                            "min": tSymbol_price_min,
+                            "step": tSymbol_price_step
                         },
                         "fSymbol_size": {
-                        "precision": fSymbol_size_precision,
-                        "max": fSymbol_size_max,
-                        "min": fSymbol_size_min,
-                        "step": fSymbol_size_step
+                            "precision": fSymbol_size_precision,
+                            "max": fSymbol_size_max,
+                            "min": fSymbol_size_min,
+                            "step": fSymbol_size_step
                         }
                     }
                     return res
@@ -102,15 +104,16 @@ class Okex(Coin):
     # a specific symbol's tiker with bid 1 and ask 1 info
     def getMarketOrderbookTicker(self, fSymbol, tSymbol, **kwargs):
         try:
-            ticker = self._spotAPI.get_depth(fSymbol+"-"+tSymbol, '1',  '',self._proxies)
+            ticker = self._spotAPI.get_depth(
+                fSymbol + "-" + tSymbol, '1',  '', self._proxies)
             res = {
-                "timeStamp" : date_to_milliseconds(ticker["timestamp"]),
-                "fSymbol" : fSymbol,
-                "tSymbol" : tSymbol,
-                "bid_one_price" : ticker["bids"][0][0],
-                "bid_one_pize" : ticker["bids"][0][1],
-                "ask_one_price" : ticker["asks"][0][0],
-                "ask_one_pize" : ticker["asks"][0][1]
+                "timeStamp": date_to_milliseconds(ticker["timestamp"]),
+                "fSymbol": fSymbol,
+                "tSymbol": tSymbol,
+                "bid_one_price": ticker["bids"][0][0],
+                "bid_one_pize": ticker["bids"][0][1],
+                "ask_one_price": ticker["asks"][0][0],
+                "ask_one_pize": ticker["asks"][0][1]
             }
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
@@ -119,14 +122,42 @@ class Okex(Coin):
     # a specific symbol's orderbook with depth
     def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit='', **kwargs):
         try:
-            res = self._spotAPI.get_depth(fSymbol+"-"+tSymbol, limit,  '',self._proxies)
+            instrument_id = fSymbol + "-" + tSymbol
+            ticker = self._spotAPI.get_depth(
+                instrument_id, limit,  '', self._proxies)
+            res = {
+                "timeStamp": date_to_milliseconds(ticker["timestamp"]),
+                "fSymbol": fSymbol,
+                "tSymbol": tSymbol,
+                "bid_price_size": ticker["bids"],
+                "ask_price_size": ticker["asks"]
+            }
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
 
     # a specific symbols kline/candlesticks
-    def getMarketKline(self, fSymbol, tSymbol, **kwargs):
-        pass
+    def getMarketKline(self, fSymbol, tSymbol, interval, start, end, **kwargs):
+        '''
+        [
+            {
+            "close":7071.1913,
+            "high":7072.7999,
+            "low":7061.7,
+            "open":7067.9008,
+            "time":"2018-08-05T10:00:00Z",
+            "volume":68.4532745
+            }
+        ]
+        '''
+        try:
+            instrument_id = fSymbol + "-" + tSymbol
+            granularity = int(interval_to_milliseconds(interval)/1000)
+            kline = self._spotAPI.get_kline(
+                instrument_id, start, end, granularity, self._proxies)
+            return kline
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
 
     # get current trade
     def getTradeOpen(self, **kwargs):

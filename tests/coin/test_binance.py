@@ -77,8 +77,26 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getMarketOrderbookTicker("IOST","BTC")
-        logger.debug(res)
+        # logger.debug(res)
         self.assertIsInstance(res, dict)
+
+    def test_getMarketOrderbookDepth(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.getMarketOrderbookDepth("IOST","BTC",5)
+        # logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_getMarketKline(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.getMarketKline("IOST","BTC","6h","2018-11-01T00:00:00.000Z","2018-11-02T00:00:00.000Z")
+        logger.debug(res)
+        self.assertIsInstance(res, list)
 
 
 

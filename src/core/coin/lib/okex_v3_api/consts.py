@@ -116,4 +116,3 @@ ETT_ORDER_LIST = '/api/ett/v3/orders'
 ETT_SPECIFIC_ORDER = '/api/ett/v3/orders/'
 ETT_CONSTITUENTS = '/api/ett/v3/constituents/'
 ETT_DEFINE = '/api/ett/v3/define-price/'
-

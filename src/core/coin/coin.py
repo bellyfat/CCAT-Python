@@ -54,7 +54,7 @@ class Coin(object):
 
     @abstractmethod
     # a specific symbols kline/candlesticks
-    def getMarketKline(self, fSymbol, tSymbol, **kwargs):
+    def getMarketKline(self, fSymbol, tSymbol, interval, start, end, **kwargs):
         pass
 
     @abstractmethod

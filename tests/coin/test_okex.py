@@ -77,5 +77,23 @@ class TestOkex(unittest.TestCase):
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
         res = okex.getMarketOrderbookTicker("STC","BTC")
-        logger.debug(res)
+        # logger.debug(res)
         self.assertIsInstance(res, dict)
+
+    def test_getMarketOrderbookDepth(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        res = okex.getMarketOrderbookDepth("STC","BTC",5)
+        # logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_getMarketKline(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        res = okex.getMarketKline("STC","BTC","1h","2018-11-01T00:00:00.000Z","2018-11-02T00:00:00.000Z")
+        logger.debug(res)
+        self.assertIsInstance(res, list)

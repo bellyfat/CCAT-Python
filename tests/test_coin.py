@@ -18,7 +18,9 @@ test_okex = [
     # TestOkex("test_getServerLimits"),
     # TestOkex("test_getServerSymbols"),
     # TestOkex("test_getSymbolsLimits"),
-    TestOkex("test_getMarketOrderbookTicker")
+    # TestOkex("test_getMarketOrderbookTicker"),
+    # TestOkex("test_getMarketOrderbookDepth"),
+    TestOkex("test_getMarketKline")
 ]
 # binance test items
 test_binance = [
@@ -28,7 +30,9 @@ test_binance = [
     # TestBinance("test_getServerLimits"),
     # TestBinance("test_getServerSymbols"),
     # TestBinance("test_getSymbolsLimits"),
-    TestBinance("test_getMarketOrderbookTicker")
+    # TestBinance("test_getMarketOrderbookTicker"),
+    # TestBinance("test_getMarketOrderbookDepth"),
+    # TestBinance("test_getMarketKline")
 ]
 # huobi test items
 test_huobi = []

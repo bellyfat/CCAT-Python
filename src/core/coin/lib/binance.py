@@ -128,15 +128,48 @@ class Binance(Coin):
     def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=100, **kwargs):
         try:
             symbol = fSymbol+tSymbol
-            res = self._client.get_order_book(symbol=symbol, limit=limit)
+            timeStamp = self._client.get_server_time()
+            ticker = self._client.get_order_book(symbol=symbol, limit=limit)
             self._client.session.close()
+            res = {
+                "timeStamp" : timeStamp["serverTime"],
+                "fSymbol" : fSymbol,
+                "tSymbol" : tSymbol,
+                "bid_price_size" : ticker["bids"],
+                "ask_price_size" : ticker["asks"]
+            }
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
 
     # a specific symbols kline/candlesticks
-    def getMarketKline(self, fSymbol, tSymbol, **kwargs):
-        pass
+    def getMarketKline(self, fSymbol, tSymbol, interval, start, end=None, **kwargs):
+        '''
+        Returns
+        [
+            [
+                1499040000000,      # Open time
+                "0.01634790",       # Open
+                "0.80000000",       # High
+                "0.01575800",       # Low
+                "0.01577100",       # Close
+                "148976.11427815",  # Volume
+                1499644799999,      # Close time
+                "2434.19055334",    # Quote asset volume
+                308,                # Number of trades
+                "1756.87402397",    # Taker buy base asset volume
+                "28.46694368",      # Taker buy quote asset volume
+                "17928899.62484339" # Can be ignored
+            ]
+        ]
+        '''
+        try:
+            symbol = fSymbol+tSymbol
+            kline = self._client.get_historical_klines(symbol, interval, start, end)
+            self._client.session.close()
+            return kline
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
 
     # get current trade
     def getTradeOpen(self, **kwargs):
