@@ -9,7 +9,8 @@
   "okex": {
     "exchange": "okex",
     "api_key": "",
-    "api_secret": ""
+    "api_secret": "",
+    "passphrase": ""
   },
   "binance": {
     "exchange": "binance",

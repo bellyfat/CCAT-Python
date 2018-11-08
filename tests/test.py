@@ -11,5 +11,5 @@ logger = Logger()
 # Begin Test
 if __name__ == '__main__':
     # 1. unit test for test_coin
-    logger.info("1. python3 -m unittest tests/test_coin.py")
-    os.system("python3 -m unittest tests/test_coin.py")
+    logger.info("1. testing... python3 tests/test_coin.py")
+    os.system("python3 tests/test_coin.py")

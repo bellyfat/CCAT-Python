@@ -12,39 +12,37 @@ from binance.exceptions import BinanceAPIException, BinanceRequestException, Bin
 
 class Binance(Coin):
 
-    def __init__(self, exchange, api_key, api_secret, proxies=''):
+    def __init__(self, exchange="Binance", api_key, api_secret, proxies=None):
         super(Binance, self).__init__(exchange, api_key, api_secret, proxies)
-        if self._proxies != '':
-            self._restAPI = Client(self._api_key, self._api_secret, {
+        if self._proxies != None:
+            self._client = Client(self._api_key, self._api_secret, {
                                    "proxies": self._proxies, "verify": False, "timeout": 20})
         else:
-            self._restAPI = Client(self._api_key, self._api_secret, {
+            self._client = Client(self._api_key, self._api_secret, {
                                    "verify": False, "timeout": 20})
-        self._restAPI.session.close()
+        self._client.session.close()
 
     # set proxy
     def setProxy(self, proxies):
         self._proxies = proxies
-        self._restAPI = Client(self._api_key, self._api_secret, {
+        self._client = Client(self._api_key, self._api_secret, {
                                "proxies": self._proxies, "verify": False, "timeout": 20})
-        self._restAPI.session.close()
+        self._client.session.close()
 
     # UTC Zone, Unix timestamp in millseconds
     def getServerTime(self):
         try:
-            res = self._restAPI.get_server_time() # UTC Zone UnixStamp
-            self._restAPI.session.close()
+            res = self._client.get_server_time() # UTC Zone UnixStamp
+            self._client.session.close()
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
 
-
-
     # perseconds qurry and orders rate limits
     def getServerLimits(self):
         try:
-            res = self._restAPI.get_exchange_info()
-            self._restAPI.session.close()
+            res = self._client.get_exchange_info()
+            self._client.session.close()
             return res["rateLimits"]
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
@@ -52,8 +50,8 @@ class Binance(Coin):
     # all symbols in pairs list baseSymbol quoteSymbol
     def getServerSymbols(self):
         try:
-            res = self._restAPI.get_exchange_info()
-            self._restAPI.session.close()
+            res = self._client.get_exchange_info()
+            self._client.session.close()
             return res["symbols"]
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException

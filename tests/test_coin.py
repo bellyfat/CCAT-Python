@@ -3,10 +3,9 @@
 import os
 import sys
 import unittest
+sys.path.append(os.getcwd())
 
 from tests.coin.test_binance import TestBinance
-
-sys.path.append(os.getcwd())
 
 
 # list of test_coin
@@ -32,8 +31,8 @@ if __name__ == '__main__':
     runner = unittest.TextTestRunner(verbosity=2)
     # add tests
     suite.addTests(test_okex)
-    suite.addTests(test_binance)
-    suite.addTests(test_huobi)
-    suite.addTests(test_gate)
+    # suite.addTests(test_binance)
+    # suite.addTests(test_huobi)
+    # suite.addTests(test_gate)
     # run test
     runner.run(suite)
