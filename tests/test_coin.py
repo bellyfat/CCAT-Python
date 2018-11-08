@@ -12,10 +12,12 @@ from tests.coin.test_okex import TestOkex
 # list of test_coin
 # okex test items
 test_okex = [
-    TestOkex("test_getConfig"),
-    TestOkex("test_setProxy"),
-    TestOkex("test_getServerTime"),
-    TestOkex("test_getServerLimits")
+    # TestOkex("test_getConfig"),
+    # TestOkex("test_setProxy"),
+    # TestOkex("test_getServerTime"),
+    # TestOkex("test_getServerLimits"),
+    # TestOkex("test_getServerSymbols"),
+    TestOkex("test_getSymbolsLimits")
 ]
 # binance test items
 test_binance = [

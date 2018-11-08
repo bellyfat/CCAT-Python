@@ -4,6 +4,7 @@
 
 import json
 import logging
+import requests
 
 from src.core.coin.coin import Coin
 from src.core.coin.lib.okex_v3_api.account_api import AccountAPI
@@ -33,9 +34,9 @@ class Okex(Coin):
         self._proxies = proxies
 
     # UTC Zone, Unix timestamp in millseconds
-    def getServerTime(self, proxies=None):
+    def getServerTime(self):
         try:
-            res = self._client._get_timestamp(proxies)
+            res = self._client._get_timestamp(self._proxies)
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
@@ -67,8 +68,15 @@ class Okex(Coin):
             raise OkexException
 
     # buy or sell a specific symbol's rate limits
-    def getSymbolLimits(self, symbol, **kwargs):
-        pass
+    def getSymbolsLimits(self, fSymbol, tSymbol, **kwargs):
+        try:
+            res = self._spotAPI.get_coin_info(self._proxies)
+            for r in res:
+                if r["base_currency"] == fSymbol and r["quote_currency"] == tSymbol:
+                    return r
+            raise OkexException 
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
 
     # a specific symbol's tiker with bid 1 and ask 1 info
     def getMarketOrderbookTicker(self, symbol, **kwargs):

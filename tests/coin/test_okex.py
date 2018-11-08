@@ -40,7 +40,7 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        res = okex.getServerTime(proxies["url"])
+        res = okex.getServerTime()
         # logger.debug(res)
         self.assertIsInstance(res, str)
 
@@ -53,12 +53,20 @@ class TestOkex(unittest.TestCase):
         # logger.debug(type(res))
         self.assertIsInstance(res, list)
 
-
     def test_getServerSymbols(self):
         proxies = Config()._proxies
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
         res = okex.getServerSymbols()
+        # logger.debug(type(res))
+        self.assertIsInstance(res, dict)
+
+    def test_getSymbolsLimits(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        res = okex.getSymbolsLimits("STORJ","BTC")
         # logger.debug(type(res))
         self.assertIsInstance(res, dict)

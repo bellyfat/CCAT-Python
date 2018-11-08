@@ -65,7 +65,7 @@ class Binance(Coin):
 
 
     # buy or sell a specific symbol's rate limits
-    def getSymbolLimits(self, symbol, **kwargs):
+    def getSymbolsLimits(self, fSymbol, tSymbol, **kwargs):
         pass
 
     # a specific symbol's tiker with bid 1 and ask 1 info
