@@ -5,6 +5,7 @@
 
 import logging
 import json
+import requests
 from src.core.coin.coin import Coin
 from src.core.util.exceptions import BinanceException
 from binance.client import Client
@@ -42,13 +43,26 @@ class Binance(Coin):
             raise BinanceException
 
     # all symbols in pairs list baseSymbol quoteSymbol
+    # def getServerSymbols(self):
+    #     try:
+    #         res = self._client.get_exchange_info()
+    #         self._client.session.close()
+    #         return res["symbols"]
+    #     except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+    #         raise BinanceException
     def getServerSymbols(self):
+        # not all api defined, get form cryptoCompare
         try:
-            res = self._client.get_exchange_info()
-            self._client.session.close()
-            return res["symbols"]
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            querry = "https://min-api.cryptocompare.com/data/all/exchanges"
+            res = requests.request("GET", querry)
+            if res.status_code == requests.codes.ok:
+                return res.json()["Binance"]
+            else:
+                raise BinanceException
+        except requests.exceptions.RequestException:
             raise BinanceException
+
+
 
     # buy or sell a specific symbol's rate limits
     def getSymbolLimits(self, symbol, **kwargs):

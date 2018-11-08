@@ -19,6 +19,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getConfig()
+        # logger.debug(res)
         self.assertEqual(res["exchange"], binanceConf["exchange"])
         self.assertEqual(res["api_key"], binanceConf["api_key"])
         self.assertEqual(res["api_secret"], binanceConf["api_secret"])
@@ -31,6 +32,7 @@ class TestBinance(unittest.TestCase):
                           binanceConf["api_secret"], proxies["url"])
         binance.setProxy(proxies["url"])
         res = binance.getConfig()
+        # logger.debug(res)
         self.assertEqual(res["proxies"], proxies["url"])
 
     def test_getServerTime(self):
@@ -39,6 +41,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getServerTime()
+        # logger.debug(type(res))
         self.assertIsInstance(res["serverTime"], int)
 
     def test_getServerLimits(self):
@@ -47,6 +50,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getServerLimits()
+        # logger.debug(type(res))
         self.assertIsInstance(res, list)
 
     def test_getServerSymbols(self):
@@ -55,7 +59,8 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getServerSymbols()
-        self.assertIsInstance(res, list)
+        # logger.debug(type(res))
+        self.assertIsInstance(res, dict)
 
 
 if __name__ == "__main__":

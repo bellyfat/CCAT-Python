@@ -13,7 +13,7 @@ class Client(object):
         self.use_server_time = use_server_time
 
 
-    def _request(self, method, request_path, params, cursor=False):
+    def _request(self, method, request_path, params, cursor=False, proxies=None):
 
         if method == c.GET:
             request_path = request_path + utils.parse_params_to_str(params)
@@ -23,7 +23,7 @@ class Client(object):
         timestamp = utils.get_timestamp()
         # sign & header
         if self.use_server_time:
-            timestamp = self._get_timestamp()
+            timestamp = self._get_timestamp(proxies)
         body = json.dumps(params) if method == c.POST else ""
 
         sign = utils.sign(utils.pre_hash(timestamp, method, request_path, str(body)), self.API_SECRET_KEY)
@@ -35,12 +35,12 @@ class Client(object):
         #print("headers:", header)
         #print("body:", body)
         if method == c.GET:
-            response = requests.get(url, headers=header)
+            response = requests.get(url, headers=header, proxies=proxies)
         elif method == c.POST:
-            response = requests.post(url, data=body, headers=header)
+            response = requests.post(url, data=body, headers=header, proxies=proxies)
             #response = requests.post(url, json=body, headers=header)
         elif method == c.DELETE:
-            response = requests.delete(url, headers=header)
+            response = requests.delete(url, headers=header, proxies=proxies)
 
         # exception handle
         if not str(response.status_code).startswith('2'):
@@ -60,20 +60,16 @@ class Client(object):
         except ValueError:
             raise exceptions.OkexRequestException('Invalid Response: %s' % response.text)
 
-    def _request_without_params(self, method, request_path):
-        return self._request(method, request_path, {})
+    def _request_without_params(self, method, request_path, proxies=None):
+        return self._request(method, request_path, {}, cursor=False, proxies=proxies)
 
-    def _request_with_params(self, method, request_path, params, cursor=False):
-        return self._request(method, request_path, params, cursor)
+    def _request_with_params(self, method, request_path, params, cursor=False, proxies=None):
+        return self._request(method, request_path, params, cursor=cursor, proxies=proxies)
 
-    def _get_timestamp(self):
+    def _get_timestamp(self, proxies=None):
         url = c.API_URL + c.SERVER_TIMESTAMP_URL
-        response = requests.get(url)
+        response = requests.get(url, proxies=proxies)
         if response.status_code == 200:
             return response.json()['iso']
         else:
             return ""
-
-
-
-
