@@ -34,12 +34,12 @@ class Coin(object):
 
     @abstractmethod
     # all symbols in pairs list baseSymbol quoteSymbol
-    def getSymbols(self, **kwargs):
+    def getServerSymbols(self):
         pass
 
     @abstractmethod
     # buy or sell a specific symbol's rate limits
-    def getSymbolsLimits(self, symbol, **kwargs):
+    def getSymbolLimits(self, symbol, **kwargs):
         pass
 
     @abstractmethod

@@ -16,7 +16,9 @@ test_okex = []
 test_binance = [
     TestBinance("test_getConfig"),
     TestBinance("test_setProxy"),
-    TestBinance("test_getServerTime")
+    TestBinance("test_getServerTime"),
+    TestBinance("test_getServerLimits"),
+    TestBinance("test_getServerSymbols")
 ]
 # huobi test items
 test_huobi = []

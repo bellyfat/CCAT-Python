@@ -32,32 +32,34 @@ class Binance(Coin):
     # UTC Zone, Unix timestamp in millseconds
     def getServerTime(self):
         try:
-            res = self._restAPI.get_server_time()
+            res = self._restAPI.get_server_time() # UTC Zone UnixStamp
             self._restAPI.session.close()
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            # log BinanceException
-            pass
+            raise BinanceException
+
 
 
     # perseconds qurry and orders rate limits
-    def getServerLimits(self, **kwargs):
+    def getServerLimits(self):
         try:
-            return self._restAPI.getget_exchange_info()
+            res = self._restAPI.get_exchange_info()
+            self._restAPI.session.close()
+            return res["rateLimits"]
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            # log BinanceException
-            pass
+            raise BinanceException
 
     # all symbols in pairs list baseSymbol quoteSymbol
-    def getSymbols(self, **kwargs):
+    def getServerSymbols(self):
         try:
-            return self._restAPI.getget_exchange_info()
+            res = self._restAPI.get_exchange_info()
+            self._restAPI.session.close()
+            return res["symbols"]
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            # log BinanceException
-            pass
+            raise BinanceException
 
     # buy or sell a specific symbol's rate limits
-    def getSymbolsLimits(self, symbol, **kwargs):
+    def getSymbolLimits(self, symbol, **kwargs):
         pass
 
     # a specific symbol's tiker with bid 1 and ask 1 info
