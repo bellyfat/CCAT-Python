@@ -55,9 +55,18 @@ class SpotAPI(Client):
             params['from'] = froms
         if to:
             params['to'] = to
+        return self._request_with_params(GET, SPOT_ORDERS_LIST, params, True, proxies)
+
+    def get_orders_pending(self, instrument_id='', froms='', to='', limit='100', proxies=None):
+        params = {'limit': limit}
+        if froms:
+            params['from'] = froms
+        if to:
+            params['to'] = to
         if instrument_id:
             params['instrument_id'] = instrument_id
-        return self._request_with_params(GET, SPOT_ORDERS_LIST, params, True, proxies)
+        return self._request_with_params(GET, SPOT_ORDERS_PENDING, params, True, proxies)
+
 
     # query order info
     def get_order_info(self, oid, instrument_id, proxies=None):

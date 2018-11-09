@@ -19,7 +19,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getConfig()
-        # logger.debug(res)
+        logger.debug(res)
         self.assertEqual(res["exchange"], binanceConf["exchange"])
         self.assertEqual(res["api_key"], binanceConf["api_key"])
         self.assertEqual(res["api_secret"], binanceConf["api_secret"])
@@ -32,7 +32,7 @@ class TestBinance(unittest.TestCase):
                           binanceConf["api_secret"], proxies["url"])
         binance.setProxy(proxies["url"])
         res = binance.getConfig()
-        # logger.debug(res)
+        logger.debug(res)
         self.assertEqual(res["proxies"], proxies["url"])
 
     def test_getServerTime(self):
@@ -41,7 +41,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getServerTime()
-        # logger.debug(res)
+        logger.debug(res)
         self.assertIsInstance(res, int)
 
     def test_getServerLimits(self):
@@ -68,7 +68,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getSymbolsLimits("IOST","BTC")
-        # logger.debug(res)
+        logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_getMarketOrderbookTicker(self):
@@ -77,7 +77,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getMarketOrderbookTicker("IOST","BTC")
-        # logger.debug(res)
+        logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_getMarketOrderbookDepth(self):
@@ -86,7 +86,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getMarketOrderbookDepth("IOST","BTC",5)
-        # logger.debug(res)
+        logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_getMarketKline(self):
@@ -95,7 +95,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getMarketKline("IOST","BTC","6h","2018-11-01T00:00:00.000Z","2018-11-02T00:00:00.000Z")
-        # logger.debug(res)
+        logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getTradeFees(self):
@@ -103,8 +103,8 @@ class TestBinance(unittest.TestCase):
         binanceConf = Config()._binance
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
-        res = binance.getTradeFees()
-        # logger.debug(res)
+        res = binance.getTradeFees(symbol="ETHUSDT")
+        logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getTradeOpen(self):
@@ -112,8 +112,8 @@ class TestBinance(unittest.TestCase):
         binanceConf = Config()._binance
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
-        res = binance.getTradeOpen("IOST","BTC")
-        # logger.debug(res)
+        res = binance.getTradeOpen("ETH","USDT")
+        logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getTradeHistory(self):
@@ -121,8 +121,8 @@ class TestBinance(unittest.TestCase):
         binanceConf = Config()._binance
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
-        res = binance.getTradeHistory("IOST","BTC")
-        # logger.debug(res)
+        res = binance.getTradeHistory("ETH","USDT")
+        logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getTradeSucceed(self):
@@ -130,8 +130,8 @@ class TestBinance(unittest.TestCase):
         binanceConf = Config()._binance
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
-        res = binance.getTradeSucceed("IOST","BTC")
-        # logger.debug(res)
+        res = binance.getTradeSucceed("ETH","USDT")
+        logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getAccountBalances(self):
@@ -140,7 +140,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getAccountBalances()
-        # logger.debug(res)
+        logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getAccountLimits(self):
@@ -149,7 +149,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getAccountLimits()
-        # logger.debug(res)
+        logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_getAccountAssetBalances(self):
@@ -158,7 +158,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getAccountAssetBalance("USDT")
-        # logger.debug(res)
+        logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_getAccountAssetDetail(self):
@@ -167,7 +167,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getAccountAssetDetail("USDT")
-        # logger.debug(res)
+        logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_createOrder(self):

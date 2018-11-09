@@ -184,8 +184,26 @@ class Binance(Coin):
     def getTradeOpen(self,  fSymbol, tSymbol, **kwargs):
         try:
             symbol = fSymbol+tSymbol
-            res = self._client.get_open_orders(symbol=symbol, **kwargs)
+            orders = self._client.get_open_orders(symbol=symbol, **kwargs)
+            ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
             self._client.session.close()
+            res = []
+            for item in orders:
+                bid_or_ask = "ask" if item["side"] == "BUY" else "bid"
+                filled_price = 0.0 if float(item["executedQty"])==0 else float(item["cummulativeQuoteQty"])/float(item["price"])
+                res.append({
+                    "timeStamp": item["time"],
+                    "order_id": item["orderId"],
+                    "status": "open",
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "bid_or_ask": bid_or_ask,
+                    "bid_ask_price": float(item["price"]),
+                    "bid_ask_size": float(item["origQty"]),
+                    "filled_price": filled_price,
+                    "filled_size": float(item["executedQty"]),
+                    "fee": float(ratio)*float(item["cummulativeQuoteQty"])
+                })
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
@@ -194,8 +212,27 @@ class Binance(Coin):
     def getTradeHistory(self,  fSymbol, tSymbol, **kwargs):
         try:
             symbol = fSymbol+tSymbol
-            res = self._client.get_all_orders(symbol=symbol, **kwargs)
+            orders = self._client.get_all_orders(symbol=symbol, **kwargs)
+            ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
             self._client.session.close()
+            res = []
+            for item in orders:
+                status = "open" if item["status"] == "NEW" else item["status"].lower()
+                bid_or_ask = "ask" if item["side"] == "BUY" else "bid"
+                filled_price = 0.0 if float(item["executedQty"])==0 else float(item["cummulativeQuoteQty"])/float(item["executedQty"])
+                res.append({
+                    "timeStamp": item["time"],
+                    "order_id": item["orderId"],
+                    "status": status,
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "bid_or_ask": bid_or_ask,
+                    "bid_ask_price": float(item["price"]),
+                    "bid_ask_size": float(item["origQty"]),
+                    "filled_price": filled_price,
+                    "filled_size": float(item["executedQty"]),
+                    "fee": float(ratio)*float(item["cummulativeQuoteQty"])
+                })
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
@@ -204,8 +241,27 @@ class Binance(Coin):
     def getTradeSucceed(self,  fSymbol, tSymbol, **kwargs):
         try:
             symbol = fSymbol+tSymbol
-            res = self._client.get_my_trades(symbol=symbol, **kwargs)
+            orders = self._client.get_all_orders(symbol=symbol, **kwargs)
+            ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
             self._client.session.close()
+            res = []
+            for item in orders:
+                if item["status"] == "FILLED":
+                    bid_or_ask = "ask" if item["side"] == "BUY" else "bid"
+                    filled_price = 0.0 if float(item["executedQty"])==0 else float(item["cummulativeQuoteQty"])/float(item["executedQty"])
+                    res.append({
+                        "timeStamp": item["time"],
+                        "order_id": item["orderId"],
+                        "status": item["status"].lower(),
+                        "fSymbol": fSymbol,
+                        "tSymbol": tSymbol,
+                        "bid_or_ask": bid_or_ask,
+                        "bid_ask_price": float(item["price"]),
+                        "bid_ask_size": float(item["origQty"]),
+                        "filled_price": filled_price,
+                        "filled_size": float(item["executedQty"]),
+                        "fee": float(ratio)*float(item["cummulativeQuoteQty"])
+                    })
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
