@@ -24,17 +24,17 @@ class Coin(object):
 
     @abstractmethod
     # UTC Zone, Unix timestamp in millseconds
-    def getServerTime(self):
+    def getServerTime(self, **kwargs):
         pass
 
     @abstractmethod
     # perseconds qurry and orders rate limits
-    def getServerLimits(self):
+    def getServerLimits(self, **kwargs):
         pass
 
     @abstractmethod
     # all symbols in pairs list baseSymbol quoteSymbol
-    def getServerSymbols(self):
+    def getServerSymbols(self, **kwargs):
         pass
 
     @abstractmethod
@@ -58,13 +58,18 @@ class Coin(object):
         pass
 
     @abstractmethod
+    # get symbol trade fees
+    def getTradeFees(self, fSymbol, tSymbol, **kwargs):
+        pass
+
+    @abstractmethod
     # get current trade
-    def getTradeOpen(self, **kwargs):
+    def getTradeOpen(self, fSymbol, tSymbol, **kwargs):
         pass
 
     @abstractmethod
     # get history trade
-    def getTradeHistory(self, **kwargs):
+    def getTradeHistory(self, fSymbol, tSymbol, **kwargs):
         pass
 
     @abstractmethod
@@ -78,19 +83,19 @@ class Coin(object):
         pass
 
     @abstractmethod
+    # get account asset deposit and withdraw limis
+    def getAccountLimits(self, **kwargs):
+        pass
+
+    @abstractmethod
     # get account asset balance
     def getAccountAssetBalance(self, asset, **kwargs):
         pass
 
     @abstractmethod
-    # get account asset deposit and withdraw detail
+    # get account asset deposit and withdraw history detail
     def getAccountAssetDetail(self, asset, **kwargs):
         pass
-
-    # @abstractmethod
-    # # withdraw account asset
-    # def getAccountAssetWithDraw(self, asset, **kwargs):
-    #     pass
 
     @abstractmethod
     # create orders default limit
@@ -105,4 +110,14 @@ class Coin(object):
     @abstractmethod
     # cancle the specific orders
     def cancleOrder(self, fSymbol, tSymbol, orderID, **kwargs):
+        pass
+
+    @abstractmethod
+    # deposite asset balance
+    def depositeAsset(self, asset, **kwargs):
+        pass
+
+    @abstractmethod
+    # withdraw asset balance
+    def withdrawAsset(self, asset, **kwargs):
         pass

@@ -95,5 +95,104 @@ class TestOkex(unittest.TestCase):
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
         res = okex.getMarketKline("STC","BTC","1h","2018-11-01T00:00:00.000Z","2018-11-02T00:00:00.000Z")
-        logger.debug(res)
+        # logger.debug(res)
         self.assertIsInstance(res, list)
+
+    def test_getTradeFees(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+    def test_getTradeOpen(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+    def test_getTradeHistory(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+    def test_getTradeSucceed(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+    def test_getAccountBalances(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+    def test_getAccountLimits(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+    def test_getAccountAssetBalances(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+    def test_getAccountAssetDetail(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+
+
+
+
+    def test_createOrder(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+    def test_checkOrder(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+    def test_cancleOrder(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+    def test_depositeAsset(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+    def test_withdrawAsset(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        pass
+
+
+if __name__ == "__main__":
+    print("Error: Should  be called form tests/test_coin.py")

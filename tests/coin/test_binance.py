@@ -95,10 +95,115 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getMarketKline("IOST","BTC","6h","2018-11-01T00:00:00.000Z","2018-11-02T00:00:00.000Z")
+        # logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getTradeFees(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.getTradeFees()
+        # logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getTradeOpen(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.getTradeOpen("IOST","BTC")
+        # logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getTradeHistory(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.getTradeHistory("IOST","BTC")
+        # logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getTradeSucceed(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.getTradeSucceed("IOST","BTC")
+        # logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getAccountBalances(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.getAccountBalances()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_getAccountLimits(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.getAccountLimits()
+        # logger.debug(res)
+        self.assertIsInstance(res, dict)
 
+    def test_getAccountAssetBalances(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.getAccountAssetBalance("USDT")
+        # logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_getAccountAssetDetail(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.getAccountAssetDetail("USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_createOrder(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        pass
+
+    def test_checkOrder(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        pass
+
+    def test_cancleOrder(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        pass
+
+    def test_depositeAsset(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        pass
+
+    def test_withdrawAsset(self):
+        proxies = Config()._proxies
+        binanceConf = Config()._binance
+        binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
+                          binanceConf["api_secret"], proxies["url"])
+        pass
 
 
 if __name__ == "__main__":

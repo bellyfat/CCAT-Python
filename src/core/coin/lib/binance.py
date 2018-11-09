@@ -71,7 +71,7 @@ class Binance(Coin):
             raise BinanceException
 
     # buy or sell a specific symbol's rate limits
-    def getSymbolsLimits(self, fSymbol, tSymbol, **kwargs):
+    def getSymbolsLimits(self, fSymbol, tSymbol):
         try:
             base = self._client.get_symbol_info(fSymbol + tSymbol)
             self._client.session.close()
@@ -109,7 +109,7 @@ class Binance(Coin):
         try:
             symbol = fSymbol+tSymbol
             timeStamp = self._client.get_server_time()
-            ticker = self._client.get_orderbook_ticker(symbol=symbol)
+            ticker = self._client.get_orderbook_ticker(symbol=symbol, **kwargs)
             self._client.session.close()
             res = {
                 "timeStamp" : timeStamp["serverTime"],
@@ -129,7 +129,7 @@ class Binance(Coin):
         try:
             symbol = fSymbol+tSymbol
             timeStamp = self._client.get_server_time()
-            ticker = self._client.get_order_book(symbol=symbol, limit=limit)
+            ticker = self._client.get_order_book(symbol=symbol, limit=limit, **kwargs)
             self._client.session.close()
             res = {
                 "timeStamp" : timeStamp["serverTime"],
@@ -143,7 +143,7 @@ class Binance(Coin):
             raise BinanceException
 
     # a specific symbols kline/candlesticks
-    def getMarketKline(self, fSymbol, tSymbol, interval, start, end=None, **kwargs):
+    def getMarketKline(self, fSymbol, tSymbol, interval, start, end=None):
         '''
         Returns
         [
@@ -171,29 +171,85 @@ class Binance(Coin):
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
 
+    # get symbol trade fees
+    def getTradeFees(self, **kwargs):
+        try:
+            res = self._client.get_trade_fee(**kwargs)
+            self._client.session.close()
+            return res["tradeFee"]
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
+
     # get current trade
-    def getTradeOpen(self, **kwargs):
-        pass
+    def getTradeOpen(self,  fSymbol, tSymbol, **kwargs):
+        try:
+            symbol = fSymbol+tSymbol
+            res = self._client.get_open_orders(symbol=symbol, **kwargs)
+            self._client.session.close()
+            return res
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
 
-        # get history trade
-    def getTradeHistory(self, **kwargs):
-        pass
+    # get history trade
+    def getTradeHistory(self,  fSymbol, tSymbol, **kwargs):
+        try:
+            symbol = fSymbol+tSymbol
+            res = self._client.get_all_orders(symbol=symbol, **kwargs)
+            self._client.session.close()
+            return res
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
 
-        # get succeed trade
-    def getTradeSucceed(self, **kwargs):
-        pass
+    # get succeed trade
+    def getTradeSucceed(self,  fSymbol, tSymbol, **kwargs):
+        try:
+            symbol = fSymbol+tSymbol
+            res = self._client.get_my_trades(symbol=symbol, **kwargs)
+            self._client.session.close()
+            return res
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
 
     # get account all asset balance
     def getAccountBalances(self, **kwargs):
-        pass
+        try:
+            res = self._client.get_account(**kwargs)
+            self._client.session.close()
+            return res["balances"]
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
+
+    # get account asset deposit and withdraw limit
+    def getAccountLimits(self, **kwargs):
+        try:
+            res = self._client.get_asset_details(**kwargs)
+            self._client.session.close()
+            return res["assetDetail"]
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
 
     # get account asset balance
     def getAccountAssetBalance(self, asset, **kwargs):
-        pass
+        try:
+            res = self._client.get_asset_balance(asset=asset, **kwargs)
+            self._client.session.close()
+            return res
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
 
-    # get account asset deposit and withdraw detail
-    def getAccountAssetDetail(self, asset, **kwargs):
-        pass
+    # get account asset deposit and withdraw history detail
+    def getAccountAssetDetail(self, asset=None, **kwargs):
+        try:
+            deposite = self._client.get_deposit_history(asset=asset, **kwargs)
+            withdraw = self._client.get_withdraw_history(asset=asset, **kwargs)
+            self._client.session.close()
+            res = {
+                "deposit":deposite["depositList"],
+                "withdraw":withdraw["withdrawList"]
+            }
+            return res
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
 
     # create orders default limit
     def createOrder(self, fSymbol, tSymbol, quantity, price, type="limit", **kwargs):
@@ -205,4 +261,12 @@ class Binance(Coin):
 
     # cancle the specific orders
     def cancleOrder(self, fSymbol, tSymbol, orderID, **kwargs):
+        pass
+
+    # deposite asset balance
+    def depositeAsset(self, asset, **kwargs):
+        pass
+
+    # withdraw asset balance
+    def withdrawAsset(self, asset, **kwargs):
         pass

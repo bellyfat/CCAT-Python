@@ -69,7 +69,7 @@ class Okex(Coin):
             raise OkexException
 
     # buy or sell a specific symbol's rate limits
-    def getSymbolsLimits(self, fSymbol, tSymbol, **kwargs):
+    def getSymbolsLimits(self, fSymbol, tSymbol):
         try:
             base = self._spotAPI.get_coin_info(self._proxies)
             for b in base:
@@ -102,7 +102,7 @@ class Okex(Coin):
             raise OkexException
 
     # a specific symbol's tiker with bid 1 and ask 1 info
-    def getMarketOrderbookTicker(self, fSymbol, tSymbol, **kwargs):
+    def getMarketOrderbookTicker(self, fSymbol, tSymbol):
         try:
             ticker = self._spotAPI.get_depth(
                 fSymbol + "-" + tSymbol, '1',  '', self._proxies)
@@ -120,7 +120,7 @@ class Okex(Coin):
             raise OkexException
 
     # a specific symbol's orderbook with depth
-    def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit='', **kwargs):
+    def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=''):
         try:
             instrument_id = fSymbol + "-" + tSymbol
             ticker = self._spotAPI.get_depth(
@@ -137,7 +137,7 @@ class Okex(Coin):
             raise OkexException
 
     # a specific symbols kline/candlesticks
-    def getMarketKline(self, fSymbol, tSymbol, interval, start, end, **kwargs):
+    def getMarketKline(self, fSymbol, tSymbol, interval, start, end):
         '''
         [
             {
@@ -159,27 +159,35 @@ class Okex(Coin):
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
 
+    # get symbol trade fees
+    def getTradeFees(self, **kwargs):
+        pass
+
     # get current trade
-    def getTradeOpen(self, **kwargs):
+    def getTradeOpen(self, fSymbol, tSymbol, **kwargs):
         pass
 
         # get history trade
-    def getTradeHistory(self, **kwargs):
+    def getTradeHistory(self, fSymbol, tSymbol, **kwargs):
         pass
 
         # get succeed trade
-    def getTradeSucceed(self, **kwargs):
+    def getTradeSucceed(self, fSymbol, tSymbol, **kwargs):
         pass
 
     # get account all asset balance
     def getAccountBalances(self, **kwargs):
         pass
 
+    # get account asset deposit and withdraw limits
+    def getAccountLimits(self, **kwargs):
+        pass
+
     # get account asset balance
     def getAccountAssetBalance(self, asset, **kwargs):
         pass
 
-    # get account asset deposit and withdraw detail
+    # get account asset deposit and withdraw history detail
     def getAccountAssetDetail(self, asset, **kwargs):
         pass
 
@@ -193,4 +201,12 @@ class Okex(Coin):
 
     # cancle the specific orders
     def cancleOrder(self, fSymbol, tSymbol, orderID, **kwargs):
+        pass
+
+    # deposite asset balance
+    def depositeAsset(self, asset, **kwargs):
+        pass
+
+    # withdraw asset balance
+    def withdrawAsset(self, asset, **kwargs):
         pass
