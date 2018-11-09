@@ -103,7 +103,10 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        pass
+
+        res = okex.getTradeFees()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
 
     def test_getTradeOpen(self):
         proxies = Config()._proxies

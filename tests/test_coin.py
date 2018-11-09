@@ -21,19 +21,19 @@ test_okex = [
     # TestOkex("test_getMarketOrderbookTicker"),
     # TestOkex("test_getMarketOrderbookDepth"),
     # TestOkex("test_getMarketKline")
-    TestOkex("test_getTradeFees"),
+    # TestOkex("test_getTradeFees"),
     TestOkex("test_getTradeOpen"),
-    TestOkex("test_getTradeHistory"),
-    TestOkex("test_getTradeSucceed"),
-    TestOkex("test_getAccountBalances"),
-    TestOkex("test_getAccountLimits"),
-    TestOkex("test_getAccountAssetBalances"),
-    TestOkex("test_getAccountAssetDetail"),
-    TestOkex("test_createOrder"),
-    TestOkex("test_checkOrder"),
-    TestOkex("test_cancleOrder"),
-    TestOkex("test_depositeAsset"),
-    TestOkex("test_withdrawAsset")
+    # TestOkex("test_getTradeHistory"),
+    # TestOkex("test_getTradeSucceed"),
+    # TestOkex("test_getAccountBalances"),
+    # TestOkex("test_getAccountLimits"),
+    # TestOkex("test_getAccountAssetBalances"),
+    # TestOkex("test_getAccountAssetDetail"),
+    # TestOkex("test_createOrder"),
+    # TestOkex("test_checkOrder"),
+    # TestOkex("test_cancleOrder"),
+    # TestOkex("test_depositeAsset"),
+    # TestOkex("test_withdrawAsset")
 ]
 # binance test items
 test_binance = [
@@ -54,11 +54,11 @@ test_binance = [
     # TestBinance("test_getAccountLimits"),
     # TestBinance("test_getAccountAssetBalances"),
     # TestBinance("test_getAccountAssetDetail"),
-    TestBinance("test_createOrder"),
-    TestBinance("test_checkOrder"),
-    TestBinance("test_cancleOrder"),
-    TestBinance("test_depositeAsset"),
-    TestBinance("test_withdrawAsset")
+    # TestBinance("test_createOrder"),
+    # TestBinance("test_checkOrder"),
+    # TestBinance("test_cancleOrder"),
+    # TestBinance("test_depositeAsset"),
+    # TestBinance("test_withdrawAsset")
 
 ]
 # huobi test items

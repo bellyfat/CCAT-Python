@@ -161,7 +161,15 @@ class Okex(Coin):
 
     # get symbol trade fees
     def getTradeFees(self, **kwargs):
-        pass
+        '''
+        币币手续费： 挂单成交0.1%， 吃单成交0.15%
+        '''
+        res = [{
+            "symbol" : "None",
+            "maker" : 0.001,
+            "taker" : 0.0015
+        }]
+        return res
 
     # get current trade
     def getTradeOpen(self, fSymbol, tSymbol, **kwargs):

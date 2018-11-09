@@ -140,7 +140,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getAccountBalances()
-        logger.debug(res)
+        # logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getAccountLimits(self):
@@ -167,7 +167,7 @@ class TestBinance(unittest.TestCase):
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getAccountAssetDetail("USDT")
-        logger.debug(res)
+        # logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_createOrder(self):
