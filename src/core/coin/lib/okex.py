@@ -55,7 +55,7 @@ class Okex(Coin):
             "requests_second": 10,
             "orders_second": 10,
             "orders_day": 10 * 3600 * 24,
-            "WebSockets_second": 50
+            "webSockets_second": 50
         }
         return res
 
@@ -118,9 +118,9 @@ class Okex(Coin):
                 "fSymbol": fSymbol,
                 "tSymbol": tSymbol,
                 "bid_one_price": float(ticker["bids"][0][0]),
-                "bid_one_pize": float(ticker["bids"][0][1]),
+                "bid_one_size": float(ticker["bids"][0][1]),
                 "ask_one_price": float(ticker["asks"][0][0]),
-                "ask_one_pize": float(ticker["asks"][0][1])
+                "ask_one_size": float(ticker["asks"][0][1])
             }
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):

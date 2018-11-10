@@ -58,7 +58,7 @@ class Binance(Coin):
                 "requests_second": requests_second,
                 "orders_second": orders_second,
                 "orders_day": orders_day,
-                "WebSockets_second": ''
+                "webSockets_second": ''
             }
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
@@ -133,9 +133,9 @@ class Binance(Coin):
                 "fSymbol" : fSymbol,
                 "tSymbol" : tSymbol,
                 "bid_one_price" : ticker["bidPrice"],
-                "bid_one_pize" : ticker["bidQty"],
+                "bid_one_size" : ticker["bidQty"],
                 "ask_one_price" : ticker["askPrice"],
-                "ask_one_pize" : ticker["askQty"]
+                "ask_one_size" : ticker["askQty"]
             }
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
