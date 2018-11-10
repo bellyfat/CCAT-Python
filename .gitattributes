@@ -1,0 +1,6 @@
+*.js linguist-language=Python
+*.json linguist-language=Python
+*.css linguist-language=Python
+*.html linguist-language=Python
+
+*.ipynb linguist-language=Python
