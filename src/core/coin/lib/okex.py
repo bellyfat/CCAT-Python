@@ -292,7 +292,15 @@ class Okex(Coin):
     # get account all asset balance
     def getAccountBalances(self, **kwargs):
         try:
-            res = self._spotAPI.get_account_info(self._proxies)
+            base = self._spotAPI.get_account_info(self._proxies)
+            res = []
+            for b in base:
+                res.append({
+                    "asset": b["currency"],
+                    "balance": float(b["balance"]),
+                    "free": float(b["available"]),
+                    "locked": float(b["frozen"])
+                })
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
@@ -300,7 +308,23 @@ class Okex(Coin):
     # get account asset deposit and withdraw limits
     def getAccountLimits(self, **kwargs):
         try:
-            res = self._accountAPI.get_currencies(self._proxies)
+            base = self._accountAPI.get_currencies(self._proxies)
+            res = []
+            for b in base:
+                if "min_withdrawal" in b.keys():
+                    res.append({
+                        "asset": b["currency"],
+                        "can_deposite": str(b["can_deposit"]) in ["true", "True", "1"],
+                        "can_withdraw": str(b["can_withdraw"]) in ["true", "True", "1"],
+                        "min_withdraw": float(b["min_withdrawal"])
+                    })
+                else:
+                    res.append({
+                        "asset": b["currency"],
+                        "can_deposite": str(b["can_deposit"]) in ["true", "True", "1"],
+                        "can_withdraw": str(b["can_withdraw"]) in ["true", "True", "1"],
+                        "min_withdraw": 0.0
+                    })
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
@@ -308,7 +332,13 @@ class Okex(Coin):
     # get account asset balance
     def getAccountAssetBalance(self, asset, **kwargs):
         try:
-            res = self._spotAPI.get_coin_account_info(asset, self._proxies)
+            base = self._spotAPI.get_coin_account_info(asset, self._proxies)
+            res = {
+                "asset": base["currency"],
+                "balance": float(base["balance"]),
+                "free": float(base["available"]),
+                "locked": float(base["frozen"])
+            }
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
