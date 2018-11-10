@@ -51,8 +51,12 @@ class Okex(Coin):
         WebSocket
             WebSocket将每个命令类型限制为每秒50条命令。
         '''
-        res = [{"RestAPI": {"user": "6 times per second", "all": "10 times per second"}},
-               {"WebSocketAPI": "50 times per second"}]
+        res = {
+            "requests_second": 10,
+            "orders_second": 10,
+            "orders_day": 10 * 3600 * 24,
+            "WebSockets_second": 50
+        }
         return res
 
     # all symbols in pairs list baseSymbol quoteSymbol
@@ -71,17 +75,19 @@ class Okex(Coin):
     # buy or sell a specific symbol's rate limits
     def getSymbolsLimits(self, fSymbol, tSymbol):
         try:
+            instrument_id = fSymbol + "-" + tSymbol
             base = self._spotAPI.get_coin_info(self._proxies)
             for b in base:
                 if b["base_currency"] == fSymbol and b["quote_currency"] == tSymbol:
-                    tSymbol_price_precision = float(b["quote_increment"])
-                    tSymbol_price_max = None
-                    tSymbol_price_min = None
-                    tSymbol_price_step = float(b["quote_increment"])
-                    fSymbol_size_precision = float(b["base_increment"])
-                    fSymbol_size_max = None
-                    fSymbol_size_min = float(b["base_min_size"])
-                    fSymbol_size_step = float(b["base_increment"])
+                    tSymbol_price_precision = float(b["tick_size"])
+                    tSymbol_price_max = ''
+                    tSymbol_price_min = float(b["tick_size"])
+                    tSymbol_price_step = float(b["tick_size"])
+                    fSymbol_size_precision = float(b["size_increment"])
+                    fSymbol_size_max = ''
+                    fSymbol_size_min = float(b["min_size"])
+                    fSymbol_size_step = float(b["size_increment"])
+                    min_notional = fSymbol_size_min * tSymbol_price_min
                     res = {
                         "tSymbol_price": {
                             "precision": tSymbol_price_precision,
@@ -94,7 +100,8 @@ class Okex(Coin):
                             "max": fSymbol_size_max,
                             "min": fSymbol_size_min,
                             "step": fSymbol_size_step
-                        }
+                        },
+                        "min_notional": min_notional
                     }
                     return res
             raise OkexException
@@ -121,6 +128,22 @@ class Okex(Coin):
 
     # a specific symbol's orderbook with depth
     def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=''):
+        '''
+        {
+            "timestamp": "2016-12-08T20:09:05.508883Z",
+
+            "bids": [
+                [ price, size, num_orders ],
+                [ "295.96", "4.39088265", 2 ],
+                ...
+            ],
+            "asks": [
+                [ price, size, num_orders ],
+                [ "295.97", "25.23542881", 12 ],
+                ...
+            ]
+        }
+        '''
         try:
             instrument_id = fSymbol + "-" + tSymbol
             ticker = self._spotAPI.get_depth(
@@ -129,8 +152,8 @@ class Okex(Coin):
                 "timeStamp": date_to_milliseconds(ticker["timestamp"]),
                 "fSymbol": fSymbol,
                 "tSymbol": tSymbol,
-                "bid_price_size": float(ticker["bids"]),
-                "ask_price_size": float(ticker["asks"])
+                "bid_price_size": ticker["bids"],
+                "ask_price_size": ticker["asks"]
             }
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
@@ -152,7 +175,7 @@ class Okex(Coin):
         '''
         try:
             instrument_id = fSymbol + "-" + tSymbol
-            granularity = int(interval_to_milliseconds(interval)/1000)
+            granularity = int(interval_to_milliseconds(interval) / 1000)
             kline = self._spotAPI.get_kline(
                 instrument_id, start, end, granularity, self._proxies)
             return kline
@@ -165,94 +188,102 @@ class Okex(Coin):
         币币手续费： 挂单成交0.1%， 吃单成交0.15%
         '''
         res = [{
-            "symbol" : "None",
-            "maker" : 0.001,
-            "taker" : 0.0015
+            "symbol": "all",
+            "maker": 0.001,
+            "taker": 0.0015
         }]
         return res
 
     # get current trade
-    def getTradeOpen(self, fSymbol='', tSymbol='', froms='', to='', limit='100'):
+    def getTradeOpen(self, fSymbol='', tSymbol='', ratio='', froms='', to='', limit='100'):
         try:
             instrument_id = ''
             if fSymbol and tSymbol:
                 instrument_id = fSymbol + "-" + tSymbol
-            orders = self._spotAPI.get_orders_pending(instrument_id, froms, to, limit, self._proxies)
+            orders = self._spotAPI.get_orders_pending(
+                instrument_id, froms, to, limit, self._proxies)
             res = []
-            ratio = self.getTradeFees()[0]["taker"]
+            if ratio == '':
+                ratio = self.getTradeFees()[0]["taker"]
             for item in orders[0]:
-                bid_or_ask = "ask" if item["side"] == "buy" else "bid"
-                filled_price = float(item["filled_size"]) if float(item["filled_size"])==0 else float(item["filled_notional"])/float(item["filled_size"])
+                ask_or_bid = "ask" if item["side"] == "buy" else "bid"
+                filled_price = float(item["filled_size"]) if float(item["filled_size"]) == 0 else float(
+                    item["filled_notional"]) / float(item["filled_size"])
                 res.append({
                     "timeStamp": date_to_milliseconds(item["timestamp"]),
                     "order_id": item["order_id"],
                     "status": "open",
+                    "type": item["type"],
                     "fSymbol": fSymbol,
                     "tSymbol": tSymbol,
-                    "bid_or_ask": bid_or_ask,
-                    "bid_ask_price": float(item["price"]),
-                    "bid_ask_size": float(item["size"]),
+                    "ask_or_bid": ask_or_bid,
+                    "ask_bid_price": float(item["price"]),
+                    "ask_bid_size": float(item["size"]),
                     "filled_price": filled_price,
                     "filled_size": float(item["filled_size"]),
-                    "fee": ratio*float(item["filled_notional"])
+                    "fee": float(ratio) * float(item["filled_notional"])
                 })
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
 
     # get history trade
-    def getTradeHistory(self, fSymbol, tSymbol, froms='', to='', limit='100'):
+    def getTradeHistory(self, fSymbol, tSymbol, ratio='', froms='', to='', limit='100'):
         try:
-            instrument_id = ''
-            if fSymbol and tSymbol:
-                instrument_id = fSymbol + "-" + tSymbol
-            orders = self._spotAPI.get_orders_list("all", instrument_id, froms, to, limit, self._proxies)
+            instrument_id = fSymbol + "-" + tSymbol
+            orders = self._spotAPI.get_orders_list(
+                "all", instrument_id, froms, to, limit, self._proxies)
             res = []
-            ratio = self.getTradeFees()[0]["taker"]
+            if ratio == '':
+                ratio = self.getTradeFees()[0]["taker"]
             for item in orders[0]:
-                bid_or_ask = "ask" if item["side"] == "buy" else "bid"
-                filled_price = float(item["filled_size"]) if float(item["filled_size"])==0 else float(item["filled_notional"])/float(item["filled_size"])
+                ask_or_bid = "ask" if item["side"] == "buy" else "bid"
+                filled_price = float(item["filled_size"]) if float(item["filled_size"]) == 0 else float(
+                    item["filled_notional"]) / float(item["filled_size"])
                 res.append({
                     "timeStamp": date_to_milliseconds(item["timestamp"]),
                     "order_id": item["order_id"],
                     "status": item["status"],
+                    "type": item["type"],
                     "fSymbol": fSymbol,
                     "tSymbol": tSymbol,
-                    "bid_or_ask": bid_or_ask,
-                    "bid_ask_price": float(item["price"]),
-                    "bid_ask_size": float(item["size"]),
+                    "ask_or_bid": ask_or_bid,
+                    "ask_bid_price": float(item["price"]),
+                    "ask_bid_size": float(item["size"]),
                     "filled_price": filled_price,
                     "filled_size": float(item["filled_size"]),
-                    "fee": ratio*float(item["filled_notional"])
+                    "fee": float(ratio) * float(item["filled_notional"])
                 })
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
 
     # get succeed trade
-    def getTradeSucceed(self, fSymbol, tSymbol, froms='', to='', limit='100'):
+    def getTradeSucceed(self, fSymbol, tSymbol, ratio='', froms='', to='', limit='100'):
         try:
-            instrument_id = ''
-            if fSymbol and tSymbol:
-                instrument_id = fSymbol + "-" + tSymbol
-            orders = self._spotAPI.get_orders_list("filled", instrument_id, froms, to, limit, self._proxies)
+            instrument_id = fSymbol + "-" + tSymbol
+            orders = self._spotAPI.get_orders_list(
+                "filled", instrument_id, froms, to, limit, self._proxies)
             res = []
-            ratio = self.getTradeFees()[0]["taker"]
+            if ratio == '':
+                ratio = self.getTradeFees()[0]["taker"]
             for item in orders[0]:
-                bid_or_ask = "ask" if item["side"] == "buy" else "bid"
-                filled_price = float(item["filled_size"]) if float(item["filled_size"])==0 else float(item["filled_notional"])/float(item["filled_size"])
+                ask_or_bid = "ask" if item["side"] == "buy" else "bid"
+                filled_price = float(item["filled_size"]) if float(item["filled_size"]) == 0 else float(
+                    item["filled_notional"]) / float(item["filled_size"])
                 res.append({
                     "timeStamp": date_to_milliseconds(item["timestamp"]),
                     "order_id": item["order_id"],
                     "status": item["status"],
+                    "type": item["type"],
                     "fSymbol": fSymbol,
                     "tSymbol": tSymbol,
-                    "bid_or_ask": bid_or_ask,
-                    "bid_ask_price": float(item["price"]),
-                    "bid_ask_size": float(item["size"]),
+                    "ask_or_bid": ask_or_bid,
+                    "ask_bid_price": float(item["price"]),
+                    "ask_bid_size": float(item["size"]),
                     "filled_price": filled_price,
                     "filled_size": float(item["filled_size"]),
-                    "fee": ratio*float(item["filled_notional"])
+                    "fee": float(ratio) * float(item["filled_notional"])
                 })
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
@@ -260,31 +291,146 @@ class Okex(Coin):
 
     # get account all asset balance
     def getAccountBalances(self, **kwargs):
-        pass
+        try:
+            res = self._spotAPI.get_account_info(self._proxies)
+            return res
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
 
     # get account asset deposit and withdraw limits
     def getAccountLimits(self, **kwargs):
-        pass
+        try:
+            res = self._accountAPI.get_currencies(self._proxies)
+            return res
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
 
     # get account asset balance
     def getAccountAssetBalance(self, asset, **kwargs):
-        pass
+        try:
+            res = self._spotAPI.get_coin_account_info(asset, self._proxies)
+            return res
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
 
     # get account asset deposit and withdraw history detail
     def getAccountAssetDetail(self, asset, **kwargs):
-        pass
+        try:
+            res = self._spotAPI.get_ledger_record(asset, '', self._proxies)
+            return res
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
 
     # create orders default limit
-    def createOrder(self, fSymbol, tSymbol, quantity, price, type="limit", **kwargs):
-        pass
+    def createOrder(self, fSymbol, tSymbol, ask_or_bid, price, quantity, ratio='', type="limit"):
+        #  for speed up, lib not check, check from local db.data
+        try:
+            instrument_id = fSymbol + "-" + tSymbol
+            side = 'buy' if ask_or_bid == "ask" else 'sell'
+            base = self._spotAPI.take_order(
+                type, side, instrument_id, quantity, 1, '', price, '', self._proxies)
+            order_id = base["order_id"]
+            info = self._spotAPI.get_order_info(
+                order_id, instrument_id, self._proxies)
+            if ratio == '':
+                ratio = self.getTradeFees()[0]["taker"]
+            ask_or_bid = "ask" if info["side"] == "buy" else "bid"
+            filled_price = float(info["filled_size"]) if float(info["filled_size"]) == 0 else float(
+                info["filled_notional"]) / float(info["filled_size"])
+            res = {
+                "timeStamp": date_to_milliseconds(info["timestamp"]),
+                "order_id": info["order_id"],
+                "status": info["status"],
+                "type": info["type"],
+                "fSymbol": fSymbol,
+                "tSymbol": tSymbol,
+                "ask_or_bid": ask_or_bid,
+                "ask_bid_price": float(info["price"]),
+                "ask_bid_size": float(info["size"]),
+                "filled_price": filled_price,
+                "filled_size": float(info["filled_size"]),
+                "fee": float(ratio) * float(info["filled_notional"])
+            }
+            return res
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
 
     # check orders done or undone
-    def checkOrder(self, fSymbol, tSymbol, orderID, **kwargs):
-        pass
+    def checkOrder(self, fSymbol, tSymbol, orderID, ratio='', **kwargs):
+        try:
+            instrument_id = fSymbol + "-" + tSymbol
+            info = self._spotAPI.get_order_info(
+                orderID, instrument_id, self._proxies)
+            if ratio == '':
+                ratio = self.getTradeFees()[0]["taker"]
+            ask_or_bid = "ask" if info["side"] == "buy" else "bid"
+            filled_price = float(info["filled_size"]) if float(info["filled_size"]) == 0 else float(
+                info["filled_notional"]) / float(info["filled_size"])
+            res = {
+                "timeStamp": date_to_milliseconds(info["timestamp"]),
+                "order_id": info["order_id"],
+                "status": info["status"],
+                "type": info["type"],
+                "fSymbol": fSymbol,
+                "tSymbol": tSymbol,
+                "ask_or_bid": ask_or_bid,
+                "ask_bid_price": float(info["price"]),
+                "ask_bid_size": float(info["size"]),
+                "filled_price": filled_price,
+                "filled_size": float(info["filled_size"]),
+                "fee": float(ratio) * float(info["filled_notional"])
+            }
+            return res
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
 
-    # cancle the specific orders
+    # cancle the specific order
     def cancleOrder(self, fSymbol, tSymbol, orderID, **kwargs):
-        pass
+        try:
+            instrument_id = fSymbol + "-" + tSymbol
+            info = self._spotAPI.get_order_info(
+                orderID, instrument_id, self._proxies)
+            if info["status"] == "open" or info["status"] == "part_filled":
+                base = self._spotAPI.revoke_order(
+                    orderID, instrument_id, self._proxies)
+                if base["result"] == True:
+                    res = {
+                        "order_id": orderID,
+                        "status": "cancled"
+                    }
+            else:
+                res = {
+                    "order_id": orderID,
+                    "status": info["status"]
+                }
+            return res
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
+
+    # cancle the bathch orders
+    def cancleBatchOrder(self, fSymbol, tSymbol, orderIDs, **kwargs):
+        try:
+            instrument_id = fSymbol + "-" + tSymbol
+            res = []
+            for orderID in orderIDs:
+                info = self._spotAPI.get_order_info(
+                    orderID, instrument_id, self._proxies)
+                if info["status"] == "open" or info["status"] == "part_filled":
+                    base = self._spotAPI.revoke_order(
+                        orderID, instrument_id, self._proxies)
+                    if base["result"] == True:
+                        res.append({
+                            "order_id": orderID,
+                            "status": "cancled"
+                        })
+                else:
+                    res.append({
+                        "order_id": orderID,
+                        "status": info["status"]
+                    })
+            return res
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
 
     # deposite asset balance
     def depositeAsset(self, asset, **kwargs):

@@ -64,17 +64,17 @@ class Coin(object):
 
     @abstractmethod
     # get current trade
-    def getTradeOpen(self, fSymbol, tSymbol, **kwargs):
+    def getTradeOpen(self, fSymbol, tSymbol, ratio, **kwargs):
         pass
 
     @abstractmethod
     # get history trade
-    def getTradeHistory(self, fSymbol, tSymbol, **kwargs):
+    def getTradeHistory(self, fSymbol, tSymbol, ratio, **kwargs):
         pass
 
     @abstractmethod
     # get succeed trade
-    def getTradeSucceed(self, **kwargs):
+    def getTradeSucceed(self, fSymbol, tSymbol, ratio, **kwargs):
         pass
 
     @abstractmethod
@@ -99,17 +99,22 @@ class Coin(object):
 
     @abstractmethod
     # create orders default limit
-    def createOrder(self, fSymbol, tSymbol, quantity, price, type="limit", **kwargs):
+    def createOrder(self, fSymbol, tSymbol, ask_or_bid, price, quantity, type, ratio='', **kwargs):
         pass
 
     @abstractmethod
     # check orders done or undone
-    def checkOrder(self, fSymbol, tSymbol, orderID, **kwargs):
+    def checkOrder(self, fSymbol, tSymbol, orderID, ratio='', **kwargs):
         pass
 
     @abstractmethod
-    # cancle the specific orders
+    # cancle the specific order
     def cancleOrder(self, fSymbol, tSymbol, orderID, **kwargs):
+        pass
+
+    @abstractmethod
+    # cancle the batch orders
+    def cancleBatchOrder(self, fSymbol, tSymbol, orderIDs, **kwargs):
         pass
 
     @abstractmethod

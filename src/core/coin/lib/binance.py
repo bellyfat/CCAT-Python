@@ -8,6 +8,7 @@ import logging
 import math
 
 import requests
+from binance.enums import *
 from binance.client import Client
 from binance.exceptions import (BinanceAPIException, BinanceOrderException,
                                 BinanceRequestException,
@@ -44,9 +45,22 @@ class Binance(Coin):
     # perseconds qurry and orders rate limits
     def getServerLimits(self):
         try:
-            res = self._client.get_exchange_info()
+            base = self._client.get_exchange_info()
             self._client.session.close()
-            return res["rateLimits"]
+            for b in base["rateLimits"]:
+                if b["rateLimitType"] == "REQUEST_WEIGHT" and b["interval"] == "MINUTE":
+                    requests_second = float(b["limit"])/60
+                if b["rateLimitType"] == "ORDERS" and b["interval"] == "SECOND":
+                    orders_second = float(b["limit"])
+                if b["rateLimitType"] == "ORDERS" and b["interval"] == "DAY":
+                    orders_day = float(b["limit"])
+            res ={
+                "requests_second": requests_second,
+                "orders_second": orders_second,
+                "orders_day": orders_day,
+                "WebSockets_second": ''
+            }
+            return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
 
@@ -86,6 +100,8 @@ class Binance(Coin):
                     fSymbol_size_max = float(b["maxQty"])
                     fSymbol_size_min = float(b["minQty"])
                     fSymbol_size_step = float(b["stepSize"])
+                if b["filterType"] == "MIN_NOTIONAL":
+                    min_notional = float(b["minNotional"])
             res={
                 "tSymbol_price": {
                 "precision": tSymbol_price_precision,
@@ -98,7 +114,8 @@ class Binance(Coin):
                 "max": fSymbol_size_max,
                 "min": fSymbol_size_min,
                 "step": fSymbol_size_step
-                }
+                },
+                "min_notional": min_notional
             }
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
@@ -143,7 +160,7 @@ class Binance(Coin):
             raise BinanceException
 
     # a specific symbols kline/candlesticks
-    def getMarketKline(self, fSymbol, tSymbol, interval, start, end=None):
+    def getMarketKline(self, fSymbol, tSymbol, interval, start, end=''):
         '''
         Returns
         [
@@ -181,25 +198,27 @@ class Binance(Coin):
             raise BinanceException
 
     # get current trade
-    def getTradeOpen(self,  fSymbol, tSymbol, **kwargs):
+    def getTradeOpen(self,  fSymbol, tSymbol, ratio='', **kwargs):
         try:
             symbol = fSymbol+tSymbol
             orders = self._client.get_open_orders(symbol=symbol, **kwargs)
-            ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
+            if ratio == '':
+                ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
             self._client.session.close()
             res = []
             for item in orders:
-                bid_or_ask = "ask" if item["side"] == "BUY" else "bid"
+                ask_or_bid = "ask" if item["side"] == "BUY" else "bid"
                 filled_price = 0.0 if float(item["executedQty"])==0 else float(item["cummulativeQuoteQty"])/float(item["price"])
                 res.append({
                     "timeStamp": item["time"],
                     "order_id": item["orderId"],
                     "status": "open",
+                    "type": item["type"].lower(),
                     "fSymbol": fSymbol,
                     "tSymbol": tSymbol,
-                    "bid_or_ask": bid_or_ask,
-                    "bid_ask_price": float(item["price"]),
-                    "bid_ask_size": float(item["origQty"]),
+                    "ask_or_bid": ask_or_bid,
+                    "ask_bid_price": float(item["price"]),
+                    "ask_bid_size": float(item["origQty"]),
                     "filled_price": filled_price,
                     "filled_size": float(item["executedQty"]),
                     "fee": float(ratio)*float(item["cummulativeQuoteQty"])
@@ -209,26 +228,28 @@ class Binance(Coin):
             raise BinanceException
 
     # get history trade
-    def getTradeHistory(self,  fSymbol, tSymbol, **kwargs):
+    def getTradeHistory(self,  fSymbol, tSymbol, ratio='', **kwargs):
         try:
             symbol = fSymbol+tSymbol
             orders = self._client.get_all_orders(symbol=symbol, **kwargs)
-            ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
+            if ratio == '':
+                ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
             self._client.session.close()
             res = []
             for item in orders:
                 status = "open" if item["status"] == "NEW" else item["status"].lower()
-                bid_or_ask = "ask" if item["side"] == "BUY" else "bid"
+                ask_or_bid = "ask" if item["side"] == "BUY" else "bid"
                 filled_price = 0.0 if float(item["executedQty"])==0 else float(item["cummulativeQuoteQty"])/float(item["executedQty"])
                 res.append({
                     "timeStamp": item["time"],
                     "order_id": item["orderId"],
                     "status": status,
+                    "type": item["type"].lower(),
                     "fSymbol": fSymbol,
                     "tSymbol": tSymbol,
-                    "bid_or_ask": bid_or_ask,
-                    "bid_ask_price": float(item["price"]),
-                    "bid_ask_size": float(item["origQty"]),
+                    "ask_or_bid": ask_or_bid,
+                    "ask_bid_price": float(item["price"]),
+                    "ask_bid_size": float(item["origQty"]),
                     "filled_price": filled_price,
                     "filled_size": float(item["executedQty"]),
                     "fee": float(ratio)*float(item["cummulativeQuoteQty"])
@@ -238,26 +259,28 @@ class Binance(Coin):
             raise BinanceException
 
     # get succeed trade
-    def getTradeSucceed(self,  fSymbol, tSymbol, **kwargs):
+    def getTradeSucceed(self,  fSymbol, tSymbol, ratio='', **kwargs):
         try:
             symbol = fSymbol+tSymbol
             orders = self._client.get_all_orders(symbol=symbol, **kwargs)
-            ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
+            if ratio == '':
+                ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
             self._client.session.close()
             res = []
             for item in orders:
                 if item["status"] == "FILLED":
-                    bid_or_ask = "ask" if item["side"] == "BUY" else "bid"
+                    ask_or_bid = "ask" if item["side"] == "BUY" else "bid"
                     filled_price = 0.0 if float(item["executedQty"])==0 else float(item["cummulativeQuoteQty"])/float(item["executedQty"])
                     res.append({
                         "timeStamp": item["time"],
                         "order_id": item["orderId"],
                         "status": item["status"].lower(),
+                        "type": item["type"].lower(),
                         "fSymbol": fSymbol,
                         "tSymbol": tSymbol,
-                        "bid_or_ask": bid_or_ask,
-                        "bid_ask_price": float(item["price"]),
-                        "bid_ask_size": float(item["origQty"]),
+                        "ask_or_bid": ask_or_bid,
+                        "ask_bid_price": float(item["price"]),
+                        "ask_bid_size": float(item["origQty"]),
                         "filled_price": filled_price,
                         "filled_size": float(item["executedQty"]),
                         "fee": float(ratio)*float(item["cummulativeQuoteQty"])
@@ -294,7 +317,7 @@ class Binance(Coin):
             raise BinanceException
 
     # get account asset deposit and withdraw history detail
-    def getAccountAssetDetail(self, asset=None, **kwargs):
+    def getAccountAssetDetail(self, asset='', **kwargs):
         try:
             deposite = self._client.get_deposit_history(asset=asset, **kwargs)
             withdraw = self._client.get_withdraw_history(asset=asset, **kwargs)
@@ -308,16 +331,132 @@ class Binance(Coin):
             raise BinanceException
 
     # create orders default limit
-    def createOrder(self, fSymbol, tSymbol, quantity, price, type="limit", **kwargs):
-        pass
+    def createOrder(self, fSymbol, tSymbol, ask_or_bid, price, quantity, ratio='', type=ORDER_TYPE_LIMIT, **kwargs):
+        # for speed up, lib not check, check from local db.data
+        try:
+            symbol = fSymbol+tSymbol
+            params = {
+                "symbol": symbol,
+                "side": SIDE_BUY if ask_or_bid == "ask" else SIDE_SELL,
+                "type": type,
+                "timeInForce": TIME_IN_FORCE_GTC,
+                "quantity": quantity,
+                "price": price,
+                **kwargs
+            }
+            base = self._client.create_order(**params)
+            if ratio == '':
+                ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
+            self._client.session.close()
+            status = "open" if base["status"] == "NEW" else base["status"].lower()
+            ask_or_bid = "ask" if base["side"] == "BUY" else "bid"
+            filled_price = 0.0 if float(base["executedQty"])==0 else float(base["cummulativeQuoteQty"])/float(base["executedQty"])
+            res = {
+                "timeStamp": base["transactTime"],
+                "order_id": base["orderId"],
+                "status": status,
+                "type": base["type"].lower(),
+                "fSymbol": fSymbol,
+                "tSymbol": tSymbol,
+                "ask_or_bid": ask_or_bid,
+                "ask_bid_price": float(base["price"]),
+                "ask_bid_size": float(base["origQty"]),
+                "filled_price": filled_price,
+                "filled_size": float(base["executedQty"]),
+                "fee": float(ratio)*float(base["cummulativeQuoteQty"])
+            }
+            return res
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
 
     # check orders done or undone
-    def checkOrder(self, fSymbol, tSymbol, orderID, **kwargs):
-        pass
+    def checkOrder(self, fSymbol, tSymbol, orderID, ratio='', **kwargs):
+        try:
+            symbol = fSymbol+tSymbol
+            params = {
+                "symbol": symbol,
+                "orderId": orderID,
+                **kwargs
+            }
+            base = self._client.get_order(**params)
+            if ratio == '':
+                ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
+            self._client.session.close()
+            status = "open" if base["status"] == "NEW" else base["status"].lower()
+            ask_or_bid = "ask" if base["side"] == "BUY" else "bid"
+            filled_price = 0.0 if float(base["executedQty"])==0 else float(base["cummulativeQuoteQty"])/float(base["executedQty"])
+            res = {
+                "timeStamp": base["time"],
+                "order_id": base["orderId"],
+                "status": status,
+                "type": base["type"].lower(),
+                "fSymbol": fSymbol,
+                "tSymbol": tSymbol,
+                "ask_or_bid": ask_or_bid,
+                "ask_bid_price": float(base["price"]),
+                "ask_bid_size": float(base["origQty"]),
+                "filled_price": filled_price,
+                "filled_size": float(base["executedQty"]),
+                "fee": float(ratio)*float(base["cummulativeQuoteQty"])
+            }
+            return res
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
 
-    # cancle the specific orders
+    # cancle the specific order
     def cancleOrder(self, fSymbol, tSymbol, orderID, **kwargs):
-        pass
+        try:
+            symbol = fSymbol+tSymbol
+            params = {
+                "symbol": symbol,
+                "orderId": orderID,
+                **kwargs
+            }
+            info = self._client.get_order(**params)
+            if info["status"] == "NEW" or info["status"] == "PARTIALLY_FILLED":
+                base = self._client.cancel_order(**params)
+                res = {
+                    "order_id": orderID,
+                    "status": "cancled"
+                }
+            else:
+                res = {
+                    "order_id": orderID,
+                    "status": info["status"].lower()
+                }
+            self._client.session.close()
+            return res
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
+
+
+    # cancle the batch orders
+    def cancleBatchOrder(self, fSymbol, tSymbol, orderIDs, **kwargs):
+        try:
+            symbol = fSymbol+tSymbol
+            res = []
+            for orderID in orderIDs:
+                params = {
+                    "symbol": symbol,
+                    "orderId": orderID,
+                    **kwargs
+                }
+                info = self._client.get_order(**params)
+                if info["status"] == "NEW" or info["status"] == "PARTIALLY_FILLED":
+                    base = self._client.cancel_order(**params)
+                    res.append({
+                        "order_id": orderID,
+                        "status": "cancled"
+                    })
+                else:
+                    res.append({
+                        "order_id": orderID,
+                        "status": info["status"].lower()
+                    })
+            self._client.session.close()
+            return res
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
+            raise BinanceException
 
     # deposite asset balance
     def depositeAsset(self, asset, **kwargs):

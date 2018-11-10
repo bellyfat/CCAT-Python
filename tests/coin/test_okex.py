@@ -50,8 +50,8 @@ class TestOkex(unittest.TestCase):
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
         res = okex.getServerLimits()
-        # logger.debug(type(res))
-        self.assertIsInstance(res, list)
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
 
     def test_getServerSymbols(self):
         proxies = Config()._proxies
@@ -59,7 +59,7 @@ class TestOkex(unittest.TestCase):
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
         res = okex.getServerSymbols()
-        # logger.debug(type(res))
+        logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_getSymbolsLimits(self):
@@ -67,7 +67,7 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        res = okex.getSymbolsLimits("STC","BTC")
+        res = okex.getSymbolsLimits("TRX", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
@@ -76,7 +76,7 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        res = okex.getMarketOrderbookTicker("STC","BTC")
+        res = okex.getMarketOrderbookTicker("STC", "BTC")
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
@@ -85,7 +85,7 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        res = okex.getMarketOrderbookDepth("STC","BTC",5)
+        res = okex.getMarketOrderbookDepth("STC", "BTC", 5)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
@@ -94,7 +94,8 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        res = okex.getMarketKline("STC","BTC","1h","2018-11-01T00:00:00.000Z","2018-11-02T00:00:00.000Z")
+        res = okex.getMarketKline(
+            "STC", "BTC", "1h", "2018-11-01T00:00:00.000Z", "2018-11-02T00:00:00.000Z")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -113,7 +114,7 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        res = okex.getTradeOpen("TRX","USDT")
+        res = okex.getTradeOpen("ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -122,7 +123,7 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        res = okex.getTradeHistory("TRX","USDT")
+        res = okex.getTradeHistory("TRX", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -131,7 +132,7 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        res = okex.getTradeSucceed("TRX","USDT")
+        res = okex.getTradeSucceed("TRX", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -140,53 +141,73 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        pass
+        res = okex.getAccountBalances()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
 
     def test_getAccountLimits(self):
         proxies = Config()._proxies
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        pass
+        res = okex.getAccountLimits()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
 
     def test_getAccountAssetBalances(self):
         proxies = Config()._proxies
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        pass
+        res = okex.getAccountAssetBalance("USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
 
     def test_getAccountAssetDetail(self):
         proxies = Config()._proxies
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        pass
-
-
-
-
+        res = okex.getAccountAssetDetail("USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, list)
 
     def test_createOrder(self):
         proxies = Config()._proxies
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        pass
+        res = okex.createOrder("ETH", "USDT", "ask", 200, 0.001)
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
 
     def test_checkOrder(self):
         proxies = Config()._proxies
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        pass
+        res = okex.checkOrder("ETH", "USDT", "1775357428504576")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
 
     def test_cancleOrder(self):
         proxies = Config()._proxies
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        pass
+        res = okex.cancleOrder("ETH", "USDT", "1775630258149376")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_cancleBatchOrder(self):
+        proxies = Config()._proxies
+        okexConf = Config()._okex
+        okex = Okex(okexConf["exchange"], okexConf["api_key"],
+                    okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+        res = okex.cancleBatchOrder(
+            "ETH", "USDT", ["1775855816349696", "1775855541036032"])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
 
     def test_depositeAsset(self):
         proxies = Config()._proxies
