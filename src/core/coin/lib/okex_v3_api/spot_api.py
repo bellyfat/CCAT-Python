@@ -16,7 +16,7 @@ class SpotAPI(Client):
         return self._request_without_params(GET, SPOT_COIN_ACCOUNT_INFO + str(symbol), proxies=proxies)
 
     # query ledger record not paging
-    def get_ledger_record(self, symbol, limit=1, proxies=None):
+    def get_ledger_record(self, symbol, limit=100, proxies=None):
         params = {}
         if limit:
             params['limit'] = limit
@@ -55,14 +55,23 @@ class SpotAPI(Client):
             params['from'] = froms
         if to:
             params['to'] = to
+        return self._request_with_params(GET, SPOT_ORDERS_LIST, params, True, proxies)
+
+    def get_orders_pending(self, instrument_id='', froms='', to='', limit='100', proxies=None):
+        params = {'limit': limit}
+        if froms:
+            params['from'] = froms
+        if to:
+            params['to'] = to
         if instrument_id:
             params['instrument_id'] = instrument_id
-        return self._request_with_params(GET, SPOT_ORDERS_LIST, params, True, proxies)
+        return self._request_with_params(GET, SPOT_ORDERS_PENDING, params, True, proxies)
+
 
     # query order info
     def get_order_info(self, oid, instrument_id, proxies=None):
         params = {'instrument_id': instrument_id}
-        return self._request_with_params(POST, SPOT_ORDER_INFO + str(oid), params, False, proxies)
+        return self._request_with_params(GET, SPOT_ORDER_INFO + str(oid), params, False, proxies)
 
     # query fills
     #def get_fills(self, order_id, instrument_id, before, after, limit):
