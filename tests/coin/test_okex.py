@@ -2,11 +2,16 @@
 
 import hashlib
 import json
+import os
+import sys
 import unittest
+
+sys.path.append(os.getcwd())
 
 from src.core.coin.lib.okex import Okex
 from src.core.config import Config
 from src.core.util.log import Logger
+
 
 logger = Logger()
 
@@ -186,7 +191,7 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        res = okex.checkOrder("ETH", "USDT", "1775357428504576")
+        res = okex.checkOrder("TRX", "USDT", "1774314142386176")
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
@@ -195,7 +200,7 @@ class TestOkex(unittest.TestCase):
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
-        res = okex.cancleOrder("ETH", "USDT", "1775630258149376")
+        res = okex.cancleOrder("TRX", "USDT", "1774314142386176")
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
@@ -205,7 +210,7 @@ class TestOkex(unittest.TestCase):
         okex = Okex(okexConf["exchange"], okexConf["api_key"],
                     okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
         res = okex.cancleBatchOrder(
-            "ETH", "USDT", ["1775855816349696", "1775855541036032"])
+            "TRX", "USDT", ["1774314142386176", "1771669234011136"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -225,4 +230,4 @@ class TestOkex(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    print("Error: Should  be called form tests/test_coin.py")
+    unittest.main()

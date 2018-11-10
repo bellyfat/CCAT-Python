@@ -2,11 +2,16 @@
 
 import hashlib
 import json
+import os
+import sys
 import unittest
+
+sys.path.append(os.getcwd())
 
 from src.core.coin.lib.binance import Binance
 from src.core.config import Config
 from src.core.util.log import Logger
+
 
 logger = Logger()
 
@@ -94,7 +99,8 @@ class TestBinance(unittest.TestCase):
         binanceConf = Config()._binance
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
                           binanceConf["api_secret"], proxies["url"])
-        res = binance.getMarketKline("IOST", "BTC", "6h", "2018-11-01T00:00:00.000Z", "2018-11-02T00:00:00.000Z")
+        res = binance.getMarketKline(
+            "IOST", "BTC", "6h", "2018-11-01T00:00:00.000Z", "2018-11-02T00:00:00.000Z")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -201,8 +207,9 @@ class TestBinance(unittest.TestCase):
         proxies = Config()._proxies
         binanceConf = Config()._binance
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
-                        binanceConf["api_secret"], proxies["url"])
-        res = binance.cancleBatchOrder("ETH", "USDT", ["134809076","134809137"])
+                          binanceConf["api_secret"], proxies["url"])
+        res = binance.cancleBatchOrder(
+            "ETH", "USDT", ["134809076", "134809137"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -222,4 +229,4 @@ class TestBinance(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    print("Error: Should  be called form tests/test_coin.py")
+    unittest.main()
