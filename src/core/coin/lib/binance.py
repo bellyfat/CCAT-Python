@@ -292,26 +292,48 @@ class Binance(Coin):
     # get account all asset balance
     def getAccountBalances(self, **kwargs):
         try:
-            res = self._client.get_account(**kwargs)
+            base = self._client.get_account(**kwargs)
             self._client.session.close()
-            return res["balances"]
+            res = []
+            for b in base["balances"]:
+                res.append({
+                    "asset": b["asset"],
+                    "balance": float(b["free"])+float(b["locked"]),
+                    "free": float(b["free"]),
+                    "locked": float(b["locked"])
+                })
+            return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
 
-    # get account asset deposit and withdraw limit
+    # get account assets deposit and withdraw limit
     def getAccountLimits(self, **kwargs):
         try:
-            res = self._client.get_asset_details(**kwargs)
+            base = self._client.get_asset_details(**kwargs)
             self._client.session.close()
-            return res["assetDetail"]
+            res = []
+            for key, value in base["assetDetail"].items():
+                res.append({
+                    "asset": key,
+                    "can_deposite": value["depositStatus"],
+                    "can_withdraw": value["withdrawStatus"],
+                    "min_withdraw": float(value["minWithdrawAmount"])
+                })
+            return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
 
     # get account asset balance
     def getAccountAssetBalance(self, asset, **kwargs):
         try:
-            res = self._client.get_asset_balance(asset=asset, **kwargs)
+            base = self._client.get_asset_balance(asset=asset, **kwargs)
             self._client.session.close()
+            res = {
+                "asset": base["asset"],
+                "balance": float(base["free"])+float(base["locked"]),
+                "free": float(base["free"]),
+                "locked": float(base["locked"])
+            }
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException

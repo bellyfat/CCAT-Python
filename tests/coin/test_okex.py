@@ -159,7 +159,7 @@ class TestOkex(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getAccountAssetBalances(self):
+    def test_getAccountAssetBalance(self):
         proxies = Config()._proxies
         okexConf = Config()._okex
         okex = Okex(okexConf["exchange"], okexConf["api_key"],

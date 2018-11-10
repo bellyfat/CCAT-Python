@@ -156,9 +156,9 @@ class TestBinance(unittest.TestCase):
                           binanceConf["api_secret"], proxies["url"])
         res = binance.getAccountLimits()
         logger.debug(res)
-        self.assertIsInstance(res, dict)
+        self.assertIsInstance(res, list)
 
-    def test_getAccountAssetBalances(self):
+    def test_getAccountAssetBalance(self):
         proxies = Config()._proxies
         binanceConf = Config()._binance
         binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
