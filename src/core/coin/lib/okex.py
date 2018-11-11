@@ -178,7 +178,19 @@ class Okex(Coin):
             granularity = int(interval_to_milliseconds(interval) / 1000)
             kline = self._spotAPI.get_kline(
                 instrument_id, start, end, granularity, self._proxies)
-            return kline
+            res = []
+            for k in kline:
+                res.append({
+                    "timeStamp": date_to_milliseconds(k["time"]),
+                    "fSymbol" : fSymbol,
+                    "tSymbol" : tSymbol,
+                    "open":k["open"],
+                    "high":k["high"],
+                    "low":k["low"],
+                    "close":k["close"],
+                    "volume":k["volume"]
+                })
+            return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
 

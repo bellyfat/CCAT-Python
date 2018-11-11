@@ -24,6 +24,8 @@ class Binance(Coin):
         super(Binance, self).__init__(exchange, api_key, api_secret, proxies)
         self._client = Client(api_key, api_secret, {
                               "proxies": proxies, "verify": False, "timeout": 20})
+
+    def __del__(self):
         self._client.session.close()
 
     # set proxy
@@ -31,13 +33,12 @@ class Binance(Coin):
         self._proxies = proxies
         self._client = Client(self._api_key, self._api_secret, {
                               "proxies": self._proxies, "verify": False, "timeout": 20})
-        self._client.session.close()
 
     # UTC Zone, Unix timestamp in millseconds
     def getServerTime(self):
         try:
             res = self._client.get_server_time()  # UTC Zone UnixStamp
-            self._client.session.close()
+
             return res["serverTime"]
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
@@ -46,7 +47,7 @@ class Binance(Coin):
     def getServerLimits(self):
         try:
             base = self._client.get_exchange_info()
-            self._client.session.close()
+
             for b in base["rateLimits"]:
                 if b["rateLimitType"] == "REQUEST_WEIGHT" and b["interval"] == "MINUTE":
                     requests_second = float(b["limit"])/60
@@ -68,7 +69,7 @@ class Binance(Coin):
     # def getServerSymbols(self):
     #     try:
     #         res = self._client.get_exchange_info()
-    #         self._client.session.close()
+    #
     #         return res["symbols"]
     #     except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
     #         raise BinanceException
@@ -88,7 +89,7 @@ class Binance(Coin):
     def getSymbolsLimits(self, fSymbol, tSymbol):
         try:
             base = self._client.get_symbol_info(fSymbol + tSymbol)
-            self._client.session.close()
+
             tSymbol_price_precision = math.pow(10, -int(base["baseAssetPrecision"]))
             fSymbol_size_precision = math.pow(10, -int(base["quotePrecision"]))
             for b in base["filters"]:
@@ -127,7 +128,6 @@ class Binance(Coin):
             symbol = fSymbol+tSymbol
             timeStamp = self._client.get_server_time()
             ticker = self._client.get_orderbook_ticker(symbol=symbol, **kwargs)
-            self._client.session.close()
             res = {
                 "timeStamp" : timeStamp["serverTime"],
                 "fSymbol" : fSymbol,
@@ -147,7 +147,7 @@ class Binance(Coin):
             symbol = fSymbol+tSymbol
             timeStamp = self._client.get_server_time()
             ticker = self._client.get_order_book(symbol=symbol, limit=limit, **kwargs)
-            self._client.session.close()
+
             res = {
                 "timeStamp" : timeStamp["serverTime"],
                 "fSymbol" : fSymbol,
@@ -183,8 +183,19 @@ class Binance(Coin):
         try:
             symbol = fSymbol+tSymbol
             kline = self._client.get_historical_klines(symbol, interval, start, end)
-            self._client.session.close()
-            return kline
+            res = []
+            for k in kline:
+                res.append({
+                    "timeStamp":k[0],
+                    "fSymbol" : fSymbol,
+                    "tSymbol" : tSymbol,
+                    "open":k[1],
+                    "high":k[2],
+                    "low":k[3],
+                    "close":k[4],
+                    "volume":k[5]
+                })
+            return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
 
@@ -192,7 +203,7 @@ class Binance(Coin):
     def getTradeFees(self, **kwargs):
         try:
             res = self._client.get_trade_fee(**kwargs)
-            self._client.session.close()
+
             return res["tradeFee"]
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
@@ -204,7 +215,7 @@ class Binance(Coin):
             orders = self._client.get_open_orders(symbol=symbol, **kwargs)
             if ratio == '':
                 ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
-            self._client.session.close()
+
             res = []
             for item in orders:
                 ask_or_bid = "ask" if item["side"] == "BUY" else "bid"
@@ -234,7 +245,7 @@ class Binance(Coin):
             orders = self._client.get_all_orders(symbol=symbol, **kwargs)
             if ratio == '':
                 ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
-            self._client.session.close()
+
             res = []
             for item in orders:
                 status = "open" if item["status"] == "NEW" else item["status"].lower()
@@ -265,7 +276,7 @@ class Binance(Coin):
             orders = self._client.get_all_orders(symbol=symbol, **kwargs)
             if ratio == '':
                 ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
-            self._client.session.close()
+
             res = []
             for item in orders:
                 if item["status"] == "FILLED":
@@ -293,7 +304,7 @@ class Binance(Coin):
     def getAccountBalances(self, **kwargs):
         try:
             base = self._client.get_account(**kwargs)
-            self._client.session.close()
+
             res = []
             for b in base["balances"]:
                 res.append({
@@ -310,7 +321,7 @@ class Binance(Coin):
     def getAccountLimits(self, **kwargs):
         try:
             base = self._client.get_asset_details(**kwargs)
-            self._client.session.close()
+
             res = []
             for key, value in base["assetDetail"].items():
                 res.append({
@@ -327,7 +338,7 @@ class Binance(Coin):
     def getAccountAssetBalance(self, asset, **kwargs):
         try:
             base = self._client.get_asset_balance(asset=asset, **kwargs)
-            self._client.session.close()
+
             res = {
                 "asset": base["asset"],
                 "balance": float(base["free"])+float(base["locked"]),
@@ -343,7 +354,7 @@ class Binance(Coin):
         try:
             deposite = self._client.get_deposit_history(asset=asset, **kwargs)
             withdraw = self._client.get_withdraw_history(asset=asset, **kwargs)
-            self._client.session.close()
+
             res = {
                 "deposit":deposite["depositList"],
                 "withdraw":withdraw["withdrawList"]
@@ -369,7 +380,7 @@ class Binance(Coin):
             base = self._client.create_order(**params)
             if ratio == '':
                 ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
-            self._client.session.close()
+
             status = "open" if base["status"] == "NEW" else base["status"].lower()
             ask_or_bid = "ask" if base["side"] == "BUY" else "bid"
             filled_price = 0.0 if float(base["executedQty"])==0 else float(base["cummulativeQuoteQty"])/float(base["executedQty"])
@@ -403,7 +414,7 @@ class Binance(Coin):
             base = self._client.get_order(**params)
             if ratio == '':
                 ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
-            self._client.session.close()
+
             status = "open" if base["status"] == "NEW" else base["status"].lower()
             ask_or_bid = "ask" if base["side"] == "BUY" else "bid"
             filled_price = 0.0 if float(base["executedQty"])==0 else float(base["cummulativeQuoteQty"])/float(base["executedQty"])
@@ -446,7 +457,7 @@ class Binance(Coin):
                     "order_id": orderID,
                     "status": info["status"].lower()
                 }
-            self._client.session.close()
+
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
@@ -475,7 +486,7 @@ class Binance(Coin):
                         "order_id": orderID,
                         "status": info["status"].lower()
                     })
-            self._client.session.close()
+
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException

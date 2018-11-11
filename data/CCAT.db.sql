@@ -72,10 +72,23 @@ CREATE TABLE IF NOT EXISTS `MARKET_TIKER` (
 	`ask_one_size`	REAL
 );
 CREATE TABLE IF NOT EXISTS `MARKET_KLINE` (
-	`to_be_continue`	TEXT
+	`server`	TEXT NOT NULL,
+	`timeStamp`	TEXT NOT NULL,
+	`fSymbol`	TEXT NOT NULL,
+	`tSymbol`	TEXT NOT NULL,
+	`open`	REAL,
+	`high`	REAL,
+	`low`	REAL,
+	`close`	REAL,
+	`volume`	REAL
 );
 CREATE TABLE IF NOT EXISTS `MARKET_DEPTH` (
-	`to_be_continue`	TEXT
+	`server`	TEXT NOT NULL,
+	`timeStamp`	INTEGER NOT NULL,
+	`fSymbol`	TEXT NOT NULL,
+	`tSymbol`	TEXT NOT NULL,
+	`bid_price_size`	TEXT,
+	`ask_price_size`	TEXT
 );
 CREATE TABLE IF NOT EXISTS `ACCOUNT_INFO` (
 	`server`	TEXT NOT NULL,
