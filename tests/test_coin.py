@@ -27,7 +27,7 @@ test_okex = [
     TestOkex("test_getTradeSucceed"),
     TestOkex("test_getAccountBalances"),
     TestOkex("test_getAccountLimits"),
-    TestOkex("test_getAccountAssetBalances"),
+    TestOkex("test_getAccountAssetBalance"),
     TestOkex("test_getAccountAssetDetail"),
     # TestOkex("test_createOrder"),
     TestOkex("test_checkOrder"),
@@ -53,7 +53,7 @@ test_binance = [
     TestBinance("test_getTradeSucceed"),
     TestBinance("test_getAccountBalances"),
     TestBinance("test_getAccountLimits"),
-    TestBinance("test_getAccountAssetBalances"),
+    TestBinance("test_getAccountAssetBalance"),
     TestBinance("test_getAccountAssetDetail"),
     # TestBinance("test_createOrder"),
     TestBinance("test_checkOrder"),
@@ -74,7 +74,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
     runner = unittest.TextTestRunner(verbosity=2)
     # add tests
-    suite.addTests(test_okex)
+    # suite.addTests(test_okex)
     suite.addTests(test_binance)
     suite.addTests(test_huobi)
     suite.addTests(test_gate)

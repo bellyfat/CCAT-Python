@@ -55,7 +55,7 @@ class Okex(Coin):
             "requests_second": 10,
             "orders_second": 10,
             "orders_day": 10 * 3600 * 24,
-            "WebSockets_second": 50
+            "webSockets_second": 50
         }
         return res
 
@@ -118,9 +118,9 @@ class Okex(Coin):
                 "fSymbol": fSymbol,
                 "tSymbol": tSymbol,
                 "bid_one_price": float(ticker["bids"][0][0]),
-                "bid_one_pize": float(ticker["bids"][0][1]),
+                "bid_one_size": float(ticker["bids"][0][1]),
                 "ask_one_price": float(ticker["asks"][0][0]),
-                "ask_one_pize": float(ticker["asks"][0][1])
+                "ask_one_size": float(ticker["asks"][0][1])
             }
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
@@ -178,7 +178,19 @@ class Okex(Coin):
             granularity = int(interval_to_milliseconds(interval) / 1000)
             kline = self._spotAPI.get_kline(
                 instrument_id, start, end, granularity, self._proxies)
-            return kline
+            res = []
+            for k in kline:
+                res.append({
+                    "timeStamp": date_to_milliseconds(k["time"]),
+                    "fSymbol" : fSymbol,
+                    "tSymbol" : tSymbol,
+                    "open":k["open"],
+                    "high":k["high"],
+                    "low":k["low"],
+                    "close":k["close"],
+                    "volume":k["volume"]
+                })
+            return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
 
@@ -292,7 +304,15 @@ class Okex(Coin):
     # get account all asset balance
     def getAccountBalances(self, **kwargs):
         try:
-            res = self._spotAPI.get_account_info(self._proxies)
+            base = self._spotAPI.get_account_info(self._proxies)
+            res = []
+            for b in base:
+                res.append({
+                    "asset": b["currency"],
+                    "balance": float(b["balance"]),
+                    "free": float(b["available"]),
+                    "locked": float(b["frozen"])
+                })
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
@@ -300,7 +320,23 @@ class Okex(Coin):
     # get account asset deposit and withdraw limits
     def getAccountLimits(self, **kwargs):
         try:
-            res = self._accountAPI.get_currencies(self._proxies)
+            base = self._accountAPI.get_currencies(self._proxies)
+            res = []
+            for b in base:
+                if "min_withdrawal" in b.keys():
+                    res.append({
+                        "asset": b["currency"],
+                        "can_deposite": str(b["can_deposit"]) in ["true", "True", "1"],
+                        "can_withdraw": str(b["can_withdraw"]) in ["true", "True", "1"],
+                        "min_withdraw": float(b["min_withdrawal"])
+                    })
+                else:
+                    res.append({
+                        "asset": b["currency"],
+                        "can_deposite": str(b["can_deposit"]) in ["true", "True", "1"],
+                        "can_withdraw": str(b["can_withdraw"]) in ["true", "True", "1"],
+                        "min_withdraw": 0.0
+                    })
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
@@ -308,7 +344,13 @@ class Okex(Coin):
     # get account asset balance
     def getAccountAssetBalance(self, asset, **kwargs):
         try:
-            res = self._spotAPI.get_coin_account_info(asset, self._proxies)
+            base = self._spotAPI.get_coin_account_info(asset, self._proxies)
+            res = {
+                "asset": base["currency"],
+                "balance": float(base["balance"]),
+                "free": float(base["available"]),
+                "locked": float(base["frozen"])
+            }
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException
