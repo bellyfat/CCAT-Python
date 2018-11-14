@@ -15,6 +15,7 @@ class Config(object):
     def __init__(self):
         with open(Config._confStr, 'r') as f:
             jsonStr = json.load(f)
+        Config._db = jsonStr["db"]
         Config._proxies = jsonStr["proxies"]
         Config._okex = jsonStr["okex"]
         Config._binance = jsonStr["binance"]

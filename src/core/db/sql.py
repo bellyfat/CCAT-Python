@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# creat table sql
-CREATE_TABEL_TRANSACTION = """
+# get talbes sql
+GET_TABLES_SQL = """
+    SELECT name FROM sqlite_master
+    WHERE type='table'
+    ORDER BY name;
+"""
+
+# creat tables sql
+CREATE_TABELS_SQL = """
     BEGIN TRANSACTION;
     CREATE TABLE IF NOT EXISTS `WITHDRAW_INFO` (
     	`server`	TEXT NOT NULL,

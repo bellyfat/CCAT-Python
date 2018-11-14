@@ -1,4 +1,8 @@
 {
+  "db":{
+    "type": "sqlite3",
+    "url": "CCAT.db"
+  },
   "proxies": {
     "type": "http",
     "url": {
