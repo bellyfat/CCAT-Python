@@ -114,4 +114,3 @@ CREATE_TABELS_SQL = """
 """
 
 # creat view sql
-CREATE_TABEL_TRANSACTION
