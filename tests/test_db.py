@@ -32,13 +32,27 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getServerInfo(self):
-        res = db.getServerInfo()
+    def test_getAccountInfo(self):
+        res = db.getAccountInfo()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertServerInfo(self):
-        db.insertServerInfo()
+    def test_getMarketDepth(self):
+        res = db.getMarketDepth()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getMarketKline(self):
+        res = db.getMarketKline()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getMarketTicker(self):
+        res = db.getMarketTicker()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getServerInfo(self):
         res = db.getServerInfo()
         logger.debug(res)
         self.assertIsInstance(res, list)
@@ -48,14 +62,23 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertSymbolInfo(self):
-        db.insertSymbolInfo()
-        res = db.getSymbolInfo()
+    def test_getTradeBacktestHistory(self):
+        res = db.getTradeBacktestHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getAccountInfo(self):
-        res = db.getAccountInfo()
+    def test_getTradeOrderHistory(self):
+        res = db.getTradeOrderHistory()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getWithdrawHistory(self):
+        res = db.getWithdrawHistory()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getWithdrawInfo(self):
+        res = db.getWithdrawInfo()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -65,8 +88,15 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getWithdrawInfo(self):
-        res = db.getWithdrawInfo()
+    def test_insertServerInfo(self):
+        db.insertServerInfo()
+        res = db.getServerInfo()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertSymbolInfo(self):
+        db.insertSymbolInfo()
+        res = db.getSymbolInfo()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -82,13 +112,19 @@ test_db = [
     TestDB("test_initDB"),
     TestDB("test_getTables"),
     TestDB("test_creatTables"),
-    TestDB("test_getServerInfo"),
-    TestDB("test_insertServerInfo"),
-    TestDB("test_getSymbolInfo"),
-    # TestDB("test_insertSymbolInfo"),
     TestDB("test_getAccountInfo"),
-    TestDB("test_insertAccountInfo"),
+    TestDB("test_getMarketDepth"),
+    TestDB("test_getMarketKline"),
+    TestDB("test_getMarketTicker"),
+    TestDB("test_getServerInfo"),
+    TestDB("test_getSymbolInfo"),
+    TestDB("test_getTradeBacktestHistory"),
+    TestDB("test_getTradeOrderHistory"),
+    TestDB("test_getWithdrawHistory"),
     TestDB("test_getWithdrawInfo"),
+    TestDB("test_insertAccountInfo"),
+    TestDB("test_insertServerInfo"),
+    TestDB("test_insertSymbolInfo"),
     TestDB("test_insertWithdrawInfo"),
 ]
 

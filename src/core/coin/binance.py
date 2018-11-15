@@ -65,30 +65,38 @@ class Binance(Coin):
             raise BinanceException
 
     # all symbols in pairs list baseSymbol quoteSymbol
-    # def getServerSymbols(self):
-    #     try:
-    #         res = self._client.get_exchange_info()
-    #
-    #         return res["symbols"]
-    #     except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-    #         raise BinanceException
     def getServerSymbols(self):
-        # not all api defined, get form cryptoCompare
         try:
-            querry = "https://min-api.cryptocompare.com/data/all/exchanges"
-            res = requests.request("GET", querry)
-            if res.status_code == requests.codes.ok:
-                return res.json()["Binance"]
-            else:
-                raise BinanceException
-        except requests.exceptions.RequestException:
+            base = self._client.get_exchange_info()["symbols"]
+            res = []
+            for b in base:
+                fSymbol = b["baseAsset"]
+                tSymbol = b["quoteAsset"]
+                res.append({
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol
+                })
+            return res
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
+    # def getServerSymbols(self):
+    #     # not all api defined, get form cryptoCompare
+    #     try:
+    #         querry = "https://min-api.cryptocompare.com/data/all/exchanges"
+    #         res = requests.request("GET", querry)
+    #         if res.status_code == requests.codes.ok:
+    #             return res.json()["Binance"]
+    #         else:
+    #             raise BinanceException
+    #     except requests.exceptions.RequestException:
+    #         raise BinanceException
 
     # buy or sell a specific symbol's rate limits
-    def getSymbolsLimits(self, fSymbol, tSymbol):
+    def getSymbolsLimits(self):
         try:
-            symbol = fSymbol+tSymbol
-            base = self._client.get_symbol_info(symbol)
+            info = self._client.get_exchange_info()["symbols"]
+            fSymbol = ''
+            tSymbol = ''
             tSymbol_price_precision = ''
             fSymbol_size_precision = ''
             tSymbol_price_precision = ''
@@ -100,7 +108,10 @@ class Binance(Coin):
             fSymbol_size_min = ''
             fSymbol_size_step = ''
             min_notional = ''
-            if base != None:
+            res = []
+            for base in info:
+                fSymbol = base["baseAsset"]
+                tSymbol = base["quoteAsset"]
                 tSymbol_price_precision = math.pow(10, -int(base["baseAssetPrecision"]))
                 fSymbol_size_precision = math.pow(10, -int(base["quotePrecision"]))
                 for b in base["filters"]:
@@ -114,21 +125,23 @@ class Binance(Coin):
                         fSymbol_size_step = float(b["stepSize"])
                     if b["filterType"] == "MIN_NOTIONAL":
                         min_notional = float(b["minNotional"])
-            res={
-                "tSymbol_price": {
-                "precision": tSymbol_price_precision,
-                "max": tSymbol_price_max,
-                "min": tSymbol_price_min,
-                "step": tSymbol_price_step
-                },
-                "fSymbol_size": {
-                "precision": fSymbol_size_precision,
-                "max": fSymbol_size_max,
-                "min": fSymbol_size_min,
-                "step": fSymbol_size_step
-                },
-                "min_notional": min_notional
-            }
+                res.append({
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "tSymbol_price": {
+                    "precision": tSymbol_price_precision,
+                    "max": tSymbol_price_max,
+                    "min": tSymbol_price_min,
+                    "step": tSymbol_price_step
+                    },
+                    "fSymbol_size": {
+                    "precision": fSymbol_size_precision,
+                    "max": fSymbol_size_max,
+                    "min": fSymbol_size_min,
+                    "step": fSymbol_size_step
+                    },
+                    "min_notional": min_notional
+                })
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException

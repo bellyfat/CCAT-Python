@@ -48,12 +48,12 @@ class TestOkex(unittest.TestCase):
     def test_getServerSymbols(self):
         res = okex.getServerSymbols()
         logger.debug(res)
-        self.assertIsInstance(res, dict)
+        self.assertIsInstance(res, list)
 
     def test_getSymbolsLimits(self):
-        res = okex.getSymbolsLimits("TRX", "USDT")
+        res = okex.getSymbolsLimits()
         logger.debug(res)
-        self.assertIsInstance(res, dict)
+        self.assertIsInstance(res, list)
 
     def test_getMarketOrderbookTicker(self):
         res = okex.getMarketOrderbookTicker("STC", "BTC")

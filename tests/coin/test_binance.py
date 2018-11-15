@@ -47,12 +47,12 @@ class TestBinance(unittest.TestCase):
     def test_getServerSymbols(self):
         res = binance.getServerSymbols()
         logger.debug(res)
-        self.assertIsInstance(res, dict)
+        self.assertIsInstance(res, list)
 
     def test_getSymbolsLimits(self):
-        res = binance.getSymbolsLimits("ETH", "USDT")
+        res = binance.getSymbolsLimits()
         logger.debug(res)
-        self.assertIsInstance(res, dict)
+        self.assertIsInstance(res, list)
 
     def test_getMarketOrderbookTicker(self):
         res = binance.getMarketOrderbookTicker("IOST", "BTC")

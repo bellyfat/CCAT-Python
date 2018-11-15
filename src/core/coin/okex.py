@@ -62,21 +62,39 @@ class Okex(Coin):
 
     # all symbols in pairs list baseSymbol quoteSymbol
     def getServerSymbols(self):
-        # not all api defined, get form cryptoCompare
-        try:
-            querry = "https://min-api.cryptocompare.com/data/all/exchanges"
-            res = requests.request("GET", querry)
-            if res.status_code == requests.codes.ok:
-                return res.json()["OKEX"]
-            else:
-                raise OkexException
-        except requests.exceptions.RequestException:
-            raise OkexException
-
-    # buy or sell a specific symbol's rate limits
-    def getSymbolsLimits(self, fSymbol, tSymbol):
         try:
             base = self._spotAPI.get_coin_info(self._proxies)
+            fSymbol = ''
+            tSymbol = ''
+            res = []
+            for b in base:
+                fSymbol = b["base_currency"]
+                tSymbol = b["quote_currency"]
+                res.append({
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol
+                })
+            return res
+        except (OkexAPIException, OkexRequestException, OkexParamsException):
+            raise OkexException
+    # def getServerSymbols(self):
+    #     # not all api defined, get form cryptoCompare
+    #     try:
+    #         querry = "https://min-api.cryptocompare.com/data/all/exchanges"
+    #         res = requests.request("GET", querry)
+    #         if res.status_code == requests.codes.ok:
+    #             return res.json()["OKEX"]
+    #         else:
+    #             raise OkexException
+    #     except requests.exceptions.RequestException:
+    #         raise OkexException
+
+    # buy or sell a specific symbol's rate limits
+    def getSymbolsLimits(self):
+        try:
+            base = self._spotAPI.get_coin_info(self._proxies)
+            fSymbol = ''
+            tSymbol = ''
             tSymbol_price_precision = ''
             tSymbol_price_max = ''
             tSymbol_price_min = ''
@@ -86,32 +104,36 @@ class Okex(Coin):
             fSymbol_size_min = ''
             fSymbol_size_step = ''
             min_notional = ''
+            res = []
             for b in base:
-                if b["base_currency"] == fSymbol and b["quote_currency"] == tSymbol:
-                    tSymbol_price_precision = float(b["tick_size"])
-                    tSymbol_price_max = ''
-                    tSymbol_price_min = float(b["tick_size"])
-                    tSymbol_price_step = float(b["tick_size"])
-                    fSymbol_size_precision = float(b["size_increment"])
-                    fSymbol_size_max = ''
-                    fSymbol_size_min = float(b["min_size"])
-                    fSymbol_size_step = float(b["size_increment"])
-                    min_notional = fSymbol_size_min * tSymbol_price_min
-            res = {
-                "tSymbol_price": {
-                    "precision": tSymbol_price_precision,
-                    "max": tSymbol_price_max,
-                    "min": tSymbol_price_min,
-                    "step": tSymbol_price_step
-                },
-                "fSymbol_size": {
-                    "precision": fSymbol_size_precision,
-                    "max": fSymbol_size_max,
-                    "min": fSymbol_size_min,
-                    "step": fSymbol_size_step
-                },
-                "min_notional": min_notional
-            }
+                fSymbol = b["base_currency"]
+                tSymbol = b["quote_currency"]
+                tSymbol_price_precision = float(b["tick_size"])
+                tSymbol_price_max = ''
+                tSymbol_price_min = float(b["tick_size"])
+                tSymbol_price_step = float(b["tick_size"])
+                fSymbol_size_precision = float(b["size_increment"])
+                fSymbol_size_max = ''
+                fSymbol_size_min = float(b["min_size"])
+                fSymbol_size_step = float(b["size_increment"])
+                min_notional = fSymbol_size_min * tSymbol_price_min
+                res.append({
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "tSymbol_price": {
+                        "precision": tSymbol_price_precision,
+                        "max": tSymbol_price_max,
+                        "min": tSymbol_price_min,
+                        "step": tSymbol_price_step
+                    },
+                    "fSymbol_size": {
+                        "precision": fSymbol_size_precision,
+                        "max": fSymbol_size_max,
+                        "min": fSymbol_size_min,
+                        "step": fSymbol_size_step
+                    },
+                    "min_notional": min_notional
+                })
             return res
         except (OkexAPIException, OkexRequestException, OkexParamsException):
             raise OkexException

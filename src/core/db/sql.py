@@ -3,26 +3,57 @@
 from string import Template
 
 
+# get db account info sql
+GET_ACCOUNT_INFO_SQL = """
+    SELECT * FROM ACCOUNT_INFO
+"""
+# get db market depth sql
+GET_MARKET_DEPTH_SQL = """
+    SELECT * FROM MARKET_DEPTH
+"""
+# get db market kline sql
+GET_MARKET_KLINE_SQL = """
+    SELECT * FROM MARKET_KLINE
+"""
+# get db market ticker sql
+GET_MARKET_TIKER_SQL = """
+    SELECT * FROM MARKET_TIKER
+"""
+# get db server info sql
+GET_SERVER_INFO_SQL = """
+    SELECT * FROM SERVER_INFO
+"""
+# get db symbol info sql
+GET_SYMBOL_INFO_SQL = """
+    SELECT * FROM SYMBOL_INFO
+"""
+# get db trade backtest history sql
+GET_TRADE_BACKTEST_HISTORY_SQL = """
+    SELECT * FROM TRADE_BACKTEST_HISTORY
+"""
+# get db trade order history sql
+GET_TRADE_ORDER_HISTORY_SQL = """
+    SELECT * FROM TRADE_ORDER_HISTORY
+"""
+# get db withdraw history sql
+GET_WITHDRAW_HISTORY_SQL = """
+    SELECT * FROM WITHDRAW_HISTORY
+"""
+# get db withdraw info sql
+GET_WITHDRAW_INFO_SQL = """
+    SELECT * FROM WITHDRAW_INFO
+"""
+
 # insert db withdraw info sql
 INSERT_WITHDRAW_INFO_SQL = Template("""
     INSERT INTO WITHDRAW_INFO (server, asset, can_deposite, can_withdraw, min_withdraw)
     VALUES ("$server", "$asset", "$can_deposite", "$can_withdraw", $min_withdraw)
 """)
-
-# get db withdraw info sql
-GET_WITHDRAW_INFO_SQL = """
-    SELECT * FROM WITHDRAW_INFO
-"""
 # insert db account info sql
 INSERT_ACCOUNT_INFO_SQL = Template("""
-    INSERT INTO ACCOUNT_INFO (server, account, timeStamp, asset, balance, free, locked)
-    VALUES ("$server", "$account", $timeStamp, "$asset", $balance, $free, $locked)
+    INSERT INTO ACCOUNT_INFO (server, timeStamp, asset, balance, free, locked)
+    VALUES ("$server", $timeStamp, "$asset", $balance, $free, $locked)
 """)
-
-# get db account info sql
-GET_ACCOUNT_INFO_SQL = """
-    SELECT * FROM ACCOUNT_INFO
-"""
 
 # insert db symbol info sql
 INSERT_SYMBOL_INFO_SQL = Template("""
@@ -30,21 +61,11 @@ INSERT_SYMBOL_INFO_SQL = Template("""
     VALUES ("$server", "$fSymbol", "$tSymbol", $limit_price_precision, $limit_price_max, $limit_price_min, $limit_price_step, $limit_size_precision, $limit_size_max, $limit_size_min, $limit_size_step, $limit_min_notional, $fee_maker, $fee_taker)
 """)
 
-# get db symbol info sql
-GET_SYMBOL_INFO_SQL = """
-    SELECT * FROM SYMBOL_INFO
-"""
-
 # insert db server info sql
 INSERT_SERVER_INFO_SQL = Template("""
     INSERT INTO SERVER_INFO (server, requests_second, orders_second, orders_day, webSockets_second)
     VALUES ("$server", $requests_second, $orders_second, $orders_day, $webSockets_second)
 """)
-
-# get db server info sql
-GET_SERVER_INFO_SQL = """
-    SELECT * FROM SERVER_INFO
-"""
 
 # get db talbes sql
 GET_TABLES_SQL = """
@@ -153,7 +174,6 @@ CREATE_TABELS_SQL = """
     );
     CREATE TABLE IF NOT EXISTS `ACCOUNT_INFO` (
     	`server`	TEXT NOT NULL,
-    	`account`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
     	`asset`	TEXT NOT NULL,
     	`balance`	REAL,

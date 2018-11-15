@@ -59,11 +59,110 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException
 
+    def getAccountInfo(self):
+        logger.debug(GET_ACCOUNT_INFO_SQL)
+        try:
+            curs = self.conn.cursor()
+            curs.execute(GET_ACCOUNT_INFO_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException
+
+    def getMarketDepth(self):
+        logger.debug(GET_MARKET_DEPTH_SQL)
+        try:
+            curs = self.conn.cursor()
+            curs.execute(GET_MARKET_DEPTH_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException
+
+    def getMarketKline(self):
+        logger.debug(GET_MARKET_KLINE_SQL)
+        try:
+            curs = self.conn.cursor()
+            curs.execute(GET_MARKET_KLINE_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException
+
+    def getMarketTicker(self):
+        logger.debug(GET_MARKET_TIKER_SQL)
+        try:
+            curs = self.conn.cursor()
+            curs.execute(GET_MARKET_TIKER_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException
+
     def getServerInfo(self):
         logger.debug(GET_SERVER_INFO_SQL)
         try:
             curs = self.conn.cursor()
             curs.execute(GET_SERVER_INFO_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException
+
+    def getSymbolInfo(self):
+        logger.debug(GET_SYMBOL_INFO_SQL)
+        try:
+            curs = self.conn.cursor()
+            curs.execute(GET_SYMBOL_INFO_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException
+
+    def getTradeBacktestHistory(self):
+        logger.debug(GET_TRADE_BACKTEST_HISTORY_SQL)
+        try:
+            curs = self.conn.cursor()
+            curs.execute(GET_TRADE_BACKTEST_HISTORY_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException
+
+    def getTradeOrderHistory(self):
+        logger.debug(GET_TRADE_ORDER_HISTORY_SQL)
+        try:
+            curs = self.conn.cursor()
+            curs.execute(GET_TRADE_ORDER_HISTORY_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException
+
+    def getWithdrawHistory(self):
+        logger.debug(GET_WITHDRAW_HISTORY_SQL)
+        try:
+            curs = self.conn.cursor()
+            curs.execute(GET_WITHDRAW_HISTORY_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException
+
+    def getWithdrawInfo(self):
+        logger.debug(GET_WITHDRAW_INFO_SQL)
+        try:
+            curs = self.conn.cursor()
+            curs.execute(GET_WITHDRAW_INFO_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -104,88 +203,65 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException
 
-    def getSymbolInfo(self):
-        logger.debug(GET_SYMBOL_INFO_SQL)
-        try:
-            curs = self.conn.cursor()
-            curs.execute(GET_SYMBOL_INFO_SQL)
-            res = curs.fetchall()
-            curs.close()
-            return res
-        except sqlite3.Error as err:
-            raise DBException
 
     def insertSymbolInfo(self):
         try:
             curs = self.conn.cursor()
             # OKEX
-            base = okex.getServerSymbols()
+            base = okex.getSymbolsLimits()
             fees = okex.getTradeFees()
-            for key in base.keys():
-                for value in base[key]:
-                    res = okex.getSymbolsLimits(key, value)
-                    INSERT_OKEX_SYMBOL_INFO_SQL = INSERT_SYMBOL_INFO_SQL.substitute(
-                        server=str(okexConf["exchange"]),
-                        fSymbol=str(key),
-                        tSymbol=str(value),
-                        limit_price_precision="NULL" if res["tSymbol_price"]["precision"]=='' else float(res["tSymbol_price"]["precision"]),
-                        limit_price_max="NULL" if res["tSymbol_price"]["max"]=='' else float(res["tSymbol_price"]["max"]),
-                        limit_price_min="NULL" if res["tSymbol_price"]["min"]=='' else float(res["tSymbol_price"]["min"]),
-                        limit_price_step="NULL" if res["tSymbol_price"]["step"]=='' else float(res["tSymbol_price"]["step"]),
-                        limit_size_precision="NULL" if res["fSymbol_size"]["precision"]=='' else float(res["fSymbol_size"]["precision"]),
-                        limit_size_max="NULL" if res["fSymbol_size"]["max"]=='' else float(res["fSymbol_size"]["max"]),
-                        limit_size_min="NULL" if res["fSymbol_size"]["min"]=='' else float(res["fSymbol_size"]["min"]),
-                        limit_size_step="NULL" if res["fSymbol_size"]["step"]=='' else float(res["fSymbol_size"]["step"]),
-                        limit_min_notional="NULL" if res["min_notional"]=='' else float(res["min_notional"]),
-                        fee_maker="NULL" if fees[0]["maker"]=='' else float(fees[0]["maker"]),
-                        fee_taker="NULL" if fees[0]["taker"]=='' else float(fees[0]["taker"])
-                    )
-                    logger.debug(INSERT_OKEX_SYMBOL_INFO_SQL)
-                    curs.execute(INSERT_OKEX_SYMBOL_INFO_SQL)
+            for b in base:
+                fees_key = fees[0]
+                INSERT_OKEX_SYMBOL_INFO_SQL = INSERT_SYMBOL_INFO_SQL.substitute(
+                    server=str(okexConf["exchange"]),
+                    fSymbol=str(b["fSymbol"]),
+                    tSymbol=str(b["tSymbol"]),
+                    limit_price_precision="NULL" if b["tSymbol_price"]["precision"]=='' else float(b["tSymbol_price"]["precision"]),
+                    limit_price_max="NULL" if b["tSymbol_price"]["max"]=='' else float(b["tSymbol_price"]["max"]),
+                    limit_price_min="NULL" if b["tSymbol_price"]["min"]=='' else float(b["tSymbol_price"]["min"]),
+                    limit_price_step="NULL" if b["tSymbol_price"]["step"]=='' else float(b["tSymbol_price"]["step"]),
+                    limit_size_precision="NULL" if b["fSymbol_size"]["precision"]=='' else float(b["fSymbol_size"]["precision"]),
+                    limit_size_max="NULL" if b["fSymbol_size"]["max"]=='' else float(b["fSymbol_size"]["max"]),
+                    limit_size_min="NULL" if b["fSymbol_size"]["min"]=='' else float(b["fSymbol_size"]["min"]),
+                    limit_size_step="NULL" if b["fSymbol_size"]["step"]=='' else float(b["fSymbol_size"]["step"]),
+                    limit_min_notional="NULL" if b["min_notional"]=='' else float(b["min_notional"]),
+                    fee_maker="NULL" if fees_key["maker"]=='' else float(fees_key["maker"]),
+                    fee_taker="NULL" if fees_key["taker"]=='' else float(fees_key["taker"])
+                )
+                logger.debug(INSERT_OKEX_SYMBOL_INFO_SQL)
+                curs.execute(INSERT_OKEX_SYMBOL_INFO_SQL)
             # binance
-            base = binance.getServerSymbols()
+            base = binance.getSymbolsLimits()
             fees = binance.getTradeFees()
-            for key in base.keys():
-                for value in base[key]:
-                    res = binance.getSymbolsLimits(key, value)
-                    for f in fees:
-                        if f["symbol"] == key+value:
-                            fees_key = f
-                    INSERT_BINANCE_SYMBOL_INFO_SQL = INSERT_SYMBOL_INFO_SQL.substitute(
-                        server=str(binanceConf["exchange"]),
-                        fSymbol=str(key),
-                        tSymbol=str(value),
-                        limit_price_precision="NULL" if res["tSymbol_price"]["precision"]=='' else float(res["tSymbol_price"]["precision"]),
-                        limit_price_max="NULL" if res["tSymbol_price"]["max"]=='' else float(res["tSymbol_price"]["max"]),
-                        limit_price_min="NULL" if res["tSymbol_price"]["min"]=='' else float(res["tSymbol_price"]["min"]),
-                        limit_price_step="NULL" if res["tSymbol_price"]["step"]=='' else float(res["tSymbol_price"]["step"]),
-                        limit_size_precision="NULL" if res["fSymbol_size"]["precision"]=='' else float(res["fSymbol_size"]["precision"]),
-                        limit_size_max="NULL" if res["fSymbol_size"]["max"]=='' else float(res["fSymbol_size"]["max"]),
-                        limit_size_min="NULL" if res["fSymbol_size"]["min"]=='' else float(res["fSymbol_size"]["min"]),
-                        limit_size_step="NULL" if res["fSymbol_size"]["step"]=='' else float(res["fSymbol_size"]["step"]),
-                        limit_min_notional="NULL" if res["min_notional"]=='' else float(res["min_notional"]),
-                        fee_maker="NULL" if fees_key["maker"]=='' else float(fees_key["maker"]),
-                        fee_taker="NULL" if fees_key["taker"]=='' else float(fees_key["taker"])
-                    )
-                    logger.debug(INSERT_BINANCE_SYMBOL_INFO_SQL)
-                    curs.execute(INSERT_BINANCE_SYMBOL_INFO_SQL)
+            for b in base:
+                fees_key = ''
+                for f in fees:
+                    if f["symbol"] == b["fSymbol"]+b["tSymbol"]:
+                        fees_key = f
+                INSERT_BINANCE_SYMBOL_INFO_SQL = INSERT_SYMBOL_INFO_SQL.substitute(
+                    server=str(binanceConf["exchange"]),
+                    fSymbol=str(b["fSymbol"]),
+                    tSymbol=str(b["tSymbol"]),
+                    limit_price_precision="NULL" if b["tSymbol_price"]["precision"]=='' else float(b["tSymbol_price"]["precision"]),
+                    limit_price_max="NULL" if b["tSymbol_price"]["max"]=='' else float(b["tSymbol_price"]["max"]),
+                    limit_price_min="NULL" if b["tSymbol_price"]["min"]=='' else float(b["tSymbol_price"]["min"]),
+                    limit_price_step="NULL" if b["tSymbol_price"]["step"]=='' else float(b["tSymbol_price"]["step"]),
+                    limit_size_precision="NULL" if b["fSymbol_size"]["precision"]=='' else float(b["fSymbol_size"]["precision"]),
+                    limit_size_max="NULL" if b["fSymbol_size"]["max"]=='' else float(b["fSymbol_size"]["max"]),
+                    limit_size_min="NULL" if b["fSymbol_size"]["min"]=='' else float(b["fSymbol_size"]["min"]),
+                    limit_size_step="NULL" if b["fSymbol_size"]["step"]=='' else float(b["fSymbol_size"]["step"]),
+                    limit_min_notional="NULL" if b["min_notional"]=='' else float(b["min_notional"]),
+                    fee_maker="NULL" if fees_key["maker"]=='' else float(fees_key["maker"]),
+                    fee_taker="NULL" if fees_key["taker"]=='' else float(fees_key["taker"])
+                )
+                logger.debug(INSERT_BINANCE_SYMBOL_INFO_SQL)
+                curs.execute(INSERT_BINANCE_SYMBOL_INFO_SQL)
             # Huobi
             # to_be_continue
             # Gate
             # to_be_continue
             self.conn.commit()
             curs.close()
-        except sqlite3.Error as err:
-            raise DBException
-
-    def getAccountInfo(self):
-        logger.debug(GET_ACCOUNT_INFO_SQL)
-        try:
-            curs = self.conn.cursor()
-            curs.execute(GET_ACCOUNT_INFO_SQL)
-            res = curs.fetchall()
-            curs.close()
-            return res
         except sqlite3.Error as err:
             raise DBException
 
@@ -215,7 +291,6 @@ class DB(object):
                 if b["balance"]>0:
                     INSERT_BINANCE_ACCOUNT_INFO_SQL = INSERT_ACCOUNT_INFO_SQL.substitute(
                         server=str(binanceConf["exchange"]),
-                        account="CCAT", # default
                         timeStamp=int(timeStamp),
                         asset=b["asset"],
                         balance=b["balance"],
@@ -233,16 +308,6 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException
 
-    def getWithdrawInfo(self):
-        logger.debug(GET_WITHDRAW_INFO_SQL)
-        try:
-            curs = self.conn.cursor()
-            curs.execute(GET_WITHDRAW_INFO_SQL)
-            res = curs.fetchall()
-            curs.close()
-            return res
-        except sqlite3.Error as err:
-            raise DBException
 
     def insertWithdrawInfo(self):
         try:
