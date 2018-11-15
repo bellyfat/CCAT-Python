@@ -26,9 +26,53 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_setTables(self):
-        db.setTables()
+    def test_creatTables(self):
+        db.creatTables()
         res = db.getTables()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getServerInfo(self):
+        res = db.getServerInfo()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertServerInfo(self):
+        db.insertServerInfo()
+        res = db.getServerInfo()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getSymbolInfo(self):
+        res = db.getSymbolInfo()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertSymbolInfo(self):
+        db.insertSymbolInfo()
+        res = db.getSymbolInfo()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getAccountInfo(self):
+        res = db.getAccountInfo()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertAccountInfo(self):
+        db.insertAccountInfo()
+        res = db.getAccountInfo()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getWithdrawInfo(self):
+        res = db.getWithdrawInfo()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertWithdrawInfo(self):
+        db.insertWithdrawInfo()
+        res = db.getWithdrawInfo()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -37,7 +81,15 @@ class TestDB(unittest.TestCase):
 test_db = [
     TestDB("test_initDB"),
     TestDB("test_getTables"),
-    TestDB("test_setTables"),
+    TestDB("test_creatTables"),
+    TestDB("test_getServerInfo"),
+    TestDB("test_insertServerInfo"),
+    TestDB("test_getSymbolInfo"),
+    # TestDB("test_insertSymbolInfo"),
+    TestDB("test_getAccountInfo"),
+    TestDB("test_insertAccountInfo"),
+    TestDB("test_getWithdrawInfo"),
+    TestDB("test_insertWithdrawInfo"),
 ]
 
 if __name__ == "__main__":

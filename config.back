@@ -12,22 +12,26 @@
   },
   "okex": {
     "exchange": "okex",
+    "account": "CCAT",
     "api_key": "",
     "api_secret": "",
     "passphrase": ""
   },
   "binance": {
     "exchange": "binance",
+    "account": "CCAT",
     "api_key": "",
     "api_secret": ""
   },
   "huobi": {
     "exchange": "huobi",
+    "account": "CCAT",
     "api_key": "",
     "api_secret": ""
   },
   "gate": {
     "exchange": "gate",
+    "account": "CCAT",
     "api_key": "",
     "api_secret": ""
   }

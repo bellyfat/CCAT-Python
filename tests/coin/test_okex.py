@@ -8,7 +8,7 @@ import unittest
 
 sys.path.append(os.getcwd())
 
-from src.core.coin.lib.okex import Okex
+from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.util.log import Logger
 
@@ -108,7 +108,7 @@ class TestOkex(unittest.TestCase):
     def test_getAccountAssetDetail(self):
         res = okex.getAccountAssetDetail("USDT")
         logger.debug(res)
-        self.assertIsInstance(res, list)
+        self.assertIsInstance(res, dict)
 
     # def test_createOrder(self):
     #     res = okex.createOrder("ETH", "USDT", "ask", 200, 0.001)

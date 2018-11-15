@@ -10,7 +10,7 @@ sys.path.append(os.getcwd())
 
 from src.core.util.log import Logger
 from src.core.config import Config
-from src.core.coin.lib.binance import Binance
+from src.core.coin.binance import Binance
 
 proxies = Config()._proxies
 binanceConf = Config()._binance
@@ -71,7 +71,8 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getTradeFees(self):
-        res = binance.getTradeFees(symbol="ETHUSDT")
+        res = binance.getTradeFees()
+        # res = binance.getTradeFees(symbol="ETHUSDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 

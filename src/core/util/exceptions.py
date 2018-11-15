@@ -9,6 +9,7 @@
 
 # DBException, code = -2001, message =
 
+
 class DBException(Exception):
 
     def __init__(self):

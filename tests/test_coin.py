@@ -74,7 +74,7 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
     runner = unittest.TextTestRunner(verbosity=2)
     # add tests
-    # suite.addTests(test_okex)
+    suite.addTests(test_okex)
     suite.addTests(test_binance)
     suite.addTests(test_huobi)
     suite.addTests(test_gate)
