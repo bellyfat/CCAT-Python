@@ -6,6 +6,19 @@ import dateparser
 import pytz
 
 
+def sqliteEscape(sqlStr):
+    sqlStr = sqlStr.replace("/", "//")
+    sqlStr = sqlStr.replace("'", '"')
+    sqlStr = sqlStr.replace("[", "/[")
+    sqlStr = sqlStr.replace("]", "/]")
+    sqlStr = sqlStr.replace("%", "/%")
+    sqlStr = sqlStr.replace("&", "/&")
+    sqlStr = sqlStr.replace("_", "/_")
+    sqlStr = sqlStr.replace("(", "/(")
+    sqlStr = sqlStr.replace(")", "/)")
+    return sqlStr
+
+
 def date_to_milliseconds(date_str):
     """Convert UTC date to milliseconds
 

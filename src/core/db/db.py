@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import json
 import sqlite3
 
 from src.core.db.sql import *
@@ -8,6 +9,7 @@ from src.core.coin.okex import Okex
 from src.core.coin.binance import Binance
 from src.core.config import Config
 from src.core.util.log import Logger
+from src.core.util.helper import sqliteEscape
 from src.core.util.exceptions import DBException
 
 proxies = Config()._proxies
@@ -169,6 +171,100 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException
 
+    def insertAccountInfo(self, exchange):
+        try:
+            curs = self.conn.cursor()
+            # OKEX
+            if exchange == "all" or okexConf["exchange"] in exchange:
+                timeStamp = okex.getServerTime()
+                base = okex.getAccountBalances()
+                for b in base:
+                    if b["balance"]>0:
+                        INSERT_OKEX_ACCOUNT_INFO_SQL = INSERT_ACCOUNT_INFO_SQL.substitute(
+                            server=str(okexConf["exchange"]),
+                            timeStamp=int(timeStamp),
+                            asset=str(b["asset"]),
+                            balance=float(b["balance"]),
+                            free=float(b["free"]),
+                            locked=float(b["locked"])
+                        )
+                        logger.debug(INSERT_OKEX_ACCOUNT_INFO_SQL)
+                        curs.execute(INSERT_OKEX_ACCOUNT_INFO_SQL)
+            # Binance
+            if exchange == "all" or binanceConf["exchange"] in exchange:
+                timeStamp = binance.getServerTime()
+                base = binance.getAccountBalances()
+                for b in base:
+                    if b["balance"]>0:
+                        INSERT_BINANCE_ACCOUNT_INFO_SQL = INSERT_ACCOUNT_INFO_SQL.substitute(
+                            server=str(binanceConf["exchange"]),
+                            timeStamp=int(timeStamp),
+                            asset=b["asset"],
+                            balance=b["balance"],
+                            free=b["free"],
+                            locked=b["locked"]
+                        )
+                        logger.debug(INSERT_BINANCE_ACCOUNT_INFO_SQL)
+                        curs.execute(INSERT_BINANCE_ACCOUNT_INFO_SQL)
+            # Huobi
+            # if exchange == "all" or "huobi" in exchange:
+            # to_be_continue
+            # Gate
+            # if exchange == "all" or "gate" in exchange:
+            # to_be_continue
+            self.conn.commit()
+            curs.close()
+        except sqlite3.Error as err:
+            raise DBException
+
+    def insertMarketDepth(self, exchange, fSymbol, tSymbol, limit=100):
+        try:
+            curs = self.conn.cursor()
+            # OKEX
+            if exchange == "all" or okexConf["exchange"] in exchange:
+                base = okex.getMarketOrderbookDepth(fSymbol, tSymbol, limit)
+                INSERT_OKEX_MARKET_DEPTH_SQL = INSERT_MARKET_DEPTH_SQL.substitute(
+                    server = str(okexConf["exchange"]),
+                    timeStamp = int(base["timeStamp"]),
+                    fSymbol = base["fSymbol"],
+                    tSymbol = base["tSymbol"],
+                    bid_price_size = sqliteEscape(json.dumps(base["bid_price_size"])),
+                    ask_price_size = sqliteEscape(json.dumps(base["ask_price_size"]))
+                )
+                logger.debug(INSERT_OKEX_MARKET_DEPTH_SQL)
+                curs.execute(INSERT_OKEX_MARKET_DEPTH_SQL)
+            # Binnance
+            if exchange == "all" or binanceConf["exchange"] in exchange:
+                base = binance.getMarketOrderbookDepth(fSymbol, tSymbol, limit)
+                INSERT_BINANCE_MARKET_DEPTH_SQL = INSERT_MARKET_DEPTH_SQL.substitute(
+                    server = str(binanceConf["exchange"]),
+                    timeStamp = int(base["timeStamp"]),
+                    fSymbol = base["fSymbol"],
+                    tSymbol = base["tSymbol"],
+                    bid_price_size = sqliteEscape(json.dumps(base["bid_price_size"])),
+                    ask_price_size = sqliteEscape(json.dumps(base["ask_price_size"]))
+                )
+                logger.debug(INSERT_BINANCE_MARKET_DEPTH_SQL)
+                curs.execute(INSERT_BINANCE_MARKET_DEPTH_SQL)
+
+            # Huobi
+            # if exchange == "all" or "huobi" in exchange:
+            # to_be_continue
+            # Gate
+            # if exchange == "all" or "gate" in exchange:
+            # to_be_continue
+            self.conn.commit()
+            curs.close()
+        except sqlite3.Error as err:
+            raise DBException
+
+
+    def insertMarketKline(self):
+        pass
+
+    def insertMarketTicker(self):
+        pass
+
     def insertServerInfo(self):
         try:
             curs = self.conn.cursor()
@@ -202,7 +298,6 @@ class DB(object):
             curs.close()
         except sqlite3.Error as err:
             raise DBException
-
 
     def insertSymbolInfo(self):
         try:
@@ -265,49 +360,14 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException
 
-    def insertAccountInfo(self):
-        try:
-            curs = self.conn.cursor()
-            # OKEX
-            timeStamp = okex.getServerTime()
-            base = okex.getAccountBalances()
-            for b in base:
-                if b["balance"]>0:
-                    INSERT_OKEX_ACCOUNT_INFO_SQL = INSERT_ACCOUNT_INFO_SQL.substitute(
-                        server=str(okexConf["exchange"]),
-                        account="CCAT", # default
-                        timeStamp=int(timeStamp),
-                        asset=str(b["asset"]),
-                        balance=float(b["balance"]),
-                        free=float(b["free"]),
-                        locked=float(b["locked"])
-                    )
-                    logger.debug(INSERT_OKEX_ACCOUNT_INFO_SQL)
-                    curs.execute(INSERT_OKEX_ACCOUNT_INFO_SQL)
-            # Binance
-            timeStamp = binance.getServerTime()
-            base = binance.getAccountBalances()
-            for b in base:
-                if b["balance"]>0:
-                    INSERT_BINANCE_ACCOUNT_INFO_SQL = INSERT_ACCOUNT_INFO_SQL.substitute(
-                        server=str(binanceConf["exchange"]),
-                        timeStamp=int(timeStamp),
-                        asset=b["asset"],
-                        balance=b["balance"],
-                        free=b["free"],
-                        locked=b["locked"]
-                    )
-                    logger.debug(INSERT_BINANCE_ACCOUNT_INFO_SQL)
-                    curs.execute(INSERT_BINANCE_ACCOUNT_INFO_SQL)
-            # Huobi
-            # to_be_continue
-            # Gate
-            # to_be_continue
-            self.conn.commit()
-            curs.close()
-        except sqlite3.Error as err:
-            raise DBException
+    def insertTradeBacktestHistory(self):
+        pass
 
+    def insertTradeOrderHistory(self):
+        pass
+
+    def insertWithdrawHistory(self):
+        pass
 
     def insertWithdrawInfo(self):
         try:

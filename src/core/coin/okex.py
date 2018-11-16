@@ -157,7 +157,7 @@ class Okex(Coin):
             raise OkexException
 
     # a specific symbol's orderbook with depth
-    def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=''):
+    def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=100):
         '''
         {
             "timestamp": "2016-12-08T20:09:05.508883Z",
