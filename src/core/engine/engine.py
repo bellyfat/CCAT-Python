@@ -3,6 +3,8 @@
 # engine class
 # super class of all engines
 
+from multiprocessing import Pool
+from multiprocessing import Process
 from abc import ABCMeta, abstractmethod
 
 class Engine(object):

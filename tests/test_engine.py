@@ -14,7 +14,7 @@ from tests.engine.test_statistic import TestStatistic
 # list of test_engine
 # listen test items
 test_listen = [
-    TestListen(""),
+    # TestListen(""),
 ]
 # backtest test items
 test_backtest = [
