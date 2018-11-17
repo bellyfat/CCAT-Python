@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import hashlib
-import json
 import os
 import sys
 import unittest
@@ -10,7 +8,7 @@ sys.path.append(os.getcwd())
 
 from src.core.util.log import Logger
 from src.core.config import Config
-from src.core.coin.lib.binance import Binance
+from src.core.coin.binance import Binance
 
 proxies = Config()._proxies
 binanceConf = Config()._binance
@@ -47,12 +45,12 @@ class TestBinance(unittest.TestCase):
     def test_getServerSymbols(self):
         res = binance.getServerSymbols()
         logger.debug(res)
-        self.assertIsInstance(res, dict)
+        self.assertIsInstance(res, list)
 
     def test_getSymbolsLimits(self):
-        res = binance.getSymbolsLimits("ETH", "USDT")
+        res = binance.getSymbolsLimits()
         logger.debug(res)
-        self.assertIsInstance(res, dict)
+        self.assertIsInstance(res, list)
 
     def test_getMarketOrderbookTicker(self):
         res = binance.getMarketOrderbookTicker("IOST", "BTC")
@@ -71,7 +69,8 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getTradeFees(self):
-        res = binance.getTradeFees(symbol="ETHUSDT")
+        res = binance.getTradeFees()
+        # res = binance.getTradeFees(symbol="ETHUSDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -111,7 +110,7 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     # def test_createOrder(self):
-    #     res = binance.createOrder("ETH", "USDT", "ask", 200, 0.05)
+    #     res = binance.createOrder("ETH", "USDT", "ask", 150, 0.05)
     #     logger.debug(res)
     #     self.assertIsInstance(res, dict)
 

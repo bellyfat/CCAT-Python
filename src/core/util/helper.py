@@ -1,9 +1,26 @@
 # -*- coding: utf-8 -*-
 
-from datetime import datetime
-
-import dateparser
 import pytz
+import dateparser
+from datetime import datetime
+from datetime import timezone
+
+def utcnow_timestamp():
+    dt = datetime.now()
+    timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
+    return int(timestamp*1000)
+
+def sqlite_escape(sqlStr):
+    sqlStr = sqlStr.replace("/", "//")
+    sqlStr = sqlStr.replace("'", '"')
+    sqlStr = sqlStr.replace("[", "/[")
+    sqlStr = sqlStr.replace("]", "/]")
+    sqlStr = sqlStr.replace("%", "/%")
+    sqlStr = sqlStr.replace("&", "/&")
+    sqlStr = sqlStr.replace("_", "/_")
+    sqlStr = sqlStr.replace("(", "/(")
+    sqlStr = sqlStr.replace(")", "/)")
+    return sqlStr
 
 
 def date_to_milliseconds(date_str):

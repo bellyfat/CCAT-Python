@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import hashlib
-import json
 import os
 import sys
 import unittest
 
 sys.path.append(os.getcwd())
 
-from src.core.coin.lib.okex import Okex
+from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.util.log import Logger
 
@@ -48,12 +46,12 @@ class TestOkex(unittest.TestCase):
     def test_getServerSymbols(self):
         res = okex.getServerSymbols()
         logger.debug(res)
-        self.assertIsInstance(res, dict)
+        self.assertIsInstance(res, list)
 
     def test_getSymbolsLimits(self):
-        res = okex.getSymbolsLimits("TRX", "USDT")
+        res = okex.getSymbolsLimits()
         logger.debug(res)
-        self.assertIsInstance(res, dict)
+        self.assertIsInstance(res, list)
 
     def test_getMarketOrderbookTicker(self):
         res = okex.getMarketOrderbookTicker("STC", "BTC")
@@ -108,10 +106,10 @@ class TestOkex(unittest.TestCase):
     def test_getAccountAssetDetail(self):
         res = okex.getAccountAssetDetail("USDT")
         logger.debug(res)
-        self.assertIsInstance(res, list)
+        self.assertIsInstance(res, dict)
 
     # def test_createOrder(self):
-    #     res = okex.createOrder("ETH", "USDT", "ask", 200, 0.001)
+    #     res = okex.createOrder("ETH", "USDT", "ask", 150, 0.001)
     #     logger.debug(res)
     #     self.assertIsInstance(res, dict)
 

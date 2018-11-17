@@ -4,10 +4,9 @@
 # URL https://python-binance.readthedocs.io/en/latest/overview.html
 
 import json
-import logging
 import math
-
 import requests
+
 from binance.enums import *
 from binance.client import Client
 from binance.exceptions import (BinanceAPIException, BinanceOrderException,
@@ -15,8 +14,10 @@ from binance.exceptions import (BinanceAPIException, BinanceOrderException,
                                 BinanceWithdrawException)
 
 from src.core.coin.coin import Coin
+from src.core.util.log import Logger
 from src.core.util.exceptions import BinanceException
 
+logger = Logger()
 
 class Binance(Coin):
 
@@ -38,7 +39,6 @@ class Binance(Coin):
     def getServerTime(self):
         try:
             res = self._client.get_server_time()  # UTC Zone UnixStamp
-
             return res["serverTime"]
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
@@ -47,7 +47,6 @@ class Binance(Coin):
     def getServerLimits(self):
         try:
             base = self._client.get_exchange_info()
-
             for b in base["rateLimits"]:
                 if b["rateLimitType"] == "REQUEST_WEIGHT" and b["interval"] == "MINUTE":
                     requests_second = float(b["limit"])/60
@@ -66,58 +65,83 @@ class Binance(Coin):
             raise BinanceException
 
     # all symbols in pairs list baseSymbol quoteSymbol
-    # def getServerSymbols(self):
-    #     try:
-    #         res = self._client.get_exchange_info()
-    #
-    #         return res["symbols"]
-    #     except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-    #         raise BinanceException
     def getServerSymbols(self):
-        # not all api defined, get form cryptoCompare
         try:
-            querry = "https://min-api.cryptocompare.com/data/all/exchanges"
-            res = requests.request("GET", querry)
-            if res.status_code == requests.codes.ok:
-                return res.json()["Binance"]
-            else:
-                raise BinanceException
-        except requests.exceptions.RequestException:
+            base = self._client.get_exchange_info()["symbols"]
+            res = []
+            for b in base:
+                fSymbol = b["baseAsset"]
+                tSymbol = b["quoteAsset"]
+                res.append({
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol
+                })
+            return res
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
+    # def getServerSymbols(self):
+    #     # not all api defined, get form cryptoCompare
+    #     try:
+    #         querry = "https://min-api.cryptocompare.com/data/all/exchanges"
+    #         res = requests.request("GET", querry)
+    #         if res.status_code == requests.codes.ok:
+    #             return res.json()["Binance"]
+    #         else:
+    #             raise BinanceException
+    #     except requests.exceptions.RequestException:
+    #         raise BinanceException
 
     # buy or sell a specific symbol's rate limits
-    def getSymbolsLimits(self, fSymbol, tSymbol):
+    def getSymbolsLimits(self):
         try:
-            base = self._client.get_symbol_info(fSymbol + tSymbol)
-
-            tSymbol_price_precision = math.pow(10, -int(base["baseAssetPrecision"]))
-            fSymbol_size_precision = math.pow(10, -int(base["quotePrecision"]))
-            for b in base["filters"]:
-                if b["filterType"] == "PRICE_FILTER":
-                    tSymbol_price_max = float(b["maxPrice"])
-                    tSymbol_price_min = float(b["minPrice"])
-                    tSymbol_price_step = float(b["tickSize"])
-                if b["filterType"] == "LOT_SIZE":
-                    fSymbol_size_max = float(b["maxQty"])
-                    fSymbol_size_min = float(b["minQty"])
-                    fSymbol_size_step = float(b["stepSize"])
-                if b["filterType"] == "MIN_NOTIONAL":
-                    min_notional = float(b["minNotional"])
-            res={
-                "tSymbol_price": {
-                "precision": tSymbol_price_precision,
-                "max": tSymbol_price_max,
-                "min": tSymbol_price_min,
-                "step": tSymbol_price_step
-                },
-                "fSymbol_size": {
-                "precision": fSymbol_size_precision,
-                "max": fSymbol_size_max,
-                "min": fSymbol_size_min,
-                "step": fSymbol_size_step
-                },
-                "min_notional": min_notional
-            }
+            info = self._client.get_exchange_info()["symbols"]
+            fSymbol = ''
+            tSymbol = ''
+            tSymbol_price_precision = ''
+            fSymbol_size_precision = ''
+            tSymbol_price_precision = ''
+            tSymbol_price_max = ''
+            tSymbol_price_min = ''
+            tSymbol_price_step = ''
+            fSymbol_size_precision = ''
+            fSymbol_size_max = ''
+            fSymbol_size_min = ''
+            fSymbol_size_step = ''
+            min_notional = ''
+            res = []
+            for base in info:
+                fSymbol = base["baseAsset"]
+                tSymbol = base["quoteAsset"]
+                tSymbol_price_precision = math.pow(10, -int(base["baseAssetPrecision"]))
+                fSymbol_size_precision = math.pow(10, -int(base["quotePrecision"]))
+                for b in base["filters"]:
+                    if b["filterType"] == "PRICE_FILTER":
+                        tSymbol_price_max = float(b["maxPrice"])
+                        tSymbol_price_min = float(b["minPrice"])
+                        tSymbol_price_step = float(b["tickSize"])
+                    if b["filterType"] == "LOT_SIZE":
+                        fSymbol_size_max = float(b["maxQty"])
+                        fSymbol_size_min = float(b["minQty"])
+                        fSymbol_size_step = float(b["stepSize"])
+                    if b["filterType"] == "MIN_NOTIONAL":
+                        min_notional = float(b["minNotional"])
+                res.append({
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "tSymbol_price": {
+                    "precision": tSymbol_price_precision,
+                    "max": tSymbol_price_max,
+                    "min": tSymbol_price_min,
+                    "step": tSymbol_price_step
+                    },
+                    "fSymbol_size": {
+                    "precision": fSymbol_size_precision,
+                    "max": fSymbol_size_max,
+                    "min": fSymbol_size_min,
+                    "step": fSymbol_size_step
+                    },
+                    "min_notional": min_notional
+                })
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
@@ -203,7 +227,6 @@ class Binance(Coin):
     def getTradeFees(self, **kwargs):
         try:
             res = self._client.get_trade_fee(**kwargs)
-
             return res["tradeFee"]
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
@@ -215,7 +238,6 @@ class Binance(Coin):
             orders = self._client.get_open_orders(symbol=symbol, **kwargs)
             if ratio == '':
                 ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
-
             res = []
             for item in orders:
                 ask_or_bid = "ask" if item["side"] == "BUY" else "bid"
@@ -245,7 +267,6 @@ class Binance(Coin):
             orders = self._client.get_all_orders(symbol=symbol, **kwargs)
             if ratio == '':
                 ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
-
             res = []
             for item in orders:
                 status = "open" if item["status"] == "NEW" else item["status"].lower()
@@ -276,7 +297,6 @@ class Binance(Coin):
             orders = self._client.get_all_orders(symbol=symbol, **kwargs)
             if ratio == '':
                 ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
-
             res = []
             for item in orders:
                 if item["status"] == "FILLED":
@@ -304,7 +324,6 @@ class Binance(Coin):
     def getAccountBalances(self, **kwargs):
         try:
             base = self._client.get_account(**kwargs)
-
             res = []
             for b in base["balances"]:
                 res.append({
@@ -321,7 +340,6 @@ class Binance(Coin):
     def getAccountLimits(self, **kwargs):
         try:
             base = self._client.get_asset_details(**kwargs)
-
             res = []
             for key, value in base["assetDetail"].items():
                 res.append({
@@ -338,7 +356,6 @@ class Binance(Coin):
     def getAccountAssetBalance(self, asset, **kwargs):
         try:
             base = self._client.get_asset_balance(asset=asset, **kwargs)
-
             res = {
                 "asset": base["asset"],
                 "balance": float(base["free"])+float(base["locked"]),
@@ -354,7 +371,6 @@ class Binance(Coin):
         try:
             deposite = self._client.get_deposit_history(asset=asset, **kwargs)
             withdraw = self._client.get_withdraw_history(asset=asset, **kwargs)
-
             res = {
                 "deposit":deposite["depositList"],
                 "withdraw":withdraw["withdrawList"]
@@ -380,7 +396,6 @@ class Binance(Coin):
             base = self._client.create_order(**params)
             if ratio == '':
                 ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
-
             status = "open" if base["status"] == "NEW" else base["status"].lower()
             ask_or_bid = "ask" if base["side"] == "BUY" else "bid"
             filled_price = 0.0 if float(base["executedQty"])==0 else float(base["cummulativeQuoteQty"])/float(base["executedQty"])
@@ -414,7 +429,6 @@ class Binance(Coin):
             base = self._client.get_order(**params)
             if ratio == '':
                 ratio = self._client.get_trade_fee(symbol=symbol)["tradeFee"][0]["taker"]
-
             status = "open" if base["status"] == "NEW" else base["status"].lower()
             ask_or_bid = "ask" if base["side"] == "BUY" else "bid"
             filled_price = 0.0 if float(base["executedQty"])==0 else float(base["cummulativeQuoteQty"])/float(base["executedQty"])
@@ -457,7 +471,6 @@ class Binance(Coin):
                     "order_id": orderID,
                     "status": info["status"].lower()
                 }
-
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException
@@ -486,7 +499,6 @@ class Binance(Coin):
                         "order_id": orderID,
                         "status": info["status"].lower()
                     })
-
             return res
         except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
             raise BinanceException

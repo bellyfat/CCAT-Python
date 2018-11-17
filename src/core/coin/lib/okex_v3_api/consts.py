@@ -22,7 +22,6 @@ DELETE = "DELETE"
 SERVER_TIMESTAMP_URL = '/api/general/v3/time'
 
 # account
-
 CURRENCIES_INFO = '/api/account/v3/currencies'
 WALLET_INFO = '/api/account/v3/wallet'
 CURRENCY_INFO = '/api/account/v3/wallet/'
