@@ -4,7 +4,7 @@ from string import Template
 
 # get db view symbol info sql
 GET_VIEW_SYMBOL_INFO_PAIRS_SQL = Template('''
-    SELECT * FROM VIEW_SYMBOL_INFO WHERE server IN ('$servers')
+    SELECT * FROM VIEW_SYMBOL_INFO WHERE server IN $servers
 ''')
 GET_VIEW_SYMBOL_INFO_ITEM_SQL = Template('''
     SELECT * FROM VIEW_SYMBOL_INFO WHERE server='$server' AND fSymbol='$fSymbol' AND tSymbol='$tSymbol'
@@ -221,7 +221,7 @@ CREATE_TABELS_SQL = '''
 # get db talbes sql
 GET_VIEWS_SQL = '''
     SELECT name FROM sqlite_master
-    WHERE type='table'
+    WHERE type='view'
     ORDER BY name;
 '''
 # creat view sql

@@ -42,7 +42,6 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-
     def test_getTables(self):
         res = db.getTables()
         logger.debug(res)
