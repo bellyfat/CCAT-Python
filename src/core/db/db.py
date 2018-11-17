@@ -39,6 +39,54 @@ class DB(object):
         except IOError as err:
             raise DBException
 
+    def getViews(self):
+        self.logger.debug(GET_VIEWS_SQL)
+        try:
+            curs = self.conn.cursor()
+            curs.execute(GET_VIEWS_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException
+
+    def creatViews(self):
+        self.logger.debug(CREATE_VIEWS_SQL)
+        try:
+            curs = self.conn.cursor()
+            curs.executescript(CREATE_VIEWS_SQL)
+            curs.close()
+        except sqlite3.Error as err:
+            raise DBException
+
+    def getViewSymbolInfoPairs(self, *servers):
+        try:
+            curs = self.conn.cursor()
+            GET_SERVERS_VIEW_SYMBOL_INFO_PAIRS_SQL = GET_VIEW_SYMBOL_INFO_PAIRS_SQL.substitute(servers=servers)
+            self.logger.debug(GET_SERVERS_VIEW_SYMBOL_INFO_PAIRS_SQL)
+            curs.execute(GET_SERVERS_VIEW_SYMBOL_INFO_PAIRS_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException
+
+    def getViewSymbolInfoItem(self, exchange, fSymbol, tSymbol):
+        try:
+            curs = self.conn.cursor()
+            GET_ITEM_VIEW_SYMBOL_INFO_ITEM_SQL = GET_VIEW_SYMBOL_INFO_ITEM_SQL.substitute(
+                server=exchange,
+                fSymbol=fSymbol,
+                tSymbol=tSymbol
+            )
+            self.logger.debug(GET_ITEM_VIEW_SYMBOL_INFO_ITEM_SQL)
+            curs.execute(GET_ITEM_VIEW_SYMBOL_INFO_ITEM_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException
+
     def getTables(self):
         self.logger.debug(GET_TABLES_SQL)
         try:

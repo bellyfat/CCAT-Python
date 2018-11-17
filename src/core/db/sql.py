@@ -2,6 +2,13 @@
 
 from string import Template
 
+# get db view symbol info sql
+GET_VIEW_SYMBOL_INFO_PAIRS_SQL = Template('''
+    SELECT * FROM VIEW_SYMBOL_INFO WHERE server IN ('$servers')
+''')
+GET_VIEW_SYMBOL_INFO_ITEM_SQL = Template('''
+    SELECT * FROM VIEW_SYMBOL_INFO WHERE server='$server' AND fSymbol='$fSymbol' AND tSymbol='$tSymbol'
+''')
 
 # get db account info sql
 GET_ACCOUNT_INFO_SQL = '''
@@ -211,6 +218,20 @@ CREATE_TABELS_SQL = '''
     COMMIT;
 '''
 
+# get db talbes sql
+GET_VIEWS_SQL = '''
+    SELECT name FROM sqlite_master
+    WHERE type='table'
+    ORDER BY name;
+'''
 # creat view sql
-
-# fast init sql
+CREATE_VIEWS_SQL = '''
+    BEGIN TRANSACTION;
+    CREATE VIEW IF NOT EXISTS VIEW_SYMBOL_INFO
+    AS
+    	SELECT S1.*
+        FROM SYMBOL_INFO S1,SYMBOL_INFO S2
+        WHERE S1.server<>S2.server AND S1.fSymbol = S2.fSymbol AND S1.tSymbol = S2.tSymbol
+        ORDER BY fSymbol, tSymbol;
+    COMMIT;
+'''

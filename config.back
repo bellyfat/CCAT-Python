@@ -1,4 +1,29 @@
 {
+  "register": {
+    "user": "CCATer",
+    "email": "",
+    "phone": "",
+    "pwd": "",
+    "series": "",
+    "regCode": ""
+  },
+  "main":{
+    "exchanges" : ["okex", "binance"],
+    "baseCoin": "USDT",
+    "targetCoin": "USDT",
+    "excludeCoins": []
+  },
+  "engine":{
+    "listen": {
+      "kline_day": "1",
+      "kline_volume": "10000",
+      "ticker_second": "5"
+    },
+    "judge": "",
+    "execute": "",
+    "backtest": "",
+    "statistic": ""
+  },
   "db":{
     "type": "sqlite3",
     "url": "CCAT.db"
