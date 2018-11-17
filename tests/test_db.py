@@ -95,7 +95,7 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_insertMarketKline(self):
-        db.insertMarketKline("all", "BTC", "USDT", "1m", "2018-11-11T00:00:00.000Z", "2018-11-11T01:00:00.000Z")
+        db.insertMarketKline("all", "BTC", "USDT", "1m", "2018-11-17T00:00:00.000Z", "2018-11-17T01:00:00.000Z")
         res = db.getMarketKline()
         logger.debug(res)
         self.assertIsInstance(res, list)
@@ -119,13 +119,13 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_insertTradeBacktestHistory(self):
-        db.insertTradeBacktestHistory()
+        db.insertTradeBacktestHistory("all", "ETH", "USDT", "ask", 150, 0.1)
         res = db.getTradeBacktestHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertTradeOrderHistory(self):
-        db.insertTradeOrderHistory()
+        db.insertTradeOrderHistory("binance", "ETH", "USDT", "ask", 150, 0.1)
         res = db.getTradeOrderHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
@@ -158,16 +158,16 @@ test_db = [
     # TestDB("test_getTradeOrderHistory"),
     # TestDB("test_getWithdrawHistory"),
     # TestDB("test_getWithdrawInfo"),
-    TestDB("test_insertAccountInfo"),
-    TestDB("test_insertMarketDepth"),
-    TestDB("test_insertMarketKline"),
-    TestDB("test_insertMarketTicker"),
-    TestDB("test_insertServerInfo"),
-    TestDB("test_insertSymbolInfo"),
+    # TestDB("test_insertAccountInfo"),
+    # TestDB("test_insertMarketDepth"),
+    # TestDB("test_insertMarketKline"),
+    # TestDB("test_insertMarketTicker"),
+    # TestDB("test_insertServerInfo"),
+    # TestDB("test_insertSymbolInfo"),
     TestDB("test_insertTradeBacktestHistory"),
     TestDB("test_insertTradeOrderHistory"),
-    TestDB("test_insertWithdrawHistory"),
-    TestDB("test_insertWithdrawInfo")
+    # TestDB("test_insertWithdrawHistory"),
+    # TestDB("test_insertWithdrawInfo")
 ]
 
 if __name__ == "__main__":

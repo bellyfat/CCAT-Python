@@ -76,12 +76,12 @@ INSERT_SYMBOL_INFO_SQL = Template('''
 ''')
 # insert db trade backtest history sql
 INSERT_TRADE_BACKTEST_HISTORY_SQL = Template('''
-    INSERT INTO TRADE_BACKTEST_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
+    INSERT OR REPLACE INTO TRADE_BACKTEST_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
     VALUES ('$server', $timeStamp, '$order_id', '$status', '$type', '$fSymbol', '$tSymbol', '$ask_or_bid', $ask_bid_price, $ask_bid_size, $filled_price, $filled_size, $fee);
 ''')
 # insert db trade order history sql
 INSERT_TRADE_ORDER_HISTORY_SQL = Template('''
-    INSERT INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
+    INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
     VALUES ('$server', $timeStamp, '$order_id', '$status', '$type', '$fSymbol', '$tSymbol', '$ask_or_bid', $ask_bid_price, $ask_bid_size, $filled_price, $filled_size, $fee);
 ''')
 # insert db withdraw history sql
@@ -121,7 +121,7 @@ CREATE_TABELS_SQL = '''
     CREATE TABLE IF NOT EXISTS `TRADE_ORDER_HISTORY` (
     	`server`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
-    	`order_id`	TEXT NOT NULL,
+    	`order_id`	TEXT NOT NULL UNIQUE,
     	`status`	TEXT,
     	`type`	TEXT NOT NULL,
     	`fSymbol`	TEXT NOT NULL,
@@ -136,7 +136,7 @@ CREATE_TABELS_SQL = '''
     CREATE TABLE IF NOT EXISTS `TRADE_BACKTEST_HISTORY` (
     	`server`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
-    	`order_id`	TEXT NOT NULL,
+    	`order_id`	TEXT NOT NULL UNIQUE,
     	`status`	TEXT,
     	`type`	TEXT NOT NULL,
     	`fSymbol`	TEXT NOT NULL,

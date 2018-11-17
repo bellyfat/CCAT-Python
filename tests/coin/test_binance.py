@@ -112,7 +112,7 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     # def test_createOrder(self):
-    #     res = binance.createOrder("ETH", "USDT", "ask", 200, 0.05)
+    #     res = binance.createOrder("ETH", "USDT", "ask", 150, 0.05)
     #     logger.debug(res)
     #     self.assertIsInstance(res, dict)
 

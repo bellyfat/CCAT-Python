@@ -111,7 +111,7 @@ class TestOkex(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     # def test_createOrder(self):
-    #     res = okex.createOrder("ETH", "USDT", "ask", 200, 0.001)
+    #     res = okex.createOrder("ETH", "USDT", "ask", 150, 0.001)
     #     logger.debug(res)
     #     self.assertIsInstance(res, dict)
 

@@ -9,7 +9,7 @@ from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.db.sql import *
 from src.core.util.exceptions import DBException
-from src.core.util.helper import sqliteEscape
+from src.core.util.helper import utcnow_timestamp, sqlite_escape
 from src.core.util.log import Logger
 
 proxies = Config()._proxies
@@ -230,9 +230,9 @@ class DB(object):
                     timeStamp=int(base["timeStamp"]),
                     fSymbol=str(base["fSymbol"]),
                     tSymbol=str(base["tSymbol"]),
-                    bid_price_size=str(sqliteEscape(
+                    bid_price_size=str(sqlite_escape(
                         json.dumps(base["bid_price_size"]))),
-                    ask_price_size=str(sqliteEscape(
+                    ask_price_size=str(sqlite_escape(
                         json.dumps(base["ask_price_size"])))
                 )
                 logger.debug(INSERT_OKEX_MARKET_DEPTH_SQL)
@@ -245,9 +245,9 @@ class DB(object):
                     timeStamp=int(base["timeStamp"]),
                     fSymbol=str(base["fSymbol"]),
                     tSymbol=str(base["tSymbol"]),
-                    bid_price_size=str(sqliteEscape(
+                    bid_price_size=str(sqlite_escape(
                         json.dumps(base["bid_price_size"]))),
-                    ask_price_size=str(sqliteEscape(
+                    ask_price_size=str(sqlite_escape(
                         json.dumps(base["ask_price_size"])))
                 )
                 logger.debug(INSERT_BINANCE_MARKET_DEPTH_SQL)
@@ -482,11 +482,121 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException
 
-    def insertTradeBacktestHistory(self):
-        pass
+    def insertTradeBacktestHistory(self, exchange, fSymbol, tSymbol, ask_or_bid, price, quantity, ratio='', type="limit"):
+        try:
+            curs = self.conn.cursor()
+            # OKEX
+            if exchange == "all" or okexConf["exchange"] in exchange:
+                timeStamp = utcnow_timestamp()
+                order_id = '0x' + str(timeStamp)
+                status = 'filled'
+                if ratio == '':
+                    ratio = okex.getTradeFees()[0]["taker"]
+                fee = float(ratio) * float(price) * float(quantity)
+                INSERT_OKEX_TRADE_BACKTEST_HISTORY_SQL = INSERT_TRADE_BACKTEST_HISTORY_SQL.substitute(
+                    server=str(okexConf["exchange"]),
+                    timeStamp=int(timeStamp),
+                    order_id=str(order_id),
+                    status=str(status),
+                    type=str(type),
+                    fSymbol=str(fSymbol),
+                    tSymbol=str(tSymbol),
+                    ask_or_bid=str(ask_or_bid),
+                    ask_bid_price=float(price),
+                    ask_bid_size=float(quantity),
+                    filled_price=float(price),
+                    filled_size=float(quantity),
+                    fee=float(fee)
+                )
+                logger.debug(INSERT_OKEX_TRADE_BACKTEST_HISTORY_SQL)
+                curs.execute(INSERT_OKEX_TRADE_BACKTEST_HISTORY_SQL)
+            # Binance
+            if exchange == "all" or binanceConf["exchange"] in exchange:
+                timeStamp = utcnow_timestamp()
+                order_id = '0x' + str(timeStamp)
+                status = 'filled'
+                if ratio == '':
+                    ratio = binance.getTradeFees()[0]["taker"]
+                fee = float(ratio) * float(price) * float(quantity)
+                INSERT_BINANCE_TRADE_BACKTEST_HISTORY_SQL = INSERT_TRADE_BACKTEST_HISTORY_SQL.substitute(
+                    server=str(binanceConf["exchange"]),
+                    timeStamp=int(timeStamp),
+                    order_id=str(order_id),
+                    status=str(status),
+                    type=str(type),
+                    fSymbol=str(fSymbol),
+                    tSymbol=str(tSymbol),
+                    ask_or_bid=str(ask_or_bid),
+                    ask_bid_price=float(price),
+                    ask_bid_size=float(quantity),
+                    filled_price=float(price),
+                    filled_size=float(quantity),
+                    fee=float(fee)
+                )
+                logger.debug(INSERT_BINANCE_TRADE_BACKTEST_HISTORY_SQL)
+                curs.execute(INSERT_BINANCE_TRADE_BACKTEST_HISTORY_SQL)
+            # Huobi
+            # to_be_continue
+            # Gate
+            # to_be_continue
+            self.conn.commit()
+            curs.close()
+        except sqlite3.Error as err:
+            raise DBException
 
-    def insertTradeOrderHistory(self):
-        pass
+    def insertTradeOrderHistory(self, exchange, fSymbol, tSymbol, ask_or_bid, price, quantity, ratio='', type="limit"):
+        try:
+            curs = self.conn.cursor()
+            # OKEX
+            if exchange == "all" or okexConf["exchange"] in exchange:
+                base = okex.createOrder(
+                    fSymbol, tSymbol, ask_or_bid, price, quantity, ratio, type)
+                INSERT_OKEX_TRADE_ORDER_HISTORY_SQL = INSERT_TRADE_ORDER_HISTORY_SQL.substitute(
+                    server=str(okexConf["exchange"]),
+                    timeStamp=int(base["timeStamp"]),
+                    order_id=str(base["order_id"]),
+                    status=str(base["status"]),
+                    type=str(base["type"]),
+                    fSymbol=str(base["fSymbol"]),
+                    tSymbol=str(base["tSymbol"]),
+                    ask_or_bid=str(base["ask_or_bid"]),
+                    ask_bid_price=float(base["ask_bid_price"]),
+                    ask_bid_size=float(base["ask_bid_size"]),
+                    filled_price=float(base["filled_price"]),
+                    filled_size=float(base["filled_size"]),
+                    fee=float(base["fee"])
+                )
+                logger.debug(INSERT_OKEX_TRADE_ORDER_HISTORY_SQL)
+                curs.execute(INSERT_OKEX_TRADE_ORDER_HISTORY_SQL)
+            # Binance
+            if exchange == "all" or binanceConf["exchange"] in exchange:
+                base = binance.createOrder(
+                    fSymbol, tSymbol, ask_or_bid, price, quantity, ratio, type)
+                INSERT_BINANCE_TRADE_ORDER_HISTORY_SQL = INSERT_TRADE_ORDER_HISTORY_SQL.substitute(
+                    server=str(binanceConf["exchange"]),
+                    timeStamp=int(base["timeStamp"]),
+                    order_id=str(base["order_id"]),
+                    status=str(base["status"]),
+                    type=str(base["type"]),
+                    fSymbol=str(base["fSymbol"]),
+                    tSymbol=str(base["tSymbol"]),
+                    ask_or_bid=str(base["ask_or_bid"]),
+                    ask_bid_price=float(base["ask_bid_price"]),
+                    ask_bid_size=float(base["ask_bid_size"]),
+                    filled_price=float(base["filled_price"]),
+                    filled_size=float(base["filled_size"]),
+                    fee=float(base["fee"])
+                )
+                logger.debug(INSERT_BINANCE_TRADE_ORDER_HISTORY_SQL)
+                curs.execute(INSERT_BINANCE_TRADE_ORDER_HISTORY_SQL)
+            # Huobi
+            # to_be_continue
+            # Gate
+            # to_be_continue
+            self.conn.commit()
+            curs.close()
+        except sqlite3.Error as err:
+            raise DBException
 
     def insertWithdrawHistory(self, exchange, asset):
         try:
@@ -496,34 +606,37 @@ class DB(object):
                 timeStamp = okex.getServerTime()
                 base = okex.getAccountAssetDetail(asset)
                 INSERT_OKEX_WITHDRAW_HISTORY_SQL = INSERT_WITHDRAW_HISTORY_SQL.substitute(
-                    server = str(okexConf["exchange"]),
-                    timeStamp = int(timeStamp),
-                    deposite = str(sqliteEscape(', '.join(json.dumps(b) for b in base["deposit"]))),
-                    withdraw = str(sqliteEscape(', '.join(json.dumps(b) for b in base["withdraw"])))
+                    server=str(okexConf["exchange"]),
+                    timeStamp=int(timeStamp),
+                    deposite=str(sqlite_escape(', '.join(json.dumps(b)
+                                                         for b in base["deposit"]))),
+                    withdraw=str(sqlite_escape(', '.join(json.dumps(b)
+                                                         for b in base["withdraw"])))
                 )
                 logger.debug(INSERT_OKEX_WITHDRAW_HISTORY_SQL)
-                curs.executescript(INSERT_OKEX_WITHDRAW_HISTORY_SQL)
+                curs.execute(INSERT_OKEX_WITHDRAW_HISTORY_SQL)
             # Binance
             if exchange == "all" or binanceConf["exchange"] in exchange:
                 timeStamp = binance.getServerTime()
                 base = binance.getAccountAssetDetail(asset)
                 INSERT_BINANCE_WITHDRAW_HISTORY_SQL = INSERT_WITHDRAW_HISTORY_SQL.substitute(
-                    server = str(binanceConf["exchange"]),
-                    timeStamp = int(timeStamp),
-                    deposite = str(sqliteEscape(', '.join(json.dumps(b) for b in base["deposit"]))),
-                    withdraw = str(sqliteEscape(', '.join(json.dumps(b) for b in base["withdraw"])))
+                    server=str(binanceConf["exchange"]),
+                    timeStamp=int(timeStamp),
+                    deposite=str(sqlite_escape(', '.join(json.dumps(b)
+                                                         for b in base["deposit"]))),
+                    withdraw=str(sqlite_escape(', '.join(json.dumps(b)
+                                                         for b in base["withdraw"])))
                 )
                 logger.debug(INSERT_BINANCE_WITHDRAW_HISTORY_SQL)
-                curs.executescript(INSERT_BINANCE_WITHDRAW_HISTORY_SQL)
+                curs.execute(INSERT_BINANCE_WITHDRAW_HISTORY_SQL)
             # Huobi
             # to_be_continue
             # Gate
             # to_be_continue
+            self.conn.commit()
             curs.close()
         except sqlite3.Error as err:
             raise DBException
-
-
 
     def insertWithdrawInfo(self):
         try:
