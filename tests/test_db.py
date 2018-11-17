@@ -83,25 +83,25 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_insertAccountInfo(self):
-        db.insertAccountInfo("binance")
+        db.insertAccountInfo("all")
         res = db.getAccountInfo()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertMarketDepth(self):
-        db.insertMarketDepth("binance","ETH","USDT")
+        db.insertMarketDepth("all","ETH","USDT")
         res = db.getMarketDepth()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertMarketKline(self):
-        db.insertMarketKline()
+        db.insertMarketKline("all", "BTC", "USDT", "1m", "2018-11-11T00:00:00.000Z", "2018-11-11T01:00:00.000Z")
         res = db.getMarketKline()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertMarketTicker(self):
-        db.insertMarketTicker()
+        db.insertMarketTicker("all", "BTC", "USDT")
         res = db.getMarketTicker()
         logger.debug(res)
         self.assertIsInstance(res, list)
@@ -131,7 +131,7 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_insertWithdrawHistory(self):
-        db.insertWithdrawHistory()
+        db.insertWithdrawHistory("all", "USDT")
         res = db.getWithdrawHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
@@ -145,9 +145,9 @@ class TestDB(unittest.TestCase):
 # list of test_db
 # db test items
 test_db = [
-    TestDB("test_initDB"),
+    # TestDB("test_initDB"),
     # TestDB("test_getTables"),
-    TestDB("test_creatTables"),
+    # TestDB("test_creatTables"),
     # TestDB("test_getAccountInfo"),
     # TestDB("test_getMarketDepth"),
     # TestDB("test_getMarketKline"),
@@ -158,16 +158,16 @@ test_db = [
     # TestDB("test_getTradeOrderHistory"),
     # TestDB("test_getWithdrawHistory"),
     # TestDB("test_getWithdrawInfo"),
-    # TestDB("test_insertAccountInfo"),
-    # TestDB("test_insertMarketDepth"),
+    TestDB("test_insertAccountInfo"),
+    TestDB("test_insertMarketDepth"),
     TestDB("test_insertMarketKline"),
-    # TestDB("test_insertMarketTicker"),
-    # TestDB("test_insertServerInfo"),
-    # TestDB("test_insertSymbolInfo"),
-    # TestDB("test_insertTradeBacktestHistory"),
-    # TestDB("test_insertTradeOrderHistory"),
-    # TestDB("test_insertWithdrawHistory"),
-    # TestDB("test_insertWithdrawInfo")
+    TestDB("test_insertMarketTicker"),
+    TestDB("test_insertServerInfo"),
+    TestDB("test_insertSymbolInfo"),
+    TestDB("test_insertTradeBacktestHistory"),
+    TestDB("test_insertTradeOrderHistory"),
+    TestDB("test_insertWithdrawHistory"),
+    TestDB("test_insertWithdrawInfo")
 ]
 
 if __name__ == "__main__":
