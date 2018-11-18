@@ -59,10 +59,10 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException
 
-    def getViewSymbolInfoPairs(self, *servers):
+    def getViewSymbolInfoPairs(self, *exchanges):
         try:
             curs = self.conn.cursor()
-            GET_SERVERS_VIEW_SYMBOL_INFO_PAIRS_SQL = GET_VIEW_SYMBOL_INFO_PAIRS_SQL.substitute(servers=servers)
+            GET_SERVERS_VIEW_SYMBOL_INFO_PAIRS_SQL = GET_VIEW_SYMBOL_INFO_PAIRS_SQL.substitute(servers=exchanges)
             self.logger.debug(GET_SERVERS_VIEW_SYMBOL_INFO_PAIRS_SQL)
             curs.execute(GET_SERVERS_VIEW_SYMBOL_INFO_PAIRS_SQL)
             res = curs.fetchall()

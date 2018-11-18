@@ -15,6 +15,7 @@ class Config(object):
     def __init__(self):
         with open(Config._confStr, 'r') as f:
             jsonStr = json.load(f)
+        Config._version = jsonStr["version"]
         Config._register = jsonStr["register"]
         Config._main = jsonStr["main"]
         Config._engine = jsonStr["engine"]

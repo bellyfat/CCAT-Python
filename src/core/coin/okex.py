@@ -6,7 +6,6 @@ import json
 import requests
 
 from src.core.coin.coin import Coin
-from src.core.util.log import Logger
 from src.core.coin.lib.okex_v3_api.account_api import AccountAPI
 from src.core.coin.lib.okex_v3_api.client import Client
 from src.core.coin.lib.okex_v3_api.exceptions import (OkexAPIException,
@@ -15,8 +14,6 @@ from src.core.coin.lib.okex_v3_api.exceptions import (OkexAPIException,
 from src.core.coin.lib.okex_v3_api.spot_api import SpotAPI
 from src.core.util.exceptions import OkexException
 from src.core.util.helper import date_to_milliseconds, interval_to_milliseconds
-
-logger = Logger()
 
 class Okex(Coin):
 

@@ -18,7 +18,7 @@ class EventEngine(object):
         # 事件引擎主进程
         self.__mainProcess = Process(target=self.__run)
         # logger
-        self.logger = Logger()
+        self.__logger = Logger()
 
     # 执行事件循环
     def __run(self):
@@ -28,7 +28,7 @@ class EventEngine(object):
                 # 获取队列中的事件 超时1秒
                 event = self.__eventQueue.get(block=True, timeout=1)
                 # 执行事件
-                self.logger.debug(event)
+                self.__logger.debug(event)
                 self.__process(event)
             else:
                 # print('无任何事件')
@@ -68,27 +68,29 @@ class EventEngine(object):
         self.__mainProcess.join()
 
     # 注册事件
-    def register(self, type, handler):
+    def register(self, event, handler):
         """注册事件处理函数监听"""
         # 尝试获取该事件类型对应的处理函数列表，若无则创建
+        type = event["type"]
         try:
             handlerList = self.__handlers[type]
+            self.__logger.debug(handlerList)
         except KeyError:
             handlerList = []
             self.__handlers[type] = handlerList
         # 若要注册的处理器不在该事件的处理器列表中，则注册该事件
         if handler not in handlerList:
-            self.logger.debug(handler)
             handlerList.append(handler)
 
-    def unregister(self, type, handler):
+    def unregister(self, event, handler):
         """注销事件处理函数监听"""
         # 尝试获取该事件类型对应的处理函数列表，若无则忽略该次注销请求
+        type = event["type"]
         try:
             handlerList = self.__handlers[type]
+            self.__logger.debug(handlerList)
             # 如果该函数存在于列表中，则移除
             if handler in handlerList:
-                self.logger.debug(handler)
                 handlerList.remove(handler)
             # 如果函数列表为空，则从引擎中移除该事件类型
             if not handlerList:
@@ -98,12 +100,12 @@ class EventEngine(object):
 
     def sendEvent(self, event):
         # 发送事件 像队列里存入事件
-        self.logger.debug(event)
+        self.__logger.debug(event)
         self.__eventQueue.put(event)
 
 
 class Event(object):
     # 事件对象
-    def __init__(self, type='', dict={}):
-        self.type = type
-        self.dict = dict
+    def __init__(self, event):
+        self.type = event["type"]
+        self.dict = event["dict"]

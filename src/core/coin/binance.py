@@ -14,10 +14,8 @@ from binance.exceptions import (BinanceAPIException, BinanceOrderException,
                                 BinanceWithdrawException)
 
 from src.core.coin.coin import Coin
-from src.core.util.log import Logger
 from src.core.util.exceptions import BinanceException
 
-logger = Logger()
 
 class Binance(Coin):
 

@@ -7,10 +7,9 @@ LISTEN_DEPTH_EVENT = Template('''
 {
     "type": "LISTEN_DEPTH_EVENT"
     "dict": {
-        "event": "LISTEN_DEPTH_EVENT",
-        "handler": "",
+        "servers": $servers,
         "args": [$fSymbol, $tSymbol, $limit],
-        "remark": "to be continue"
+        "remark": "symbols info, run as need"
     }
 }
 ''')
@@ -18,8 +17,7 @@ LISTEN_KLINE_EVENT = Template('''
 {
     "type": "LISTEN_KLINE_EVENT"
     "dict": {
-        "event": "LISTEN_KLINE_EVENT",
-        "handler": "",
+        "servers": $servers,
         "args": [$fSymbol, $tSymbol, $interval, $start, $end],
         "remark": "symbols filter, run first and frequent"
     }
@@ -29,8 +27,7 @@ LISTEN_TICKER_EVENT = Template('''
 {
     "type": "LISTEN_TICKER_EVENT"
     "dict": {
-        "event": "LISTEN_TICKER_EVENT",
-        "handler": "",
+        "servers": $servers,
         "args": [$fSymbol, $tSymbol],
         "remark": "ccat filter, run as frequent as possible"
     }
@@ -42,8 +39,7 @@ JUDGE_KLINE_EVENT = Template('''
 {
     "type": "JUDGE_KLINE_EVENT"
     "dict": {
-        "event": "JUDGE_KLINE_EVENT",
-        "handler": "",
+        "servers": $servers,
         "args": [],
         "remark": ""
     }
@@ -53,8 +49,7 @@ JUDGE_TICKER_EVENT = Template('''
 {
     "type": "JUDGE_TICKER_EVENT"
     "dict": {
-        "event": "JUDGE_TICKER_EVENT",
-        "handler": "",
+        "servers": $servers,
         "args": [],
         "remark": ""
     }
@@ -66,8 +61,7 @@ BACKTEST_EVENT = Template('''
 {
     "type": "BACKTEST_EVENT"
     "dict": {
-        "event": "BACKTEST_EVENT",
-        "handler": "",
+        "servers": $servers,
         "args": [],
         "remark": ""
     }
@@ -79,8 +73,7 @@ EXECUTE_EVENT = Template('''
 {
     "type": "EXECUTE_EVENT"
     "dict": {
-        "event": "EXECUTE_EVENT",
-        "handler": "",
+        "servers": $servers,
         "args": [],
         "remark": ""
     }
@@ -92,8 +85,7 @@ STATISTIC_EVENT = Template('''
 {
     "type": "BACKTEST_EVENT"
     "dict": {
-        "event": "BACKTEST_EVENT",
-        "handler": "",
+        "servers": $servers,
         "args": [],
         "remark": ""
     }
