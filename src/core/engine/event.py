@@ -5,30 +5,30 @@ from string import Template
 # listen event list
 LISTEN_DEPTH_EVENT = Template('''
 {
-    "type": "LISTEN_DEPTH_EVENT"
+    "type": "LISTEN_DEPTH_EVENT",
     "dict": {
-        "servers": $servers,
-        "args": [$fSymbol, $tSymbol, $limit],
+        "servers": "$servers",
+        "args": ["$fSymbol", "$tSymbol", "$limit"],
         "remark": "symbols info, run as need"
     }
 }
 ''')
 LISTEN_KLINE_EVENT = Template('''
 {
-    "type": "LISTEN_KLINE_EVENT"
+    "type": "LISTEN_KLINE_EVENT",
     "dict": {
-        "servers": $servers,
-        "args": [$fSymbol, $tSymbol, $interval, $start, $end],
+        "servers": "$servers",
+        "args": ["$fSymbol", "$tSymbol", "$interval", "$start", "$end"],
         "remark": "symbols filter, run first and frequent"
     }
 }
 ''')
 LISTEN_TICKER_EVENT = Template('''
 {
-    "type": "LISTEN_TICKER_EVENT"
+    "type": "LISTEN_TICKER_EVENT",
     "dict": {
-        "servers": $servers,
-        "args": [$fSymbol, $tSymbol],
+        "servers": "$servers",
+        "args": ["$fSymbol", "$tSymbol"],
         "remark": "ccat filter, run as frequent as possible"
     }
 }
@@ -37,7 +37,7 @@ LISTEN_TICKER_EVENT = Template('''
 # judge event list
 JUDGE_KLINE_EVENT = Template('''
 {
-    "type": "JUDGE_KLINE_EVENT"
+    "type": "JUDGE_KLINE_EVENT",
     "dict": {
         "servers": $servers,
         "args": [],
@@ -47,7 +47,7 @@ JUDGE_KLINE_EVENT = Template('''
 ''')
 JUDGE_TICKER_EVENT = Template('''
 {
-    "type": "JUDGE_TICKER_EVENT"
+    "type": "JUDGE_TICKER_EVENT",
     "dict": {
         "servers": $servers,
         "args": [],
@@ -59,7 +59,7 @@ JUDGE_TICKER_EVENT = Template('''
 # backtest event list
 BACKTEST_EVENT = Template('''
 {
-    "type": "BACKTEST_EVENT"
+    "type": "BACKTEST_EVENT",
     "dict": {
         "servers": $servers,
         "args": [],
@@ -71,7 +71,7 @@ BACKTEST_EVENT = Template('''
 # execute event list
 EXECUTE_EVENT = Template('''
 {
-    "type": "EXECUTE_EVENT"
+    "type": "EXECUTE_EVENT",
     "dict": {
         "servers": $servers,
         "args": [],
@@ -83,7 +83,7 @@ EXECUTE_EVENT = Template('''
 # statistic event list
 STATISTIC_EVENT = Template('''
 {
-    "type": "BACKTEST_EVENT"
+    "type": "BACKTEST_EVENT",
     "dict": {
         "servers": $servers,
         "args": [],

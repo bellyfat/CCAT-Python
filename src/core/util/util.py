@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import os
 from src.core.db.db import DB
+from src.core.config import Config
 from src.core.util.log import Logger
+from src.core.util.exceptions import DBException
 
 # util class
 class Util(object):
@@ -11,7 +14,8 @@ class Util(object):
 
     def init(self):
         try:
-            db = DB()
+            dbStr = os.path.join(os.getcwd(), Config()._db["url"])
+            db = DB(dbStr)
             db.initDB()
             db.creatTables()
             db.creatViews()
