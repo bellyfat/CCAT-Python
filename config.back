@@ -15,6 +15,7 @@
     "excludeCoins": []
   },
   "engine":{
+    "epoch": "0",
     "timeout": "1"
   },
   "listen":{

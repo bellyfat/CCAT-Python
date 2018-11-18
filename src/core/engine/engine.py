@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import time
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Value
+
 from src.core.config import Config
 from src.core.util.log import Logger
 
@@ -12,33 +13,35 @@ class EventEngine(object):
         # 保存事件列表
         self.__eventQueue = Queue()
         # 引擎开关
-        self.__active = False
+        self.__active = Value('b',False)
         # 事件处理字典{'event1': [handler1,handler2] , 'event2':[handler3, ...,handler4]}
         self.__handlers = {}
         # 保存事件处理进程池
         self.__processPool = []
         # 事件引擎主进程
-        self.__mainProcess = Process(target=self.__run)
+        self.__mainProcess = Process(target=self.__run, args=(self.__active, ))
         # logger
         self.__logger = Logger()
 
     # 执行事件循环
-    def __run(self):
-        while self.__active:
+    def __run(self, __active):
+        self.__logger.debug("__run")
+        while __active.value:
             # 事件队列非空
             if not self.__eventQueue.empty():
                 # 获取队列中的事件 超时1秒
-                event = self.__eventQueue.get(block=True, timeout=float(Config()._engine["timeout"]))
+                event = self.__eventQueue.get(
+                    block=True, timeout=float(Config()._engine["timeout"]))
                 # 执行事件
                 self.__logger.debug(event)
                 self.__process(event)
             else:
-                self.__logger.debug("NOT ANY EVENT")
+                self.__logger.debug("eventQueue empty")
                 time.sleep(float(Config()._engine["epoch"]))
-                pass
 
     # 执行事件
     def __process(self, event):
+        self.__logger.debug("__process")
         if event.type in self.__handlers:
             for handler in self.__handlers[event.type]:
                 # 开一个进程去异步处理
@@ -49,16 +52,18 @@ class EventEngine(object):
 
     # 开启事件引擎
     def start(self):
-        self.__logger.debug("START")
-        self.__active = True
+        self.__logger.debug("start")
+        self.__active.value = True
+        # 恢复等待事件处理进程运行
+        for p in self.__processPool:
+            p.start()
         self.__mainProcess.start()
 
     # 暂停事件引擎
     def stop(self):
-        """停止"""
-        self.__logger.debug("STOP")
+        self.__logger.debug("stop")
         # 将事件管理器设为停止
-        self.__active = False
+        self.__active.value = False
         # 等待事件处理进程退出
         for p in self.__processPool:
             p.join()
@@ -66,8 +71,8 @@ class EventEngine(object):
 
     # 终止事件引擎
     def terminate(self):
-        self.__logger.debug("TERMINATE")
-        self.__active = False
+        self.__logger.debug("terminate")
+        self.__active.value = False
         # 终止所有事件处理进程
         for p in self.__processPool:
             p.terminate()
@@ -75,10 +80,9 @@ class EventEngine(object):
 
     # 注册事件
     def register(self, event, handler):
-        """注册事件处理函数监听"""
         # 尝试获取该事件类型对应的处理函数列表，若无则创建
+        self.__logger.debug("register")
         type = event.type
-        self.__logger.debug(type)
         try:
             handlerList = self.__handlers[type]
         except KeyError:
@@ -89,10 +93,9 @@ class EventEngine(object):
             handlerList.append(handler)
 
     def unregister(self, event, handler):
-        """注销事件处理函数监听"""
         # 尝试获取该事件类型对应的处理函数列表，若无则忽略该次注销请求
+        self.__logger.debug("unregister")
         type = event.type
-        self.__logger.debug(type)
         try:
             handlerList = self.__handlers[type]
             # 如果该函数存在于列表中，则移除
@@ -106,7 +109,7 @@ class EventEngine(object):
 
     def sendEvent(self, event):
         # 发送事件 像队列里存入事件
-        self.__logger.debug(event)
+        self.__logger.debug("sendEvent")
         self.__eventQueue.put(event)
 
 

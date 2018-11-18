@@ -5,6 +5,7 @@ import sys
 import unittest
 sys.path.append(os.getcwd())
 
+from src.core.util.util import Util
 from tests.engine.test_listen import TestListen
 from tests.engine.test_backtest import TestBacktest
 from tests.engine.test_execute import TestExecute
@@ -15,7 +16,9 @@ from tests.engine.test_statistic import TestStatistic
 # list of test_engine
 # listen test items
 test_listen = [
-    TestListen("test_listenEvent")
+    TestListen("test_sendListenDepthEvent"),
+    TestListen("test_sendListenKlineEvent"),
+    TestListen("test_sendListenTickerEvent")
 ]
 # backtest test items
 test_backtest = [
@@ -32,6 +35,9 @@ test_statistic = [
 
 # Begin Test
 if __name__ == '__main__':
+    # util init
+    util = Util()
+    util.init()
     # Test
     suite = unittest.TestSuite()
     runner = unittest.TextTestRunner(verbosity=2)
