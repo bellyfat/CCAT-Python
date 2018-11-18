@@ -24,6 +24,10 @@
     "backtest": "",
     "statistic": ""
   },
+  "log":{
+    "type":"CCAT",
+    "url":"CCAT_Python_Spam.log"
+  },
   "db":{
     "type": "sqlite3",
     "url": "CCAT.db"

@@ -4,10 +4,13 @@ import os
 import time
 import logging
 import colorlog
-
+from src.core.config import Config
 
 class Logger(object):
-    _fileStr = time.strftime('%Y_%m_%d_%H_%M_%S', time.localtime(time.time())) + "_CCAT_spam.log"
+
+    _type = Config()._log["type"]
+    _fileStr = Config()._log["url"]
+    # _fileStr = time.strftime('%Y_%m_%d_%H_%M_%S', time.localtime(time.time())) + "_CCAT_Python_Spam.log"
     _logfile = os.path.join(os.getcwd(),"log", _fileStr)
     _file_formatter = logging.Formatter('%(asctime)s %(levelname)-8s: %(message)s')
     _console_formatter = colorlog.ColoredFormatter(
@@ -25,19 +28,20 @@ class Logger(object):
         style='%'
     )
 
-    _logger = logging.getLogger('CCAT')
 
     def __init__(self):
         # 设置文件日志的格式
         # 定义日志处理器将INFO或者以上级别的日志发送到 sys.stderr
-        handler = logging.FileHandler(self._logfile)
-        handler.setFormatter(self._file_formatter)
+        handler = logging.FileHandler(Logger._logfile, mode="a+")
+        handler.setFormatter(Logger._file_formatter)
         handler.setLevel(logging.INFO)
         # 设置控制台日志的格式
         # 定义日志处理器将WARNING或者以上级别的日志发送到 console
         console = logging.StreamHandler()
-        console.setFormatter(self._console_formatter)
+        console.setFormatter(Logger._console_formatter)
         console.setLevel(logging.DEBUG)
+        # 设置logger
+        self._logger = logging.getLogger(Logger._type)
         # 添加至logger
         self._logger.handlers = []
         self._logger.addHandler(handler)
