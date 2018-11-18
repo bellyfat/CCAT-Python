@@ -1,5 +1,5 @@
 {
-  "version": "CCAT-Python 0.0.1",
+  "version": "CCAT 0.0.1",
   "register": {
     "user": "CCATer",
     "email": "",
@@ -15,15 +15,12 @@
     "excludeCoins": []
   },
   "engine":{
-    "listen": {
-      "kline_day": "1",
-      "kline_volume": "10000",
-      "ticker_second": "5"
-    },
-    "judge": "",
-    "execute": "",
-    "backtest": "",
-    "statistic": ""
+    "timeout": "1"
+  },
+  "listen":{
+    "depthTimer": "0",
+    "klineTimer": "86400",
+    "tickerTimer": "60"
   },
   "log":{
     "type":"CCAT",
