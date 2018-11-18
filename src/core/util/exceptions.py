@@ -9,6 +9,17 @@
 
 # DBException, code = -2001, message =
 
+# EngineException, code = -3000, message =
+
+class EngineException(Exception):
+
+    def __init__(self):
+        self.code = -3000
+        self.message = "engine exceptions throwed."
+
+    def __str__(self):  # pragma: no cover
+        return 'EngineException(code=%s): %s' % (self.code, self.message)
+
 
 class DBException(Exception):
 

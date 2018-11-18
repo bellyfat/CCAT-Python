@@ -15,8 +15,8 @@ if __name__ == '__main__':
     # os.system("python3 tests/test_coin.py")
 
     # 2. unit test for test_db
-    logger.debug("2. testing... python3 tests/test_db.py")
-    os.system("python3 tests/test_db.py")
+    # logger.debug("2. testing... python3 tests/test_db.py")
+    # os.system("python3 tests/test_db.py")
 
     # 3. unit test for test_engine
     logger.debug("3. testing... python3 tests/test_engine.py")

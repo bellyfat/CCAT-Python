@@ -1,4 +1,5 @@
 {
+  "version": "CCAT 0.0.1",
   "register": {
     "user": "CCATer",
     "email": "",

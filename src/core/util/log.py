@@ -4,6 +4,8 @@ import os
 import time
 import logging
 import colorlog
+from logging.handlers import TimedRotatingFileHandler
+from logging.handlers import RotatingFileHandler
 from src.core.config import Config
 
 class Logger(object):
@@ -32,7 +34,8 @@ class Logger(object):
     def __init__(self):
         # 设置文件日志的格式
         # 定义日志处理器将INFO或者以上级别的日志发送到 sys.stderr
-        handler = logging.FileHandler(Logger._logfile, mode="a+")
+        # handler = logging.FileHandler(Logger._logfile, mode="a+")
+        handler = logging.handlers.TimedRotatingFileHandler(Logger._logfile, when="d", interval=1, backupCount=7)
         handler.setFormatter(Logger._file_formatter)
         handler.setLevel(logging.INFO)
         # 设置控制台日志的格式

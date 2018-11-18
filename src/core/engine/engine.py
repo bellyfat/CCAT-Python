@@ -104,6 +104,6 @@ class EventEngine(object):
 
 class Event(object):
     # 事件对象
-    def __init__(self, type=None):
+    def __init__(self, type='', dict={}):
         self.type = type
-        self.dict = {}
+        self.dict = dict
