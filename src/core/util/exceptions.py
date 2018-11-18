@@ -7,15 +7,27 @@
 # huobiException, code = -1003, message = huobi exchange exceptions throwed
 # gateException, code = -1004, message = gate exchange exceptions throwed
 
-# DBException, code = -2001, message =
+# DBException, code = -2000, message =
 
 # EngineException, code = -3000, message =
 
+# ApplicationException, code = -4000
+
+class ApplicationException(Exception):
+
+    def __init__(self, err):
+        self.code = -4000
+        self.message = err
+
+    def __str__(self):  # pragma: no cover
+        return 'ApplicationException(code=%s): %s' % (self.code, self.message)
+
+
 class EngineException(Exception):
 
-    def __init__(self):
+    def __init__(self, err):
         self.code = -3000
-        self.message = "engine exceptions throwed."
+        self.message = err
 
     def __str__(self):  # pragma: no cover
         return 'EngineException(code=%s): %s' % (self.code, self.message)
@@ -23,9 +35,9 @@ class EngineException(Exception):
 
 class DBException(Exception):
 
-    def __init__(self):
-        self.code = -2001
-        self.message = "db exceptions throwed."
+    def __init__(self, err):
+        self.code = -2000
+        self.message = err
 
     def __str__(self):  # pragma: no cover
         return 'DBException(code=%s): %s' % (self.code, self.message)
@@ -33,18 +45,18 @@ class DBException(Exception):
 
 class OkexException(Exception):
 
-    def __init__(self):
+    def __init__(self, err):
         self.code = -1001
-        self.message = "okex exchange exceptions throwed"
+        self.message = err
 
     def __str__(self):  # pragma: no cover
         return 'OkexException(code=%s): %s' % (self.code, self.message)
 
 class BinanceException(Exception):
 
-    def __init__(self):
+    def __init__(self, err):
         self.code = -1002
-        self.message = "binance exchange exceptions throwed"
+        self.message = err
 
     def __str__(self):  # pragma: no cover
         return 'BinanceException(code=%s): %s' % (self.code, self.message)

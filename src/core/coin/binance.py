@@ -38,8 +38,8 @@ class Binance(Coin):
         try:
             res = self._client.get_server_time()  # UTC Zone UnixStamp
             return res["serverTime"]
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # perseconds qurry and orders rate limits
     def getServerLimits(self):
@@ -59,8 +59,8 @@ class Binance(Coin):
                 "webSockets_second": ''
             }
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # all symbols in pairs list baseSymbol quoteSymbol
     def getServerSymbols(self):
@@ -75,8 +75,8 @@ class Binance(Coin):
                     "tSymbol": tSymbol
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
     # def getServerSymbols(self):
     #     # not all api defined, get form cryptoCompare
     #     try:
@@ -85,9 +85,9 @@ class Binance(Coin):
     #         if res.status_code == requests.codes.ok:
     #             return res.json()["Binance"]
     #         else:
-    #             raise BinanceException
+    #             raise BinanceException(err)
     #     except requests.exceptions.RequestException:
-    #         raise BinanceException
+    #         raise BinanceException(err)
 
     # buy or sell a specific symbol's rate limits
     def getSymbolsLimits(self):
@@ -141,8 +141,8 @@ class Binance(Coin):
                     "min_notional": min_notional
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
     def getMarketOrderbookTicker(self, fSymbol, tSymbol, **kwargs):
@@ -160,8 +160,8 @@ class Binance(Coin):
                 "ask_one_size" : ticker["askQty"]
             }
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # a specific symbol's orderbook with depth
     def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=100, **kwargs):
@@ -178,8 +178,8 @@ class Binance(Coin):
                 "ask_price_size" : ticker["asks"]
             }
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # a specific symbols kline/candlesticks
     def getMarketKline(self, fSymbol, tSymbol, interval, start, end=''):
@@ -218,16 +218,16 @@ class Binance(Coin):
                     "volume":k[5]
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # get symbol trade fees
     def getTradeFees(self, **kwargs):
         try:
             res = self._client.get_trade_fee(**kwargs)
             return res["tradeFee"]
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # get current trade
     def getTradeOpen(self,  fSymbol, tSymbol, ratio='', **kwargs):
@@ -255,8 +255,8 @@ class Binance(Coin):
                     "fee": float(ratio)*float(item["cummulativeQuoteQty"])
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # get history trade
     def getTradeHistory(self,  fSymbol, tSymbol, ratio='', **kwargs):
@@ -285,8 +285,8 @@ class Binance(Coin):
                     "fee": float(ratio)*float(item["cummulativeQuoteQty"])
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # get succeed trade
     def getTradeSucceed(self,  fSymbol, tSymbol, ratio='', **kwargs):
@@ -315,8 +315,8 @@ class Binance(Coin):
                         "fee": float(ratio)*float(item["cummulativeQuoteQty"])
                     })
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # get account all asset balance
     def getAccountBalances(self, **kwargs):
@@ -331,8 +331,8 @@ class Binance(Coin):
                     "locked": float(b["locked"])
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # get account assets deposit and withdraw limit
     def getAccountLimits(self, **kwargs):
@@ -347,8 +347,8 @@ class Binance(Coin):
                     "min_withdraw": float(value["minWithdrawAmount"])
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # get account asset balance
     def getAccountAssetBalance(self, asset, **kwargs):
@@ -361,8 +361,8 @@ class Binance(Coin):
                 "locked": float(base["locked"])
             }
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # get account asset deposit and withdraw history detail
     def getAccountAssetDetail(self, asset='', **kwargs):
@@ -374,8 +374,8 @@ class Binance(Coin):
                 "withdraw":withdraw["withdrawList"]
             }
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # create orders default limit
     def createOrder(self, fSymbol, tSymbol, ask_or_bid, price, quantity, ratio='', type=ORDER_TYPE_LIMIT, **kwargs):
@@ -412,8 +412,8 @@ class Binance(Coin):
                 "fee": float(ratio)*float(base["cummulativeQuoteQty"])
             }
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # check orders done or undone
     def checkOrder(self, fSymbol, tSymbol, orderID, ratio='', **kwargs):
@@ -445,8 +445,8 @@ class Binance(Coin):
                 "fee": float(ratio)*float(base["cummulativeQuoteQty"])
             }
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # cancle the specific order
     def cancleOrder(self, fSymbol, tSymbol, orderID, **kwargs):
@@ -470,8 +470,8 @@ class Binance(Coin):
                     "status": info["status"].lower()
                 }
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
 
     # cancle the batch orders
@@ -498,8 +498,8 @@ class Binance(Coin):
                         "status": info["status"].lower()
                     })
             return res
-        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException):
-            raise BinanceException
+        except (BinanceAPIException, BinanceRequestException, BinanceOrderException, BinanceWithdrawException) as err:
+            raise BinanceException(err)
 
     # deposite asset balance
     def depositeAsset(self, asset, **kwargs):

@@ -4,7 +4,7 @@ import os
 from src.core.db.db import DB
 from src.core.config import Config
 from src.core.util.log import Logger
-from src.core.util.exceptions import DBException
+from src.core.util.exceptions import DBException, ApplicationException
 
 # util class
 class Util(object):
@@ -14,12 +14,11 @@ class Util(object):
 
     def init(self):
         try:
-            dbStr = os.path.join(os.getcwd(), Config()._db["url"])
-            db = DB(dbStr)
+            db = DB()
             db.initDB()
             db.creatTables()
             db.creatViews()
         except DBException as err:
-            errStr = "%s/n, Application Error. Can Not Init File." % err
+            errStr = "%s\n, Application Error. Can Not Init File." % err
             self.logger.critical(errStr)
-            raise DBException
+            raise ApplicationException(errStr)

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import time
 from multiprocessing import Process, Queue
+from src.core.config import Config
 from src.core.util.log import Logger
 
 
@@ -26,12 +28,13 @@ class EventEngine(object):
             # 事件队列非空
             if not self.__eventQueue.empty():
                 # 获取队列中的事件 超时1秒
-                event = self.__eventQueue.get(block=True, timeout=1)
+                event = self.__eventQueue.get(block=True, timeout=float(Config()._engine["timeout"]))
                 # 执行事件
                 self.__logger.debug(event)
                 self.__process(event)
             else:
-                # print('无任何事件')
+                self.__logger.debug("NOT ANY EVENT")
+                time.sleep(float(Config()._engine["epoch"]))
                 pass
 
     # 执行事件
@@ -46,12 +49,14 @@ class EventEngine(object):
 
     # 开启事件引擎
     def start(self):
+        self.__logger.debug("START")
         self.__active = True
         self.__mainProcess.start()
 
     # 暂停事件引擎
     def stop(self):
         """停止"""
+        self.__logger.debug("STOP")
         # 将事件管理器设为停止
         self.__active = False
         # 等待事件处理进程退出
@@ -61,6 +66,7 @@ class EventEngine(object):
 
     # 终止事件引擎
     def terminate(self):
+        self.__logger.debug("TERMINATE")
         self.__active = False
         # 终止所有事件处理进程
         for p in self.__processPool:
@@ -71,10 +77,10 @@ class EventEngine(object):
     def register(self, event, handler):
         """注册事件处理函数监听"""
         # 尝试获取该事件类型对应的处理函数列表，若无则创建
-        type = event["type"]
+        type = event.type
+        self.__logger.debug(type)
         try:
             handlerList = self.__handlers[type]
-            self.__logger.debug(handlerList)
         except KeyError:
             handlerList = []
             self.__handlers[type] = handlerList
@@ -85,10 +91,10 @@ class EventEngine(object):
     def unregister(self, event, handler):
         """注销事件处理函数监听"""
         # 尝试获取该事件类型对应的处理函数列表，若无则忽略该次注销请求
-        type = event["type"]
+        type = event.type
+        self.__logger.debug(type)
         try:
             handlerList = self.__handlers[type]
-            self.__logger.debug(handlerList)
             # 如果该函数存在于列表中，则移除
             if handler in handlerList:
                 handlerList.remove(handler)

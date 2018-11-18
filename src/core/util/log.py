@@ -14,9 +14,9 @@ class Logger(object):
     _fileStr = Config()._log["url"]
     # _fileStr = time.strftime('%Y_%m_%d_%H_%M_%S', time.localtime(time.time())) + "_CCAT_Python_Spam.log"
     _logfile = os.path.join(os.getcwd(),"log", _fileStr)
-    _file_formatter = logging.Formatter('%(asctime)s %(levelname)-8s: %(message)s')
+    _file_formatter = logging.Formatter('%(asctime)s pid=%(process)d %(levelname)-4s: %(message)s')
     _console_formatter = colorlog.ColoredFormatter(
-        "%(log_color)s%(asctime)s %(levelname)-8s: %(reset)s %(blue)s%(message)s",
+        "%(log_color)s%(asctime)s pid=%(process)d %(levelname)-4s: %(reset)s%(blue)s%(message)s",
         datefmt=None,
         reset=True,
         log_colors={

@@ -9,8 +9,7 @@ from src.core.db.db import DB
 from src.core.config import Config
 from src.core.util.log import Logger
 
-dbStr = os.path.join(os.getcwd(), Config()._db["url"])
-db = DB(dbStr)
+db = DB()
 logger = Logger()
 
 class TestDB(unittest.TestCase):

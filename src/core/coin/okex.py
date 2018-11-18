@@ -37,8 +37,8 @@ class Okex(Coin):
         try:
             res = self._client._get_timestamp(self._proxies)
             return date_to_milliseconds(res)
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # perseconds qurry and orders rate limits
     def getServerLimits(self):
@@ -72,8 +72,8 @@ class Okex(Coin):
                     "tSymbol": tSymbol
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
     # def getServerSymbols(self):
     #     # not all api defined, get form cryptoCompare
     #     try:
@@ -82,9 +82,9 @@ class Okex(Coin):
     #         if res.status_code == requests.codes.ok:
     #             return res.json()["OKEX"]
     #         else:
-    #             raise OkexException
+    #             raise OkexException(err)
     #     except requests.exceptions.RequestException:
-    #         raise OkexException
+    #         raise OkexException(err)
 
     # buy or sell a specific symbol's rate limits
     def getSymbolsLimits(self):
@@ -132,8 +132,8 @@ class Okex(Coin):
                     "min_notional": min_notional
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
     def getMarketOrderbookTicker(self, fSymbol, tSymbol):
@@ -150,8 +150,8 @@ class Okex(Coin):
                 "ask_one_size": float(ticker["asks"][0][1])
             }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # a specific symbol's orderbook with depth
     def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=100):
@@ -183,8 +183,8 @@ class Okex(Coin):
                 "ask_price_size": ticker["asks"]
             }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # a specific symbols kline/candlesticks
     def getMarketKline(self, fSymbol, tSymbol, interval, start, end):
@@ -218,8 +218,8 @@ class Okex(Coin):
                     "volume":k["volume"]
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # get symbol trade fees
     def getTradeFees(self):
@@ -263,8 +263,8 @@ class Okex(Coin):
                     "fee": float(ratio) * float(item["filled_notional"])
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # get history trade
     def getTradeHistory(self, fSymbol, tSymbol, ratio='', froms='', to='', limit='100'):
@@ -294,8 +294,8 @@ class Okex(Coin):
                     "fee": float(ratio) * float(item["filled_notional"])
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # get succeed trade
     def getTradeSucceed(self, fSymbol, tSymbol, ratio='', froms='', to='', limit='100'):
@@ -325,8 +325,8 @@ class Okex(Coin):
                     "fee": float(ratio) * float(item["filled_notional"])
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # get account all asset balance
     def getAccountBalances(self, **kwargs):
@@ -341,8 +341,8 @@ class Okex(Coin):
                     "locked": float(b["frozen"])
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # get account asset deposit and withdraw limits
     def getAccountLimits(self, **kwargs):
@@ -365,8 +365,8 @@ class Okex(Coin):
                         "min_withdraw": 0.0
                     })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # get account asset balance
     def getAccountAssetBalance(self, asset, **kwargs):
@@ -379,8 +379,8 @@ class Okex(Coin):
                 "locked": float(base["frozen"])
             }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # get account asset deposit and withdraw history detail
     def getAccountAssetDetail(self, asset, **kwargs):
@@ -398,8 +398,8 @@ class Okex(Coin):
                 "withdraw": withdraw
             }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # create orders default limit
     def createOrder(self, fSymbol, tSymbol, ask_or_bid, price, quantity, ratio='', type="limit"):
@@ -432,8 +432,8 @@ class Okex(Coin):
                 "fee": float(ratio) * float(info["filled_notional"])
             }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # check orders done or undone
     def checkOrder(self, fSymbol, tSymbol, orderID, ratio='', **kwargs):
@@ -461,8 +461,8 @@ class Okex(Coin):
                 "fee": float(ratio) * float(info["filled_notional"])
             }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # cancle the specific order
     def cancleOrder(self, fSymbol, tSymbol, orderID, **kwargs):
@@ -484,8 +484,8 @@ class Okex(Coin):
                     "status": info["status"]
                 }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # cancle the bathch orders
     def cancleBatchOrder(self, fSymbol, tSymbol, orderIDs, **kwargs):
@@ -509,8 +509,8 @@ class Okex(Coin):
                         "status": info["status"]
                     })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException):
-            raise OkexException
+        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+            raise OkexException(err)
 
     # deposite asset balance
     def depositeAsset(self, asset, **kwargs):
