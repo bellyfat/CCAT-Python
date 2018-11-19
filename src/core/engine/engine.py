@@ -5,7 +5,7 @@ from multiprocessing import Process, Queue, Value
 
 from src.core.config import Config
 from src.core.util.log import Logger
-
+from src.core.util.exceptions import EngineException
 
 class EventEngine(object):
     # 初始化事件事件驱动引擎
@@ -102,8 +102,9 @@ class EventEngine(object):
             # 如果函数列表为空，则从引擎中移除该事件类型
             if not handlerList:
                 del self.__handlers[type]
-        except KeyError:
-            pass
+        except KeyError as err:
+            errStr = "src.core.engine.engine.unregister: %s" % EngineException(err)
+            self.__logger.error(errStr)
 
     def sendEvent(self, event):
         self.__logger.debug("src.core.engine.engine.sendEvent")

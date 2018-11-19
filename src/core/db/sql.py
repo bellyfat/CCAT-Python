@@ -9,6 +9,9 @@ GET_VIEW_INFO_SYMBOL_PAIRS_SQL = Template('''
 GET_VIEW_INFO_SYMBOL_ITEM_SQL = Template('''
     SELECT * FROM VIEW_INFO_SYMBOL WHERE server='$server' AND fSymbol='$fSymbol' AND tSymbol='$tSymbol'
 ''')
+GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL = '''
+    SELECT * FROM VIEW_ACCOUNT_BALANCE_CURRENT;
+'''
 
 # get db account info sql
 GET_ACCOUNT_INFO_SQL = '''
@@ -93,7 +96,7 @@ INSERT_TRADE_ORDER_HISTORY_SQL = Template('''
 ''')
 # insert db withdraw history sql
 INSERT_WITHDRAW_HISTORY_SQL = Template('''
-    INSERT OR REPLACE INTO ACCOUNT_WITHDRAW_HISTORY (server, timeStamp, asset, deposite, withdraw)
+    INSERT INTO ACCOUNT_WITHDRAW_HISTORY (server, timeStamp, asset, deposite, withdraw)
     VALUES ('$server', $timeStamp, '$asset', '$deposite', '$withdraw')
 ''')
 # insert db withdraw info sql
@@ -101,7 +104,6 @@ INSERT_INFO_WITHDRAW_SQL = Template('''
     INSERT INTO INFO_WITHDRAW (server, asset, can_deposite, can_withdraw, min_withdraw)
     VALUES ('$server', '$asset', '$can_deposite', '$can_withdraw', $min_withdraw);
 ''')
-
 
 # get db talbes sql
 GET_TABLES_SQL = '''
@@ -202,7 +204,7 @@ CREATE_TABELS_SQL = '''
     	`webSockets_second`	REAL
     );
     CREATE TABLE IF NOT EXISTS `ACCOUNT_WITHDRAW_HISTORY` (
-    	`server`	TEXT NOT NULL UNIQUE,
+    	`server`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
     	`asset`	TEXT NOT NULL,
     	`deposite`	TEXT,
@@ -228,11 +230,23 @@ GET_VIEWS_SQL = '''
 # creat view sql
 CREATE_VIEWS_SQL = '''
     BEGIN TRANSACTION;
-    CREATE VIEW VIEW_INFO_SYMBOL
+    CREATE VIEW IF NOT EXISTS VIEW_INFO_SYMBOL
         AS
         	SELECT S1.*
             FROM INFO_SYMBOL S1,INFO_SYMBOL S2
             WHERE S1.server<>S2.server AND S1.fSymbol = S2.fSymbol AND S1.tSymbol = S2.tSymbol
             ORDER BY fSymbol, tSymbol;
+    CREATE VIEW IF NOT EXISTS VIEW_ACCOUNT_BALANCE_CURRENT
+        AS
+			SELECT B1.*
+			FROM ACCOUNT_BALANCE_HISTORY B1
+			LEFT JOIN ACCOUNT_BALANCE_HISTORY B2 ON B1.server = B2.server AND B1.asset = B2.asset AND B1.timeStamp < B2.timeStamp
+			WHERE B2.server IS NULL;
+    CREATE VIEW IF NOT EXISTS VIEW_ACCOUNT_WITHDRAW_CURRENT
+        AS
+			SELECT B1.*
+			FROM ACCOUNT_WITHDRAW_HISTORY B1
+			LEFT JOIN ACCOUNT_WITHDRAW_HISTORY B2 ON B1.server = B2.server AND B1.asset = B2.asset AND B1.timeStamp < B2.timeStamp
+			WHERE B2.server IS NULL;
     COMMIT;
 '''

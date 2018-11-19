@@ -9,7 +9,7 @@ from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.db.sql import *
 from src.core.util.exceptions import DBException
-from src.core.util.helper import sqlite_escape, utcnow_timestamp
+from src.core.util.helper import sqlite_escape, utcnow_timestamp, dict_factory
 from src.core.util.log import Logger
 
 
@@ -29,6 +29,7 @@ class DB(object):
         self._logger = Logger()
         self._dbStr = dbStr
         self._conn = sqlite3.connect(dbStr)
+        self._conn.row_factory = dict_factory
         os.chmod(self._dbStr, 0o664)  # 设置读写权限
 
     def __del__(self):
@@ -40,6 +41,7 @@ class DB(object):
             self._conn.close()
             os.remove(self._dbStr)
             self._conn = sqlite3.connect(self._dbStr)
+            self._conn.row_factory = dict_factory
             os.chmod(self._dbStr, 0o664)  # 设置读写权限
         except IOError as err:
             raise DBException(err)
@@ -93,6 +95,19 @@ class DB(object):
             return res
         except sqlite3.Error as err:
             raise DBException(err)
+
+    def getViewAccountBalanceCurrent(self):
+        self._logger.debug("src.core.db.db.getViewAccountBalanceCurrent")
+        self._logger.debug(GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL)
+        try:
+            curs = self._conn.cursor()
+            curs.execute(GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
 
     def getTables(self):
         self._logger.debug("src.core.db.db.getTables")
@@ -236,7 +251,7 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def insertAccountBalanceHistory(self, exchange):
+    def insertAccountBalanceHistory(self, exchange="all"):
         self._logger.debug("src.core.db.db.insertAccountBalanceHistory")
         try:
             curs = self._conn.cursor()
@@ -699,7 +714,7 @@ class DB(object):
                 INSERT_OKEX_WITHDRAW_HISTORY_SQL = INSERT_WITHDRAW_HISTORY_SQL.substitute(
                     server=str(self._okexConf["exchange"]),
                     timeStamp=int(timeStamp),
-                    asset=str("asset"),
+                    asset=str(asset),
                     deposite=str(
                         sqlite_escape(', '.join(
                             json.dumps(b) for b in base["deposit"]))),
@@ -715,7 +730,7 @@ class DB(object):
                 INSERT_BINANCE_WITHDRAW_HISTORY_SQL = INSERT_WITHDRAW_HISTORY_SQL.substitute(
                     server=str(self._binanceConf["exchange"]),
                     timeStamp=int(timeStamp),
-                    asset=str("asset"),
+                    asset=str(asset),
                     deposite=str(
                         sqlite_escape(', '.join(
                             json.dumps(b) for b in base["deposit"]))),

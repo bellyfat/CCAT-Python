@@ -5,6 +5,9 @@ import dateparser
 from datetime import datetime
 from datetime import timezone
 
+def dict_factory(cursor, row):
+    return dict((col[0], row[idx]) for idx, col in enumerate(cursor.description))
+
 def utcnow_timestamp():
     dt = datetime.now()
     timestamp = dt.replace(tzinfo=timezone.utc).timestamp()

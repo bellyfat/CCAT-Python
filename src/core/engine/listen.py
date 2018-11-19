@@ -6,7 +6,7 @@ from src.core.db.db import DB
 from src.core.engine.engine import Event
 from src.core.engine.event import (LISTEN_DEPTH_EVENT, LISTEN_KLINE_EVENT,
                                    LISTEN_TICKER_EVENT)
-from src.core.util.exceptions import DBException
+from src.core.util.exceptions import DBException, EngineException
 from src.core.util.log import Logger
 
 
@@ -14,6 +14,28 @@ class Listen(object):
     def __init__(self, eventEngine):
         self._engine = eventEngine
         self._logger = Logger()
+
+    def sendListenAccountBalanceEvent(self, exchange):
+        # 构造事件对象
+        TEMP_EVENT = json.loads(
+            LISTEN_ACCOUNT_BALANCE_EVENT.substitute(
+                server=exchange)
+        event = Event(TEMP_EVENT)
+        self._logger.debug("src.core.engine.listen.sendListenAccountBalanceEvent: " +
+                           event.type)
+        # 发送事件
+        self._engine.sendEvent(event)
+
+    def sendListenAccountWithdrawEvent(self, exchange):
+        # 构造事件对象
+        TEMP_EVENT = json.loads(
+            LISTEN_ACCOUNT_WITHDRAW_EVENT.substitute(
+                server=exchange, asset=asset)
+        event = Event(TEMP_EVENT)
+        self._logger.debug("src.core.engine.listen.sendListenAccountWithdrawEvent: " +
+                           event.type)
+        # 发送事件
+        self._engine.sendEvent(event)
 
     def sendListenDepthEvent(self, exchange, fSymbol, tSymbol, limit=100):
         # 构造事件对象
@@ -55,42 +77,62 @@ class Listen(object):
         # 发送事件
         self._engine.sendEvent(event)
 
+    def handleListenAccountBalanceEvent(self, event):
+        # 接收事件
+        self._logger.debug("src.core.engine.listen.handleListenAccountBalanceEvent")
+        [exchange] = event.dict["args"]
+        try:
+            db = DB()
+            db.insertAccountBalanceHistory(exchange)
+        except DBException as err:
+            errStr = "src.core.engine.listen.handleListenAccountBalanceEvent: %s" % EngineException(err)
+            self._logger.error(errStr)
+
+    def handleListenAccountWithdrawEvent(self, event):
+        # 接收事件
+        self._logger.debug("src.core.engine.listen.handleListenAccountWithdrawEvent")
+        [exchange, asset] = event.dict["args"]
+        try:
+            db = DB()
+            db.insertAccountWithdrawHistory(exchange, asset)
+        except DBException as err:
+            errStr = "src.core.engine.listen.handleListenAccountWithdrawEvent: %s" % EngineException(err)
+            self._logger.error(errStr)
+
+
     def handleListenDepthEvent(self, event):
         # 接收事件
         self._logger.debug("src.core.engine.listen.handleListenDepthEvent")
-        exchange = event.dict["server"]
-        [fSymbol, tSymbol, limit] = event.dict["args"]
+        [exchange, fSymbol, tSymbol, limit] = event.dict["args"]
         try:
             db = DB()
             db.insertMarketDepth(exchange, fSymbol, tSymbol, limit)
         except DBException as err:
-            errStr = "src.core.engine.listen.handleListenDepthEvent Error: %s" % err
+            errStr = "src.core.engine.listen.handleListenDepthEvent: %s" % EngineException(err)
             self._logger.error(errStr)
 
     def handleListenKlineEvent(self, event):
         # 接收事件
         self._logger.debug("src.core.engine.listen.handleListenKlineEvent")
-        exchange = event.dict["server"]
-        [fSymbol, tSymbol, interval, start, end] = event.dict["args"]
+        [exchange, fSymbol, tSymbol, interval, start, end] = event.dict["args"]
         try:
             db = DB()
             db.insertMarketKline(exchange, fSymbol, tSymbol, interval, start,
                                  end)
         except DBException as err:
-            errStr = "src.core.engine.listen.handleListenKlineEvent Error: %s" % err
+            errStr = "src.core.engine.listen.handleListenKlineEvent: %s" % EngineException(err)
             self._logger.error(errStr)
 
     def handleListenTickerEvent(self, event):
         self._logger.debug("src.core.engine.listen.handleListenTickerEvent: " +
                            event.type)
         # 接收事件
-        exchange = event.dict["server"]
-        [fSymbol, tSymbol] = event.dict["args"]
+        [exchange, fSymbol, tSymbol] = event.dict["args"]
         try:
             db = DB()
             db.insertMarketTicker(exchange, fSymbol, tSymbol)
         except DBException as err:
-            errStr = "src.core.engine.listen.handleListenTickerEvent Error: %s" % err
+            errStr = "src.core.engine.listen.handleListenTickerEvent: %s" % EngineException(err)
             self._logger.error(errStr)
 
     def registerListenEvent(self):

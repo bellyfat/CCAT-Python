@@ -18,6 +18,10 @@ if __name__ == '__main__':
     # logger.debug("2. testing... python3 tests/test_db.py")
     # os.system("python3 tests/test_db.py")
 
-    # 3. unit test for test_engine
-    logger.debug("3. testing... python3 tests/test_engine.py")
-    os.system("python3 tests/test_engine.py")
+    # 3. integration test for test_engine
+    # logger.debug("3. testing... python3 tests/test_engine.py")
+    # os.system("python3 tests/test_engine.py")
+
+    # 4. system test for test_main
+    logger.debug("3. testing... python3 tests/test_main.py")
+    os.system("python3 tests/test_main.py")

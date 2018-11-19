@@ -9,17 +9,22 @@ from src.core.util.exceptions import DBException, ApplicationException
 # util class
 class Util(object):
 
+
     def __init__(self):
         self._logger = Logger()
+        self._mainCof = Config()._main
 
     def initAPP(self):
         self._logger.debug("src.core.util.util.initAPP")
-        # 初始化数据库
-        self.initDB()
-        # 插入静态Info数据
+        try:
+            self.initDB()
+            self.initDBInfo()
+        except ApplicationException as err:
+            errStr = "src.core.util.util.initAPP: %s" % ApplicationException(err)
+            self._logger.critical(errStr)
+            raise ApplicationException(err)
 
-        pass
-
+    # 初始化数据库
     def initDB(self):
         self._logger.debug("src.core.util.util.initDB")
         try:
@@ -28,30 +33,34 @@ class Util(object):
             db.creatTables()
             db.creatViews()
         except DBException as err:
-            errStr = "src.core.util.util.init: Critical. ApplicationException: Can Not Init DB File. %s" % err
+            errStr = "src.core.util.util.initDB: %s" % ApplicationException(err)
             self._logger.critical(errStr)
-            raise ApplicationException(errStr)
+            raise ApplicationException(err)
 
-    def updateDBInfo(self):
+    # Info数据
+    def initDBInfo(self):
         self._logger.debug("src.core.util.util.initDBInfo")
         try:
             db = DB()
-            # Info数据
-            db.insertInfoServer()
-            db.insertInfoSymbol()
-            db.insertInfoWithdraw()
+            db.insertInfoServer(self._mainCof["exchanges"])
+            db.insertInfoSymbol(self._mainCof["exchanges"])
+            db.insertInfoWithdraw(self._mainCof["exchanges"])
         except DBException as err:
-            errStr = "src.core.util.util.init: Critical. ApplicationException: Can Not Init DB File. %s" % err
+            errStr = "src.core.util.util.initDBInfo: %s" % ApplicationException(err)
             self._logger.critical(errStr)
-            raise ApplicationException(errStr)
+            raise ApplicationException(err)
 
+    # Account数据
     def updateDBAccount(self):
-        # History数据
-        db.insertAccountBalanceHistory()
-        db.insertAccountWithdrawHistory("xxx")
-
-    def updateDBMarket(self):
+        self._logger.debug("src.core.util.util.updateDBAccount")
         pass
 
+    # Market数据
+    def updateDBMarket(self):
+        self._logger.debug("src.core.util.util.updateDBMarket")
+        pass
+
+    # Trade数据
     def updateDBTrade(self):
+        self._logger.debug("src.core.util.util.updateDBTrade")
         pass
