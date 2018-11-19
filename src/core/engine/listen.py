@@ -79,8 +79,8 @@ class Listen(object):
             self._logger.error(errStr)
 
     def handleListenTickerEvent(self, event):
+        self._logger.debug("src.core.engine.listen.handleListenTickerEvent: "+event.type)
         # 接收事件
-        self._logger.debug("src.core.engine.listen.handleListenTickerEvent")
         exchange = event.dict["server"]
         [fSymbol, tSymbol] = event.dict["args"]
         try:
