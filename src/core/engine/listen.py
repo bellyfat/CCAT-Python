@@ -24,8 +24,8 @@ class Listen(object):
                 fSymbol=fSymbol,
                 tSymbol=tSymbol,
                 limit=limit))
-        self._logger.debug(TEMP_EVENT)
         event = Event(TEMP_EVENT)
+        self._logger.debug("src.core.engine.listen.sendListenDepthEvent: "+event.type)
         # 发送事件
         self._engine.sendEvent(event)
 
@@ -40,8 +40,8 @@ class Listen(object):
                 interval=interval,
                 start=start,
                 end=end))
-        self._logger.debug(TEMP_EVENT)
         event = Event(TEMP_EVENT)
+        self._logger.debug("src.core.engine.listen.sendListenKlineEvent: "+event.type)
         # 发送事件
         self._engine.sendEvent(event)
 
@@ -50,43 +50,43 @@ class Listen(object):
         TEMP_EVENT = json.loads(
             LISTEN_TICKER_EVENT.substitute(
                 server=exchange, fSymbol=fSymbol, tSymbol=tSymbol))
-        self._logger.debug(TEMP_EVENT)
         event = Event(TEMP_EVENT)
+        self._logger.debug("src.core.engine.listen.sendListenTickerEvent: "+event.type)
         # 发送事件
         self._engine.sendEvent(event)
 
     def handleListenDepthEvent(self, event):
         # 接收事件
-        self._logger.debug("handleListenDepthEvent")
+        self._logger.debug("src.core.engine.listen.handleListenDepthEvent")
         exchange = event.dict["server"]
         [fSymbol, tSymbol, limit] = event.dict["args"]
         try:
             self._db.insertMarketDepth(exchange, fSymbol, tSymbol, limit)
         except DBException as err:
-            errStr = "handleListenDepthEvent Error: %s" % err
+            errStr = "src.core.engine.listen.handleListenDepthEvent Error: %s" % err
             self._logger.error(errStr)
 
     def handleListenKlineEvent(self, event):
         # 接收事件
-        self._logger.debug("handleListenKlineEvent")
+        self._logger.debug("src.core.engine.listen.handleListenKlineEvent")
         exchange = event.dict["server"]
         [fSymbol, tSymbol, interval, start, end] = event.dict["args"]
         try:
             self._db.insertMarketKline(exchange, fSymbol, tSymbol, interval, start,
                               end)
         except DBException as err:
-            errStr = "handleListenKlineEvent Error: %s" % err
+            errStr = "src.core.engine.listen.handleListenKlineEvent Error: %s" % err
             self._logger.error(errStr)
 
     def handleListenTickerEvent(self, event):
         # 接收事件
-        self._logger.debug("handleListenTickerEvent")
+        self._logger.debug("src.core.engine.listen.handleListenTickerEvent")
         exchange = event.dict["server"]
         [fSymbol, tSymbol] = event.dict["args"]
         try:
             self._db.insertMarketTicker(exchange, fSymbol, tSymbol)
         except DBException as err:
-            errStr = "handleListenTickerEvent Error: %s" % err
+            errStr = "src.core.engine.listen.handleListenTickerEvent Error: %s" % err
             self._logger.error(errStr)
 
     def registerListenEvent(self):

@@ -25,7 +25,7 @@ class EventEngine(object):
 
     # 执行事件循环
     def __run(self, __active):
-        self.__logger.debug("__run")
+        self.__logger.debug("src.core.engine.engine.__mainProcess.__run")
         while __active.value:
             # 事件队列非空
             if not self.__eventQueue.empty():
@@ -33,15 +33,15 @@ class EventEngine(object):
                 event = self.__eventQueue.get(
                     block=True, timeout=float(Config()._engine["timeout"]))
                 # 执行事件
-                self.__logger.debug(event)
+                self.__logger.debug("src.core.engine.engine.__mainProcess.__run.eventQueue: "+event.type)
                 self.__process(event)
             else:
-                self.__logger.debug("eventQueue empty")
+                self.__logger.debug("src.core.engine.engine.__mainProcess.__run.eventQueue: empty")
                 time.sleep(float(Config()._engine["epoch"]))
 
     # 执行事件
     def __process(self, event):
-        self.__logger.debug("__process")
+        self.__logger.debug("src.core.engine.engine.__mainProcess.__process: "+event.type)
         if event.type in self.__handlers:
             for handler in self.__handlers[event.type]:
                 # 开一个进程去异步处理
@@ -52,16 +52,14 @@ class EventEngine(object):
 
     # 开启事件引擎
     def start(self):
-        self.__logger.debug("start")
+        self.__logger.debug("src.core.engine.engine.start")
         self.__active.value = True
-        # 恢复等待事件处理进程运行
-        for p in self.__processPool:
-            p.start()
+        # 开启事件引擎主进程
         self.__mainProcess.start()
 
     # 暂停事件引擎
     def stop(self):
-        self.__logger.debug("stop")
+        self.__logger.debug("src.core.engine.engine.stop")
         # 将事件管理器设为停止
         self.__active.value = False
         # 等待事件处理进程退出
@@ -71,17 +69,17 @@ class EventEngine(object):
 
     # 终止事件引擎
     def terminate(self):
-        self.__logger.debug("terminate")
+        self.__logger.debug("src.core.engine.engine.terminate")
         self.__active.value = False
         # 终止所有事件处理进程
         for p in self.__processPool:
             p.terminate()
-        self.__mainProcess.join()
+        self.__mainProcess.terminate()
 
     # 注册事件
     def register(self, event, handler):
+        self.__logger.debug("src.core.engine.engine.register")
         # 尝试获取该事件类型对应的处理函数列表，若无则创建
-        self.__logger.debug("register")
         type = event.type
         try:
             handlerList = self.__handlers[type]
@@ -93,8 +91,8 @@ class EventEngine(object):
             handlerList.append(handler)
 
     def unregister(self, event, handler):
+        self.__logger.debug("src.core.engine.engine.unregister")
         # 尝试获取该事件类型对应的处理函数列表，若无则忽略该次注销请求
-        self.__logger.debug("unregister")
         type = event.type
         try:
             handlerList = self.__handlers[type]
@@ -108,8 +106,8 @@ class EventEngine(object):
             pass
 
     def sendEvent(self, event):
+        self.__logger.debug("src.core.engine.engine.sendEvent")
         # 发送事件 像队列里存入事件
-        self.__logger.debug("sendEvent")
         self.__eventQueue.put(event)
 
 

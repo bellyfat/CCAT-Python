@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 import unittest
 sys.path.append(os.getcwd())
 
@@ -10,7 +11,6 @@ from src.core.db.db import DB
 from src.core.engine.engine import Event, EventEngine
 from src.core.engine.listen import Listen
 from src.core.util.log import Logger
-
 
 # global var
 logger = Logger()
@@ -26,25 +26,25 @@ class TestListen(unittest.TestCase):
         self.listen.registerListenEvent()
         self.eventEngine.start()
 
-    def test_sendListenDepthEvent(self):
-        logger.debug("test_sendListenDepthEvent")
+    def test_sendListenEvent(self):
+        logger.debug("test_sendListenEvent")
+        # sendListenDepthEvent
         self.listen.sendListenDepthEvent("all", "ETH", "USDT", 10)
+        # sendListenKlineEvent
+        self.listen.sendListenKlineEvent("all", "ETH", "USDT", "1m",
+                                         "2018-11-18T00:00:00.000Z",
+                                         "2018-11-18T01:00:00.000Z")
+        # sendListenTickerEvent
+        self.listen.sendListenTickerEvent("all", "ETH", "USDT")
+        # 等待新进程运行完毕
+        time.sleep(5)
+        # result
         res = self.db.getMarketDepth()
         logger.debug(res)
         self.assertIsInstance(res, list)
-
-    def test_sendListenKlineEvent(self):
-        logger.debug("test_sendListenKlineEvent")
-        self.listen.sendListenKlineEvent("all", "BTC", "USDT", "1m",
-                                         "2018-11-17T00:00:00.000Z",
-                                         "2018-11-17T01:00:00.000Z")
         res = self.db.getMarketKline()
         logger.debug(res)
         self.assertIsInstance(res, list)
-
-    def test_sendListenTickerEvent(self):
-        logger.debug("test_sendListenTickerEvent")
-        self.listen.sendListenTickerEvent("all", "BTC", "USDT")
         res = self.db.getMarketTicker()
         logger.debug(res)
         self.assertIsInstance(res, list)

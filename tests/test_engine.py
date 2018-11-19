@@ -16,9 +16,7 @@ from tests.engine.test_statistic import TestStatistic
 # list of test_engine
 # listen test items
 test_listen = [
-    TestListen("test_sendListenDepthEvent"),
-    TestListen("test_sendListenKlineEvent"),
-    TestListen("test_sendListenTickerEvent")
+    TestListen("test_sendListenEvent")
 ]
 # backtest test items
 test_backtest = [
