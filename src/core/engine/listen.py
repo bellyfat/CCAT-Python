@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import json
+
 from src.core.db.db import DB
-from src.core.util.log import Logger
 from src.core.engine.engine import Event
+from src.core.engine.event import (LISTEN_DEPTH_EVENT, LISTEN_KLINE_EVENT,
+                                   LISTEN_TICKER_EVENT)
 from src.core.util.exceptions import DBException
-from src.core.engine.event import LISTEN_DEPTH_EVENT, LISTEN_KLINE_EVENT, LISTEN_TICKER_EVENT
+from src.core.util.log import Logger
 
 
 class Listen(object):
@@ -17,17 +19,16 @@ class Listen(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             LISTEN_DEPTH_EVENT.substitute(
-                server=exchange,
-                fSymbol=fSymbol,
-                tSymbol=tSymbol,
+                server=exchange, fSymbol=fSymbol, tSymbol=tSymbol,
                 limit=limit))
         event = Event(TEMP_EVENT)
-        self._logger.debug("src.core.engine.listen.sendListenDepthEvent: "+event.type)
+        self._logger.debug("src.core.engine.listen.sendListenDepthEvent: " +
+                           event.type)
         # 发送事件
         self._engine.sendEvent(event)
 
-    def sendListenKlineEvent(self, exchange, fSymbol, tSymbol, interval,
-                             start, end):
+    def sendListenKlineEvent(self, exchange, fSymbol, tSymbol, interval, start,
+                             end):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             LISTEN_KLINE_EVENT.substitute(
@@ -38,7 +39,8 @@ class Listen(object):
                 start=start,
                 end=end))
         event = Event(TEMP_EVENT)
-        self._logger.debug("src.core.engine.listen.sendListenKlineEvent: "+event.type)
+        self._logger.debug("src.core.engine.listen.sendListenKlineEvent: " +
+                           event.type)
         # 发送事件
         self._engine.sendEvent(event)
 
@@ -48,7 +50,8 @@ class Listen(object):
             LISTEN_TICKER_EVENT.substitute(
                 server=exchange, fSymbol=fSymbol, tSymbol=tSymbol))
         event = Event(TEMP_EVENT)
-        self._logger.debug("src.core.engine.listen.sendListenTickerEvent: "+event.type)
+        self._logger.debug("src.core.engine.listen.sendListenTickerEvent: " +
+                           event.type)
         # 发送事件
         self._engine.sendEvent(event)
 
@@ -72,13 +75,14 @@ class Listen(object):
         try:
             db = DB()
             db.insertMarketKline(exchange, fSymbol, tSymbol, interval, start,
-                              end)
+                                 end)
         except DBException as err:
             errStr = "src.core.engine.listen.handleListenKlineEvent Error: %s" % err
             self._logger.error(errStr)
 
     def handleListenTickerEvent(self, event):
-        self._logger.debug("src.core.engine.listen.handleListenTickerEvent: "+event.type)
+        self._logger.debug("src.core.engine.listen.handleListenTickerEvent: " +
+                           event.type)
         # 接收事件
         exchange = event.dict["server"]
         [fSymbol, tSymbol] = event.dict["args"]
