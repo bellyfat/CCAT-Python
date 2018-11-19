@@ -16,7 +16,7 @@ LISTEN_ACCOUNT_WITHDRAW_EVENT = Template('''
 {
     "type": "LISTEN_ACCOUNT_WITHDRAW_EVENT",
     "dict": {
-        "args": ["$server", "asset"],
+        "args": ["$server", "$asset"],
         "remark": "account withdraw history, run as need"
     }
 }

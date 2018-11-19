@@ -4,8 +4,9 @@ import json
 
 from src.core.db.db import DB
 from src.core.engine.engine import Event
-from src.core.engine.event import (LISTEN_DEPTH_EVENT, LISTEN_KLINE_EVENT,
-                                   LISTEN_TICKER_EVENT)
+from src.core.engine.event import (
+    LISTEN_ACCOUNT_BALANCE_EVENT, LISTEN_ACCOUNT_WITHDRAW_EVENT,
+    LISTEN_DEPTH_EVENT, LISTEN_KLINE_EVENT, LISTEN_TICKER_EVENT)
 from src.core.util.exceptions import DBException, EngineException
 from src.core.util.log import Logger
 
@@ -18,22 +19,23 @@ class Listen(object):
     def sendListenAccountBalanceEvent(self, exchange):
         # 构造事件对象
         TEMP_EVENT = json.loads(
-            LISTEN_ACCOUNT_BALANCE_EVENT.substitute(
-                server=exchange)
+            LISTEN_ACCOUNT_BALANCE_EVENT.substitute(server=exchange))
         event = Event(TEMP_EVENT)
-        self._logger.debug("src.core.engine.listen.sendListenAccountBalanceEvent: " +
-                           event.type)
+        self._logger.debug(
+            "src.core.engine.listen.sendListenAccountBalanceEvent: " +
+            event.type)
         # 发送事件
         self._engine.sendEvent(event)
 
-    def sendListenAccountWithdrawEvent(self, exchange):
+    def sendListenAccountWithdrawEvent(self, exchange, asset):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             LISTEN_ACCOUNT_WITHDRAW_EVENT.substitute(
-                server=exchange, asset=asset)
+                server=exchange, asset=asset))
         event = Event(TEMP_EVENT)
-        self._logger.debug("src.core.engine.listen.sendListenAccountWithdrawEvent: " +
-                           event.type)
+        self._logger.debug(
+            "src.core.engine.listen.sendListenAccountWithdrawEvent: " +
+            event.type)
         # 发送事件
         self._engine.sendEvent(event)
 
@@ -79,48 +81,53 @@ class Listen(object):
 
     def handleListenAccountBalanceEvent(self, event):
         # 接收事件
-        self._logger.debug("src.core.engine.listen.handleListenAccountBalanceEvent")
+        self._logger.debug(
+            "src.core.engine.listen.handleListenAccountBalanceEvent: " + event.type)
         [exchange] = event.dict["args"]
         try:
             db = DB()
             db.insertAccountBalanceHistory(exchange)
         except DBException as err:
-            errStr = "src.core.engine.listen.handleListenAccountBalanceEvent: %s" % EngineException(err)
+            errStr = "src.core.engine.listen.handleListenAccountBalanceEvent: %s" % EngineException(
+                err)
             self._logger.error(errStr)
 
     def handleListenAccountWithdrawEvent(self, event):
         # 接收事件
-        self._logger.debug("src.core.engine.listen.handleListenAccountWithdrawEvent")
+        self._logger.debug(
+            "src.core.engine.listen.handleListenAccountWithdrawEvent: " + event.type)
         [exchange, asset] = event.dict["args"]
         try:
             db = DB()
             db.insertAccountWithdrawHistory(exchange, asset)
         except DBException as err:
-            errStr = "src.core.engine.listen.handleListenAccountWithdrawEvent: %s" % EngineException(err)
+            errStr = "src.core.engine.listen.handleListenAccountWithdrawEvent: %s" % EngineException(
+                err)
             self._logger.error(errStr)
-
 
     def handleListenDepthEvent(self, event):
         # 接收事件
-        self._logger.debug("src.core.engine.listen.handleListenDepthEvent")
+        self._logger.debug("src.core.engine.listen.handleListenDepthEvent: " + event.type)
         [exchange, fSymbol, tSymbol, limit] = event.dict["args"]
         try:
             db = DB()
             db.insertMarketDepth(exchange, fSymbol, tSymbol, limit)
         except DBException as err:
-            errStr = "src.core.engine.listen.handleListenDepthEvent: %s" % EngineException(err)
+            errStr = "src.core.engine.listen.handleListenDepthEvent: %s" % EngineException(
+                err)
             self._logger.error(errStr)
 
     def handleListenKlineEvent(self, event):
         # 接收事件
-        self._logger.debug("src.core.engine.listen.handleListenKlineEvent")
+        self._logger.debug("src.core.engine.listen.handleListenKlineEvent: " + event.type)
         [exchange, fSymbol, tSymbol, interval, start, end] = event.dict["args"]
         try:
             db = DB()
             db.insertMarketKline(exchange, fSymbol, tSymbol, interval, start,
                                  end)
         except DBException as err:
-            errStr = "src.core.engine.listen.handleListenKlineEvent: %s" % EngineException(err)
+            errStr = "src.core.engine.listen.handleListenKlineEvent: %s" % EngineException(
+                err)
             self._logger.error(errStr)
 
     def handleListenTickerEvent(self, event):
@@ -132,12 +139,18 @@ class Listen(object):
             db = DB()
             db.insertMarketTicker(exchange, fSymbol, tSymbol)
         except DBException as err:
-            errStr = "src.core.engine.listen.handleListenTickerEvent: %s" % EngineException(err)
+            errStr = "src.core.engine.listen.handleListenTickerEvent: %s" % EngineException(
+                err)
             self._logger.error(errStr)
 
     def registerListenEvent(self):
         self._logger.debug("src.core.engine.listen.registerListenEvent")
         # 构造事件
+        ACCOUNT_BALANCE_EVETNT = Event(
+            json.loads(LISTEN_ACCOUNT_BALANCE_EVENT.substitute(server="")))
+        ACCOUNT_WITHDRAW_EVENT = Event(
+            json.loads(
+                LISTEN_ACCOUNT_WITHDRAW_EVENT.substitute(server="", asset="")))
         DEPETH_EVETNT = Event(
             json.loads(
                 LISTEN_DEPTH_EVENT.substitute(
@@ -156,10 +169,16 @@ class Listen(object):
                 LISTEN_TICKER_EVENT.substitute(
                     server="", fSymbol="", tSymbol="")))
         # 构造 handler
+        ACCOUNT_BALANCE_EVETNT_HANDLER = self.handleListenAccountBalanceEvent
+        ACCOUNT_WITHDRAW_EVENT_HANDLER = self.handleListenAccountWithdrawEvent
         DEPETH_EVETNT_HANDLER = self.handleListenDepthEvent
         KLINE_EVETNT_HANDLER = self.handleListenKlineEvent
         TICKER_EVETNT_HANDLER = self.handleListenTickerEvent
         # 注册事件
+        self._engine.register(ACCOUNT_BALANCE_EVETNT,
+                              ACCOUNT_BALANCE_EVETNT_HANDLER)
+        self._engine.register(ACCOUNT_WITHDRAW_EVENT,
+                              ACCOUNT_WITHDRAW_EVENT_HANDLER)
         self._engine.register(DEPETH_EVETNT, DEPETH_EVETNT_HANDLER)
         self._engine.register(KLINE_EVENT, KLINE_EVETNT_HANDLER)
         self._engine.register(TICKER_EVENT, TICKER_EVETNT_HANDLER)
@@ -167,6 +186,11 @@ class Listen(object):
     def unregisterListenEvent(self):
         self._logger.debug("src.core.engine.listen.unregisterListenEvent")
         # 构造事件
+        ACCOUNT_BALANCE_EVETNT = Event(
+            json.loads(LISTEN_ACCOUNT_BALANCE_EVENT.substitute(server="")))
+        ACCOUNT_WITHDRAW_EVENT = Event(
+            json.loads(
+                LISTEN_ACCOUNT_WITHDRAW_EVENT.substitute(server="", asset="")))
         DEPETH_EVETNT = Event(
             json.loads(
                 LISTEN_DEPTH_EVENT.substitute(
@@ -185,10 +209,16 @@ class Listen(object):
                 LISTEN_TICKER_EVENT.substitute(
                     server="", fSymbol="", tSymbol="")))
         # 构造 handler
+        ACCOUNT_BALANCE_EVETNT_HANDLER = self.handleListenAccountBalanceEvent
+        ACCOUNT_WITHDRAW_EVENT_HANDLER = self.handleListenAccountWithdrawEvent
         DEPETH_EVETNT_HANDLER = self.handleListenDepthEvent
         KLINE_EVETNT_HANDLER = self.handleListenKlineEvent
         TICKER_EVETNT_HANDLER = self.handleListenTickerEvent
         # 注销事件
+        self._engine.unregister(ACCOUNT_BALANCE_EVETNT,
+                                ACCOUNT_BALANCE_EVETNT_HANDLER)
+        self._engine.unregister(ACCOUNT_WITHDRAW_EVENT,
+                                ACCOUNT_WITHDRAW_EVENT_HANDLER)
         self._engine.unregister(DEPETH_EVETNT, DEPETH_EVETNT_HANDLER)
         self._engine.unregister(KLINE_EVENT, KLINE_EVETNT_HANDLER)
         self._engine.unregister(TICKER_EVENT, TICKER_EVETNT_HANDLER)

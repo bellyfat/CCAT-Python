@@ -6,12 +6,15 @@ import unittest
 sys.path.append(os.getcwd())
 
 from src.core.util.util import Util
+from src.core.engine.engine import Event, EventEngine
 from tests.engine.test_listen import TestListen
 from tests.engine.test_backtest import TestBacktest
 from tests.engine.test_execute import TestExecute
 from tests.engine.test_statistic import TestStatistic
 
 
+# global var
+__eventEngine = EventEngine()
 
 # list of test_engine
 # listen test items
@@ -38,7 +41,7 @@ test_statistic = [
 # Begin Test
 if __name__ == '__main__':
     # util init
-    util = Util()
+    util = Util(__eventEngine)
     util.initDB()
     # Test
     suite = unittest.TestSuite()

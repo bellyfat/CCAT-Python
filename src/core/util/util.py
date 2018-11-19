@@ -4,6 +4,7 @@ import os
 from src.core.db.db import DB
 from src.core.config import Config
 from src.core.util.log import Logger
+from src.core.engine.listen import Listen
 from src.core.util.exceptions import DBException, ApplicationException
 
 # util class
@@ -51,16 +52,25 @@ class Util(object):
             raise ApplicationException(err)
 
     # Account数据
-    def updateDBAccount(self):
+    def updateDBAccount(self, listen):
         self._logger.debug("src.core.util.util.updateDBAccount")
-        pass
+        try:
+            for exchange in self._mainCof["exchanges"]:
+                listen.sendListenAccountBalanceEvent(exchange)
+            db = DB()
+            res = db.getInfoWithdraw()
+            for r in res:
+                if r["can_deposite"] == "True" and r["can_withdraw"] == "True":
+                    listen.sendListenAccountWithdrawEvent(r["server"], r["asset"])
+        except DBException as err:
+            errStr = "src.core.util.util.updateDBAccount: %s" % ApplicationException(err)
+            self._logger.critical(errStr)
+            raise ApplicationException(err)
 
     # Market数据
     def updateDBMarket(self):
-        self._logger.debug("src.core.util.util.updateDBMarket")
         pass
 
     # Trade数据
     def updateDBTrade(self):
-        self._logger.debug("src.core.util.util.updateDBTrade")
         pass
