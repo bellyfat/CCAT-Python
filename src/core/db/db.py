@@ -66,28 +66,28 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getViewSymbolInfoPairs(self, *exchanges):
-        self._logger.debug("src.core.db.db.getViewSymbolInfoPairs")
+    def getViewInfoSymbolPairs(self, *exchanges):
+        self._logger.debug("src.core.db.db.getViewInfoSymbolPairs")
         try:
             curs = self._conn.cursor()
-            GET_SERVERS_VIEW_SYMBOL_INFO_PAIRS_SQL = GET_VIEW_SYMBOL_INFO_PAIRS_SQL.substitute(
+            GET_SERVERS_VIEW_INFO_SYMBOL_PAIRS_SQL = GET_VIEW_INFO_SYMBOL_PAIRS_SQL.substitute(
                 servers=exchanges)
-            self._logger.debug(GET_SERVERS_VIEW_SYMBOL_INFO_PAIRS_SQL)
-            curs.execute(GET_SERVERS_VIEW_SYMBOL_INFO_PAIRS_SQL)
+            self._logger.debug(GET_SERVERS_VIEW_INFO_SYMBOL_PAIRS_SQL)
+            curs.execute(GET_SERVERS_VIEW_INFO_SYMBOL_PAIRS_SQL)
             res = curs.fetchall()
             curs.close()
             return res
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getViewSymbolInfoItem(self, exchange, fSymbol, tSymbol):
-        self._logger.debug("src.core.db.db.getViewSymbolInfoItem")
+    def getViewInfoSymbolItem(self, exchange, fSymbol, tSymbol):
+        self._logger.debug("src.core.db.db.getViewInfoSymbolItem")
         try:
             curs = self._conn.cursor()
-            GET_ITEM_VIEW_SYMBOL_INFO_ITEM_SQL = GET_VIEW_SYMBOL_INFO_ITEM_SQL.substitute(
+            GET_ITEM_VIEW_INFO_SYMBOL_ITEM_SQL = GET_VIEW_INFO_SYMBOL_ITEM_SQL.substitute(
                 server=exchange, fSymbol=fSymbol, tSymbol=tSymbol)
-            self._logger.debug(GET_ITEM_VIEW_SYMBOL_INFO_ITEM_SQL)
-            curs.execute(GET_ITEM_VIEW_SYMBOL_INFO_ITEM_SQL)
+            self._logger.debug(GET_ITEM_VIEW_INFO_SYMBOL_ITEM_SQL)
+            curs.execute(GET_ITEM_VIEW_INFO_SYMBOL_ITEM_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -164,24 +164,24 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getServerInfo(self):
-        self._logger.debug("src.core.db.db.getServerInfo")
-        self._logger.debug(GET_SERVER_INFO_SQL)
+    def getInfoServer(self):
+        self._logger.debug("src.core.db.db.getInfoServer")
+        self._logger.debug(GET_INFO_SERVER_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_SERVER_INFO_SQL)
+            curs.execute(GET_INFO_SERVER_SQL)
             res = curs.fetchall()
             curs.close()
             return res
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getSymbolInfo(self):
-        self._logger.debug("src.core.db.db.getSymbolInfo")
-        self._logger.debug(GET_SYMBOL_INFO_SQL)
+    def getInfoSymbol(self):
+        self._logger.debug("src.core.db.db.getInfoSymbol")
+        self._logger.debug(GET_INFO_SYMBOL_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_SYMBOL_INFO_SQL)
+            curs.execute(GET_INFO_SYMBOL_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -224,12 +224,12 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getWithdrawInfo(self):
-        self._logger.debug("src.core.db.db.getWithdrawInfo")
-        self._logger.debug(GET_WITHDRAW_INFO_SQL)
+    def getInfoWithdraw(self):
+        self._logger.debug("src.core.db.db.getInfoWithdraw")
+        self._logger.debug(GET_INFO_WITHDRAW_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_WITHDRAW_INFO_SQL)
+            curs.execute(GET_INFO_WITHDRAW_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -419,14 +419,14 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def insertServerInfo(self, exchange="all"):
-        self._logger.debug("src.core.db.db.insertServerInfo")
+    def insertInfoServer(self, exchange="all"):
+        self._logger.debug("src.core.db.db.insertInfoServer")
         try:
             curs = self._conn.cursor()
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
                 res = self._okex.getServerLimits()
-                INSERT_OKEX_SERVER_INFO_SQL = INSERT_SERVER_INFO_SQL.substitute(
+                INSERT_OKEX_INFO_SERVER_SQL = INSERT_INFO_SERVER_SQL.substitute(
                     server=str(self._okexConf["exchange"]),
                     requests_second="NULL" if res["requests_second"] == '' else
                     float(res["requests_second"]),
@@ -436,12 +436,12 @@ class DB(object):
                     if res["orders_day"] == '' else float(res["orders_day"]),
                     webSockets_second="NULL" if res["webSockets_second"] == ''
                     else float(res["webSockets_second"]))
-                self._logger.debug(INSERT_OKEX_SERVER_INFO_SQL)
-                curs.execute(INSERT_OKEX_SERVER_INFO_SQL)
+                self._logger.debug(INSERT_OKEX_INFO_SERVER_SQL)
+                curs.execute(INSERT_OKEX_INFO_SERVER_SQL)
             # Binance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
                 res = self._binance.getServerLimits()
-                INSERT_BINANCE_SERVER_INFO_SQL = INSERT_SERVER_INFO_SQL.substitute(
+                INSERT_BINANCE_INFO_SERVER_SQL = INSERT_INFO_SERVER_SQL.substitute(
                     server=str(self._binanceConf["exchange"]),
                     requests_second="NULL" if res["requests_second"] == '' else
                     float(res["requests_second"]),
@@ -451,8 +451,8 @@ class DB(object):
                     if res["orders_day"] == '' else float(res["orders_day"]),
                     webSockets_second="NULL" if res["webSockets_second"] == ''
                     else float(res["webSockets_second"]))
-                self._logger.debug(INSERT_BINANCE_SERVER_INFO_SQL)
-                curs.execute(INSERT_BINANCE_SERVER_INFO_SQL)
+                self._logger.debug(INSERT_BINANCE_INFO_SERVER_SQL)
+                curs.execute(INSERT_BINANCE_INFO_SERVER_SQL)
             # Huobi
             # to_be_continue
             # Gate
@@ -462,8 +462,8 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def insertSymbolInfo(self, exchange="all"):
-        self._logger.debug("src.core.db.db.insertSymbolInfo")
+    def insertInfoSymbol(self, exchange="all"):
+        self._logger.debug("src.core.db.db.insertInfoSymbol")
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -472,7 +472,7 @@ class DB(object):
                 fees = self._okex.getTradeFees()
                 for b in base:
                     fees_key = fees[0]
-                    INSERT_OKEX_SYMBOL_INFO_SQL = INSERT_SYMBOL_INFO_SQL.substitute(
+                    INSERT_OKEX_INFO_SYMBOL_SQL = INSERT_INFO_SYMBOL_SQL.substitute(
                         server=str(self._okexConf["exchange"]),
                         fSymbol=str(b["fSymbol"]),
                         tSymbol=str(b["tSymbol"]),
@@ -504,8 +504,8 @@ class DB(object):
                             fees_key["maker"]),
                         fee_taker="NULL" if fees_key["taker"] == '' else float(
                             fees_key["taker"]))
-                    self._logger.debug(INSERT_OKEX_SYMBOL_INFO_SQL)
-                    curs.execute(INSERT_OKEX_SYMBOL_INFO_SQL)
+                    self._logger.debug(INSERT_OKEX_INFO_SYMBOL_SQL)
+                    curs.execute(INSERT_OKEX_INFO_SYMBOL_SQL)
             # Binance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
                 base = self._binance.getSymbolsLimits()
@@ -515,7 +515,7 @@ class DB(object):
                     for f in fees:
                         if f["symbol"] == b["fSymbol"] + b["tSymbol"]:
                             fees_key = f
-                    INSERT_BINANCE_SYMBOL_INFO_SQL = INSERT_SYMBOL_INFO_SQL.substitute(
+                    INSERT_BINANCE_INFO_SYMBOL_SQL = INSERT_INFO_SYMBOL_SQL.substitute(
                         server=str(self._binanceConf["exchange"]),
                         fSymbol=str(b["fSymbol"]),
                         tSymbol=str(b["tSymbol"]),
@@ -547,8 +547,8 @@ class DB(object):
                             fees_key["maker"]),
                         fee_taker="NULL" if fees_key["taker"] == '' else float(
                             fees_key["taker"]))
-                    self._logger.debug(INSERT_BINANCE_SYMBOL_INFO_SQL)
-                    curs.execute(INSERT_BINANCE_SYMBOL_INFO_SQL)
+                    self._logger.debug(INSERT_BINANCE_INFO_SYMBOL_SQL)
+                    curs.execute(INSERT_BINANCE_INFO_SYMBOL_SQL)
             # Huobi
             # to_be_continue
             # Gate
@@ -733,34 +733,34 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def insertWithdrawInfo(self, exchange="all"):
-        self._logger.debug("src.core.db.db.insertWithdrawInfo")
+    def insertInfoWithdraw(self, exchange="all"):
+        self._logger.debug("src.core.db.db.insertInfoWithdraw")
         try:
             curs = self._conn.cursor()
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
                 base = self._okex.getAccountLimits()
                 for b in base:
-                    INSERT_OKEX_WITHDRAW_INFO_SQL = INSERT_WITHDRAW_INFO_SQL.substitute(
+                    INSERT_OKEX_INFO_WITHDRAW_SQL = INSERT_INFO_WITHDRAW_SQL.substitute(
                         server=str(self._okexConf["exchange"]),
                         asset=str(b["asset"]),
                         can_deposite=str(b["can_deposite"]),
                         can_withdraw=str(b["can_withdraw"]),
                         min_withdraw=float(b["min_withdraw"]))
-                    self._logger.debug(INSERT_OKEX_WITHDRAW_INFO_SQL)
-                    curs.execute(INSERT_OKEX_WITHDRAW_INFO_SQL)
+                    self._logger.debug(INSERT_OKEX_INFO_WITHDRAW_SQL)
+                    curs.execute(INSERT_OKEX_INFO_WITHDRAW_SQL)
             # Binance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
                 base = self._binance.getAccountLimits()
                 for b in base:
-                    INSERT_BINANCE_WITHDRAW_INFO_SQL = INSERT_WITHDRAW_INFO_SQL.substitute(
+                    INSERT_BINANCE_INFO_WITHDRAW_SQL = INSERT_INFO_WITHDRAW_SQL.substitute(
                         server=str(self._binanceConf["exchange"]),
                         asset=str(b["asset"]),
                         can_deposite=str(b["can_deposite"]),
                         can_withdraw=str(b["can_withdraw"]),
                         min_withdraw=float(b["min_withdraw"]))
-                    self._logger.debug(INSERT_BINANCE_WITHDRAW_INFO_SQL)
-                    curs.execute(INSERT_BINANCE_WITHDRAW_INFO_SQL)
+                    self._logger.debug(INSERT_BINANCE_INFO_WITHDRAW_SQL)
+                    curs.execute(INSERT_BINANCE_INFO_WITHDRAW_SQL)
             # Huobi
             # to_be_continue
             # Gate

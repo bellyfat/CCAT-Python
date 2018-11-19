@@ -37,9 +37,9 @@ class Util(object):
         try:
             db = DB()
             # Info数据
-            db.insertServerInfo()
-            db.insertSymbolInfo()
-            db.insertWithdrawInfo()
+            db.insertInfoServer()
+            db.insertInfoSymbol()
+            db.insertInfoWithdraw()
         except DBException as err:
             errStr = "src.core.util.util.init: Critical. ApplicationException: Can Not Init DB File. %s" % err
             self._logger.critical(errStr)
@@ -49,3 +49,9 @@ class Util(object):
         # History数据
         db.insertAccountBalanceHistory()
         db.insertAccountWithdrawHistory("xxx")
+
+    def updateDBMarket(self):
+        pass
+
+    def updateDBTrade(self):
+        pass

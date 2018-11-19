@@ -31,13 +31,13 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewSymbolInfoPairs(self):
-        res = db.getViewSymbolInfoPairs("okex", "binance")
+    def test_getViewInfoSymbolPairs(self):
+        res = db.getViewInfoSymbolPairs("okex", "binance")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewSymbolInfoItem(self):
-        res = db.getViewSymbolInfoItem("okex", "ETH", "USDT")
+    def test_getViewInfoSymbolItem(self):
+        res = db.getViewInfoSymbolItem("okex", "ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -72,13 +72,13 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getServerInfo(self):
-        res = db.getServerInfo()
+    def test_getInfoServer(self):
+        res = db.getInfoServer()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getSymbolInfo(self):
-        res = db.getSymbolInfo()
+    def test_getInfoSymbol(self):
+        res = db.getInfoSymbol()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -97,8 +97,8 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getWithdrawInfo(self):
-        res = db.getWithdrawInfo()
+    def test_getInfoWithdraw(self):
+        res = db.getInfoWithdraw()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -126,15 +126,15 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertServerInfo(self):
-        db.insertServerInfo()
-        res = db.getServerInfo()
+    def test_insertInfoServer(self):
+        db.insertInfoServer()
+        res = db.getInfoServer()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertSymbolInfo(self):
-        db.insertSymbolInfo()
-        res = db.getSymbolInfo()
+    def test_insertInfoSymbol(self):
+        db.insertInfoSymbol()
+        res = db.getInfoSymbol()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -156,9 +156,9 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertWithdrawInfo(self):
-        db.insertWithdrawInfo()
-        res = db.getWithdrawInfo()
+    def test_insertInfoWithdraw(self):
+        db.insertInfoWithdraw()
+        res = db.getInfoWithdraw()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -172,26 +172,26 @@ test_db = [
     TestDB("test_getMarketDepth"),
     TestDB("test_getMarketKline"),
     TestDB("test_getMarketTicker"),
-    TestDB("test_getServerInfo"),
-    TestDB("test_getSymbolInfo"),
+    TestDB("test_getInfoServer"),
+    TestDB("test_getInfoSymbol"),
     TestDB("test_getTradeBacktestHistory"),
     TestDB("test_getTradeOrderHistory"),
     TestDB("test_getAccountWithdrawHistory"),
-    TestDB("test_getWithdrawInfo"),
+    TestDB("test_getInfoWithdraw"),
     TestDB("test_insertAccountBalanceHistory"),
     TestDB("test_insertMarketDepth"),
     TestDB("test_insertMarketKline"),
     TestDB("test_insertMarketTicker"),
-    TestDB("test_insertServerInfo"),
-    TestDB("test_insertSymbolInfo"),
+    TestDB("test_insertInfoServer"),
+    TestDB("test_insertInfoSymbol"),
     TestDB("test_insertTradeBacktestHistory"),
     # TestDB("test_insertTradeOrderHistory"),
     TestDB("test_insertAccountWithdrawHistory"),
-    TestDB("test_insertWithdrawInfo"),
+    TestDB("test_insertInfoWithdraw"),
     TestDB("test_getViews"),
     TestDB("test_creatViews"),
-    TestDB("test_getViewSymbolInfoPairs"),
-    TestDB("test_getViewSymbolInfoItem"),
+    TestDB("test_getViewInfoSymbolPairs"),
+    TestDB("test_getViewInfoSymbolItem"),
 ]
 
 if __name__ == "__main__":
