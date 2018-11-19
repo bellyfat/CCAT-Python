@@ -39,12 +39,12 @@ test_statistic = [
 if __name__ == '__main__':
     # util init
     util = Util()
-    util.init()
+    util.initDB()
     # Test
     suite = unittest.TestSuite()
     runner = unittest.TextTestRunner(verbosity=2)
     # add tests
-    # suite.addTests(test_listen)
+    suite.addTests(test_listen)
     suite.addTests(test_judge)
     suite.addTests(test_backtest)
     suite.addTests(test_execute)

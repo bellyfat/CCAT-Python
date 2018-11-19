@@ -12,7 +12,7 @@ GET_VIEW_SYMBOL_INFO_ITEM_SQL = Template('''
 
 # get db account info sql
 GET_ACCOUNT_INFO_SQL = '''
-    SELECT * FROM ACCOUNT_INFO;
+    SELECT * FROM ACCOUNT_BALANCE_HISTORY;
 '''
 # get db market depth sql
 GET_MARKET_DEPTH_SQL = '''
@@ -44,7 +44,7 @@ GET_TRADE_ORDER_HISTORY_SQL = '''
 '''
 # get db withdraw history sql
 GET_WITHDRAW_HISTORY_SQL = '''
-    SELECT * FROM WITHDRAW_HISTORY;
+    SELECT * FROM ACCOUNT_WITHDRAW_HISTORY;
 '''
 # get db withdraw info sql
 GET_WITHDRAW_INFO_SQL = '''
@@ -53,7 +53,7 @@ GET_WITHDRAW_INFO_SQL = '''
 
 # insert db account info sql
 INSERT_ACCOUNT_INFO_SQL = Template('''
-    INSERT INTO ACCOUNT_INFO (server, timeStamp, asset, balance, free, locked)
+    INSERT INTO ACCOUNT_BALANCE_HISTORY (server, timeStamp, asset, balance, free, locked)
     VALUES ('$server', $timeStamp, '$asset', $balance, $free, $locked);
 ''')
 # insert db market depth sql
@@ -93,8 +93,8 @@ INSERT_TRADE_ORDER_HISTORY_SQL = Template('''
 ''')
 # insert db withdraw history sql
 INSERT_WITHDRAW_HISTORY_SQL = Template('''
-    INSERT OR REPLACE INTO WITHDRAW_HISTORY (server, timeStamp, deposite, withdraw)
-    VALUES ('$server', $timeStamp, '$deposite', '$withdraw')
+    INSERT OR REPLACE INTO ACCOUNT_WITHDRAW_HISTORY (server, timeStamp, asset, deposite, withdraw)
+    VALUES ('$server', $timeStamp, '$asset', '$deposite', '$withdraw')
 ''')
 # insert db withdraw info sql
 INSERT_WITHDRAW_INFO_SQL = Template('''
@@ -119,9 +119,10 @@ CREATE_TABELS_SQL = '''
     	`can_withdraw`	TEXT NOT NULL,
     	`min_withdraw`	REAL
     );
-    CREATE TABLE IF NOT EXISTS `WITHDRAW_HISTORY` (
+    CREATE TABLE IF NOT EXISTS `ACCOUNT_WITHDRAW_HISTORY` (
     	`server`	TEXT NOT NULL UNIQUE,
     	`timeStamp`	INTEGER NOT NULL,
+    	`asset`	TEXT NOT NULL,
         `deposite`  TEXT,
         `withdraw`  TEXT
     );
@@ -207,7 +208,7 @@ CREATE_TABELS_SQL = '''
     	`bid_price_size`	BLOB,
     	`ask_price_size`	BLOB
     );
-    CREATE TABLE IF NOT EXISTS `ACCOUNT_INFO` (
+    CREATE TABLE IF NOT EXISTS `ACCOUNT_BALANCE_HISTORY` (
     	`server`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
     	`asset`	TEXT NOT NULL,

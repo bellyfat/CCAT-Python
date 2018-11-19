@@ -52,8 +52,8 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getAccountInfo(self):
-        res = db.getAccountInfo()
+    def test_getAccountBalanceHistory(self):
+        res = db.getAccountBalanceHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -92,8 +92,8 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getWithdrawHistory(self):
-        res = db.getWithdrawHistory()
+    def test_getAccountWithdrawHistory(self):
+        res = db.getAccountWithdrawHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -102,9 +102,9 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertAccountInfo(self):
-        db.insertAccountInfo("all")
-        res = db.getAccountInfo()
+    def test_insertAccountBalanceHistory(self):
+        db.insertAccountBalanceHistory("all")
+        res = db.getAccountBalanceHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -150,9 +150,9 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertWithdrawHistory(self):
-        db.insertWithdrawHistory("all", "USDT")
-        res = db.getWithdrawHistory()
+    def test_insertAccountWithdrawHistory(self):
+        db.insertAccountWithdrawHistory("all", "USDT")
+        res = db.getAccountWithdrawHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -165,29 +165,29 @@ class TestDB(unittest.TestCase):
 # list of test_db
 # db test items
 test_db = [
-    # TestDB("test_initDB"),
-    # TestDB("test_getTables"),
-    # TestDB("test_creatTables"),
-    # TestDB("test_getAccountInfo"),
-    # TestDB("test_getMarketDepth"),
-    # TestDB("test_getMarketKline"),
-    # TestDB("test_getMarketTicker"),
-    # TestDB("test_getServerInfo"),
-    # TestDB("test_getSymbolInfo"),
-    # TestDB("test_getTradeBacktestHistory"),
-    # TestDB("test_getTradeOrderHistory"),
-    # TestDB("test_getWithdrawHistory"),
-    # TestDB("test_getWithdrawInfo"),
-    # TestDB("test_insertAccountInfo"),
-    # TestDB("test_insertMarketDepth"),
-    # TestDB("test_insertMarketKline"),
-    # TestDB("test_insertMarketTicker"),
-    # TestDB("test_insertServerInfo"),
-    # TestDB("test_insertSymbolInfo"),
-    # TestDB("test_insertTradeBacktestHistory"),
-    # # TestDB("test_insertTradeOrderHistory"),
-    # TestDB("test_insertWithdrawHistory"),
-    # TestDB("test_insertWithdrawInfo")
+    TestDB("test_initDB"),
+    TestDB("test_getTables"),
+    TestDB("test_creatTables"),
+    TestDB("test_getAccountBalanceHistory"),
+    TestDB("test_getMarketDepth"),
+    TestDB("test_getMarketKline"),
+    TestDB("test_getMarketTicker"),
+    TestDB("test_getServerInfo"),
+    TestDB("test_getSymbolInfo"),
+    TestDB("test_getTradeBacktestHistory"),
+    TestDB("test_getTradeOrderHistory"),
+    TestDB("test_getAccountWithdrawHistory"),
+    TestDB("test_getWithdrawInfo"),
+    TestDB("test_insertAccountBalanceHistory"),
+    TestDB("test_insertMarketDepth"),
+    TestDB("test_insertMarketKline"),
+    TestDB("test_insertMarketTicker"),
+    TestDB("test_insertServerInfo"),
+    TestDB("test_insertSymbolInfo"),
+    TestDB("test_insertTradeBacktestHistory"),
+    # TestDB("test_insertTradeOrderHistory"),
+    TestDB("test_insertAccountWithdrawHistory"),
+    TestDB("test_insertWithdrawInfo"),
     TestDB("test_getViews"),
     TestDB("test_creatViews"),
     TestDB("test_getViewSymbolInfoPairs"),
