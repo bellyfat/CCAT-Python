@@ -19,6 +19,10 @@ test_listen = [
     TestListen("test_sendListenEvent")
 ]
 # backtest test items
+test_judge = [
+    # TestJudge(""),
+]
+# backtest test items
 test_backtest = [
     # TestBacktest(""),
 ]
@@ -40,7 +44,8 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
     runner = unittest.TextTestRunner(verbosity=2)
     # add tests
-    suite.addTests(test_listen)
+    # suite.addTests(test_listen)
+    suite.addTests(test_judge)
     suite.addTests(test_backtest)
     suite.addTests(test_execute)
     suite.addTests(test_statistic)

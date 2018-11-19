@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import os
 import json
 from src.core.db.db import DB
-from src.core.config import Config
 from src.core.util.log import Logger
 from src.core.engine.engine import Event
 from src.core.util.exceptions import DBException
