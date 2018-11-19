@@ -13,7 +13,6 @@ from src.core.engine.event import LISTEN_DEPTH_EVENT, LISTEN_KLINE_EVENT, LISTEN
 class Listen(object):
     def __init__(self, eventEngine):
         self._engine = eventEngine
-        self._db = DB()
         self._logger = Logger()
 
     def sendListenDepthEvent(self, exchange, fSymbol, tSymbol, limit=100):
@@ -61,7 +60,8 @@ class Listen(object):
         exchange = event.dict["server"]
         [fSymbol, tSymbol, limit] = event.dict["args"]
         try:
-            self._db.insertMarketDepth(exchange, fSymbol, tSymbol, limit)
+            db = DB()
+            db.insertMarketDepth(exchange, fSymbol, tSymbol, limit)
         except DBException as err:
             errStr = "src.core.engine.listen.handleListenDepthEvent Error: %s" % err
             self._logger.error(errStr)
@@ -72,7 +72,8 @@ class Listen(object):
         exchange = event.dict["server"]
         [fSymbol, tSymbol, interval, start, end] = event.dict["args"]
         try:
-            self._db.insertMarketKline(exchange, fSymbol, tSymbol, interval, start,
+            db = DB()
+            db.insertMarketKline(exchange, fSymbol, tSymbol, interval, start,
                               end)
         except DBException as err:
             errStr = "src.core.engine.listen.handleListenKlineEvent Error: %s" % err
@@ -84,12 +85,14 @@ class Listen(object):
         exchange = event.dict["server"]
         [fSymbol, tSymbol] = event.dict["args"]
         try:
-            self._db.insertMarketTicker(exchange, fSymbol, tSymbol)
+            db = DB()
+            db.insertMarketTicker(exchange, fSymbol, tSymbol)
         except DBException as err:
             errStr = "src.core.engine.listen.handleListenTickerEvent Error: %s" % err
             self._logger.error(errStr)
 
     def registerListenEvent(self):
+        self._logger.debug("src.core.engine.listen.registerListenEvent")
         # 构造事件
         DEPETH_EVETNT = Event(
             json.loads(
@@ -113,13 +116,12 @@ class Listen(object):
         KLINE_EVETNT_HANDLER = self.handleListenKlineEvent
         TICKER_EVETNT_HANDLER = self.handleListenTickerEvent
         # 注册事件
-        self._logger.debug(DEPETH_EVETNT)
-        self._logger.debug(DEPETH_EVETNT_HANDLER)
         self._engine.register(DEPETH_EVETNT, DEPETH_EVETNT_HANDLER)
         self._engine.register(KLINE_EVENT, KLINE_EVETNT_HANDLER)
         self._engine.register(TICKER_EVENT, TICKER_EVETNT_HANDLER)
 
     def unregisterListenEvent(self):
+        self._logger.debug("src.core.engine.listen.unregisterListenEvent")
         # 构造事件
         DEPETH_EVETNT = Event(
             json.loads(
@@ -143,8 +145,6 @@ class Listen(object):
         KLINE_EVETNT_HANDLER = self.handleListenKlineEvent
         TICKER_EVETNT_HANDLER = self.handleListenTickerEvent
         # 注销事件
-        self._logger.debug(DEPETH_EVETNT)
-        self._logger.debug(DEPETH_EVETNT_HANDLER)
         self._engine.unregister(DEPETH_EVETNT, DEPETH_EVETNT_HANDLER)
         self._engine.unregister(KLINE_EVENT, KLINE_EVETNT_HANDLER)
         self._engine.unregister(TICKER_EVENT, TICKER_EVETNT_HANDLER)

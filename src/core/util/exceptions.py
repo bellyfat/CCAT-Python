@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 
 # Exception Tables
-# exceptions, code, message, detail
-# okexException, code = -1001, message = okex exchange exceptions throwed
-# binanceException, code = -1002, message = binance exchange exceptions throwed
-# huobiException, code = -1003, message = huobi exchange exceptions throwed
-# gateException, code = -1004, message = gate exchange exceptions throwed
 
-# DBException, code = -2000, message =
-
-# EngineException, code = -3000, message =
-
-# ApplicationException, code = -4000
+# okexException, code = -1001, message = err
+# binanceException, code = -1002, message = err
+# huobiException, code = -1003, message = err
+# gateException, code = -1004, message = err
+# DBException, code = -2000, message = err
+# EngineException, code = -3000, message = err
+# ApplicationException, code = -4000, message = err
 
 class ApplicationException(Exception):
 
@@ -63,18 +60,18 @@ class BinanceException(Exception):
 
 class HuobiException(Exception):
 
-    def __init__(self):
+    def __init__(self, err):
         self.code = -1003
-        self.message = "huobi exchange exceptions throwed"
+        self.message = err
 
     def __str__(self):  # pragma: no cover
         return 'HuobiException(code=%s): %s' % (self.code, self.message)
 
 class GateException(Exception):
 
-    def __init__(self):
+    def __init__(self, err):
         self.code = -1004
-        self.message = "gate exchange exceptions throwed"
+        self.message = err
 
     def __str__(self):  # pragma: no cover
         return 'GateException(code=%s): %s' % (self.code, self.message)

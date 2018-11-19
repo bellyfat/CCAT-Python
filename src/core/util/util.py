@@ -19,6 +19,6 @@ class Util(object):
             db.creatTables()
             db.creatViews()
         except DBException as err:
-            errStr = "%s\n, Application Error. Can Not Init File." % err
+            errStr = "src.core.util.util.init: Critical. ApplicationException: Can Not Init File. %s" % err
             self.logger.critical(errStr)
             raise ApplicationException(errStr)
