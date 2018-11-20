@@ -7,13 +7,14 @@ from src.core.config import Config
 from src.core.util.log import Logger
 from src.core.util.exceptions import EngineException
 
+
 class EventEngine(object):
     # 初始化事件事件驱动引擎
     def __init__(self):
         # 保存事件列表
         self.__eventQueue = Queue()
         # 引擎开关
-        self.__active = Value('b',False)
+        self.__active = Value('b', False)
         # 事件处理字典{'event1': [handler1,handler2] , 'event2':[handler3, ...,handler4]}
         self.__handlers = {}
         # 保存事件处理进程池
@@ -25,7 +26,8 @@ class EventEngine(object):
 
     # 执行事件循环
     def __run(self, __active):
-        self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run")
+        self.__logger.debug(
+            "src.core.engine.engine.EventEngine.__mainProcess.__run")
         while __active.value:
             # 事件队列非空
             if not self.__eventQueue.empty():
@@ -33,16 +35,22 @@ class EventEngine(object):
                 event = self.__eventQueue.get(
                     block=True, timeout=float(Config()._engine["timeout"]))
                 # 执行事件
-                self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.eventQueue: "+event.type)
+                self.__logger.debug(
+                    "src.core.engine.engine.EventEngine.__mainProcess.__run.eventQueue: "
+                    + event.type)
                 self.__process(event)
             else:
                 # 等待 epoch
-                self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.eventQueue: empty")
+                self.__logger.debug(
+                    "src.core.engine.engine.EventEngine.__mainProcess.__run.eventQueue: empty"
+                )
                 time.sleep(float(Config()._engine["epoch"]))
 
     # 执行事件
     def __process(self, event):
-        self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__process: "+event.type)
+        self.__logger.debug(
+            "src.core.engine.engine.EventEngine.__mainProcess.__process: " +
+            event.type)
         if event.type in self.__handlers:
             for handler in self.__handlers[event.type]:
                 # 开一个进程去异步处理
@@ -104,7 +112,8 @@ class EventEngine(object):
             if not handlerList:
                 del self.__handlers[type]
         except KeyError as err:
-            errStr = "src.core.engine.engine.EventEngine.unregister: %s" % EngineException(err)
+            errStr = "src.core.engine.engine.EventEngine.unregister: %s" % EngineException(
+                err)
             self.__logger.error(errStr)
 
     def sendEvent(self, event):
