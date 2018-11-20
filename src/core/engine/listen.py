@@ -119,7 +119,7 @@ class Listen(object):
         self._engine.register(KLINE_EVENT, KLINE_EVETNT_HANDLER)
         self._engine.register(TICKER_EVENT, TICKER_EVETNT_HANDLER)
 
-    def unregisterListenEvent(self, handler):
+    def unRegisterListenEvent(self, handler):
         self._logger.debug("src.core.engine.listen.Listen.unregisterListenEvent")
         # 构造事件
         ACCOUNT_BALANCE_EVETNT = Event(

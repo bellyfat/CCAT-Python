@@ -27,8 +27,10 @@ if __name__ == '__main__':
 
     # constant var
 
+
     # register engine
     listen.registerListenEvent(listenHandler)
+
 
     # start engine
     __eventEngine.start()
@@ -37,6 +39,10 @@ if __name__ == '__main__':
     util.updateDBAccountBalance(listen)
     # util.updateDBAccountWithdraw(listen)
 
+
     # stop engine
-    time.sleep(1)
+    time.sleep(2)
     __eventEngine.stop()
+
+    # unRegister engine
+    listen.unRegisterListenEvent(listenHandler)

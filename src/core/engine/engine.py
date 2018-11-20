@@ -86,10 +86,10 @@ class EventEngine(object):
             handlerList = self.__handlers[type]
         except KeyError:
             handlerList = []
-            self.__handlers[type] = handlerList
         # 若要注册的处理器不在该事件的处理器列表中，则注册该事件
         if handler not in handlerList:
             handlerList.append(handler)
+        self.__handlers[type] = handlerList
 
     def unregister(self, event, handler):
         self.__logger.debug("src.core.engine.engine.EventEngine.unregister")
