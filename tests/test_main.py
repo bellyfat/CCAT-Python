@@ -2,6 +2,7 @@
 
 import os
 import sys
+import time
 sys.path.append(os.getcwd())
 
 from src.core.engine.engine import EventEngine
@@ -33,4 +34,9 @@ if __name__ == '__main__':
     __eventEngine.start()
 
     # app update
-    util.updateDBAccount(listen)
+    # util.updateDBAccountBalance(listen)
+    util.updateDBAccountWithdraw(listen)
+
+    # stop engine
+    time.sleep(5)
+    __eventEngine.stop()

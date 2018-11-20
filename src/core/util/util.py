@@ -18,6 +18,7 @@ class Util(object):
         self._mainCof = Config()._main
         self._serverLimits = None
 
+    # Init App
     def initAPP(self):
         self._logger.debug("src.core.util.util.Util.initAPP")
         try:
@@ -67,9 +68,24 @@ class Util(object):
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
-    # Account数据
-    def updateDBAccount(self, listen):
-        self._logger.debug("src.core.util.util.Util.updateDBAccount")
+    # Update App
+    def updateAPP(self, listen):
+        pass
+
+    # Account Balance 数据
+    def updateDBAccountBalance(self, listen):
+        self._logger.debug("src.core.util.util.Util.updateDBAccountBalance")
+        try:
+            for exchange in self._mainCof["exchanges"]:
+                listen.sendListenAccountBalanceEvent(exchange)
+        except DBException as err:
+            errStr = "src.core.util.util.Util.updateDBAccountBalance: %s" % ApplicationException(err)
+            self._logger.critical(errStr)
+            raise ApplicationException(err)
+
+    # Account Withdraw 数据
+    def updateDBAccountWithdraw(self, listen):
+        self._logger.debug("src.core.util.util.Util.updateDBAccountWithdraw")
         try:
             for exchange in self._mainCof["exchanges"]:
                 listen.sendListenAccountBalanceEvent(exchange)
@@ -80,12 +96,13 @@ class Util(object):
                     time.sleep(float(1.25/self._serverLimits["requests_second"].min()))
                     listen.sendListenAccountWithdrawEvent(r["server"], r["asset"])
         except DBException as err:
-            errStr = "src.core.util.util.Util.updateDBAccount: %s" % ApplicationException(err)
+            errStr = "src.core.util.util.Util.updateDBAccountWithdraw: %s" % ApplicationException(err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
     # Market数据
     def updateDBMarket(self):
+        self._logger.debug("src.core.util.util.Util.updateDBMarket")
         pass
 
     # Trade数据

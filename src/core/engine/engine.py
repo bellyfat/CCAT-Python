@@ -36,6 +36,7 @@ class EventEngine(object):
                 self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.eventQueue: "+event.type)
                 self.__process(event)
             else:
+                # 等待 epoch
                 self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.eventQueue: empty")
                 time.sleep(float(Config()._engine["epoch"]))
 

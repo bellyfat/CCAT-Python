@@ -2,57 +2,30 @@
 
 import os
 import sys
-import unittest
 sys.path.append(os.getcwd())
 
-from src.core.util.util import Util
-from src.core.engine.engine import Event, EventEngine
-from tests.engine.test_listen import TestListen
-from tests.engine.test_backtest import TestBacktest
-from tests.engine.test_execute import TestExecute
-from tests.engine.test_statistic import TestStatistic
+from src.core.util.log import Logger
 
-
-# global var
-__eventEngine = EventEngine()
-
-# list of test_engine
-# listen test items
-test_listen = [
-    TestListen("test_sendListenEvent")
-]
-# backtest test items
-test_judge = [
-    # TestJudge(""),
-]
-# backtest test items
-test_backtest = [
-    # TestBacktest(""),
-]
-# execute test items
-test_execute = [
-    # TestExecute(""),
-]
-# statistic test items
-test_statistic = [
-    # TestStatistic(""),
-]
+logger = Logger()
 
 # Begin Test
 if __name__ == '__main__':
-    # util init
-    util = Util(__eventEngine)
-    util.initDB()
-    # Test
-    suite = unittest.TestSuite()
-    runner = unittest.TextTestRunner(verbosity=2)
-    # add tests
-    suite.addTests(test_listen)
-    suite.addTests(test_judge)
-    suite.addTests(test_backtest)
-    suite.addTests(test_execute)
-    suite.addTests(test_statistic)
-    # run test
-    runner.run(suite)
+    # 1. integration test for test_listen
+    logger.debug("3.1 sub testing... python3 tests/engine/test_listen.py")
+    os.system("python3 tests/engine/test_listen.py")
 
-    # Tear down test fixtures
+    # 2. integration test for test_judge
+    logger.debug("3.2 sub testing... python3 tests/engine/test_judge.py")
+    os.system("python3 tests/engine/test_judge.py")
+
+    # 3. integration test for test_backtest
+    logger.debug("3.3 sub testing... python3 tests/engine/test_backtest.py")
+    os.system("python3 tests/engine/test_backtest.py")
+
+    # 4. integration test for test_execute
+    logger.debug("3.4 sub testing... python3 tests/engine/test_execute.py")
+    os.system("python3 tests/engine/test_execute.py")
+
+    # 5. integration test for test_statistic
+    logger.debug("3.5 sub testing... python3 tests/engine/test_statistic.py")
+    os.system("python3 tests/engine/test_statistic.py")
