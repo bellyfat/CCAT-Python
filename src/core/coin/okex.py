@@ -20,9 +20,9 @@ class Okex(Coin):
     def __init__(self, exchange, api_key, api_secret, passphrase, proxies=None):
         super(Okex, self).__init__(exchange, api_key, api_secret, proxies)
         self._passphrase = passphrase
-        self._client = Client(api_key, api_secret, passphrase, True)
-        self._accountAPI = AccountAPI(api_key, api_secret, passphrase, True)
-        self._spotAPI = SpotAPI(api_key, api_secret, passphrase, True)
+        self._client = Client(api_key, api_secret, passphrase, False)
+        self._accountAPI = AccountAPI(api_key, api_secret, passphrase, False)
+        self._spotAPI = SpotAPI(api_key, api_secret, passphrase, False)
 
     # get config
     def getConfig(self):
@@ -37,7 +37,7 @@ class Okex(Coin):
         try:
             res = self._client._get_timestamp(self._proxies)
             return date_to_milliseconds(res)
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # perseconds qurry and orders rate limits
@@ -72,7 +72,7 @@ class Okex(Coin):
                     "tSymbol": tSymbol
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
     # def getServerSymbols(self):
     #     # not all api defined, get form cryptoCompare
@@ -132,7 +132,7 @@ class Okex(Coin):
                     "min_notional": min_notional
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
@@ -150,7 +150,7 @@ class Okex(Coin):
                 "ask_one_size": float(ticker["asks"][0][1])
             }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # a specific symbol's orderbook with depth
@@ -183,7 +183,7 @@ class Okex(Coin):
                 "ask_price_size": ticker["asks"]
             }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # a specific symbols kline/candlesticks
@@ -218,7 +218,7 @@ class Okex(Coin):
                     "volume":k["volume"]
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get symbol trade fees
@@ -263,7 +263,7 @@ class Okex(Coin):
                     "fee": float(ratio) * float(item["filled_notional"])
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get history trade
@@ -294,7 +294,7 @@ class Okex(Coin):
                     "fee": float(ratio) * float(item["filled_notional"])
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get succeed trade
@@ -325,7 +325,7 @@ class Okex(Coin):
                     "fee": float(ratio) * float(item["filled_notional"])
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get account all asset balance
@@ -341,7 +341,7 @@ class Okex(Coin):
                     "locked": float(b["frozen"])
                 })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get account asset deposit and withdraw limits
@@ -365,7 +365,7 @@ class Okex(Coin):
                         "min_withdraw": 0.0
                     })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get account asset balance
@@ -379,7 +379,7 @@ class Okex(Coin):
                 "locked": float(base["frozen"])
             }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get account asset deposit and withdraw history detail
@@ -398,7 +398,7 @@ class Okex(Coin):
                 "withdraw": withdraw
             }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # create orders default limit
@@ -432,7 +432,7 @@ class Okex(Coin):
                 "fee": float(ratio) * float(info["filled_notional"])
             }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # check orders done or undone
@@ -461,7 +461,7 @@ class Okex(Coin):
                 "fee": float(ratio) * float(info["filled_notional"])
             }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # cancle the specific order
@@ -484,7 +484,7 @@ class Okex(Coin):
                     "status": info["status"]
                 }
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # cancle the bathch orders
@@ -509,7 +509,7 @@ class Okex(Coin):
                         "status": info["status"]
                     })
             return res
-        except (OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # deposite asset balance

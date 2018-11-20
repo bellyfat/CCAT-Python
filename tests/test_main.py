@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     # app init
     util.initAPP()
-    util.initServerLimits()
+    # util.initServerLimits()
 
     # constant var
 

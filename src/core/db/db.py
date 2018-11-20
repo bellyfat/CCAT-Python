@@ -8,8 +8,9 @@ from src.core.coin.binance import Binance
 from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.db.sql import *
-from src.core.util.exceptions import DBException
-from src.core.util.helper import sqlite_escape, utcnow_timestamp, dict_factory
+from src.core.util.exceptions import (BinanceException, DBException,
+                                      OkexException)
+from src.core.util.helper import dict_factory, sqlite_escape, utcnow_timestamp
 from src.core.util.log import Logger
 
 
@@ -18,19 +19,20 @@ class DB(object):
     def __init__(self):
         proxies = Config()._proxies
         dbStr = os.path.join(os.getcwd(), Config()._db["url"])
-        self._binanceConf = Config()._binance
-        self._binance = Binance(self._binanceConf["exchange"],
-                               self._binanceConf["api_key"],
-                               self._binanceConf["api_secret"], proxies["url"])
-        self._okexConf = Config()._okex
-        self._okex = Okex(self._okexConf["exchange"], self._okexConf["api_key"],
-                         self._okexConf["api_secret"],
-                         self._okexConf["passphrase"], proxies["url"])
-        self._logger = Logger()
         self._dbStr = dbStr
         self._conn = sqlite3.connect(dbStr)
         self._conn.row_factory = dict_factory
         os.chmod(self._dbStr, 0o664)  # 设置读写权限
+        self._okexConf = Config()._okex
+        self._okex = Okex(self._okexConf["exchange"],
+                          self._okexConf["api_key"],
+                          self._okexConf["api_secret"],
+                          self._okexConf["passphrase"], proxies["url"])
+        self._binanceConf = Config()._binance
+        self._binance = Binance(
+            self._binanceConf["exchange"], self._binanceConf["api_key"],
+            self._binanceConf["api_secret"], proxies["url"])
+        self._logger = Logger()
 
     def __del__(self):
         self._conn.close()
@@ -107,7 +109,6 @@ class DB(object):
             return res
         except sqlite3.Error as err:
             raise DBException(err)
-
 
     def getTables(self):
         self._logger.debug("src.core.db.db.DB.getTables")
@@ -292,7 +293,7 @@ class DB(object):
             # to_be_continue
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
     def insertMarketDepth(self, exchange, fSymbol, tSymbol, limit=100):
@@ -337,7 +338,7 @@ class DB(object):
             # to_be_continue
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
     def insertMarketKline(self, exchange, fSymbol, tSymbol, interval, start,
@@ -348,7 +349,7 @@ class DB(object):
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
                 base = self._okex.getMarketKline(fSymbol, tSymbol, interval,
-                                                start, end)
+                                                 start, end)
                 for b in base:
                     INSERT_OKEX_MARKET_KLINE_SQL = INSERT_MARKET_KLINE_SQL.substitute(
                         server=str(self._okexConf["exchange"]),
@@ -365,7 +366,7 @@ class DB(object):
             # Binance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
                 base = self._binance.getMarketKline(fSymbol, tSymbol, interval,
-                                                   start, end)
+                                                    start, end)
                 for b in base:
                     INSERT_BINANCE_MARKET_KLINE_SQL = INSERT_MARKET_KLINE_SQL.substitute(
                         server=str(self._binanceConf["exchange"]),
@@ -387,7 +388,7 @@ class DB(object):
             # to_be_continue
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
     def insertMarketTicker(self, exchange, fSymbol, tSymbol):
@@ -430,7 +431,7 @@ class DB(object):
             # to_be_continue
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
     def insertInfoServer(self, exchange="all"):
@@ -473,7 +474,7 @@ class DB(object):
             # to_be_continue
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
     def insertInfoSymbol(self, exchange="all"):
@@ -569,7 +570,7 @@ class DB(object):
             # to_be_continue
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
     def insertTradeBacktestHistory(self,
@@ -638,7 +639,7 @@ class DB(object):
             # to_be_continue
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
     def insertTradeOrderHistory(self,
@@ -656,7 +657,7 @@ class DB(object):
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
                 base = self._okex.createOrder(fSymbol, tSymbol, ask_or_bid,
-                                             price, quantity, ratio, type)
+                                              price, quantity, ratio, type)
                 INSERT_OKEX_TRADE_ORDER_HISTORY_SQL = INSERT_TRADE_ORDER_HISTORY_SQL.substitute(
                     server=str(self._okexConf["exchange"]),
                     timeStamp=int(base["timeStamp"]),
@@ -676,7 +677,7 @@ class DB(object):
             # Binance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
                 base = self._binance.createOrder(fSymbol, tSymbol, ask_or_bid,
-                                                price, quantity, ratio, type)
+                                                 price, quantity, ratio, type)
                 INSERT_BINANCE_TRADE_ORDER_HISTORY_SQL = INSERT_TRADE_ORDER_HISTORY_SQL.substitute(
                     server=str(self._binanceConf["exchange"]),
                     timeStamp=int(base["timeStamp"]),
@@ -699,7 +700,7 @@ class DB(object):
             # to_be_continue
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
     def insertAccountWithdrawHistory(self, exchange, asset):
@@ -743,7 +744,7 @@ class DB(object):
             # to_be_continue
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
     def insertInfoWithdraw(self, exchange="all"):
@@ -780,5 +781,5 @@ class DB(object):
             # to_be_continue
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)

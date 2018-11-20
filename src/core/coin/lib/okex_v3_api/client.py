@@ -21,9 +21,11 @@ class Client(object):
         url = c.API_URL + request_path
 
         timestamp = utils.get_timestamp()
+        # print(timestamp)
         # sign & header
         if self.use_server_time:
             timestamp = self._get_timestamp(proxies)
+            # print(timestamp)
         body = json.dumps(params) if method == c.POST else ""
 
         sign = utils.sign(utils.pre_hash(timestamp, method, request_path, str(body)), self.API_SECRET_KEY)
@@ -34,13 +36,16 @@ class Client(object):
         #print("url:", url)
         #print("headers:", header)
         #print("body:", body)
-        if method == c.GET:
-            response = requests.get(url, headers=header, proxies=proxies)
-        elif method == c.POST:
-            response = requests.post(url, data=body, headers=header, proxies=proxies)
-            #response = requests.post(url, json=body, headers=header)
-        elif method == c.DELETE:
-            response = requests.delete(url, headers=header, proxies=proxies)
+        try:
+            if method == c.GET:
+                response = requests.get(url, headers=header, proxies=proxies, timeout=20)
+            elif method == c.POST:
+                response = requests.post(url, data=body, headers=header, proxies=proxies, timeout=20)
+                #response = requests.post(url, json=body, headers=header)
+            elif method == c.DELETE:
+                response = requests.delete(url, headers=header, proxies=proxies, timeout=20)
+        except requests.exceptions.ProxyError as err:
+            raise exceptions.OkexRequestException('Proxy Connection timeout : %s' % err)
 
         # exception handle
         if not str(response.status_code).startswith('2'):
@@ -68,7 +73,10 @@ class Client(object):
 
     def _get_timestamp(self, proxies=None):
         url = c.API_URL + c.SERVER_TIMESTAMP_URL
-        response = requests.get(url, proxies=proxies)
+        try:
+            response = requests.get(url, proxies=proxies, timeout=20)
+        except requests.exceptions.ProxyError as err:
+            raise exceptions.OkexRequestException('Proxy Connection timeout : %s' % err)
         if response.status_code == 200:
             return response.json()['iso']
         else:

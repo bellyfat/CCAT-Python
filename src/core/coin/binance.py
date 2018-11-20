@@ -5,16 +5,19 @@
 
 import json
 import math
+
 import requests
 import urllib3
-from binance.enums import *
-from binance.client import Client
-from binance.exceptions import (BinanceAPIException, BinanceOrderException,
-                                BinanceRequestException,
-                                BinanceWithdrawException)
 
 from src.core.coin.coin import Coin
+from src.core.coin.lib.binance_api.client import Client
+from src.core.coin.lib.binance_api.enums import *
+from src.core.coin.lib.binance_api.exceptions import (BinanceAPIException,
+                                                      BinanceOrderException,
+                                                      BinanceRequestException,
+                                                      BinanceWithdrawException)
 from src.core.util.exceptions import BinanceException
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
@@ -44,7 +47,7 @@ class Binance(Coin):
         try:
             res = self._client.get_server_time()  # UTC Zone UnixStamp
             return res["serverTime"]
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -67,7 +70,7 @@ class Binance(Coin):
                 "webSockets_second": ''
             }
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -81,7 +84,7 @@ class Binance(Coin):
                 tSymbol = b["quoteAsset"]
                 res.append({"fSymbol": fSymbol, "tSymbol": tSymbol})
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -151,7 +154,7 @@ class Binance(Coin):
                     "min_notional": min_notional
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -171,7 +174,7 @@ class Binance(Coin):
                 "ask_one_size": ticker["askQty"]
             }
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -191,7 +194,7 @@ class Binance(Coin):
                 "ask_price_size": ticker["asks"]
             }
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -233,7 +236,7 @@ class Binance(Coin):
                     "volume": k[5]
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -242,7 +245,7 @@ class Binance(Coin):
         try:
             res = self._client.get_trade_fee(**kwargs)
             return res["tradeFee"]
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -287,7 +290,7 @@ class Binance(Coin):
                     float(ratio) * float(item["cummulativeQuoteQty"])
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -335,7 +338,7 @@ class Binance(Coin):
                     float(ratio) * float(item["cummulativeQuoteQty"])
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -382,7 +385,7 @@ class Binance(Coin):
                         float(ratio) * float(item["cummulativeQuoteQty"])
                     })
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -399,7 +402,7 @@ class Binance(Coin):
                     "locked": float(b["locked"])
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -416,7 +419,7 @@ class Binance(Coin):
                     "min_withdraw": float(value["minWithdrawAmount"])
                 })
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -431,7 +434,7 @@ class Binance(Coin):
                 "locked": float(base["locked"])
             }
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -445,7 +448,7 @@ class Binance(Coin):
                 "withdraw": withdraw["withdrawList"]
             }
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -495,7 +498,7 @@ class Binance(Coin):
                 "fee": float(ratio) * float(base["cummulativeQuoteQty"])
             }
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -528,7 +531,7 @@ class Binance(Coin):
                 "fee": float(ratio) * float(base["cummulativeQuoteQty"])
             }
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -544,7 +547,7 @@ class Binance(Coin):
             else:
                 res = {"order_id": orderID, "status": info["status"].lower()}
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 
@@ -566,7 +569,7 @@ class Binance(Coin):
                         "status": info["status"].lower()
                     })
             return res
-        except (BinanceAPIException, BinanceRequestException,
+        except (KeyError, BinanceAPIException, BinanceRequestException,
                 BinanceOrderException, BinanceWithdrawException) as err:
             raise BinanceException(err)
 

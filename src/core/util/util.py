@@ -73,13 +73,12 @@ class Util(object):
         try:
             for exchange in self._mainCof["exchanges"]:
                 listen.sendListenAccountBalanceEvent(exchange)
-                time.sleep(1/float(self._serverLimits.at[exchange, "requests_second"]))
             db = DB()
             res = db.getInfoWithdraw()
-            for r in res:
+            for r  in res:
                 if r["can_deposite"] == "True" and r["can_withdraw"] == "True":
+                    time.sleep(float(2/self._serverLimits["requests_second"].min()))
                     listen.sendListenAccountWithdrawEvent(r["server"], r["asset"])
-                    time.sleep(1/float(self._serverLimits.at[r["server"], "requests_second"]))
         except DBException as err:
             errStr = "src.core.util.util.Util.updateDBAccount: %s" % ApplicationException(err)
             self._logger.critical(errStr)
