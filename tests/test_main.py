@@ -21,8 +21,8 @@ if __name__ == '__main__':
     listenHandler = ListenHandler()
 
     # app init
-    util.initAPP()
-    # util.initServerLimits()
+    # util.initAPP()
+    util.initServerLimits()
 
     # constant var
 

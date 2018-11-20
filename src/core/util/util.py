@@ -77,7 +77,7 @@ class Util(object):
             res = db.getInfoWithdraw()
             for r  in res:
                 if r["can_deposite"] == "True" and r["can_withdraw"] == "True":
-                    time.sleep(float(2/self._serverLimits["requests_second"].min()))
+                    time.sleep(float(1.25/self._serverLimits["requests_second"].min()))
                     listen.sendListenAccountWithdrawEvent(r["server"], r["asset"])
         except DBException as err:
             errStr = "src.core.util.util.Util.updateDBAccount: %s" % ApplicationException(err)

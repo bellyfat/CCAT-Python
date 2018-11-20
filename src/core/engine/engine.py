@@ -28,7 +28,6 @@ class EventEngine(object):
         self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run")
         while __active.value:
             # 事件队列非空
-            time.sleep(float(Config()._engine["epoch"]))
             if not self.__eventQueue.empty():
                 # 获取队列中的事件 超时1秒
                 event = self.__eventQueue.get(
@@ -38,6 +37,7 @@ class EventEngine(object):
                 self.__process(event)
             else:
                 self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.eventQueue: empty")
+                time.sleep(float(Config()._engine["epoch"]))
 
     # 执行事件
     def __process(self, event):

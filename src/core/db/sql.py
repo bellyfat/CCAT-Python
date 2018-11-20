@@ -244,9 +244,9 @@ CREATE_VIEWS_SQL = '''
 			WHERE B2.server IS NULL;
     CREATE VIEW IF NOT EXISTS VIEW_ACCOUNT_WITHDRAW_CURRENT
         AS
-			SELECT B1.*
-			FROM ACCOUNT_WITHDRAW_HISTORY B1
-			LEFT JOIN ACCOUNT_WITHDRAW_HISTORY B2 ON B1.server = B2.server AND B1.asset = B2.asset AND B1.timeStamp < B2.timeStamp
-			WHERE B2.server IS NULL;
+            SELECT B1.*
+            FROM ACCOUNT_WITHDRAW_HISTORY B1
+            LEFT JOIN ACCOUNT_WITHDRAW_HISTORY B2 ON B1.server = B2.server AND B1.asset = B2.asset AND B1.timeStamp < B2.timeStamp
+            WHERE (B1.deposite<>'' OR B1.withdraw <>'') and B2.server IS NULL;
     COMMIT;
 '''
