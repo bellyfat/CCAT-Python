@@ -50,7 +50,7 @@ class Okex(Coin):
             WebSocket将每个命令类型限制为每秒50条命令。
         '''
         res = {
-            "requests_second": 10,
+            "requests_second": 6,
             "orders_second": 10,
             "orders_day": 10 * 3600 * 24,
             "webSockets_second": 50

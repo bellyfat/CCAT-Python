@@ -36,7 +36,7 @@ class DB(object):
         self._conn.close()
 
     def initDB(self):
-        self._logger.debug("src.core.db.db.initDB")
+        self._logger.debug("src.core.db.db.DB.initDB")
         try:
             self._conn.close()
             os.remove(self._dbStr)
@@ -47,7 +47,7 @@ class DB(object):
             raise DBException(err)
 
     def getViews(self):
-        self._logger.debug("src.core.db.db.getViews")
+        self._logger.debug("src.core.db.db.DB.getViews")
         self._logger.debug(GET_VIEWS_SQL)
         try:
             curs = self._conn.cursor()
@@ -59,7 +59,7 @@ class DB(object):
             raise DBException(err)
 
     def creatViews(self):
-        self._logger.debug("src.core.db.db.creatViews")
+        self._logger.debug("src.core.db.db.DB.creatViews")
         self._logger.debug(CREATE_VIEWS_SQL)
         try:
             curs = self._conn.cursor()
@@ -69,7 +69,7 @@ class DB(object):
             raise DBException(err)
 
     def getViewInfoSymbolPairs(self, *exchanges):
-        self._logger.debug("src.core.db.db.getViewInfoSymbolPairs")
+        self._logger.debug("src.core.db.db.DB.getViewInfoSymbolPairs")
         try:
             curs = self._conn.cursor()
             GET_SERVERS_VIEW_INFO_SYMBOL_PAIRS_SQL = GET_VIEW_INFO_SYMBOL_PAIRS_SQL.substitute(
@@ -83,7 +83,7 @@ class DB(object):
             raise DBException(err)
 
     def getViewInfoSymbolItem(self, exchange, fSymbol, tSymbol):
-        self._logger.debug("src.core.db.db.getViewInfoSymbolItem")
+        self._logger.debug("src.core.db.db.DB.getViewInfoSymbolItem")
         try:
             curs = self._conn.cursor()
             GET_ITEM_VIEW_INFO_SYMBOL_ITEM_SQL = GET_VIEW_INFO_SYMBOL_ITEM_SQL.substitute(
@@ -97,7 +97,7 @@ class DB(object):
             raise DBException(err)
 
     def getViewAccountBalanceCurrent(self):
-        self._logger.debug("src.core.db.db.getViewAccountBalanceCurrent")
+        self._logger.debug("src.core.db.db.DB.getViewAccountBalanceCurrent")
         self._logger.debug(GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL)
         try:
             curs = self._conn.cursor()
@@ -110,7 +110,7 @@ class DB(object):
 
 
     def getTables(self):
-        self._logger.debug("src.core.db.db.getTables")
+        self._logger.debug("src.core.db.db.DB.getTables")
         self._logger.debug(GET_TABLES_SQL)
         try:
             curs = self._conn.cursor()
@@ -122,7 +122,7 @@ class DB(object):
             raise DBException(err)
 
     def creatTables(self):
-        self._logger.debug("src.core.db.db.creatTables")
+        self._logger.debug("src.core.db.db.DB.creatTables")
         self._logger.debug(CREATE_TABELS_SQL)
         try:
             curs = self._conn.cursor()
@@ -132,7 +132,7 @@ class DB(object):
             raise DBException(err)
 
     def getAccountBalanceHistory(self):
-        self._logger.debug("src.core.db.db.getAccountBalanceHistory")
+        self._logger.debug("src.core.db.db.DB.getAccountBalanceHistory")
         self._logger.debug(GET_ACCOUNT_INFO_SQL)
         try:
             curs = self._conn.cursor()
@@ -144,7 +144,7 @@ class DB(object):
             raise DBException(err)
 
     def getMarketDepth(self):
-        self._logger.debug("src.core.db.db.getMarketDepth")
+        self._logger.debug("src.core.db.db.DB.getMarketDepth")
         self._logger.debug(GET_MARKET_DEPTH_SQL)
         try:
             curs = self._conn.cursor()
@@ -156,7 +156,7 @@ class DB(object):
             raise DBException(err)
 
     def getMarketKline(self):
-        self._logger.debug("src.core.db.db.getMarketKline")
+        self._logger.debug("src.core.db.db.DB.getMarketKline")
         self._logger.debug(GET_MARKET_KLINE_SQL)
         try:
             curs = self._conn.cursor()
@@ -168,7 +168,7 @@ class DB(object):
             raise DBException(err)
 
     def getMarketTicker(self):
-        self._logger.debug("src.core.db.db.getMarketTicker")
+        self._logger.debug("src.core.db.db.DB.getMarketTicker")
         self._logger.debug(GET_MARKET_TIKER_SQL)
         try:
             curs = self._conn.cursor()
@@ -180,7 +180,7 @@ class DB(object):
             raise DBException(err)
 
     def getInfoServer(self):
-        self._logger.debug("src.core.db.db.getInfoServer")
+        self._logger.debug("src.core.db.db.DB.getInfoServer")
         self._logger.debug(GET_INFO_SERVER_SQL)
         try:
             curs = self._conn.cursor()
@@ -192,7 +192,7 @@ class DB(object):
             raise DBException(err)
 
     def getInfoSymbol(self):
-        self._logger.debug("src.core.db.db.getInfoSymbol")
+        self._logger.debug("src.core.db.db.DB.getInfoSymbol")
         self._logger.debug(GET_INFO_SYMBOL_SQL)
         try:
             curs = self._conn.cursor()
@@ -204,7 +204,7 @@ class DB(object):
             raise DBException(err)
 
     def getTradeBacktestHistory(self):
-        self._logger.debug("src.core.db.db.getTradeBacktestHistory")
+        self._logger.debug("src.core.db.db.DB.getTradeBacktestHistory")
         self._logger.debug(GET_TRADE_BACKTEST_HISTORY_SQL)
         try:
             curs = self._conn.cursor()
@@ -216,7 +216,7 @@ class DB(object):
             raise DBException(err)
 
     def getTradeOrderHistory(self):
-        self._logger.debug("src.core.db.db.getTradeOrderHistory")
+        self._logger.debug("src.core.db.db.DB.getTradeOrderHistory")
         self._logger.debug(GET_TRADE_ORDER_HISTORY_SQL)
         try:
             curs = self._conn.cursor()
@@ -228,7 +228,7 @@ class DB(object):
             raise DBException(err)
 
     def getAccountWithdrawHistory(self):
-        self._logger.debug("src.core.db.db.getAccountWithdrawHistory")
+        self._logger.debug("src.core.db.db.DB.getAccountWithdrawHistory")
         self._logger.debug(GET_WITHDRAW_HISTORY_SQL)
         try:
             curs = self._conn.cursor()
@@ -240,7 +240,7 @@ class DB(object):
             raise DBException(err)
 
     def getInfoWithdraw(self):
-        self._logger.debug("src.core.db.db.getInfoWithdraw")
+        self._logger.debug("src.core.db.db.DB.getInfoWithdraw")
         self._logger.debug(GET_INFO_WITHDRAW_SQL)
         try:
             curs = self._conn.cursor()
@@ -252,12 +252,12 @@ class DB(object):
             raise DBException(err)
 
     def insertAccountBalanceHistory(self, exchange="all"):
-        self._logger.debug("src.core.db.db.insertAccountBalanceHistory")
+        self._logger.debug("src.core.db.db.DB.insertAccountBalanceHistory")
         try:
             curs = self._conn.cursor()
+            timeStamp = utcnow_timestamp()
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
-                timeStamp = self._okex.getServerTime()
                 base = self._okex.getAccountBalances()
                 for b in base:
                     if b["balance"] > 0:
@@ -272,7 +272,6 @@ class DB(object):
                         curs.execute(INSERT_OKEX_ACCOUNT_INFO_SQL)
             # Binance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                timeStamp = self._binance.getServerTime()
                 base = self._binance.getAccountBalances()
                 for b in base:
                     if b["balance"] > 0:
@@ -297,7 +296,7 @@ class DB(object):
             raise DBException(err)
 
     def insertMarketDepth(self, exchange, fSymbol, tSymbol, limit=100):
-        self._logger.debug("src.core.db.db.insertMarketDepth")
+        self._logger.debug("src.core.db.db.DB.insertMarketDepth")
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -343,7 +342,7 @@ class DB(object):
 
     def insertMarketKline(self, exchange, fSymbol, tSymbol, interval, start,
                           end):
-        self._logger.debug("src.core.db.db.insertMarketKline")
+        self._logger.debug("src.core.db.db.DB.insertMarketKline")
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -392,7 +391,7 @@ class DB(object):
             raise DBException(err)
 
     def insertMarketTicker(self, exchange, fSymbol, tSymbol):
-        self._logger.debug("src.core.db.db.insertMarketTicker")
+        self._logger.debug("src.core.db.db.DB.insertMarketTicker")
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -435,7 +434,7 @@ class DB(object):
             raise DBException(err)
 
     def insertInfoServer(self, exchange="all"):
-        self._logger.debug("src.core.db.db.insertInfoServer")
+        self._logger.debug("src.core.db.db.DB.insertInfoServer")
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -478,7 +477,7 @@ class DB(object):
             raise DBException(err)
 
     def insertInfoSymbol(self, exchange="all"):
-        self._logger.debug("src.core.db.db.insertInfoSymbol")
+        self._logger.debug("src.core.db.db.DB.insertInfoSymbol")
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -582,7 +581,7 @@ class DB(object):
                                    quantity,
                                    ratio='',
                                    type="limit"):
-        self._logger.debug("src.core.db.db.insertTradeBacktestHistory")
+        self._logger.debug("src.core.db.db.DB.insertTradeBacktestHistory")
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -651,7 +650,7 @@ class DB(object):
                                 quantity,
                                 ratio='',
                                 type="limit"):
-        self._logger.debug("src.core.db.db.insertTradeOrderHistory")
+        self._logger.debug("src.core.db.db.DB.insertTradeOrderHistory")
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -704,12 +703,12 @@ class DB(object):
             raise DBException(err)
 
     def insertAccountWithdrawHistory(self, exchange, asset):
-        self._logger.debug("src.core.db.db.insertAccountWithdrawHistory")
+        self._logger.debug("src.core.db.db.DB.insertAccountWithdrawHistory")
         try:
             curs = self._conn.cursor()
+            timeStamp = utcnow_timestamp()
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
-                timeStamp = self._okex.getServerTime()
                 base = self._okex.getAccountAssetDetail(asset)
                 INSERT_OKEX_WITHDRAW_HISTORY_SQL = INSERT_WITHDRAW_HISTORY_SQL.substitute(
                     server=str(self._okexConf["exchange"]),
@@ -725,7 +724,6 @@ class DB(object):
                 curs.execute(INSERT_OKEX_WITHDRAW_HISTORY_SQL)
             # Binance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                timeStamp = self._binance.getServerTime()
                 base = self._binance.getAccountAssetDetail(asset)
                 INSERT_BINANCE_WITHDRAW_HISTORY_SQL = INSERT_WITHDRAW_HISTORY_SQL.substitute(
                     server=str(self._binanceConf["exchange"]),
@@ -749,7 +747,7 @@ class DB(object):
             raise DBException(err)
 
     def insertInfoWithdraw(self, exchange="all"):
-        self._logger.debug("src.core.db.db.insertInfoWithdraw")
+        self._logger.debug("src.core.db.db.DB.insertInfoWithdraw")
         try:
             curs = self._conn.cursor()
             # OKEX

@@ -5,7 +5,7 @@ import sys
 sys.path.append(os.getcwd())
 
 from src.core.engine.engine import EventEngine
-from src.core.engine.listen import Listen
+from src.core.engine.listen import Listen, ListenHandler
 from src.core.util.util import Util
 from src.core.util.log import Logger
 
@@ -15,15 +15,19 @@ __logger = Logger()
 
 # Begin Test
 if __name__ == '__main__':
-    # define var
+    # clase instanse
     util = Util()
     listen = Listen(__eventEngine)
+    listenHandler = ListenHandler()
 
     # app init
-    # util.initAPP()
+    util.initAPP()
+    util.initServerLimits()
+
+    # constant var
 
     # register engine
-    listen.registerListenEvent()
+    listen.registerListenEvent(listenHandler)
 
     # start engine
     __eventEngine.start()
