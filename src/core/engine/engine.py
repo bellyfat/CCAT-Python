@@ -4,15 +4,17 @@ import time
 from multiprocessing import Process, Queue, Value
 
 from src.core.config import Config
-from src.core.util.log import Logger
 from src.core.util.exceptions import EngineException
+from src.core.util.log import Logger
 
 
 class EventEngine(object):
     # 初始化事件事件驱动引擎
     def __init__(self):
-        # 保存事件列表
-        self.__eventQueue = Queue()
+        # 保存事件列表 按优先级不同分别保存
+        self.__lowEnventQueue = Queue()
+        self.__mediumEventQueue = Queue()
+        self.__highEventQueue = Queue()
         # 引擎开关
         self.__active = Value('b', False)
         # 事件处理字典{'event1': [handler1,handler2] , 'event2':[handler3, ...,handler4]}
@@ -20,19 +22,19 @@ class EventEngine(object):
         # 保存事件处理进程池
         self.__processPool = []
         # 事件引擎主进程
-        self.__mainProcess = Process(target=self.__run, args=(self.__active, ))
+        self.__mainProcess = Process(target=self.__run)
         # logger
         self.__logger = Logger()
 
     # 执行事件循环
-    def __run(self, __active):
+    def __run(self):
         self.__logger.debug(
             "src.core.engine.engine.EventEngine.__mainProcess.__run")
-        while __active.value:
+        while self.__active.value:
             # 事件队列非空
-            if not self.__eventQueue.empty():
+            if not self.__mediumEventQueue.empty():
                 # 获取队列中的事件 超时1秒
-                event = self.__eventQueue.get(
+                event = self.__mediumEventQueue.get(
                     block=True, timeout=float(Config()._engine["timeout"]))
                 # 执行事件
                 self.__logger.debug(
@@ -120,11 +122,13 @@ class EventEngine(object):
     def sendEvent(self, event):
         self.__logger.debug("src.core.engine.engine.EventEngine.sendEvent")
         # 发送事件 像队列里存入事件
-        self.__eventQueue.put(event)
+        self.__mediumEventQueue.put(event)
 
 
 class Event(object):
     # 事件对象
     def __init__(self, event):
         self.type = event["type"]
-        self.dict = event["dict"]
+        self.priority = event["priority"]
+        self.timeStamp = event["timeStamp"]
+        self.args = event["args"]

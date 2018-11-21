@@ -4,11 +4,7 @@ import json
 
 from src.core.db.db import DB
 from src.core.engine.engine import Event
-from src.core.engine.event import (LISTEN_ACCOUNT_BALANCE_EVENT,
-                                   LISTEN_ACCOUNT_WITHDRAW_EVENT,
-                                   LISTEN_MARKET_DEPTH_EVENT,
-                                   LISTEN_MARKET_KLINE_EVENT,
-                                   LISTEN_MARKET_TICKER_EVENT)
+from src.core.engine.enums import *
 from src.core.util.exceptions import DBException, EngineException
 from src.core.util.log import Logger
 
