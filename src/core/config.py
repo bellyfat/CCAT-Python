@@ -19,7 +19,7 @@ class Config(object):
         Config._register = jsonStr["register"]
         Config._main = jsonStr["main"]
         Config._engine = jsonStr["engine"]
-        Config._listen = jsonStr["listen"]
+        Config._event = jsonStr["event"]
         Config._log = jsonStr["log"]
         Config._db = jsonStr["db"]
         Config._proxies = jsonStr["proxies"]

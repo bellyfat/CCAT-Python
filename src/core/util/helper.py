@@ -2,8 +2,10 @@
 
 import pytz
 import dateparser
+from string import Template
 from datetime import datetime
 from datetime import timezone
+
 
 def dict_factory(cursor, row):
     return dict((col[0], row[idx]) for idx, col in enumerate(cursor.description))
@@ -70,3 +72,12 @@ def interval_to_milliseconds(interval):
         return int(interval[:-1]) * seconds_per_unit[interval[-1]] * 1000
     except (ValueError, KeyError):
         return None
+
+class MyTemplate(Template):
+    def substitute(self, *args, **kwds):
+        try:
+            return super().substitute(*args, **kwds)
+        except KeyError as err:
+            key = str(err.args[0])
+            kwds[key] = key
+            return self.substitute(*args, **kwds)

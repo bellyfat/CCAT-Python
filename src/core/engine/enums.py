@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from string import Template
+from src.core.config import Config
+from src.core.util.helper import MyTemplate
+
 
 # event priority
 LOW_PRIORITY_ENVENT = "low" # p.start()
 MEDIUM_PRIORITY_ENVENT = "medium" # p.start()
 HIGH_PRIORITY_ENVENT = "high" # p.join()运行
 
-LOW_PRIORITY_ENVENT_TIMEOUT = 30
-MEDIUM_PRIORITY_ENVENT_TIMEOUT = 10
-HIGH_PRIORITY_ENVENT_TIMEOUT = 5
+LOW_PRIORITY_ENVENT_TIMEOUT = float(Config()._event["lowTimeout"])
+MEDIUM_PRIORITY_ENVENT_TIMEOUT = float(Config()._event["mediumTimeout"])
+HIGH_PRIORITY_ENVENT_TIMEOUT = float(Config()._event["highTimeout"])
 
 
 # listen event list
-LISTEN_ACCOUNT_BALANCE_EVENT = Template("""
+LISTEN_ACCOUNT_BALANCE_EVENT = MyTemplate("""
 {
     "type": "LISTEN_ACCOUNT_BALANCE_EVENT",
     "priority": "low",
@@ -22,7 +24,7 @@ LISTEN_ACCOUNT_BALANCE_EVENT = Template("""
 }
 """)
 
-LISTEN_ACCOUNT_WITHDRAW_EVENT = Template("""
+LISTEN_ACCOUNT_WITHDRAW_EVENT = MyTemplate("""
 {
     "type": "LISTEN_ACCOUNT_WITHDRAW_EVENT",
     "priority": "low",
@@ -31,7 +33,7 @@ LISTEN_ACCOUNT_WITHDRAW_EVENT = Template("""
 }
 """)
 
-LISTEN_MARKET_KLINE_EVENT = Template("""
+LISTEN_MARKET_KLINE_EVENT = MyTemplate("""
 {
     "type": "LISTEN_MARKET_KLINE_EVENT",
     "priority": "medium",
@@ -40,7 +42,7 @@ LISTEN_MARKET_KLINE_EVENT = Template("""
 }
 """)
 
-LISTEN_MARKET_TICKER_EVENT = Template("""
+LISTEN_MARKET_TICKER_EVENT = MyTemplate("""
 {
     "type": "LISTEN_MARKET_TICKER_EVENT",
     "priority": "medium",
@@ -49,7 +51,7 @@ LISTEN_MARKET_TICKER_EVENT = Template("""
 }
 """)
 
-LISTEN_MARKET_DEPTH_EVENT = Template("""
+LISTEN_MARKET_DEPTH_EVENT = MyTemplate("""
 {
     "type": "LISTEN_MARKET_DEPTH_EVENT",
     "priority": "medium",
@@ -59,7 +61,7 @@ LISTEN_MARKET_DEPTH_EVENT = Template("""
 """)
 
 # judge event list
-JUDGE_MARKET_KLINE_EVENT = Template("""
+JUDGE_MARKET_KLINE_EVENT = MyTemplate("""
 {
     "type": "JUDGE_MARKET_KLINE_EVENT",
     "priority": "high",
@@ -68,7 +70,7 @@ JUDGE_MARKET_KLINE_EVENT = Template("""
 }
 """)
 
-JUDGE_MARKET_TICKER_EVENT = Template("""
+JUDGE_MARKET_TICKER_EVENT = MyTemplate("""
 {
     "type": "JUDGE_MARKET_TICKER_EVENT",
     "priority": "high",
@@ -78,7 +80,7 @@ JUDGE_MARKET_TICKER_EVENT = Template("""
 """)
 
 # backtest event list
-BACKTEST_MARKET_KLINE_EVENT = Template("""
+BACKTEST_MARKET_KLINE_EVENT = MyTemplate("""
 {
     "type": "BACKTEST_MARKET_KLINE_EVENT",
     "priority": "low",
@@ -87,7 +89,7 @@ BACKTEST_MARKET_KLINE_EVENT = Template("""
 }
 """)
 
-BACKTEST_MARKET_TICKER_EVENT = Template("""
+BACKTEST_MARKET_TICKER_EVENT = MyTemplate("""
 {
     "type": "BACKTEST_MARKET_TICKER_EVENT",
     "priority": "low",
@@ -97,7 +99,7 @@ BACKTEST_MARKET_TICKER_EVENT = Template("""
 """)
 
 # order event list
-ORDER_MARKET_KLINE_EVENT = Template("""
+ORDER_MARKET_KLINE_EVENT = MyTemplate("""
 {
     "type": "BACKTEST_MARKET_KLINE_EVENT",
     "priority": "high",
@@ -106,7 +108,7 @@ ORDER_MARKET_KLINE_EVENT = Template("""
 }
 """)
 
-ORDER_MARKET_TICKER_EVENT = Template("""
+ORDER_MARKET_TICKER_EVENT = MyTemplate("""
 {
     "type": "BACKTEST_MARKET_TICKER_EVENT",
     "priority": "high",
@@ -115,7 +117,7 @@ ORDER_MARKET_TICKER_EVENT = Template("""
 }
 """)
 
-ORDER_CONFIRM_EVENT = Template("""
+ORDER_CONFIRM_EVENT = MyTemplate("""
 {
     "type": "ORDER_CONFIRM_EVENT",
     "priority": "high",
@@ -124,7 +126,7 @@ ORDER_CONFIRM_EVENT = Template("""
 }
 """)
 
-ORDER_CANCEL_EVENT = Template("""
+ORDER_CANCEL_EVENT = MyTemplate("""
 {
     "type": "ORDER_CANCEL_EVENT",
     "priority": "high",
@@ -134,7 +136,7 @@ ORDER_CANCEL_EVENT = Template("""
 """)
 
 # statistic event list
-STATISTIC_BACKTEST_EVENT = Template("""
+STATISTIC_BACKTEST_EVENT = MyTemplate("""
 {
     "type": "STATISTIC_BACKTEST_EVENT",
     "priority": "low",
@@ -143,7 +145,7 @@ STATISTIC_BACKTEST_EVENT = Template("""
 }
 """)
 
-STATISTIC_ORDER_EVENT = Template("""
+STATISTIC_ORDER_EVENT = MyTemplate("""
 {
     "type": "STATISTIC_ORDER_EVENT",
     "priority": "low",
