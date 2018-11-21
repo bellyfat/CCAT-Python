@@ -45,6 +45,10 @@ class EventEngine(object):
                     "src.core.engine.engine.EventEngine.__mainProcess.__run.eventQueue: empty"
                 )
                 time.sleep(float(Config()._engine["epoch"]))
+        # 终止所有事件处理进程
+        self.__logger.debug(self.__processPool)
+        for p in self.__processPool:
+            p.join()
 
     # 执行事件
     def __process(self, event):
@@ -71,18 +75,15 @@ class EventEngine(object):
         self.__logger.debug("src.core.engine.engine.EventEngine.stop")
         # 将事件管理器设为停止
         self.__active.value = False
-        # 等待事件处理进程退出
-        for p in self.__processPool:
-            p.join()
+        # 等待事件引擎主进程退出
         self.__mainProcess.join()
 
     # 终止事件引擎
     def terminate(self):
         self.__logger.debug("src.core.engine.engine.EventEngine.terminate")
+        # 将事件管理器设为停止
         self.__active.value = False
-        # 终止所有事件处理进程
-        for p in self.__processPool:
-            p.terminate()
+        # 等待事件引擎主进程退出
         self.__mainProcess.terminate()
 
     # 注册事件
