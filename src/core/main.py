@@ -12,6 +12,23 @@ from src.core.util.log import Logger
 __eventEngine = EventEngine()
 __logger = Logger()
 
+
+# Init App
+def initAPP(self):
+    self._logger.debug("src.core.main.initAPP")
+    try:
+        self.initDB()
+        self.initDBInfo()
+        self.initServerLimits()
+    except ApplicationException as err:
+        errStr = "src.core.main.initAPP: %s" % ApplicationException(err)
+        self._logger.critical(errStr)
+        raise ApplicationException(err)
+
+# Update App
+def updateAPP(self, listen):
+    pass
+
 # Begin Test
 if __name__ == '__main__':
     # define var

@@ -38,12 +38,12 @@ class Client(object):
         #print("body:", body)
         try:
             if method == c.GET:
-                response = requests.get(url, headers=header, proxies=proxies, timeout=20)
+                response = requests.get(url, headers=header, proxies=proxies, timeout=10)
             elif method == c.POST:
-                response = requests.post(url, data=body, headers=header, proxies=proxies, timeout=20)
+                response = requests.post(url, data=body, headers=header, proxies=proxies, timeout=10)
                 #response = requests.post(url, json=body, headers=header)
             elif method == c.DELETE:
-                response = requests.delete(url, headers=header, proxies=proxies, timeout=20)
+                response = requests.delete(url, headers=header, proxies=proxies, timeout=10)
         except requests.exceptions.ProxyError as err:
             raise exceptions.OkexRequestException('Proxy Connection timeout : %s' % err)
 
@@ -74,7 +74,7 @@ class Client(object):
     def _get_timestamp(self, proxies=None):
         url = c.API_URL + c.SERVER_TIMESTAMP_URL
         try:
-            response = requests.get(url, proxies=proxies, timeout=20)
+            response = requests.get(url, proxies=proxies, timeout=10)
         except requests.exceptions.ProxyError as err:
             raise exceptions.OkexRequestException('Proxy Connection timeout : %s' % err)
         if response.status_code == 200:

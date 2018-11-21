@@ -18,18 +18,6 @@ class Util(object):
         self._mainCof = Config()._main
         self._serverLimits = None
 
-    # Init App
-    def initAPP(self):
-        self._logger.debug("src.core.util.util.Util.initAPP")
-        try:
-            self.initDB()
-            self.initDBInfo()
-            self.initServerLimits()
-        except ApplicationException as err:
-            errStr = "src.core.util.util.Util.initAPP: %s" % ApplicationException(err)
-            self._logger.critical(errStr)
-            raise ApplicationException(err)
-
     # 初始化数据库
     def initDB(self):
         self._logger.debug("src.core.util.util.Util.initDB")
@@ -68,10 +56,6 @@ class Util(object):
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
-    # Update App
-    def updateAPP(self, listen):
-        pass
-
     # Account Balance 数据
     def updateDBAccountBalance(self, listen):
         self._logger.debug("src.core.util.util.Util.updateDBAccountBalance")
@@ -87,8 +71,6 @@ class Util(object):
     def updateDBAccountWithdraw(self, listen):
         self._logger.debug("src.core.util.util.Util.updateDBAccountWithdraw")
         try:
-            for exchange in self._mainCof["exchanges"]:
-                listen.sendListenAccountBalanceEvent(exchange)
             db = DB()
             res = db.getInfoWithdraw()
             for r  in res:

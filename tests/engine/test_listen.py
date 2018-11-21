@@ -16,33 +16,32 @@ __logger = Logger()
 
 # Begin Test
 if __name__ == '__main__':
+    # constant var
+
     # clase instanse
     util = Util()
     listen = Listen(__eventEngine)
     listenHandler = ListenHandler()
 
     # app init
-    # util.initAPP()
+    util.initDB()
+    util.initDBInfo()
     util.initServerLimits()
-
-    # constant var
-
 
     # register engine
     listen.registerListenEvent(listenHandler)
-
 
     # start engine
     __eventEngine.start()
 
     # app update
     util.updateDBAccountBalance(listen)
-    # util.updateDBAccountWithdraw(listen)
+    util.updateDBAccountWithdraw(listen)
 
 
     # stop engine
-    time.sleep(2)
-    __eventEngine.stop()
+    # time.sleep(5)
+    # __eventEngine.stop()
 
     # unRegister engine
     listen.unRegisterListenEvent(listenHandler)

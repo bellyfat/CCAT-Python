@@ -16,27 +16,4 @@ __logger = Logger()
 
 # Begin Test
 if __name__ == '__main__':
-    # clase instanse
-    util = Util()
-    listen = Listen(__eventEngine)
-    listenHandler = ListenHandler()
-
-    # app init
-    # util.initAPP()
-    util.initServerLimits()
-
-    # constant var
-
-    # register engine
-    listen.registerListenEvent(listenHandler)
-
-    # start engine
-    __eventEngine.start()
-
-    # app update
-    # util.updateDBAccountBalance(listen)
-    util.updateDBAccountWithdraw(listen)
-
-    # stop engine
-    time.sleep(5)
-    __eventEngine.stop()
+    pass
