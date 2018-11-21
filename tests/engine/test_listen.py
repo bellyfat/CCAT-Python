@@ -24,8 +24,8 @@ if __name__ == '__main__':
     listenHandler = ListenHandler()
 
     # app init
-    util.initDB()
-    util.initDBInfo()
+    # util.initDB()
+    # util.initDBInfo()
     util.initServerLimits()
 
     # register engine
@@ -36,12 +36,12 @@ if __name__ == '__main__':
 
     # app update
     util.updateDBAccountBalance(listen)
-    util.updateDBAccountWithdraw(listen)
+    # util.updateDBAccountWithdraw(listen)
 
 
     # stop engine
-    # time.sleep(5)
-    # __eventEngine.stop()
+    time.sleep(2)
+    __eventEngine.stop()
 
     # unRegister engine
     listen.unRegisterListenEvent(listenHandler)

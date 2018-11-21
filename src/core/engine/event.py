@@ -3,101 +3,149 @@
 from string import Template
 
 # listen event list
-LISTEN_ACCOUNT_BALANCE_EVENT = Template('''
+LISTEN_ACCOUNT_BALANCE_EVENT = Template("""
 {
     "type": "LISTEN_ACCOUNT_BALANCE_EVENT",
     "dict": {
+        "timeStamp": $timeStamp,
         "args": ["$server"],
         "remark": "account balance history, run as need"
     }
 }
-''')
-LISTEN_ACCOUNT_WITHDRAW_EVENT = Template('''
+""")
+
+LISTEN_ACCOUNT_WITHDRAW_EVENT = Template("""
 {
     "type": "LISTEN_ACCOUNT_WITHDRAW_EVENT",
     "dict": {
+        "timeStamp": $timeStamp,
         "args": ["$server", "$asset"],
         "remark": "account withdraw history, run as need"
     }
 }
-''')
-LISTEN_DEPTH_EVENT = Template('''
+""")
+
+LISTEN_MARKET_KLINE_EVENT = Template("""
 {
-    "type": "LISTEN_DEPTH_EVENT",
+    "type": "LISTEN_MARKET_KLINE_EVENT",
     "dict": {
-        "args": ["$server","$fSymbol", "$tSymbol", "$limit"],
-        "remark": "symbols info, run as need"
-    }
-}
-''')
-LISTEN_KLINE_EVENT = Template('''
-{
-    "type": "LISTEN_KLINE_EVENT",
-    "dict": {
+        "timeStamp": $timeStamp,
         "args": ["$server", "$fSymbol", "$tSymbol", "$interval", "$start", "$end"],
         "remark": "symbols filter, run first and frequent"
     }
 }
-''')
-LISTEN_TICKER_EVENT = Template('''
+""")
+
+LISTEN_MARKET_TICKER_EVENT = Template("""
 {
-    "type": "LISTEN_TICKER_EVENT",
+    "type": "LISTEN_MARKET_TICKER_EVENT",
     "dict": {
+        "timeStamp": $timeStamp,
         "args": ["$server", "$fSymbol", "$tSymbol"],
         "remark": "ccat filter, run as frequent as possible"
     }
 }
-''')
+""")
+
+LISTEN_MARKET_DEPTH_EVENT = Template("""
+{
+    "type": "LISTEN_MARKET_DEPTH_EVENT",
+    "dict": {
+        "timeStamp": $timeStamp,
+        "args": ["$server","$fSymbol", "$tSymbol", "$limit"],
+        "remark": "symbols info, run as need"
+    }
+}
+""")
 
 # judge event list
-JUDGE_KLINE_EVENT = Template('''
+JUDGE_MARKET_KLINE_EVENT = Template("""
 {
-    "type": "JUDGE_KLINE_EVENT",
+    "type": "JUDGE_MARKET_KLINE_EVENT",
     "dict": {
+        "timeStamp": $timeStamp,
         "args": [],
         "remark": ""
     }
 }
-''')
-JUDGE_TICKER_EVENT = Template('''
+""")
+
+JUDGE_MARKET_TICKER_EVENT = Template("""
 {
-    "type": "JUDGE_TICKER_EVENT",
+    "type": "JUDGE_MARKET_TICKER_EVENT",
     "dict": {
+        "timeStamp": $timeStamp,
         "args": [],
         "remark": ""
     }
 }
-''')
+""")
 
 # backtest event list
-BACKTEST_EVENT = Template('''
+BACKTEST_MARKET_KLINE_EVENT = Template("""
 {
-    "type": "BACKTEST_EVENT",
+    "type": "BACKTEST_MARKET_KLINE_EVENT",
     "dict": {
+        "timeStamp": $timeStamp,
         "args": [],
         "remark": ""
     }
 }
-''')
+""")
 
-# execute event list
-EXECUTE_EVENT = Template('''
+BACKTEST_MARKET_TICKER_EVENT = Template("""
 {
-    "type": "EXECUTE_EVENT",
+    "type": "BACKTEST_MARKET_TICKER_EVENT",
     "dict": {
+        "timeStamp": $timeStamp,
         "args": [],
         "remark": ""
     }
 }
-''')
+""")
+
+# order event list
+ORDER_MARKET_KLINE_EVENT = Template("""
+{
+    "type": "BACKTEST_MARKET_KLINE_EVENT",
+    "dict": {
+        "timeStamp": $timeStamp,
+        "args": [],
+        "remark": ""
+    }
+}
+""")
+
+ORDER_MARKET_TICKER_EVENT = Template("""
+{
+    "type": "BACKTEST_MARKET_TICKER_EVENT",
+    "dict": {
+        "timeStamp": $timeStamp,
+        "args": [],
+        "remark": ""
+    }
+}
+""")
 
 # statistic event list
-STATISTIC_EVENT = Template('''
+STATISTIC_BACKTEST_EVENT = Template("""
 {
-    "type": "BACKTEST_EVENT",
+    "type": "STATISTIC_BACKTEST_EVENT",
     "dict": {
+        "timeStamp": $timeStamp,
         "args": [],
         "remark": ""
     }
 }
-''')
+""")
+
+STATISTIC_ORDER_EVENT = Template("""
+{
+    "type": "STATISTIC_ORDER_EVENT",
+    "dict": {
+        "timeStamp": $timeStamp,
+        "args": [],
+        "remark": ""
+    }
+}
+""")
