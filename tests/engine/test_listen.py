@@ -6,6 +6,7 @@ import time
 sys.path.append(os.getcwd())
 
 from src.core.engine.engine import EventEngine
+from src.core.engine.register import Register
 from src.core.engine.sender import Sender
 from src.core.engine.handler import Handler
 from src.core.util.util import Util
@@ -22,7 +23,8 @@ if __name__ == '__main__':
     # clase instanse
     util = Util()
     sender = Sender(__eventEngine)
-    handler = Handler()
+    handler = Handler(sender)
+    register = Register(__eventEngine, handler)
 
     # app init
     util.initDB()
@@ -30,19 +32,19 @@ if __name__ == '__main__':
     util.initServerLimits()
 
     # register engine
-    listen.registerListenEvent(listenHandler)
+    register.register()
 
     # start engine
     __eventEngine.start()
 
     # app update
-    util.updateDBAccountBalance(listen)
-    # util.updateDBAccountWithdraw(listen)
+    util.updateDBAccountBalance(sender)
+    util.updateDBAccountWithdraw(sender)
 
 
     # stop engine
-    time.sleep(2)
+    time.sleep(5)
     __eventEngine.stop()
 
-    # unRegister engine
-    listen.unRegisterListenEvent(listenHandler)
+    # unregister engine
+    register.unregister()

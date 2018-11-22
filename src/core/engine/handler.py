@@ -9,7 +9,8 @@ from src.core.util.log import Logger
 
 
 class Handler(object):
-    def __init__(self):
+    def __init__(self, sender):
+        self._sender = sender
         self._logger = Logger()
 
     def handleListenAccountBalanceEvent(self, event):

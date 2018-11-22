@@ -23,7 +23,7 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendListenAccountBalanceEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         self._engine.sendEvent(event)
 
@@ -35,7 +35,7 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendListenAccountWithdrawEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         self._engine.sendEvent(event)
 
@@ -52,7 +52,7 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendListenMarketDepthEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         pass
 
@@ -71,7 +71,7 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendListenMarketKlineEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         self._engine.sendEvent(event)
 
@@ -86,11 +86,11 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendListenMarketTickerEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         self._engine.sendEvent(event)
 
-    def sendJudgeMarketKlineEvent(self,args):
+    def sendJudgeMarketKlineEvent(self, args):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             JUDGE_MARKET_KLINE_EVENT.substitute(
@@ -98,11 +98,11 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendJudgeMarketKlineEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         pass
 
-    def sendJudgeMarketTickerEvent(self,args):
+    def sendJudgeMarketTickerEvent(self, args):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             JUDGE_MARKET_TICKER_EVENT.substitute(
@@ -110,11 +110,11 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendJudgeMarketTickerEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         self._engine.sendEvent(event)
 
-    def sendBacktestMarketKlineEvent(self,args):
+    def sendBacktestMarketKlineEvent(self, args):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             BACKTEST_MARKET_KLINE_EVENT.substitute(
@@ -122,11 +122,11 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendBacktestMarketKlineEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         pass
 
-    def sendBacktestMarketTickerEvent(self,args):
+    def sendBacktestMarketTickerEvent(self, args):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             BACKTEST_MARKET_TICKER_EVENT.substitute(
@@ -134,11 +134,11 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendBacktestMarketTickerEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         self._engine.sendEvent(event)
 
-    def sendOrderMarketKlineEvent(self,args):
+    def sendOrderMarketKlineEvent(self, args):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             ORDER_MARKET_KLINE_EVENT.substitute(
@@ -146,11 +146,11 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendOrderMarketKlineEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         pass
 
-    def sendOrderMarketTickerEvent(self,args):
+    def sendOrderMarketTickerEvent(self, args):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             ORDER_MARKET_TICKER_EVENT.substitute(
@@ -158,11 +158,11 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendOrderMarketTickerEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         self._engine.sendEvent(event)
 
-    def sendOrderConfirmEvent(self,args):
+    def sendOrderConfirmEvent(self, args):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             ORDER_CONFIRM_EVENT.substitute(
@@ -170,11 +170,11 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendOrderConfirmEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         self._engine.sendEvent(event)
 
-    def sendOrderCancleEvent(self,args):
+    def sendOrderCancleEvent(self, args):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             ORDER_CANCEL_EVENT.substitute(
@@ -182,11 +182,11 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendOrderCancleEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         self._engine.sendEvent(event)
 
-    def sendStatiscBacktestEvent(self,args):
+    def sendStatiscBacktestEvent(self, args):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             STATISTIC_BACKTEST_EVENT.substitute(
@@ -194,11 +194,11 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendStatiscBacktestEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         self._engine.sendEvent(event)
 
-    def sendStatiscOrderEvent(self,args):
+    def sendStatiscOrderEvent(self, args):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             STATISTIC_ORDER_EVENT.substitute(
@@ -206,6 +206,6 @@ class Sender(object):
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendStatiscOrderEvent: " +
-            event.type)
+            json.dumps(TEMP_EVENT))
         # 发送事件
         self._engine.sendEvent(event)

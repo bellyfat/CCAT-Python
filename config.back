@@ -15,13 +15,12 @@
     "excludeCoins": []
   },
   "engine":{
-    "epoch": "0.1",
-    "timeout": "1"
+    "epoch": "0.1"
   },
-  "listen":{
-    "depthTimer": "0",
-    "klineTimer": "86400",
-    "tickerTimer": "60"
+  "event":{
+    "lowTimeout": "30",
+    "mediumTimeout": "15",
+    "highTimeout": "5"
   },
   "log":{
     "type":"CCAT",

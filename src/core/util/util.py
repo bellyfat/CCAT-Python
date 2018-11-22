@@ -2,17 +2,17 @@
 
 import os
 import time
+
 import pandas as pd
-from src.core.db.db import DB
+
 from src.core.config import Config
+from src.core.db.db import DB
+from src.core.util.exceptions import ApplicationException, DBException
 from src.core.util.log import Logger
-from src.core.engine.sender import Listen
-from src.core.util.exceptions import DBException, ApplicationException
+
 
 # util class
 class Util(object):
-
-
     def __init__(self):
         self._logger = Logger()
         self._mainCof = Config()._main
@@ -27,7 +27,8 @@ class Util(object):
             db.creatTables()
             db.creatViews()
         except DBException as err:
-            errStr = "src.core.util.util.Util.initDB: %s" % ApplicationException(err)
+            errStr = "src.core.util.util.Util.initDB: %s" % ApplicationException(
+                err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
@@ -39,8 +40,10 @@ class Util(object):
             db.insertInfoServer(self._mainCof["exchanges"])
             db.insertInfoSymbol(self._mainCof["exchanges"])
             db.insertInfoWithdraw(self._mainCof["exchanges"])
+            db.insertAccountBalanceHistory(self._mainCof["exchanges"])
         except DBException as err:
-            errStr = "src.core.util.util.Util.initDBInfo: %s" % ApplicationException(err)
+            errStr = "src.core.util.util.Util.initDBInfo: %s" % ApplicationException(
+                err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
@@ -50,9 +53,11 @@ class Util(object):
         try:
             db = DB()
             res = db.getInfoServer()
-            self._serverLimits = pd.DataFrame(res).set_index(["server"], inplace=False)
+            self._serverLimits = pd.DataFrame(res).set_index(["server"],
+                                                             inplace=False)
         except DBException as err:
-            errStr = "src.core.util.util.Util.getServerLimits: %s" % ApplicationException(err)
+            errStr = "src.core.util.util.Util.getServerLimits: %s" % ApplicationException(
+                err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
@@ -60,10 +65,10 @@ class Util(object):
     def updateDBAccountBalance(self, sender):
         self._logger.debug("src.core.util.util.Util.updateDBAccountBalance")
         try:
-            for exchange in self._mainCof["exchanges"]:
-                sender.sendListenAccountBalanceEvent(exchange)
+            sender.sendListenAccountBalanceEvent(self._mainCof["exchanges"])
         except DBException as err:
-            errStr = "src.core.util.util.Util.updateDBAccountBalance: %s" % ApplicationException(err)
+            errStr = "src.core.util.util.Util.updateDBAccountBalance: %s" % ApplicationException(
+                err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
@@ -72,13 +77,39 @@ class Util(object):
         self._logger.debug("src.core.util.util.Util.updateDBAccountWithdraw")
         try:
             db = DB()
-            res = db.getInfoWithdraw()
-            for r  in res:
-                if r["can_deposite"] == "True" and r["can_withdraw"] == "True":
-                    time.sleep(float(1.25/self._serverLimits["requests_second"].min()))
-                    sender.sendListenAccountWithdrawEvent(r["server"], r["asset"])
+            ####################################################################
+            # fully update
+            ##############
+            # res = db.getInfoWithdraw()
+            # for r in res:
+            #     if r["can_deposite"] == "True" or r["can_withdraw"] == "True":
+            #         time.sleep(1.25 / float(
+            #             self._serverLimits.at[r["server"], "requests_second"]))
+            #         sender.sendListenAccountWithdrawEvent(
+            #             r["server"], r["asset"])
+            ####################################################################
+            # fast update
+            res = db.getViewAccountBalanceCurrent()
+            for r in res:
+                time.sleep(1.25 / float(
+                    self._serverLimits.at[r["server"], "requests_second"]))
+                sender.sendListenAccountWithdrawEvent(r["server"], r["asset"])
+
         except DBException as err:
-            errStr = "src.core.util.util.Util.updateDBAccountWithdraw: %s" % ApplicationException(err)
+            errStr = "src.core.util.util.Util.updateDBAccountWithdraw: %s" % ApplicationException(
+                err)
+            self._logger.critical(errStr)
+            raise ApplicationException(err)
+
+    # Market Kline 数据
+    def updateDBMarketKline(self, sender):
+        self._logger.debug("src.core.util.util.Util.updateDBMarketKline")
+        try:
+            db = DB()
+            pass
+        except DBException as err:
+            errStr = "src.core.util.util.Util.updateDBMarketKline: %s" % ApplicationException(
+                err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 

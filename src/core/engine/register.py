@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import json
 from src.core.engine.enums import *
+from src.core.util.log import Logger
 
 
 class Register(object):
     def __init__(self, eventEngine, handler):
         self._eventEngine = eventEngine
+        self._handler = handler
         self._logger = Logger()
         # 事件
         # listen event
@@ -45,25 +48,25 @@ class Register(object):
             STATISTIC_ORDER_EVENT.substitute())["type"]
         # handler
         # listen handler
-        self.LISTEN_ACCOUNT_BALANCE_EVENT_HANDLER = self.handler.handleListenAccountBalanceEvent
-        self.LISTEN_ACCOUNT_WITHDRAW_EVENT_HANDLER = self.handler.handleListenAccountWithdrawEvent
-        self.LISTEN_MARKET_KLINE_EVENT_HANDLER = self.handler.handleListenMarketKlineEvent
-        self.LISTEN_MARKET_TICKER_EVENT_HANDLER = self.handler.handleListenMarketTickerEvent
-        self.LISTEN_MARKET_DEPTH_EVENT_HANDLER = self.handler.handleListenMarketDepthEvent
+        self.LISTEN_ACCOUNT_BALANCE_EVENT_HANDLER = self._handler.handleListenAccountBalanceEvent
+        self.LISTEN_ACCOUNT_WITHDRAW_EVENT_HANDLER = self._handler.handleListenAccountWithdrawEvent
+        self.LISTEN_MARKET_KLINE_EVENT_HANDLER = self._handler.handleListenMarketKlineEvent
+        self.LISTEN_MARKET_TICKER_EVENT_HANDLER = self._handler.handleListenMarketTickerEvent
+        self.LISTEN_MARKET_DEPTH_EVENT_HANDLER = self._handler.handleListenMarketDepthEvent
         # judge handler
-        self.JUDGE_MARKET_KLINE_EVENT_HANDLER = self.handler.handleJudgeMarketKlineEvent
-        self.JUDGE_MARKET_TICKER_EVENT_HANDLER = self.handler.handleJudgeMarketTickerEvent
+        self.JUDGE_MARKET_KLINE_EVENT_HANDLER = self._handler.handleJudgeMarketKlineEvent
+        self.JUDGE_MARKET_TICKER_EVENT_HANDLER = self._handler.handleJudgeMarketTickerEvent
         # backtest handler
-        self.BACKTEST_MARKET_KLINE_EVENT_HANDLER = self.handler.handleBacktestMarketKlineEvent
-        self.BACKTEST_MARKET_TICKER_EVENT_HANDLER = self.handler.handleBacktestMarketTickerEvent
+        self.BACKTEST_MARKET_KLINE_EVENT_HANDLER = self._handler.handleBacktestMarketKlineEvent
+        self.BACKTEST_MARKET_TICKER_EVENT_HANDLER = self._handler.handleBacktestMarketTickerEvent
         # order handler
-        self.ORDER_MARKET_KLINE_EVENT_HANDLER = self.handler.handleOrderMarketKlineEvent
-        self.ORDER_MARKET_TICKER_EVENT_HANDLER = self.handler.handleOrderMarketTickerEvent
-        self.ORDER_CONFIRM_EVENT_HANDLER = self.handler.handleOrderConfirmEvent
-        self.ORDER_CANCEL_EVENT_HANDLER = self.handler.handleOrderCancelEvent
+        self.ORDER_MARKET_KLINE_EVENT_HANDLER = self._handler.handleOrderMarketKlineEvent
+        self.ORDER_MARKET_TICKER_EVENT_HANDLER = self._handler.handleOrderMarketTickerEvent
+        self.ORDER_CONFIRM_EVENT_HANDLER = self._handler.handleOrderConfirmEvent
+        self.ORDER_CANCEL_EVENT_HANDLER = self._handler.handleOrderCancelEvent
         # statistic handler
-        self.STATISTIC_BACKTEST_EVENT_HANDLER = self.handler.handleStatisticBacktestEvent
-        self.STATISTIC_ORDER_EVENT_HANDLER = self.handler.handleStatisticOrderEvent
+        self.STATISTIC_BACKTEST_EVENT_HANDLER = self._handler.handleStatisticBacktestEvent
+        self.STATISTIC_ORDER_EVENT_HANDLER = self._handler.handleStatisticOrderEvent
 
     def register(self):
         self._logger.debug("src.core.engine.register.Register.register")
@@ -99,7 +102,7 @@ class Register(object):
         self._eventEngine.register(self.STATISTIC_ORDER_EVENT_TYPE,
                                    self.STATISTIC_ORDER_EVENT_HANDLER)
 
-    def unregister(self, handler):
+    def unregister(self):
         self._logger.debug("src.core.engine.register.Register.unregister")
         # 注销事件
         self._eventEngine.unregister(self.LISTEN_ACCOUNT_BALANCE_EVENT_TYPE,

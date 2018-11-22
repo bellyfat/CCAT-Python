@@ -41,33 +41,36 @@ class EventEngine(object):
             event = None
             if not self.__highEventQueue.empty():
                 self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue")
-                event = self.__highEventQueue.get(block=True, timeout=1))
-                while utcnow_timestamp()-int(event.timeStamp)>HIGH_PRIORITY_ENVENT_TIMEOUT:
+                event = self.__highEventQueue.get(block=False)
+                while utcnow_timestamp()-event.timeStamp>HIGH_PRIORITY_ENVENT_TIMEOUT:
                     if not self.__highEventQueue.empty():
                         self.__logger.warn("src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue TIMEOUT:"+event.type)
-                        event = self.__highEventQueue.get(block=True, timeout=1))
+                        event = self.__highEventQueue.get(block=False)
                     else:
                         event = None
+                        break
 
             if not self.__mediumEventQueue.empty() and event == None:
                 self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue")
-                event = self.__mediumEventQueue.get(block=True, timeout=1))
-                while utcnow_timestamp()-int(event.timeStamp)>MEDIUM_PRIORITY_ENVENT_TIMEOUT:
+                event = self.__mediumEventQueue.get(block=False)
+                while utcnow_timestamp()-event.timeStamp>MEDIUM_PRIORITY_ENVENT_TIMEOUT:
                     if not self.__mediumEventQueue.empty():
                         self.__logger.warn("src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT:"+event.type)
-                        event = self.__mediumEventQueue.get(block=True, timeout=1))
+                        event = self.__mediumEventQueue.get(block=False)
                     else:
                         event = None
+                        break
 
             if not self.__lowEnventQueue.empty() and event == None:
                 self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue")
-                event = self.__lowEnventQueue.get(block=True, timeout=1))
-                while utcnow_timestamp()-int(event.timeStamp)>LOW_PRIORITY_ENVENT_TIMEOUT:
+                event = self.__lowEnventQueue.get(block=False)
+                while utcnow_timestamp()-event.timeStamp>LOW_PRIORITY_ENVENT_TIMEOUT:
                     if not self.__lowEnventQueue.empty():
                         self.__logger.warn("src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT:"+event.type)
-                        event = self.__lowEnventQueue.get(block=True, timeout=1))
+                        event = self.__lowEnventQueue.get(block=False)
                     else:
                         event = None
+                        break
             # 事件队列非空
             if not event == None:
                 # 执行事件
@@ -166,5 +169,5 @@ class Event(object):
     def __init__(self, event):
         self.type = event["type"]
         self.priority = event["priority"]
-        self.timeStamp = event["timeStamp"]
+        self.timeStamp = int(event["timeStamp"])
         self.args = event["args"]
