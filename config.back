@@ -1,4 +1,31 @@
 {
+  "version": "CCAT 0.0.1",
+  "register": {
+    "user": "CCATer",
+    "email": "",
+    "phone": "",
+    "pwd": "",
+    "series": "",
+    "regCode": ""
+  },
+  "main":{
+    "exchanges" : ["okex", "binance"],
+    "baseCoin": "USDT",
+    "targetCoin": "USDT",
+    "excludeCoins": []
+  },
+  "engine":{
+    "epoch": "0.1"
+  },
+  "event":{
+    "lowTimeout": "30",
+    "mediumTimeout": "15",
+    "highTimeout": "5"
+  },
+  "log":{
+    "type":"CCAT",
+    "url":"CCAT_Python_Spam.log"
+  },
   "db":{
     "type": "sqlite3",
     "url": "CCAT.db"

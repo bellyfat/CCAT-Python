@@ -1,31 +1,9 @@
-# -*- coding: utf-8 -*-
+# coding=utf-8
 
-import pytz
 import dateparser
-from string import Template
+import pytz
+
 from datetime import datetime
-from datetime import timezone
-
-
-def dict_factory(cursor, row):
-    return dict((col[0], row[idx]) for idx, col in enumerate(cursor.description))
-
-def utcnow_timestamp():
-    dt = datetime.now()
-    timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
-    return int(timestamp*1000)
-
-def sqlite_escape(sqlStr):
-    sqlStr = sqlStr.replace("/", "//")
-    sqlStr = sqlStr.replace("'", '"')
-    sqlStr = sqlStr.replace("[", "/[")
-    sqlStr = sqlStr.replace("]", "/]")
-    sqlStr = sqlStr.replace("%", "/%")
-    sqlStr = sqlStr.replace("&", "/&")
-    sqlStr = sqlStr.replace("_", "/_")
-    sqlStr = sqlStr.replace("(", "/(")
-    sqlStr = sqlStr.replace(")", "/)")
-    return sqlStr
 
 
 def date_to_milliseconds(date_str):
@@ -72,12 +50,3 @@ def interval_to_milliseconds(interval):
         return int(interval[:-1]) * seconds_per_unit[interval[-1]] * 1000
     except (ValueError, KeyError):
         return None
-
-class MyTemplate(Template):
-    def substitute(self, *args, **kwds):
-        try:
-            return super().substitute(*args, **kwds)
-        except KeyError as err:
-            key = str(err.args[0])
-            kwds[key] = key
-            return self.substitute(*args, **kwds)

@@ -2,16 +2,17 @@
 
 import os
 import sys
-import unittest
-
 sys.path.append(os.getcwd())
 
-
-from src.core.config import Config
+from src.core.engine.engine import EventEngine
+from src.core.engine.listen import Listen, ListenHandler
+from src.core.util.util import Util
 from src.core.util.log import Logger
 
-class TestExecute(unittest.TestCase):
-    pass
+# global var
+__eventEngine = EventEngine()
+__logger = Logger()
 
-if __name__ == "__main__":
-    unittest.main()
+# Begin Test
+if __name__ == '__main__':
+    pass

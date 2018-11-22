@@ -2,10 +2,20 @@
 
 from string import Template
 
+# get db view symbol info sql
+GET_VIEW_INFO_SYMBOL_PAIRS_SQL = Template('''
+    SELECT * FROM VIEW_INFO_SYMBOL WHERE server IN $servers
+''')
+GET_VIEW_INFO_SYMBOL_ITEM_SQL = Template('''
+    SELECT * FROM VIEW_INFO_SYMBOL WHERE server='$server' AND fSymbol='$fSymbol' AND tSymbol='$tSymbol'
+''')
+GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL = '''
+    SELECT * FROM VIEW_ACCOUNT_BALANCE_CURRENT;
+'''
 
 # get db account info sql
 GET_ACCOUNT_INFO_SQL = '''
-    SELECT * FROM ACCOUNT_INFO;
+    SELECT * FROM ACCOUNT_BALANCE_HISTORY;
 '''
 # get db market depth sql
 GET_MARKET_DEPTH_SQL = '''
@@ -20,12 +30,12 @@ GET_MARKET_TIKER_SQL = '''
     SELECT * FROM MARKET_TIKER;
 '''
 # get db server info sql
-GET_SERVER_INFO_SQL = '''
-    SELECT * FROM SERVER_INFO;
+GET_INFO_SERVER_SQL = '''
+    SELECT * FROM INFO_SERVER;
 '''
 # get db symbol info sql
-GET_SYMBOL_INFO_SQL = '''
-    SELECT * FROM SYMBOL_INFO;
+GET_INFO_SYMBOL_SQL = '''
+    SELECT * FROM INFO_SYMBOL;
 '''
 # get db trade backtest history sql
 GET_TRADE_BACKTEST_HISTORY_SQL = '''
@@ -37,16 +47,16 @@ GET_TRADE_ORDER_HISTORY_SQL = '''
 '''
 # get db withdraw history sql
 GET_WITHDRAW_HISTORY_SQL = '''
-    SELECT * FROM WITHDRAW_HISTORY;
+    SELECT * FROM ACCOUNT_WITHDRAW_HISTORY;
 '''
 # get db withdraw info sql
-GET_WITHDRAW_INFO_SQL = '''
-    SELECT * FROM WITHDRAW_INFO;
+GET_INFO_WITHDRAW_SQL = '''
+    SELECT * FROM INFO_WITHDRAW;
 '''
 
 # insert db account info sql
 INSERT_ACCOUNT_INFO_SQL = Template('''
-    INSERT INTO ACCOUNT_INFO (server, timeStamp, asset, balance, free, locked)
+    INSERT INTO ACCOUNT_BALANCE_HISTORY (server, timeStamp, asset, balance, free, locked)
     VALUES ('$server', $timeStamp, '$asset', $balance, $free, $locked);
 ''')
 # insert db market depth sql
@@ -65,13 +75,13 @@ INSERT_MARKET_TIKER_SQL = Template('''
     VALUES ('$server', $timeStamp, '$fSymbol', '$tSymbol', $bid_one_price, $bid_one_size, $ask_one_price, $ask_one_size);
 ''')
 # insert db server info sql
-INSERT_SERVER_INFO_SQL = Template('''
-    INSERT OR REPLACE INTO SERVER_INFO (server, requests_second, orders_second, orders_day, webSockets_second)
+INSERT_INFO_SERVER_SQL = Template('''
+    INSERT OR REPLACE INTO INFO_SERVER (server, requests_second, orders_second, orders_day, webSockets_second)
     VALUES ('$server', $requests_second, $orders_second, $orders_day, $webSockets_second);
 ''')
 # insert db symbol info sql
-INSERT_SYMBOL_INFO_SQL = Template('''
-    INSERT INTO SYMBOL_INFO (server, fSymbol, tSymbol, limit_price_precision, limit_price_max, limit_price_min, limit_price_step, limit_size_precision, limit_size_max, limit_size_min, limit_size_step, limit_min_notional, fee_maker, fee_taker)
+INSERT_INFO_SYMBOL_SQL = Template('''
+    INSERT INTO INFO_SYMBOL (server, fSymbol, tSymbol, limit_price_precision, limit_price_max, limit_price_min, limit_price_step, limit_size_precision, limit_size_max, limit_size_min, limit_size_step, limit_min_notional, fee_maker, fee_taker)
     VALUES ('$server', '$fSymbol', '$tSymbol', $limit_price_precision, $limit_price_max, $limit_price_min, $limit_price_step, $limit_size_precision, $limit_size_max, $limit_size_min, $limit_size_step, $limit_min_notional, $fee_maker, $fee_taker);
 ''')
 # insert db trade backtest history sql
@@ -86,15 +96,14 @@ INSERT_TRADE_ORDER_HISTORY_SQL = Template('''
 ''')
 # insert db withdraw history sql
 INSERT_WITHDRAW_HISTORY_SQL = Template('''
-    INSERT OR REPLACE INTO WITHDRAW_HISTORY (server, timeStamp, deposite, withdraw)
-    VALUES ('$server', $timeStamp, '$deposite', '$withdraw')
+    INSERT INTO ACCOUNT_WITHDRAW_HISTORY (server, timeStamp, asset, deposite, withdraw)
+    VALUES ('$server', $timeStamp, '$asset', '$deposite', '$withdraw')
 ''')
 # insert db withdraw info sql
-INSERT_WITHDRAW_INFO_SQL = Template('''
-    INSERT INTO WITHDRAW_INFO (server, asset, can_deposite, can_withdraw, min_withdraw)
+INSERT_INFO_WITHDRAW_SQL = Template('''
+    INSERT INTO INFO_WITHDRAW (server, asset, can_deposite, can_withdraw, min_withdraw)
     VALUES ('$server', '$asset', '$can_deposite', '$can_withdraw', $min_withdraw);
 ''')
-
 
 # get db talbes sql
 GET_TABLES_SQL = '''
@@ -105,19 +114,6 @@ GET_TABLES_SQL = '''
 # creat db tables sql
 CREATE_TABELS_SQL = '''
     BEGIN TRANSACTION;
-    CREATE TABLE IF NOT EXISTS `WITHDRAW_INFO` (
-    	`server`	TEXT NOT NULL,
-    	`asset`	TEXT NOT NULL,
-    	`can_deposite`	TEXT NOT NULL,
-    	`can_withdraw`	TEXT NOT NULL,
-    	`min_withdraw`	REAL
-    );
-    CREATE TABLE IF NOT EXISTS `WITHDRAW_HISTORY` (
-    	`server`	TEXT NOT NULL UNIQUE,
-    	`timeStamp`	INTEGER NOT NULL,
-        `deposite`  TEXT,
-        `withdraw`  TEXT
-    );
     CREATE TABLE IF NOT EXISTS `TRADE_ORDER_HISTORY` (
     	`server`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
@@ -148,29 +144,6 @@ CREATE_TABELS_SQL = '''
     	`filled_size`	REAL,
     	`fee`	REAL
     );
-    CREATE TABLE IF NOT EXISTS `SYMBOL_INFO` (
-    	`server`	TEXT NOT NULL,
-    	`fSymbol`	TEXT NOT NULL,
-    	`tSymbol`	TEXT NOT NULL,
-    	`limit_price_precision`	REAL,
-    	`limit_price_max`	REAL,
-    	`limit_price_min`	REAL,
-    	`limit_price_step`	REAL,
-    	`limit_size_precision`	REAL,
-    	`limit_size_max`	REAL,
-    	`limit_size_min`	REAL,
-    	`limit_size_step`	REAL,
-    	`limit_min_notional`	REAL,
-    	`fee_maker`	REAL,
-    	`fee_taker`	REAL
-    );
-    CREATE TABLE IF NOT EXISTS `SERVER_INFO` (
-    	`server`	TEXT NOT NULL UNIQUE,
-    	`requests_second`	REAL,
-    	`orders_second`	REAL,
-    	`orders_day`	REAL,
-    	`webSockets_second`	REAL
-    );
     CREATE TABLE IF NOT EXISTS `MARKET_TIKER` (
     	`server`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
@@ -200,7 +173,44 @@ CREATE_TABELS_SQL = '''
     	`bid_price_size`	BLOB,
     	`ask_price_size`	BLOB
     );
-    CREATE TABLE IF NOT EXISTS `ACCOUNT_INFO` (
+    CREATE TABLE IF NOT EXISTS `INFO_WITHDRAW` (
+    	`server`	TEXT NOT NULL,
+    	`asset`	TEXT NOT NULL,
+    	`can_deposite`	TEXT NOT NULL,
+    	`can_withdraw`	TEXT NOT NULL,
+    	`min_withdraw`	REAL
+    );
+    CREATE TABLE IF NOT EXISTS `INFO_SYMBOL` (
+    	`server`	TEXT NOT NULL,
+    	`fSymbol`	TEXT NOT NULL,
+    	`tSymbol`	TEXT NOT NULL,
+    	`limit_price_precision`	REAL,
+    	`limit_price_max`	REAL,
+    	`limit_price_min`	REAL,
+    	`limit_price_step`	REAL,
+    	`limit_size_precision`	REAL,
+    	`limit_size_max`	REAL,
+    	`limit_size_min`	REAL,
+    	`limit_size_step`	REAL,
+    	`limit_min_notional`	REAL,
+    	`fee_maker`	REAL,
+    	`fee_taker`	REAL
+    );
+    CREATE TABLE IF NOT EXISTS `INFO_SERVER` (
+    	`server`	TEXT NOT NULL UNIQUE,
+    	`requests_second`	REAL,
+    	`orders_second`	REAL,
+    	`orders_day`	REAL,
+    	`webSockets_second`	REAL
+    );
+    CREATE TABLE IF NOT EXISTS `ACCOUNT_WITHDRAW_HISTORY` (
+    	`server`	TEXT NOT NULL,
+    	`timeStamp`	INTEGER NOT NULL,
+    	`asset`	TEXT NOT NULL,
+    	`deposite`	TEXT,
+    	`withdraw`	TEXT
+    );
+    CREATE TABLE IF NOT EXISTS `ACCOUNT_BALANCE_HISTORY` (
     	`server`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
     	`asset`	TEXT NOT NULL,
@@ -211,6 +221,32 @@ CREATE_TABELS_SQL = '''
     COMMIT;
 '''
 
+# get db talbes sql
+GET_VIEWS_SQL = '''
+    SELECT name FROM sqlite_master
+    WHERE type='view'
+    ORDER BY name;
+'''
 # creat view sql
-
-# fast init sql
+CREATE_VIEWS_SQL = '''
+    BEGIN TRANSACTION;
+    CREATE VIEW IF NOT EXISTS VIEW_INFO_SYMBOL
+        AS
+        	SELECT S1.*
+            FROM INFO_SYMBOL S1,INFO_SYMBOL S2
+            WHERE S1.server<>S2.server AND S1.fSymbol = S2.fSymbol AND S1.tSymbol = S2.tSymbol
+            ORDER BY fSymbol, tSymbol;
+    CREATE VIEW IF NOT EXISTS VIEW_ACCOUNT_BALANCE_CURRENT
+        AS
+			SELECT B1.*
+			FROM ACCOUNT_BALANCE_HISTORY B1
+			LEFT JOIN ACCOUNT_BALANCE_HISTORY B2 ON B1.server = B2.server AND B1.asset = B2.asset AND B1.timeStamp < B2.timeStamp
+			WHERE B2.server IS NULL;
+    CREATE VIEW IF NOT EXISTS VIEW_ACCOUNT_WITHDRAW_CURRENT
+        AS
+            SELECT B1.*
+            FROM ACCOUNT_WITHDRAW_HISTORY B1
+            LEFT JOIN ACCOUNT_WITHDRAW_HISTORY B2 ON B1.server = B2.server AND B1.asset = B2.asset AND B1.timeStamp < B2.timeStamp
+            WHERE (B1.deposite<>'' OR B1.withdraw <>'') and B2.server IS NULL;
+    COMMIT;
+'''

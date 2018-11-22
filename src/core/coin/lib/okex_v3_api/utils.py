@@ -35,8 +35,8 @@ def parse_params_to_str(params):
 
 
 def get_timestamp():
-    now = datetime.datetime.now()
-    t = now.isoformat()
+    now = datetime.datetime.utcnow()
+    t = now.isoformat()[:-3]
     return t + "Z"
 
 
