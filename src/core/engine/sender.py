@@ -22,7 +22,7 @@ class Sender(object):
                 timeStamp=utcnow_timestamp(), server=exchange))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendListenAccountBalanceEvent: " +
+            "src.core.engine.sender.Sender.sendListenAccountBalanceEvent: " +
             event.type)
         # 发送事件
         self._engine.sendEvent(event)
@@ -34,7 +34,7 @@ class Sender(object):
                 timeStamp=utcnow_timestamp(), server=exchange, asset=asset))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendListenAccountWithdrawEvent: " +
+            "src.core.engine.sender.Sender.sendListenAccountWithdrawEvent: " +
             event.type)
         # 发送事件
         self._engine.sendEvent(event)
@@ -51,7 +51,7 @@ class Sender(object):
                 limit=limit))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendListenMarketDepthEvent: " +
+            "src.core.engine.sender.Sender.sendListenMarketDepthEvent: " +
             event.type)
         # 发送事件
         pass
@@ -70,7 +70,7 @@ class Sender(object):
                 end=end))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendListenMarketKlineEvent: " +
+            "src.core.engine.sender.Sender.sendListenMarketKlineEvent: " +
             event.type)
         # 发送事件
         self._engine.sendEvent(event)
@@ -85,7 +85,7 @@ class Sender(object):
                 tSymbol=tSymbol))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendListenMarketTickerEvent: " +
+            "src.core.engine.sender.Sender.sendListenMarketTickerEvent: " +
             event.type)
         # 发送事件
         self._engine.sendEvent(event)
@@ -97,7 +97,7 @@ class Sender(object):
                 timeStamp=utcnow_timestamp(), args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendJudgeMarketKlineEvent: " +
+            "src.core.engine.sender.Sender.sendJudgeMarketKlineEvent: " +
             event.type)
         # 发送事件
         pass
@@ -109,7 +109,7 @@ class Sender(object):
                 timeStamp=utcnow_timestamp(), args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendJudgeMarketTickerEvent: " +
+            "src.core.engine.sender.Sender.sendJudgeMarketTickerEvent: " +
             event.type)
         # 发送事件
         self._engine.sendEvent(event)
@@ -121,7 +121,7 @@ class Sender(object):
                 timeStamp=utcnow_timestamp(), args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendBacktestMarketKlineEvent: " +
+            "src.core.engine.sender.Sender.sendBacktestMarketKlineEvent: " +
             event.type)
         # 发送事件
         pass
@@ -133,7 +133,7 @@ class Sender(object):
                 timeStamp=utcnow_timestamp(), args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendBacktestMarketTickerEvent: " +
+            "src.core.engine.sender.Sender.sendBacktestMarketTickerEvent: " +
             event.type)
         # 发送事件
         self._engine.sendEvent(event)
@@ -145,7 +145,7 @@ class Sender(object):
                 timeStamp=utcnow_timestamp(), args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendOrderMarketKlineEvent: " +
+            "src.core.engine.sender.Sender.sendOrderMarketKlineEvent: " +
             event.type)
         # 发送事件
         pass
@@ -157,7 +157,7 @@ class Sender(object):
                 timeStamp=utcnow_timestamp(), args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendOrderMarketTickerEvent: " +
+            "src.core.engine.sender.Sender.sendOrderMarketTickerEvent: " +
             event.type)
         # 发送事件
         self._engine.sendEvent(event)
@@ -169,7 +169,7 @@ class Sender(object):
                 timeStamp=utcnow_timestamp(), args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendOrderConfirmEvent: " +
+            "src.core.engine.sender.Sender.sendOrderConfirmEvent: " +
             event.type)
         # 发送事件
         self._engine.sendEvent(event)
@@ -181,7 +181,7 @@ class Sender(object):
                 timeStamp=utcnow_timestamp(), args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendOrderCancleEvent: " +
+            "src.core.engine.sender.Sender.sendOrderCancleEvent: " +
             event.type)
         # 发送事件
         self._engine.sendEvent(event)
@@ -193,7 +193,7 @@ class Sender(object):
                 timeStamp=utcnow_timestamp(), args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendStatiscBacktestEvent: " +
+            "src.core.engine.sender.Sender.sendStatiscBacktestEvent: " +
             event.type)
         # 发送事件
         self._engine.sendEvent(event)
@@ -205,7 +205,7 @@ class Sender(object):
                 timeStamp=utcnow_timestamp(), args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendStatiscOrderEvent: " +
+            "src.core.engine.sender.Sender.sendStatiscOrderEvent: " +
             event.type)
         # 发送事件
         self._engine.sendEvent(event)

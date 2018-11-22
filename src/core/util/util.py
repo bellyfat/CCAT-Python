@@ -6,7 +6,7 @@ import pandas as pd
 from src.core.db.db import DB
 from src.core.config import Config
 from src.core.util.log import Logger
-from src.core.engine.listen import Listen
+from src.core.engine.sender import Listen
 from src.core.util.exceptions import DBException, ApplicationException
 
 # util class
@@ -57,18 +57,18 @@ class Util(object):
             raise ApplicationException(err)
 
     # Account Balance 数据
-    def updateDBAccountBalance(self, listen):
+    def updateDBAccountBalance(self, sender):
         self._logger.debug("src.core.util.util.Util.updateDBAccountBalance")
         try:
             for exchange in self._mainCof["exchanges"]:
-                listen.sendListenAccountBalanceEvent(exchange)
+                sender.sendListenAccountBalanceEvent(exchange)
         except DBException as err:
             errStr = "src.core.util.util.Util.updateDBAccountBalance: %s" % ApplicationException(err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
     # Account Withdraw 数据
-    def updateDBAccountWithdraw(self, listen):
+    def updateDBAccountWithdraw(self, sender):
         self._logger.debug("src.core.util.util.Util.updateDBAccountWithdraw")
         try:
             db = DB()
@@ -76,7 +76,7 @@ class Util(object):
             for r  in res:
                 if r["can_deposite"] == "True" and r["can_withdraw"] == "True":
                     time.sleep(float(1.25/self._serverLimits["requests_second"].min()))
-                    listen.sendListenAccountWithdrawEvent(r["server"], r["asset"])
+                    sender.sendListenAccountWithdrawEvent(r["server"], r["asset"])
         except DBException as err:
             errStr = "src.core.util.util.Util.updateDBAccountWithdraw: %s" % ApplicationException(err)
             self._logger.critical(errStr)
