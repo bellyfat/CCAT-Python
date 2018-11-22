@@ -36,11 +36,6 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewInfoSymbolItem(self):
-        res = db.getViewInfoSymbolItem("okex", "ETH", "USDT")
-        logger.debug(res)
-        self.assertIsInstance(res, list)
-
     def test_getTables(self):
         res = db.getTables()
         logger.debug(res)
@@ -194,7 +189,6 @@ test_db = [
     # TestDB("test_getViews"),
     # TestDB("test_creatViews"),
     # TestDB("test_getViewInfoSymbolPairs"),
-    # TestDB("test_getViewInfoSymbolItem"),
 ]
 
 if __name__ == "__main__":

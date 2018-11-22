@@ -4,14 +4,12 @@ from string import Template
 
 # get db view symbol info sql
 GET_VIEW_INFO_SYMBOL_PAIRS_SQL = Template('''
-    SELECT * FROM VIEW_INFO_SYMBOL WHERE server IN $servers
+    SELECT * FROM VIEW_INFO_SYMBOL WHERE server IN $server
 ''')
-GET_VIEW_INFO_SYMBOL_ITEM_SQL = Template('''
-    SELECT * FROM VIEW_INFO_SYMBOL WHERE server='$server' AND fSymbol='$fSymbol' AND tSymbol='$tSymbol'
+
+GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL = Template('''
+    SELECT * FROM VIEW_ACCOUNT_BALANCE_CURRENT WHERE server IN $server;
 ''')
-GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL = '''
-    SELECT * FROM VIEW_ACCOUNT_BALANCE_CURRENT;
-'''
 
 # get db account info sql
 GET_ACCOUNT_INFO_SQL = '''

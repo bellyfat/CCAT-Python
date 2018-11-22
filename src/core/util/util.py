@@ -8,6 +8,7 @@ import pandas as pd
 from src.core.config import Config
 from src.core.db.db import DB
 from src.core.util.exceptions import ApplicationException, DBException
+from src.core.util.helper import timestamp_to_isoformat, utcnow_timestamp
 from src.core.util.log import Logger
 
 
@@ -79,7 +80,7 @@ class Util(object):
             db = DB()
             ####################################################################
             # fully update
-            ##############
+            ####################################################################
             # res = db.getInfoWithdraw()
             # for r in res:
             #     if r["can_deposite"] == "True" or r["can_withdraw"] == "True":
@@ -89,7 +90,7 @@ class Util(object):
             #             r["server"], r["asset"])
             ####################################################################
             # fast update
-            res = db.getViewAccountBalanceCurrent()
+            res = db.getViewAccountBalanceCurrent(self._mainCof["exchanges"])
             for r in res:
                 time.sleep(1.25 / float(
                     self._serverLimits.at[r["server"], "requests_second"]))
@@ -106,7 +107,16 @@ class Util(object):
         self._logger.debug("src.core.util.util.Util.updateDBMarketKline")
         try:
             db = DB()
-            pass
+            res = db.getViewInfoSymbolPairs(self._mainCof["exchanges"])
+            start = utcnow_timestamp() - 24 * 60 * 60 * 1000
+            end = utcnow_timestamp()
+            for r in res:
+                time.sleep(1.25 / float(
+                    self._serverLimits.at[r["server"], "requests_second"]))
+                sender.sendListenMarketKlineEvent(
+                    r["server"], r["fSymbol"], r["tSymbol"], "1h",
+                    timestamp_to_isoformat(start), timestamp_to_isoformat(end))
+
         except DBException as err:
             errStr = "src.core.util.util.Util.updateDBMarketKline: %s" % ApplicationException(
                 err)

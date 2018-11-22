@@ -30,8 +30,7 @@ class Handler(object):
     def handleListenAccountWithdrawEvent(self, event):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: "
-            + event.type)
+            "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         [exchange, asset] = event.args
         try:
             db = DB()
@@ -44,8 +43,7 @@ class Handler(object):
     def handleListenMarketDepthEvent(self, event):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenMarketDepthEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleListenMarketDepthEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         [exchange, fSymbol, tSymbol, limit] = event.args
         try:
             db = DB()
@@ -58,8 +56,7 @@ class Handler(object):
     def handleListenMarketKlineEvent(self, event):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenMarketKlineEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleListenMarketKlineEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         [exchange, fSymbol, tSymbol, interval, start, end] = event.args
         try:
             db = DB()

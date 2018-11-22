@@ -70,40 +70,28 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getViewInfoSymbolPairs(self, *exchanges):
+    def getViewInfoSymbolPairs(self, exchange):
         self._logger.debug("src.core.db.db.DB.getViewInfoSymbolPairs")
         try:
             curs = self._conn.cursor()
-            GET_SERVERS_VIEW_INFO_SYMBOL_PAIRS_SQL = GET_VIEW_INFO_SYMBOL_PAIRS_SQL.substitute(
-                servers=exchanges)
-            self._logger.debug(GET_SERVERS_VIEW_INFO_SYMBOL_PAIRS_SQL)
-            curs.execute(GET_SERVERS_VIEW_INFO_SYMBOL_PAIRS_SQL)
+            TEMP_SQL = GET_VIEW_INFO_SYMBOL_PAIRS_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getViewInfoSymbolItem(self, exchange, fSymbol, tSymbol):
-        self._logger.debug("src.core.db.db.DB.getViewInfoSymbolItem")
-        try:
-            curs = self._conn.cursor()
-            GET_ITEM_VIEW_INFO_SYMBOL_ITEM_SQL = GET_VIEW_INFO_SYMBOL_ITEM_SQL.substitute(
-                server=exchange, fSymbol=fSymbol, tSymbol=tSymbol)
-            self._logger.debug(GET_ITEM_VIEW_INFO_SYMBOL_ITEM_SQL)
-            curs.execute(GET_ITEM_VIEW_INFO_SYMBOL_ITEM_SQL)
-            res = curs.fetchall()
-            curs.close()
-            return res
-        except sqlite3.Error as err:
-            raise DBException(err)
-
-    def getViewAccountBalanceCurrent(self):
+    def getViewAccountBalanceCurrent(self, exchange):
         self._logger.debug("src.core.db.db.DB.getViewAccountBalanceCurrent")
-        self._logger.debug(GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL)
+            TEMP_SQL = GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -343,7 +331,9 @@ class DB(object):
 
     def insertMarketKline(self, exchange, fSymbol, tSymbol, interval, start,
                           end):
-        self._logger.debug("src.core.db.db.DB.insertMarketKline")
+        self._logger.debug(
+            "src.core.db.db.DB.insertMarketKline: { exchange=%s, fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s }"
+            % (exchange, fSymbol, tSymbol, interval, start, end))
         try:
             curs = self._conn.cursor()
             # OKEX

@@ -1,19 +1,29 @@
 # -*- coding: utf-8 -*-
 
-import pytz
-import dateparser
+from datetime import datetime, timezone
 from string import Template
-from datetime import datetime
-from datetime import timezone
+
+import dateparser
+import pytz
 
 
 def dict_factory(cursor, row):
-    return dict((col[0], row[idx]) for idx, col in enumerate(cursor.description))
+    return dict(
+        (col[0], row[idx]) for idx, col in enumerate(cursor.description))
+
 
 def utcnow_timestamp():
     dt = datetime.now()
     timestamp = dt.replace(tzinfo=timezone.utc).timestamp()
-    return int(timestamp*1000)
+    return int(timestamp * 1000)
+
+
+def timestamp_to_isoformat(timeStamp):
+    [dt, micro] = datetime.fromtimestamp(
+        timeStamp / 1000, tz=timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f').split('.')
+    dt = "%s.%03d" % (dt, int(micro) / 1000)
+    return dt + "Z"
+
 
 def sqlite_escape(sqlStr):
     sqlStr = sqlStr.replace("/", "//")
@@ -72,6 +82,7 @@ def interval_to_milliseconds(interval):
         return int(interval[:-1]) * seconds_per_unit[interval[-1]] * 1000
     except (ValueError, KeyError):
         return None
+
 
 class MyTemplate(Template):
     def substitute(self, *args, **kwds):

@@ -9,7 +9,7 @@ LOW_PRIORITY_ENVENT = "low" # p.start()
 MEDIUM_PRIORITY_ENVENT = "medium" # p.start()
 HIGH_PRIORITY_ENVENT = "high" # p.join()运行
 
-# event timeout in milisenconds
+# event timeout in millisenconds
 LOW_PRIORITY_ENVENT_TIMEOUT = float(Config()._event["lowTimeout"])*1000
 MEDIUM_PRIORITY_ENVENT_TIMEOUT = float(Config()._event["mediumTimeout"])*1000
 HIGH_PRIORITY_ENVENT_TIMEOUT = float(Config()._event["highTimeout"])*1000

@@ -35,38 +35,45 @@ class EventEngine(object):
 
     # 执行事件循环
     def __run(self):
-        self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run")
+        self.__logger.debug(
+            "src.core.engine.engine.EventEngine.__mainProcess.__run")
         while self.__active.value:
             # 按优先级 获取队列中的事件 超时1秒
             event = None
             if not self.__highEventQueue.empty():
-                self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue")
+                self.__logger.debug(
+                    "src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue")
                 event = self.__highEventQueue.get(block=False)
-                while utcnow_timestamp()-event.timeStamp>HIGH_PRIORITY_ENVENT_TIMEOUT:
+                while utcnow_timestamp() - event.timeStamp > HIGH_PRIORITY_ENVENT_TIMEOUT:
                     if not self.__highEventQueue.empty():
-                        self.__logger.warn("src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue TIMEOUT:"+event.type)
+                        self.__logger.warn(
+                            "src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue TIMEOUT:" + event.type)
                         event = self.__highEventQueue.get(block=False)
                     else:
                         event = None
                         break
 
             if not self.__mediumEventQueue.empty() and event == None:
-                self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue")
+                self.__logger.debug(
+                    "src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue")
                 event = self.__mediumEventQueue.get(block=False)
-                while utcnow_timestamp()-event.timeStamp>MEDIUM_PRIORITY_ENVENT_TIMEOUT:
+                while utcnow_timestamp() - event.timeStamp > MEDIUM_PRIORITY_ENVENT_TIMEOUT:
                     if not self.__mediumEventQueue.empty():
-                        self.__logger.warn("src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT:"+event.type)
+                        self.__logger.warn(
+                            "src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT:" + event.type)
                         event = self.__mediumEventQueue.get(block=False)
                     else:
                         event = None
                         break
 
             if not self.__lowEnventQueue.empty() and event == None:
-                self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue")
+                self.__logger.debug(
+                    "src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue")
                 event = self.__lowEnventQueue.get(block=False)
-                while utcnow_timestamp()-event.timeStamp>LOW_PRIORITY_ENVENT_TIMEOUT:
+                while utcnow_timestamp() - event.timeStamp > LOW_PRIORITY_ENVENT_TIMEOUT:
                     if not self.__lowEnventQueue.empty():
-                        self.__logger.warn("src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT:"+event.type)
+                        self.__logger.warn(
+                            "src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT:" + event.type)
                         event = self.__lowEnventQueue.get(block=False)
                     else:
                         event = None
@@ -79,7 +86,7 @@ class EventEngine(object):
                     + event.type)
                 self.__process(event)
             else:
-                # 等待 epoch
+                # 执行 Epoch
                 self.__logger.debug(
                     "src.core.engine.engine.EventEngine.__mainProcess.__run.__eventQueue: empty"
                 )
