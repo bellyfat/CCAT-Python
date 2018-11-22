@@ -40,10 +40,10 @@ class Handler(object):
                 err)
             self._logger.error(errStr)
 
-    def handleListenDepthEvent(self, event):
+    def handleListenMarketDepthEvent(self, event):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenDepthEvent: " +
+            "src.core.engine.handler.Handler.handleListenMarketDepthEvent: " +
             event.type)
         [exchange, fSymbol, tSymbol, limit] = event.args
         try:
@@ -54,10 +54,10 @@ class Handler(object):
                 err)
             self._logger.error(errStr)
 
-    def handleListenKlineEvent(self, event):
+    def handleListenMarketKlineEvent(self, event):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenKlineEvent: " +
+            "src.core.engine.handler.Handler.handleListenMarketKlineEvent: " +
             event.type)
         [exchange, fSymbol, tSymbol, interval, start, end] = event.args
         try:
@@ -69,9 +69,9 @@ class Handler(object):
                 err)
             self._logger.error(errStr)
 
-    def handleListenTickerEvent(self, event):
+    def handleListenMarketTickerEvent(self, event):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenTickerEvent: " +
+            "src.core.engine.handler.Handler.handleListenMarketTickerEvent: " +
             event.type)
         # 接收事件
         [exchange, fSymbol, tSymbol] = event.args
@@ -135,13 +135,6 @@ class Handler(object):
     def handleOrderCancelEvent(self, event):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleOrderCancelEvent: " +
-            event.type)
-        # 接收事件
-        pass
-
-    def handleJudgeKlineEvent(self, event):
-        self._logger.debug(
-            "src.core.engine.handler.Handler.handleJudgeKlineEvent: " +
             event.type)
         # 接收事件
         pass

@@ -54,7 +54,7 @@ class Sender(object):
             "src.core.engine.listen.Listen.sendListenMarketDepthEvent: " +
             event.type)
         # 发送事件
-        self._engine.sendEvent(event)
+        pass
 
     def sendListenMarketKlineEvent(self, exchange, fSymbol, tSymbol, interval,
                                    start, end):
@@ -75,7 +75,7 @@ class Sender(object):
         # 发送事件
         self._engine.sendEvent(event)
 
-    def sendListenTickerEvent(self, exchange, fSymbol, tSymbol):
+    def sendListenMarketTickerEvent(self, exchange, fSymbol, tSymbol):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             LISTEN_MARKET_TICKER_EVENT.substitute(
@@ -85,7 +85,7 @@ class Sender(object):
                 tSymbol=tSymbol))
         event = Event(TEMP_EVENT)
         self._logger.debug(
-            "src.core.engine.listen.Listen.sendListenTickerEvent: " +
+            "src.core.engine.listen.Listen.sendListenMarketTickerEvent: " +
             event.type)
         # 发送事件
         self._engine.sendEvent(event)
@@ -124,7 +124,7 @@ class Sender(object):
             "src.core.engine.listen.Listen.sendBacktestMarketKlineEvent: " +
             event.type)
         # 发送事件
-        self._engine.sendEvent(event)
+        pass
 
     def sendBacktestMarketTickerEvent(self,args):
         # 构造事件对象

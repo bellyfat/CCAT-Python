@@ -47,9 +47,9 @@ class Register(object):
         # listen handler
         self.LISTEN_ACCOUNT_BALANCE_EVENT_HANDLER = self.handler.handleListenAccountBalanceEvent
         self.LISTEN_ACCOUNT_WITHDRAW_EVENT_HANDLER = self.handler.handleListenAccountWithdrawEvent
-        self.LISTEN_MARKET_KLINE_EVENT_HANDLER = self.handler.handleListenKlineEvent
-        self.LISTEN_MARKET_TICKER_EVENT_HANDLER = self.handler.handleListenTickerEvent
-        self.LISTEN_MARKET_DEPTH_EVENT_HANDLER = self.handler.handleListenDepthEvent
+        self.LISTEN_MARKET_KLINE_EVENT_HANDLER = self.handler.handleListenMarketKlineEvent
+        self.LISTEN_MARKET_TICKER_EVENT_HANDLER = self.handler.handleListenMarketTickerEvent
+        self.LISTEN_MARKET_DEPTH_EVENT_HANDLER = self.handler.handleListenMarketDepthEvent
         # judge handler
         self.JUDGE_MARKET_KLINE_EVENT_HANDLER = self.handler.handleJudgeMarketKlineEvent
         self.JUDGE_MARKET_TICKER_EVENT_HANDLER = self.handler.handleJudgeMarketTickerEvent
