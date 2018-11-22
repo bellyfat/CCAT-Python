@@ -4,10 +4,15 @@ import time
 from multiprocessing import Process, Queue, Value
 
 from src.core.config import Config
-from src.core.engine.enums import LOW_PRIORITY_ENVENT, MEDIUM_PRIORITY_ENVENT, HIGH_PRIORITY_ENVENT, LOW_PRIORITY_ENVENT_TIMEOUT, MEDIUM_PRIORITY_ENVENT_TIMEOUT, HIGH_PRIORITY_ENVENT_TIMEOUT
+from src.core.engine.enums import (HIGH_PRIORITY_ENVENT,
+                                   HIGH_PRIORITY_ENVENT_TIMEOUT,
+                                   LOW_PRIORITY_ENVENT,
+                                   LOW_PRIORITY_ENVENT_TIMEOUT,
+                                   MEDIUM_PRIORITY_ENVENT,
+                                   MEDIUM_PRIORITY_ENVENT_TIMEOUT)
 from src.core.util.exceptions import EngineException
-from src.core.util.log import Logger
 from src.core.util.helper import utcnow_timestamp
+from src.core.util.log import Logger
 
 
 class EventEngine(object):
@@ -47,7 +52,7 @@ class EventEngine(object):
             if not self.__mediumEventQueue.empty() and event == None:
                 self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue")
                 event = self.__mediumEventQueue.get(block=True, timeout=1))
-                while utcnow_timestamp()-int(event.timeStamp)>HIGH_PRIORITY_ENVENT_TIMEOUT:
+                while utcnow_timestamp()-int(event.timeStamp)>MEDIUM_PRIORITY_ENVENT_TIMEOUT:
                     if not self.__mediumEventQueue.empty():
                         self.__logger.warn("src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT:"+event.type)
                         event = self.__mediumEventQueue.get(block=True, timeout=1))
@@ -57,7 +62,7 @@ class EventEngine(object):
             if not self.__lowEnventQueue.empty() and event == None:
                 self.__logger.debug("src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue")
                 event = self.__lowEnventQueue.get(block=True, timeout=1))
-                while utcnow_timestamp()-int(event.timeStamp)>HIGH_PRIORITY_ENVENT_TIMEOUT:
+                while utcnow_timestamp()-int(event.timeStamp)>LOW_PRIORITY_ENVENT_TIMEOUT:
                     if not self.__lowEnventQueue.empty():
                         self.__logger.warn("src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT:"+event.type)
                         event = self.__lowEnventQueue.get(block=True, timeout=1))

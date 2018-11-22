@@ -6,7 +6,8 @@ import time
 sys.path.append(os.getcwd())
 
 from src.core.engine.engine import EventEngine
-from src.core.engine.listen import Listen, ListenHandler
+from src.core.engine.sender import Sender
+from src.core.engine.handler import Handler
 from src.core.util.util import Util
 from src.core.util.log import Logger
 
@@ -20,12 +21,12 @@ if __name__ == '__main__':
 
     # clase instanse
     util = Util()
-    listen = Listen(__eventEngine)
-    listenHandler = ListenHandler()
+    sender = Sender(__eventEngine)
+    handler = Handler()
 
     # app init
-    # util.initDB()
-    # util.initDBInfo()
+    util.initDB()
+    util.initDBInfo()
     util.initServerLimits()
 
     # register engine

@@ -4,86 +4,131 @@ from src.core.engine.enums import *
 
 
 class Register(object):
-    def __init__(self):
+    def __init__(self, eventEngine, handler):
+        self._eventEngine = eventEngine
         self._logger = Logger()
+        # 事件
+        # listen event
+        self.LISTEN_ACCOUNT_BALANCE_EVENT_TYPE = json.loads(
+            LISTEN_ACCOUNT_BALANCE_EVENT.substitute())["type"]
+        self.LISTEN_ACCOUNT_WITHDRAW_EVENT_TYPE = json.loads(
+            LISTEN_ACCOUNT_WITHDRAW_EVENT.substitute())["type"]
+        self.LISTEN_MARKET_KLINE_EVENT_TYPE = json.loads(
+            LISTEN_MARKET_KLINE_EVENT.substitute())["type"]
+        self.LISTEN_MARKET_TICKER_EVENT_TYPE = json.loads(
+            LISTEN_MARKET_TICKER_EVENT.substitute())["type"]
+        self.LISTEN_MARKET_DEPTH_EVENT_TYPE = json.loads(
+            LISTEN_MARKET_DEPTH_EVENT.substitute())["type"]
+        # judge event
+        self.JUDGE_MARKET_KLINE_EVENT_TYPE = json.loads(
+            JUDGE_MARKET_KLINE_EVENT.substitute())["type"]
+        self.JUDGE_MARKET_TICKER_EVENT_TYPE = json.loads(
+            JUDGE_MARKET_TICKER_EVENT.substitute())["type"]
+        # backtest event
+        self.BACKTEST_MARKET_KLINE_EVENT_TYPE = json.loads(
+            BACKTEST_MARKET_KLINE_EVENT.substitute())["type"]
+        self.BACKTEST_MARKET_TICKER_EVENT_TYPE = json.loads(
+            BACKTEST_MARKET_TICKER_EVENT.substitute())["type"]
+        # order event
+        self.ORDER_MARKET_KLINE_EVENT_TYPE = json.loads(
+            ORDER_MARKET_KLINE_EVENT.substitute())["type"]
+        self.ORDER_MARKET_TICKER_EVENT_TYPE = json.loads(
+            ORDER_MARKET_TICKER_EVENT.substitute())["type"]
+        self.ORDER_CONFIRM_EVENT_TYPE = json.loads(
+            ORDER_CONFIRM_EVENT.substitute())["type"]
+        self.ORDER_CANCEL_EVENT_TYPE = json.loads(
+            ORDER_CANCEL_EVENT.substitute())["type"]
+        # statistic event
+        self.STATISTIC_BACKTEST_EVENT_TYPE = json.loads(
+            STATISTIC_BACKTEST_EVENT.substitute())["type"]
+        self.STATISTIC_ORDER_EVENT_TYPE = json.loads(
+            STATISTIC_ORDER_EVENT.substitute())["type"]
+        # handler
+        # listen handler
+        self.LISTEN_ACCOUNT_BALANCE_EVENT_HANDLER = self.handler.handleListenAccountBalanceEvent
+        self.LISTEN_ACCOUNT_WITHDRAW_EVENT_HANDLER = self.handler.handleListenAccountWithdrawEvent
+        self.LISTEN_MARKET_KLINE_EVENT_HANDLER = self.handler.handleListenKlineEvent
+        self.LISTEN_MARKET_TICKER_EVENT_HANDLER = self.handler.handleListenTickerEvent
+        self.LISTEN_MARKET_DEPTH_EVENT_HANDLER = self.handler.handleListenDepthEvent
+        # judge handler
+        self.JUDGE_MARKET_KLINE_EVENT_HANDLER = self.handler.handleJudgeMarketKlineEvent
+        self.JUDGE_MARKET_TICKER_EVENT_HANDLER = self.handler.handleJudgeMarketTickerEvent
+        # backtest handler
+        self.BACKTEST_MARKET_KLINE_EVENT_HANDLER = self.handler.handleBacktestMarketKlineEvent
+        self.BACKTEST_MARKET_TICKER_EVENT_HANDLER = self.handler.handleBacktestMarketTickerEvent
+        # order handler
+        self.ORDER_MARKET_KLINE_EVENT_HANDLER = self.handler.handleOrderMarketKlineEvent
+        self.ORDER_MARKET_TICKER_EVENT_HANDLER = self.handler.handleOrderMarketTickerEvent
+        self.ORDER_CONFIRM_EVENT_HANDLER = self.handler.handleOrderConfirmEvent
+        self.ORDER_CANCEL_EVENT_HANDLER = self.handler.handleOrderCancelEvent
+        # statistic handler
+        self.STATISTIC_BACKTEST_EVENT_HANDLER = self.handler.handleStatisticBacktestEvent
+        self.STATISTIC_ORDER_EVENT_HANDLER = self.handler.handleStatisticOrderEvent
 
-    def registeEvent(self, handler):
-        self._logger.debug("src.core.engine.listen.Listen.registerListenEvent")
-        # 构造事件
-        ACCOUNT_BALANCE_EVETNT = Event(
-            json.loads(LISTEN_ACCOUNT_BALANCE_EVENT.substitute(server="")))
-        ACCOUNT_WITHDRAW_EVENT = Event(
-            json.loads(
-                LISTEN_ACCOUNT_WITHDRAW_EVENT.substitute(server="", asset="")))
-        DEPETH_EVETNT = Event(
-            json.loads(
-                LISTEN_MARKET_DEPTH_EVENT.substitute(
-                    server="", fSymbol="", tSymbol="", limit="")))
-        KLINE_EVENT = Event(
-            json.loads(
-                LISTEN_MARKET_KLINE_EVENT.substitute(
-                    server="",
-                    fSymbol="",
-                    tSymbol="",
-                    interval="",
-                    start="",
-                    end="")))
-        TICKER_EVENT = Event(
-            json.loads(
-                LISTEN_MARKET_TICKER_EVENT.substitute(
-                    server="", fSymbol="", tSymbol="")))
-        # 构造 handler
-        ACCOUNT_BALANCE_EVETNT_HANDLER = handler.handleListenAccountBalanceEvent
-        ACCOUNT_WITHDRAW_EVENT_HANDLER = handler.handleListenAccountWithdrawEvent
-        DEPETH_EVETNT_HANDLER = handler.handleListenDepthEvent
-        KLINE_EVETNT_HANDLER = handler.handleListenKlineEvent
-        TICKER_EVETNT_HANDLER = handler.handleListenTickerEvent
+    def register(self):
+        self._logger.debug("src.core.engine.register.Register.register")
         # 注册事件
-        self._engine.register(ACCOUNT_BALANCE_EVETNT,
-                              ACCOUNT_BALANCE_EVETNT_HANDLER)
-        self._engine.register(ACCOUNT_WITHDRAW_EVENT,
-                              ACCOUNT_WITHDRAW_EVENT_HANDLER)
-        self._engine.register(DEPETH_EVETNT, DEPETH_EVETNT_HANDLER)
-        self._engine.register(KLINE_EVENT, KLINE_EVETNT_HANDLER)
-        self._engine.register(TICKER_EVENT, TICKER_EVETNT_HANDLER)
+        self._eventEngine.register(self.LISTEN_ACCOUNT_BALANCE_EVENT_TYPE,
+                                   self.LISTEN_ACCOUNT_BALANCE_EVENT_HANDLER)
+        self._eventEngine.register(self.LISTEN_ACCOUNT_WITHDRAW_EVENT_TYPE,
+                                   self.LISTEN_ACCOUNT_WITHDRAW_EVENT_HANDLER)
+        self._eventEngine.register(self.LISTEN_MARKET_KLINE_EVENT_TYPE,
+                                   self.LISTEN_MARKET_KLINE_EVENT_HANDLER)
+        self._eventEngine.register(self.LISTEN_MARKET_TICKER_EVENT_TYPE,
+                                   self.LISTEN_MARKET_TICKER_EVENT_HANDLER)
+        self._eventEngine.register(self.LISTEN_MARKET_DEPTH_EVENT_TYPE,
+                                   self.LISTEN_MARKET_DEPTH_EVENT_HANDLER)
+        self._eventEngine.register(self.JUDGE_MARKET_KLINE_EVENT_TYPE,
+                                   self.JUDGE_MARKET_KLINE_EVENT_HANDLER)
+        self._eventEngine.register(self.JUDGE_MARKET_TICKER_EVENT_TYPE,
+                                   self.JUDGE_MARKET_TICKER_EVENT_HANDLER)
+        self._eventEngine.register(self.BACKTEST_MARKET_KLINE_EVENT_TYPE,
+                                   self.BACKTEST_MARKET_KLINE_EVENT_HANDLER)
+        self._eventEngine.register(self.BACKTEST_MARKET_TICKER_EVENT_TYPE,
+                                   self.BACKTEST_MARKET_TICKER_EVENT_HANDLER)
+        self._eventEngine.register(self.ORDER_MARKET_KLINE_EVENT_TYPE,
+                                   self.ORDER_MARKET_KLINE_EVENT_HANDLER)
+        self._eventEngine.register(self.ORDER_MARKET_TICKER_EVENT_TYPE,
+                                   self.ORDER_MARKET_TICKER_EVENT_HANDLER)
+        self._eventEngine.register(self.ORDER_CONFIRM_EVENT_TYPE,
+                                   self.ORDER_CONFIRM_EVENT_HANDLER)
+        self._eventEngine.register(self.ORDER_CANCEL_EVENT_TYPE,
+                                   self.ORDER_CANCEL_EVENT_HANDLER)
+        self._eventEngine.register(self.STATISTIC_BACKTEST_EVENT_TYPE,
+                                   self.STATISTIC_BACKTEST_EVENT_HANDLER)
+        self._eventEngine.register(self.STATISTIC_ORDER_EVENT_TYPE,
+                                   self.STATISTIC_ORDER_EVENT_HANDLER)
 
-    def unRegisterListenEvent(self, handler):
-        self._logger.debug(
-            "src.core.engine.listen.Listen.unregisterListenEvent")
-        # 构造事件
-        ACCOUNT_BALANCE_EVETNT = Event(
-            json.loads(LISTEN_ACCOUNT_BALANCE_EVENT.substitute(server="")))
-        ACCOUNT_WITHDRAW_EVENT = Event(
-            json.loads(
-                LISTEN_ACCOUNT_WITHDRAW_EVENT.substitute(server="", asset="")))
-        DEPETH_EVETNT = Event(
-            json.loads(
-                LISTEN_MARKET_DEPTH_EVENT.substitute(
-                    server="", fSymbol="", tSymbol="", limit="")))
-        KLINE_EVENT = Event(
-            json.loads(
-                LISTEN_MARKET_KLINE_EVENT.substitute(
-                    server="",
-                    fSymbol="",
-                    tSymbol="",
-                    interval="",
-                    start="",
-                    end="")))
-        TICKER_EVENT = Event(
-            json.loads(
-                LISTEN_MARKET_TICKER_EVENT.substitute(
-                    server="", fSymbol="", tSymbol="")))
-        # 构造 handler
-        ACCOUNT_BALANCE_EVETNT_HANDLER = handler.handleListenAccountBalanceEvent
-        ACCOUNT_WITHDRAW_EVENT_HANDLER = handler.handleListenAccountWithdrawEvent
-        DEPETH_EVETNT_HANDLER = handler.handleListenDepthEvent
-        KLINE_EVETNT_HANDLER = handler.handleListenKlineEvent
-        TICKER_EVETNT_HANDLER = handler.handleListenTickerEvent
+    def unregister(self, handler):
+        self._logger.debug("src.core.engine.register.Register.unregister")
         # 注销事件
-        self._engine.unregister(ACCOUNT_BALANCE_EVETNT,
-                                ACCOUNT_BALANCE_EVETNT_HANDLER)
-        self._engine.unregister(ACCOUNT_WITHDRAW_EVENT,
-                                ACCOUNT_WITHDRAW_EVENT_HANDLER)
-        self._engine.unregister(DEPETH_EVETNT, DEPETH_EVETNT_HANDLER)
-        self._engine.unregister(KLINE_EVENT, KLINE_EVETNT_HANDLER)
-        self._engine.unregister(TICKER_EVENT, TICKER_EVETNT_HANDLER)
+        self._eventEngine.unregister(self.LISTEN_ACCOUNT_BALANCE_EVENT_TYPE,
+                                   self.LISTEN_ACCOUNT_BALANCE_EVENT_HANDLER)
+        self._eventEngine.unregister(self.LISTEN_ACCOUNT_WITHDRAW_EVENT_TYPE,
+                                   self.LISTEN_ACCOUNT_WITHDRAW_EVENT_HANDLER)
+        self._eventEngine.unregister(self.LISTEN_MARKET_KLINE_EVENT_TYPE,
+                                   self.LISTEN_MARKET_KLINE_EVENT_HANDLER)
+        self._eventEngine.unregister(self.LISTEN_MARKET_TICKER_EVENT_TYPE,
+                                   self.LISTEN_MARKET_TICKER_EVENT_HANDLER)
+        self._eventEngine.unregister(self.LISTEN_MARKET_DEPTH_EVENT_TYPE,
+                                   self.LISTEN_MARKET_DEPTH_EVENT_HANDLER)
+        self._eventEngine.unregister(self.JUDGE_MARKET_KLINE_EVENT_TYPE,
+                                   self.JUDGE_MARKET_KLINE_EVENT_HANDLER)
+        self._eventEngine.unregister(self.JUDGE_MARKET_TICKER_EVENT_TYPE,
+                                   self.JUDGE_MARKET_TICKER_EVENT_HANDLER)
+        self._eventEngine.unregister(self.BACKTEST_MARKET_KLINE_EVENT_TYPE,
+                                   self.BACKTEST_MARKET_KLINE_EVENT_HANDLER)
+        self._eventEngine.unregister(self.BACKTEST_MARKET_TICKER_EVENT_TYPE,
+                                   self.BACKTEST_MARKET_TICKER_EVENT_HANDLER)
+        self._eventEngine.unregister(self.ORDER_MARKET_KLINE_EVENT_TYPE,
+                                   self.ORDER_MARKET_KLINE_EVENT_HANDLER)
+        self._eventEngine.unregister(self.ORDER_MARKET_TICKER_EVENT_TYPE,
+                                   self.ORDER_MARKET_TICKER_EVENT_HANDLER)
+        self._eventEngine.unregister(self.ORDER_CONFIRM_EVENT_TYPE,
+                                   self.ORDER_CONFIRM_EVENT_HANDLER)
+        self._eventEngine.unregister(self.ORDER_CANCEL_EVENT_TYPE,
+                                   self.ORDER_CANCEL_EVENT_HANDLER)
+        self._eventEngine.unregister(self.STATISTIC_BACKTEST_EVENT_TYPE,
+                                   self.STATISTIC_BACKTEST_EVENT_HANDLER)
+        self._eventEngine.unregister(self.STATISTIC_ORDER_EVENT_TYPE,
+                                   self.STATISTIC_ORDER_EVENT_HANDLER)
