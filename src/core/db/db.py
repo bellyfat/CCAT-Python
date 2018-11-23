@@ -242,51 +242,59 @@ class DB(object):
 
     def insertAccountBalanceHistory(self, exchange="all"):
         self._logger.debug(
-            "src.core.db.db.DB.insertAccountBalanceHistory: { exchange=%s }" % exchange)
+            "src.core.db.db.DB.insertAccountBalanceHistory: { exchange=%s }" %
+            exchange)
         try:
             curs = self._conn.cursor()
             timeStamp = utcnow_timestamp()
+            TEMP_SQL_TITLE = INSERT_ACCOUNT_BALANCE_HISTORY_SQL_TITLE
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
                 base = self._okex.getAccountBalances()
+                TEMP_SQL_VALUE = []
                 for b in base:
                     if b["balance"] > 0:
-                        INSERT_OKEX_ACCOUNT_INFO_SQL = INSERT_ACCOUNT_INFO_SQL.substitute(
-                            server=str(self._okexConf["exchange"]),
-                            timeStamp=int(timeStamp),
-                            asset=str(b["asset"]),
-                            balance=float(b["balance"]),
-                            free=float(b["free"]),
-                            locked=float(b["locked"]))
-                        self._logger.debug(INSERT_OKEX_ACCOUNT_INFO_SQL)
-                        curs.execute(INSERT_OKEX_ACCOUNT_INFO_SQL)
+
+                        TEMP_SQL_VALUE.append(
+                            INSERT_ACCOUNT_BALANCE_HISTORY_SQL_VALUE.substitute(
+                                server=str(self._okexConf["exchange"]),
+                                timeStamp=int(timeStamp),
+                                asset=str(b["asset"]),
+                                balance=float(b["balance"]),
+                                free=float(b["free"]),
+                                locked=float(b["locked"])))
             # Binance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
                 base = self._binance.getAccountBalances()
                 for b in base:
                     if b["balance"] > 0:
-                        INSERT_BINANCE_ACCOUNT_INFO_SQL = INSERT_ACCOUNT_INFO_SQL.substitute(
-                            server=str(self._binanceConf["exchange"]),
-                            timeStamp=int(timeStamp),
-                            asset=str(b["asset"]),
-                            balance=float(b["balance"]),
-                            free=float(b["free"]),
-                            locked=float(b["locked"]))
-                        self._logger.debug(INSERT_BINANCE_ACCOUNT_INFO_SQL)
-                        curs.execute(INSERT_BINANCE_ACCOUNT_INFO_SQL)
+
+                        TEMP_SQL_VALUE.append(
+                            INSERT_ACCOUNT_BALANCE_HISTORY_SQL_VALUE.substitute(
+                                server=str(self._binanceConf["exchange"]),
+                                timeStamp=int(timeStamp),
+                                asset=str(b["asset"]),
+                                balance=float(b["balance"]),
+                                free=float(b["free"]),
+                                locked=float(b["locked"])))
             # Huobi
             # if exchange == "all" or "huobi" in exchange:
             # to_be_continue
             # Gate
             # if exchange == "all" or "gate" in exchange:
             # to_be_continue
+            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             self._conn.commit()
             curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
     def insertMarketDepth(self, exchange, fSymbol, tSymbol, limit=100):
-        self._logger.debug("src.core.db.db.DB.insertMarketDepth: { exchange=%s, fSymbol=%s, tSymbol=%s, limit=%s }" % (exchange, fSymbol, tSymbol, limit))
+        self._logger.debug(
+            "src.core.db.db.DB.insertMarketDepth: { exchange=%s, fSymbol=%s, tSymbol=%s, limit=%s }"
+            % (exchange, fSymbol, tSymbol, limit))
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -383,7 +391,9 @@ class DB(object):
             raise DBException(err)
 
     def insertMarketTicker(self, exchange, fSymbol, tSymbol):
-        self._logger.debug("src.core.db.db.DB.insertMarketTicker: { exchange=%s, fSymbol=%s, tSymbol=%s }" % (exchange, fSymbol, tSymbol))
+        self._logger.debug(
+            "src.core.db.db.DB.insertMarketTicker: { exchange=%s, fSymbol=%s, tSymbol=%s }"
+            % (exchange, fSymbol, tSymbol))
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -575,7 +585,9 @@ class DB(object):
                                    quantity,
                                    ratio='',
                                    type="limit"):
-        self._logger.debug("src.core.db.db.DB.insertTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }" % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
+        self._logger.debug(
+            "src.core.db.db.DB.insertTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }"
+            % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -644,7 +656,9 @@ class DB(object):
                                 quantity,
                                 ratio='',
                                 type="limit"):
-        self._logger.debug("src.core.db.db.DB.insertTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }" % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
+        self._logger.debug(
+            "src.core.db.db.DB.insertTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }"
+            % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -697,7 +711,9 @@ class DB(object):
             raise DBException(err)
 
     def insertAccountWithdrawHistory(self, exchange, asset):
-        self._logger.debug("src.core.db.db.DB.insertAccountWithdrawHistory: { exchange=%s, asset=%s }" % (exchange, asset))
+        self._logger.debug(
+            "src.core.db.db.DB.insertAccountWithdrawHistory: { exchange=%s, asset=%s }"
+            % (exchange, asset))
         try:
             curs = self._conn.cursor()
             timeStamp = utcnow_timestamp()
@@ -741,7 +757,8 @@ class DB(object):
             raise DBException(err)
 
     def insertInfoWithdraw(self, exchange="all"):
-        self._logger.debug("src.core.db.db.DB.insertInfoWithdraw: { exchange=%s}" % exchange)
+        self._logger.debug(
+            "src.core.db.db.DB.insertInfoWithdraw: { exchange=%s}" % exchange)
         try:
             curs = self._conn.cursor()
             # OKEX

@@ -52,11 +52,19 @@ GET_INFO_WITHDRAW_SQL = '''
     SELECT * FROM INFO_WITHDRAW;
 '''
 
-# insert db account info sql
-INSERT_ACCOUNT_INFO_SQL = Template('''
+# insert db account balance history sql
+INSERT_ACCOUNT_BALANCE_HISTORY_SQL_TITLE = '''
     INSERT INTO ACCOUNT_BALANCE_HISTORY (server, timeStamp, asset, balance, free, locked)
-    VALUES ('$server', $timeStamp, '$asset', $balance, $free, $locked);
+    VALUES'''
+INSERT_ACCOUNT_BALANCE_HISTORY_SQL_VALUE = Template('''
+    ('$server', $timeStamp, '$asset', $balance, $free, $locked)''')
+
+# insert db account withdraw history sql
+INSERT_WITHDRAW_HISTORY_SQL = Template('''
+    INSERT INTO ACCOUNT_WITHDRAW_HISTORY (server, timeStamp, asset, deposite, withdraw)
+    VALUES ('$server', $timeStamp, '$asset', '$deposite', '$withdraw')
 ''')
+
 # insert db market depth sql
 INSERT_MARKET_DEPTH_SQL = Template('''
     INSERT INTO MARKET_DEPTH (server, timeStamp, fSymbol, tSymbol, bid_price_size, ask_price_size)
@@ -92,11 +100,7 @@ INSERT_TRADE_ORDER_HISTORY_SQL = Template('''
     INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
     VALUES ('$server', $timeStamp, '$order_id', '$status', '$type', '$fSymbol', '$tSymbol', '$ask_or_bid', $ask_bid_price, $ask_bid_size, $filled_price, $filled_size, $fee);
 ''')
-# insert db withdraw history sql
-INSERT_WITHDRAW_HISTORY_SQL = Template('''
-    INSERT INTO ACCOUNT_WITHDRAW_HISTORY (server, timeStamp, asset, deposite, withdraw)
-    VALUES ('$server', $timeStamp, '$asset', '$deposite', '$withdraw')
-''')
+
 # insert db withdraw info sql
 INSERT_INFO_WITHDRAW_SQL = Template('''
     INSERT INTO INFO_WITHDRAW (server, asset, can_deposite, can_withdraw, min_withdraw)

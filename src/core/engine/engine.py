@@ -41,7 +41,7 @@ class EventEngine(object):
             # 按优先级 获取队列中的事件 超时1秒
             event = None
             if not self.__highEventQueue.empty():
-                self.__logger.info(
+                self.__logger.debug(
                     "src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue")
                 event = self.__highEventQueue.get(block=False)
                 while utcnow_timestamp() - event.timeStamp > HIGH_PRIORITY_ENVENT_TIMEOUT:
@@ -54,7 +54,7 @@ class EventEngine(object):
                         break
 
             if not self.__mediumEventQueue.empty() and event == None:
-                self.__logger.info(
+                self.__logger.debug(
                     "src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue")
                 event = self.__mediumEventQueue.get(block=False)
                 while utcnow_timestamp() - event.timeStamp > MEDIUM_PRIORITY_ENVENT_TIMEOUT:
@@ -67,7 +67,7 @@ class EventEngine(object):
                         break
 
             if not self.__lowEnventQueue.empty() and event == None:
-                self.__logger.info(
+                self.__logger.debug(
                     "src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue")
                 event = self.__lowEnventQueue.get(block=False)
                 while utcnow_timestamp() - event.timeStamp > LOW_PRIORITY_ENVENT_TIMEOUT:
@@ -96,7 +96,7 @@ class EventEngine(object):
 
     # 执行事件
     def __process(self, event):
-        self.__logger.info(
+        self.__logger.debug(
             "src.core.engine.engine.EventEngine.__mainProcess.__run.__process: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         if event.type in self.__handlers:
             for handler in self.__handlers[event.type]:
