@@ -39,8 +39,8 @@ if __name__ == '__main__':
 
     # app update
     util.updateDBAccountBalance(sender)
-    # util.updateDBAccountWithdraw(sender)
-    # util.updateDBMarketKline(sender)
+    util.updateDBAccountWithdraw(sender)
+    util.updateDBMarketKline(sender)
 
 
     # stop engine

@@ -248,15 +248,16 @@ class DB(object):
             curs = self._conn.cursor()
             timeStamp = utcnow_timestamp()
             TEMP_SQL_TITLE = INSERT_ACCOUNT_BALANCE_HISTORY_SQL_TITLE
+            TEMP_SQL_VALUE = []
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
                 base = self._okex.getAccountBalances()
-                TEMP_SQL_VALUE = []
                 for b in base:
                     if b["balance"] > 0:
 
                         TEMP_SQL_VALUE.append(
-                            INSERT_ACCOUNT_BALANCE_HISTORY_SQL_VALUE.substitute(
+                            INSERT_ACCOUNT_BALANCE_HISTORY_SQL_VALUE.
+                            substitute(
                                 server=str(self._okexConf["exchange"]),
                                 timeStamp=int(timeStamp),
                                 asset=str(b["asset"]),
@@ -270,7 +271,8 @@ class DB(object):
                     if b["balance"] > 0:
 
                         TEMP_SQL_VALUE.append(
-                            INSERT_ACCOUNT_BALANCE_HISTORY_SQL_VALUE.substitute(
+                            INSERT_ACCOUNT_BALANCE_HISTORY_SQL_VALUE.
+                            substitute(
                                 server=str(self._binanceConf["exchange"]),
                                 timeStamp=int(timeStamp),
                                 asset=str(b["asset"]),
@@ -291,48 +293,298 @@ class DB(object):
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
+    def insertAccountWithdrawHistory(self, exchange, asset):
+        self._logger.debug(
+            "src.core.db.db.DB.insertAccountWithdrawHistory: { exchange=%s, asset=%s }"
+            % (exchange, asset))
+        try:
+            curs = self._conn.cursor()
+            timeStamp = utcnow_timestamp()
+            TEMP_SQL_TITLE = INSERT_WITHDRAW_HISTORY_SQL_TITLE
+            TEMP_SQL_VALUE = []
+            # OKEX
+            if exchange == "all" or self._okexConf["exchange"] in exchange:
+                base = self._okex.getAccountAssetDetail(asset)
+                TEMP_SQL_VALUE.append(
+                    INSERT_WITHDRAW_HISTORY_SQL_VALUE.substitute(
+                        server=str(self._okexConf["exchange"]),
+                        timeStamp=int(timeStamp),
+                        asset=str(asset),
+                        deposite=str(
+                            sqlite_escape(', '.join(
+                                json.dumps(b) for b in base["deposit"]))),
+                        withdraw=str(
+                            sqlite_escape(', '.join(
+                                json.dumps(b) for b in base["withdraw"])))))
+            # Binance
+            if exchange == "all" or self._binanceConf["exchange"] in exchange:
+                base = self._binance.getAccountAssetDetail(asset)
+                TEMP_SQL_VALUE.append(
+                    INSERT_WITHDRAW_HISTORY_SQL_VALUE.substitute(
+                        server=str(self._binanceConf["exchange"]),
+                        timeStamp=int(timeStamp),
+                        asset=str(asset),
+                        deposite=str(
+                            sqlite_escape(', '.join(
+                                json.dumps(b) for b in base["deposit"]))),
+                        withdraw=str(
+                            sqlite_escape(', '.join(
+                                json.dumps(b) for b in base["withdraw"])))))
+            # Huobi
+            # to_be_continue
+            # Gate
+            # to_be_continue
+            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (OkexException, BinanceException, sqlite3.Error) as err:
+            raise DBException(err)
+
+    def insertInfoServer(self, exchange="all"):
+        self._logger.debug(
+            "src.core.db.db.DB.insertInfoServer: { exchange=%s }" % exchange)
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL_TITLE = INSERT_INFO_SERVER_SQL_TITLE
+            TEMP_SQL_VALUE = []
+            # OKEX
+            if exchange == "all" or self._okexConf["exchange"] in exchange:
+                res = self._okex.getServerLimits()
+                TEMP_SQL_VALUE.append(
+                    INSERT_INFO_SERVER_SQL_VALUE.substitute(
+                        server=str(self._okexConf["exchange"]),
+                        requests_second="NULL" if res["requests_second"] == ''
+                        else float(res["requests_second"]),
+                        orders_second="NULL" if res["orders_second"] == '' else
+                        float(res["orders_second"]),
+                        orders_day="NULL" if res["orders_day"] == '' else
+                        float(res["orders_day"]),
+                        webSockets_second="NULL"
+                        if res["webSockets_second"] == '' else float(
+                            res["webSockets_second"])))
+            # Binance
+            if exchange == "all" or self._binanceConf["exchange"] in exchange:
+                res = self._binance.getServerLimits()
+                TEMP_SQL_VALUE.append(
+                    INSERT_INFO_SERVER_SQL_VALUE.substitute(
+                        server=str(self._binanceConf["exchange"]),
+                        requests_second="NULL" if res["requests_second"] == ''
+                        else float(res["requests_second"]),
+                        orders_second="NULL" if res["orders_second"] == '' else
+                        float(res["orders_second"]),
+                        orders_day="NULL" if res["orders_day"] == '' else
+                        float(res["orders_day"]),
+                        webSockets_second="NULL"
+                        if res["webSockets_second"] == '' else float(
+                            res["webSockets_second"])))
+            # Huobi
+            # to_be_continue
+            # Gate
+            # to_be_continue
+            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (OkexException, BinanceException, sqlite3.Error) as err:
+            raise DBException(err)
+
+    def insertInfoSymbol(self, exchange="all"):
+        self._logger.debug(
+            "src.core.db.db.DB.insertInfoSymbol: { exchange=%s }" % exchange)
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL_TITLE = INSERT_INFO_SYMBOL_SQL_TITLE
+            TEMP_SQL_VALUE = []
+            # OKEX
+            if exchange == "all" or self._okexConf["exchange"] in exchange:
+                base = self._okex.getSymbolsLimits()
+                fees = self._okex.getTradeFees()
+                for b in base:
+                    fees_key = fees[0]
+                    TEMP_SQL_VALUE.append(
+                        INSERT_INFO_SYMBOL_SQL_VALUE.substitute(
+                            server=str(self._okexConf["exchange"]),
+                            fSymbol=str(b["fSymbol"]),
+                            tSymbol=str(b["tSymbol"]),
+                            limit_price_precision="NULL"
+                            if b["tSymbol_price"]["precision"] == '' else
+                            float(b["tSymbol_price"]["precision"]),
+                            limit_price_max="NULL"
+                            if b["tSymbol_price"]["max"] == '' else float(
+                                b["tSymbol_price"]["max"]),
+                            limit_price_min="NULL"
+                            if b["tSymbol_price"]["min"] == '' else float(
+                                b["tSymbol_price"]["min"]),
+                            limit_price_step="NULL"
+                            if b["tSymbol_price"]["step"] == '' else float(
+                                b["tSymbol_price"]["step"]),
+                            limit_size_precision="NULL"
+                            if b["fSymbol_size"]["precision"] == '' else float(
+                                b["fSymbol_size"]["precision"]),
+                            limit_size_max="NULL"
+                            if b["fSymbol_size"]["max"] == '' else float(
+                                b["fSymbol_size"]["max"]),
+                            limit_size_min="NULL"
+                            if b["fSymbol_size"]["min"] == '' else float(
+                                b["fSymbol_size"]["min"]),
+                            limit_size_step="NULL"
+                            if b["fSymbol_size"]["step"] == '' else float(
+                                b["fSymbol_size"]["step"]),
+                            limit_min_notional="NULL"
+                            if b["min_notional"] == '' else float(
+                                b["min_notional"]),
+                            fee_maker="NULL" if fees_key["maker"] == '' else
+                            float(fees_key["maker"]),
+                            fee_taker="NULL" if fees_key["taker"] == '' else
+                            float(fees_key["taker"])))
+            # Binance
+            if exchange == "all" or self._binanceConf["exchange"] in exchange:
+                base = self._binance.getSymbolsLimits()
+                fees = self._binance.getTradeFees()
+                for b in base:
+                    fees_key = ''
+                    for f in fees:
+                        if f["symbol"] == b["fSymbol"] + b["tSymbol"]:
+                            fees_key = f
+                            TEMP_SQL_VALUE.append(
+                                INSERT_INFO_SYMBOL_SQL_VALUE.substitute(
+                                    server=str(self._binanceConf["exchange"]),
+                                    fSymbol=str(b["fSymbol"]),
+                                    tSymbol=str(b["tSymbol"]),
+                                    limit_price_precision="NULL" if
+                                    b["tSymbol_price"]["precision"] == '' else
+                                    float(b["tSymbol_price"]["precision"]),
+                                    limit_price_max="NULL"
+                                    if b["tSymbol_price"]["max"] == '' else
+                                    float(b["tSymbol_price"]["max"]),
+                                    limit_price_min="NULL"
+                                    if b["tSymbol_price"]["min"] == '' else
+                                    float(b["tSymbol_price"]["min"]),
+                                    limit_price_step="NULL"
+                                    if b["tSymbol_price"]["step"] == '' else
+                                    float(b["tSymbol_price"]["step"]),
+                                    limit_size_precision="NULL"
+                                    if b["fSymbol_size"]["precision"] == ''
+                                    else float(b["fSymbol_size"]["precision"]),
+                                    limit_size_max="NULL"
+                                    if b["fSymbol_size"]["max"] == '' else
+                                    float(b["fSymbol_size"]["max"]),
+                                    limit_size_min="NULL"
+                                    if b["fSymbol_size"]["min"] == '' else
+                                    float(b["fSymbol_size"]["min"]),
+                                    limit_size_step="NULL"
+                                    if b["fSymbol_size"]["step"] == '' else
+                                    float(b["fSymbol_size"]["step"]),
+                                    limit_min_notional="NULL"
+                                    if b["min_notional"] == '' else float(
+                                        b["min_notional"]),
+                                    fee_maker="NULL" if fees_key["maker"] == ''
+                                    else float(fees_key["maker"]),
+                                    fee_taker="NULL" if fees_key["taker"] == ''
+                                    else float(fees_key["taker"])))
+            # Huobi
+            # to_be_continue
+            # Gate
+            # to_be_continue
+            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (OkexException, BinanceException, sqlite3.Error) as err:
+            raise DBException(err)
+
+    def insertInfoWithdraw(self, exchange="all"):
+        self._logger.debug(
+            "src.core.db.db.DB.insertInfoWithdraw: { exchange=%s}" % exchange)
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL_TITLE = INSERT_INFO_WITHDRAW_SQL_TITLE
+            TEMP_SQL_VALUE = []
+            # OKEX
+            if exchange == "all" or self._okexConf["exchange"] in exchange:
+                base = self._okex.getAccountLimits()
+                for b in base:
+                    TEMP_SQL_VALUE.append(
+                        INSERT_INFO_WITHDRAW_SQL_VALUE.substitute(
+                            server=str(self._okexConf["exchange"]),
+                            asset=str(b["asset"]),
+                            can_deposite=str(b["can_deposite"]),
+                            can_withdraw=str(b["can_withdraw"]),
+                            min_withdraw=float(b["min_withdraw"])))
+            # Binance
+            if exchange == "all" or self._binanceConf["exchange"] in exchange:
+                base = self._binance.getAccountLimits()
+                for b in base:
+                    TEMP_SQL_VALUE.append(
+                        INSERT_INFO_WITHDRAW_SQL_VALUE.substitute(
+                            server=str(self._binanceConf["exchange"]),
+                            asset=str(b["asset"]),
+                            can_deposite=str(b["can_deposite"]),
+                            can_withdraw=str(b["can_withdraw"]),
+                            min_withdraw=float(b["min_withdraw"])))
+            # Huobi
+            # to_be_continue
+            # Gate
+            # to_be_continue
+            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (OkexException, BinanceException, sqlite3.Error) as err:
+            raise DBException(err)
+
     def insertMarketDepth(self, exchange, fSymbol, tSymbol, limit=100):
         self._logger.debug(
             "src.core.db.db.DB.insertMarketDepth: { exchange=%s, fSymbol=%s, tSymbol=%s, limit=%s }"
             % (exchange, fSymbol, tSymbol, limit))
         try:
             curs = self._conn.cursor()
+            TEMP_SQL_TITLE = INSERT_MARKET_DEPTH_SQL_TITLE
+            TEMP_SQL_VALUE = []
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
                 base = self._okex.getMarketOrderbookDepth(
                     fSymbol, tSymbol, limit)
-                INSERT_OKEX_MARKET_DEPTH_SQL = INSERT_MARKET_DEPTH_SQL.substitute(
-                    server=str(self._okexConf["exchange"]),
-                    timeStamp=int(base["timeStamp"]),
-                    fSymbol=str(base["fSymbol"]),
-                    tSymbol=str(base["tSymbol"]),
-                    bid_price_size=str(
-                        sqlite_escape(json.dumps(base["bid_price_size"]))),
-                    ask_price_size=str(
-                        sqlite_escape(json.dumps(base["ask_price_size"]))))
-                self._logger.debug(INSERT_OKEX_MARKET_DEPTH_SQL)
-                curs.execute(INSERT_OKEX_MARKET_DEPTH_SQL)
+                TEMP_SQL_VALUE.append(
+                    INSERT_MARKET_DEPTH_SQL_VALUE.substitute(
+                        server=str(self._okexConf["exchange"]),
+                        timeStamp=int(base["timeStamp"]),
+                        fSymbol=str(base["fSymbol"]),
+                        tSymbol=str(base["tSymbol"]),
+                        bid_price_size=str(
+                            sqlite_escape(json.dumps(base["bid_price_size"]))),
+                        ask_price_size=str(
+                            sqlite_escape(json.dumps(
+                                base["ask_price_size"])))))
             # Binnance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
                 base = self._binance.getMarketOrderbookDepth(
                     fSymbol, tSymbol, limit)
-                INSERT_BINANCE_MARKET_DEPTH_SQL = INSERT_MARKET_DEPTH_SQL.substitute(
-                    server=str(self._binanceConf["exchange"]),
-                    timeStamp=int(base["timeStamp"]),
-                    fSymbol=str(base["fSymbol"]),
-                    tSymbol=str(base["tSymbol"]),
-                    bid_price_size=str(
-                        sqlite_escape(json.dumps(base["bid_price_size"]))),
-                    ask_price_size=str(
-                        sqlite_escape(json.dumps(base["ask_price_size"]))))
-                self._logger.debug(INSERT_BINANCE_MARKET_DEPTH_SQL)
-                curs.execute(INSERT_BINANCE_MARKET_DEPTH_SQL)
+                TEMP_SQL_VALUE.append(
+                    INSERT_MARKET_DEPTH_SQL_VALUE.substitute(
+                        server=str(self._binanceConf["exchange"]),
+                        timeStamp=int(base["timeStamp"]),
+                        fSymbol=str(base["fSymbol"]),
+                        tSymbol=str(base["tSymbol"]),
+                        bid_price_size=str(
+                            sqlite_escape(json.dumps(base["bid_price_size"]))),
+                        ask_price_size=str(
+                            sqlite_escape(json.dumps(
+                                base["ask_price_size"])))))
             # Huobi
             # if exchange == "all" or "huobi" in exchange:
             # to_be_continue
             # Gate
             # if exchange == "all" or "gate" in exchange:
             # to_be_continue
+            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             self._conn.commit()
             curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
@@ -345,49 +597,53 @@ class DB(object):
             % (exchange, fSymbol, tSymbol, interval, start, end))
         try:
             curs = self._conn.cursor()
+            TEMP_SQL_TITLE = INSERT_MARKET_KLINE_SQL_TITLE
+            TEMP_SQL_VALUE = []
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
                 base = self._okex.getMarketKline(fSymbol, tSymbol, interval,
                                                  start, end)
                 for b in base:
-                    INSERT_OKEX_MARKET_KLINE_SQL = INSERT_MARKET_KLINE_SQL.substitute(
-                        server=str(self._okexConf["exchange"]),
-                        timeStamp=int(b["timeStamp"]),
-                        fSymbol=str(b["fSymbol"]),
-                        tSymbol=str(b["tSymbol"]),
-                        open=float(b["open"]),
-                        high=float(b["high"]),
-                        low=float(b["low"]),
-                        close=float(b["close"]),
-                        volume=float(b["volume"]))
-                    self._logger.debug(INSERT_OKEX_MARKET_KLINE_SQL)
-                    curs.execute(INSERT_OKEX_MARKET_KLINE_SQL)
+                    TEMP_SQL_VALUE.append(
+                        INSERT_MARKET_KLINE_SQL_VALUE.substitute(
+                            server=str(self._okexConf["exchange"]),
+                            timeStamp=int(b["timeStamp"]),
+                            fSymbol=str(b["fSymbol"]),
+                            tSymbol=str(b["tSymbol"]),
+                            open=float(b["open"]),
+                            high=float(b["high"]),
+                            low=float(b["low"]),
+                            close=float(b["close"]),
+                            volume=float(b["volume"])))
             # Binance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
                 base = self._binance.getMarketKline(fSymbol, tSymbol, interval,
                                                     start, end)
                 for b in base:
-                    INSERT_BINANCE_MARKET_KLINE_SQL = INSERT_MARKET_KLINE_SQL.substitute(
-                        server=str(self._binanceConf["exchange"]),
-                        timeStamp=int(b["timeStamp"]),
-                        fSymbol=str(b["fSymbol"]),
-                        tSymbol=str(b["tSymbol"]),
-                        open=float(b["open"]),
-                        high=float(b["high"]),
-                        low=float(b["low"]),
-                        close=float(b["close"]),
-                        volume=float(b["volume"]))
-                    self._logger.debug(INSERT_BINANCE_MARKET_KLINE_SQL)
-                    curs.execute(INSERT_BINANCE_MARKET_KLINE_SQL)
+                    TEMP_SQL_VALUE.append(
+                        INSERT_MARKET_KLINE_SQL_VALUE.substitute(
+                            server=str(self._binanceConf["exchange"]),
+                            timeStamp=int(b["timeStamp"]),
+                            fSymbol=str(b["fSymbol"]),
+                            tSymbol=str(b["tSymbol"]),
+                            open=float(b["open"]),
+                            high=float(b["high"]),
+                            low=float(b["low"]),
+                            close=float(b["close"]),
+                            volume=float(b["volume"])))
             # Huobi
             # if exchange == "all" or "huobi" in exchange:
             # to_be_continue
             # Gate
             # if exchange == "all" or "gate" in exchange:
             # to_be_continue
+            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             self._conn.commit()
             curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
+            self._logger.critical(TEMP_SQL)
             raise DBException(err)
 
     def insertMarketTicker(self, exchange, fSymbol, tSymbol):
@@ -396,181 +652,43 @@ class DB(object):
             % (exchange, fSymbol, tSymbol))
         try:
             curs = self._conn.cursor()
+            TEMP_SQL_TITLE = INSERT_MARKET_TIKER_SQL_TITLE
+            TEMP_SQL_VALUE = []
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
                 base = self._okex.getMarketOrderbookTicker(fSymbol, tSymbol)
-                INSERT_OKEX_MARKET_TIKER_SQL = INSERT_MARKET_TIKER_SQL.substitute(
-                    server=str(self._okexConf["exchange"]),
-                    timeStamp=int(base["timeStamp"]),
-                    fSymbol=str(base["fSymbol"]),
-                    tSymbol=str(base["tSymbol"]),
-                    bid_one_price=float(base["bid_one_price"]),
-                    bid_one_size=float(base["bid_one_size"]),
-                    ask_one_price=float(base["ask_one_price"]),
-                    ask_one_size=float(base["ask_one_size"]))
-                self._logger.debug(INSERT_OKEX_MARKET_TIKER_SQL)
-                curs.execute(INSERT_OKEX_MARKET_TIKER_SQL)
+                TEMP_SQL_VALUE.append(
+                    INSERT_MARKET_TIKER_SQL_VALUE.substitute(
+                        server=str(self._okexConf["exchange"]),
+                        timeStamp=int(base["timeStamp"]),
+                        fSymbol=str(base["fSymbol"]),
+                        tSymbol=str(base["tSymbol"]),
+                        bid_one_price=float(base["bid_one_price"]),
+                        bid_one_size=float(base["bid_one_size"]),
+                        ask_one_price=float(base["ask_one_price"]),
+                        ask_one_size=float(base["ask_one_size"])))
             # Binance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
                 base = self._binance.getMarketOrderbookTicker(fSymbol, tSymbol)
-                INSERT_BINANCE_MARKET_TIKER_SQL = INSERT_MARKET_TIKER_SQL.substitute(
-                    server=str(self._binanceConf["exchange"]),
-                    timeStamp=int(base["timeStamp"]),
-                    fSymbol=str(base["fSymbol"]),
-                    tSymbol=str(base["tSymbol"]),
-                    bid_one_price=float(base["bid_one_price"]),
-                    bid_one_size=float(base["bid_one_size"]),
-                    ask_one_price=float(base["ask_one_price"]),
-                    ask_one_size=float(base["ask_one_size"]))
-                self._logger.debug(INSERT_BINANCE_MARKET_TIKER_SQL)
-                curs.execute(INSERT_BINANCE_MARKET_TIKER_SQL)
+                TEMP_SQL_VALUE.append(
+                    INSERT_MARKET_TIKER_SQL_VALUE.substitute(
+                        server=str(self._binanceConf["exchange"]),
+                        timeStamp=int(base["timeStamp"]),
+                        fSymbol=str(base["fSymbol"]),
+                        tSymbol=str(base["tSymbol"]),
+                        bid_one_price=float(base["bid_one_price"]),
+                        bid_one_size=float(base["bid_one_size"]),
+                        ask_one_price=float(base["ask_one_price"]),
+                        ask_one_size=float(base["ask_one_size"])))
             # Huobi
             # if exchange == "all" or "huobi" in exchange:
             # to_be_continue
             # Gate
             # if exchange == "all" or "gate" in exchange:
             # to_be_continue
-            self._conn.commit()
-            curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
-            raise DBException(err)
-
-    def insertInfoServer(self, exchange="all"):
-        self._logger.debug(
-            "src.core.db.db.DB.insertInfoServer: { exchange=%s }" % exchange)
-        try:
-            curs = self._conn.cursor()
-            # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                res = self._okex.getServerLimits()
-                INSERT_OKEX_INFO_SERVER_SQL = INSERT_INFO_SERVER_SQL.substitute(
-                    server=str(self._okexConf["exchange"]),
-                    requests_second="NULL" if res["requests_second"] == '' else
-                    float(res["requests_second"]),
-                    orders_second="NULL" if res["orders_second"] == '' else
-                    float(res["orders_second"]),
-                    orders_day="NULL"
-                    if res["orders_day"] == '' else float(res["orders_day"]),
-                    webSockets_second="NULL" if res["webSockets_second"] == ''
-                    else float(res["webSockets_second"]))
-                self._logger.debug(INSERT_OKEX_INFO_SERVER_SQL)
-                curs.execute(INSERT_OKEX_INFO_SERVER_SQL)
-            # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                res = self._binance.getServerLimits()
-                INSERT_BINANCE_INFO_SERVER_SQL = INSERT_INFO_SERVER_SQL.substitute(
-                    server=str(self._binanceConf["exchange"]),
-                    requests_second="NULL" if res["requests_second"] == '' else
-                    float(res["requests_second"]),
-                    orders_second="NULL" if res["orders_second"] == '' else
-                    float(res["orders_second"]),
-                    orders_day="NULL"
-                    if res["orders_day"] == '' else float(res["orders_day"]),
-                    webSockets_second="NULL" if res["webSockets_second"] == ''
-                    else float(res["webSockets_second"]))
-                self._logger.debug(INSERT_BINANCE_INFO_SERVER_SQL)
-                curs.execute(INSERT_BINANCE_INFO_SERVER_SQL)
-            # Huobi
-            # to_be_continue
-            # Gate
-            # to_be_continue
-            self._conn.commit()
-            curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
-            raise DBException(err)
-
-    def insertInfoSymbol(self, exchange="all"):
-        self._logger.debug(
-            "src.core.db.db.DB.insertInfoSymbol: { exchange=%s }" % exchange)
-        try:
-            curs = self._conn.cursor()
-            # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                base = self._okex.getSymbolsLimits()
-                fees = self._okex.getTradeFees()
-                for b in base:
-                    fees_key = fees[0]
-                    INSERT_OKEX_INFO_SYMBOL_SQL = INSERT_INFO_SYMBOL_SQL.substitute(
-                        server=str(self._okexConf["exchange"]),
-                        fSymbol=str(b["fSymbol"]),
-                        tSymbol=str(b["tSymbol"]),
-                        limit_price_precision="NULL"
-                        if b["tSymbol_price"]["precision"] == '' else float(
-                            b["tSymbol_price"]["precision"]),
-                        limit_price_max="NULL"
-                        if b["tSymbol_price"]["max"] == '' else float(
-                            b["tSymbol_price"]["max"]),
-                        limit_price_min="NULL"
-                        if b["tSymbol_price"]["min"] == '' else float(
-                            b["tSymbol_price"]["min"]),
-                        limit_price_step="NULL"
-                        if b["tSymbol_price"]["step"] == '' else float(
-                            b["tSymbol_price"]["step"]),
-                        limit_size_precision="NULL"
-                        if b["fSymbol_size"]["precision"] == '' else float(
-                            b["fSymbol_size"]["precision"]),
-                        limit_size_max="NULL" if b["fSymbol_size"]["max"] == ''
-                        else float(b["fSymbol_size"]["max"]),
-                        limit_size_min="NULL" if b["fSymbol_size"]["min"] == ''
-                        else float(b["fSymbol_size"]["min"]),
-                        limit_size_step="NULL"
-                        if b["fSymbol_size"]["step"] == '' else float(
-                            b["fSymbol_size"]["step"]),
-                        limit_min_notional="NULL" if b["min_notional"] == ''
-                        else float(b["min_notional"]),
-                        fee_maker="NULL" if fees_key["maker"] == '' else float(
-                            fees_key["maker"]),
-                        fee_taker="NULL" if fees_key["taker"] == '' else float(
-                            fees_key["taker"]))
-                    self._logger.debug(INSERT_OKEX_INFO_SYMBOL_SQL)
-                    curs.execute(INSERT_OKEX_INFO_SYMBOL_SQL)
-            # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                base = self._binance.getSymbolsLimits()
-                fees = self._binance.getTradeFees()
-                for b in base:
-                    fees_key = ''
-                    for f in fees:
-                        if f["symbol"] == b["fSymbol"] + b["tSymbol"]:
-                            fees_key = f
-                    INSERT_BINANCE_INFO_SYMBOL_SQL = INSERT_INFO_SYMBOL_SQL.substitute(
-                        server=str(self._binanceConf["exchange"]),
-                        fSymbol=str(b["fSymbol"]),
-                        tSymbol=str(b["tSymbol"]),
-                        limit_price_precision="NULL"
-                        if b["tSymbol_price"]["precision"] == '' else float(
-                            b["tSymbol_price"]["precision"]),
-                        limit_price_max="NULL"
-                        if b["tSymbol_price"]["max"] == '' else float(
-                            b["tSymbol_price"]["max"]),
-                        limit_price_min="NULL"
-                        if b["tSymbol_price"]["min"] == '' else float(
-                            b["tSymbol_price"]["min"]),
-                        limit_price_step="NULL"
-                        if b["tSymbol_price"]["step"] == '' else float(
-                            b["tSymbol_price"]["step"]),
-                        limit_size_precision="NULL"
-                        if b["fSymbol_size"]["precision"] == '' else float(
-                            b["fSymbol_size"]["precision"]),
-                        limit_size_max="NULL" if b["fSymbol_size"]["max"] == ''
-                        else float(b["fSymbol_size"]["max"]),
-                        limit_size_min="NULL" if b["fSymbol_size"]["min"] == ''
-                        else float(b["fSymbol_size"]["min"]),
-                        limit_size_step="NULL"
-                        if b["fSymbol_size"]["step"] == '' else float(
-                            b["fSymbol_size"]["step"]),
-                        limit_min_notional="NULL" if b["min_notional"] == ''
-                        else float(b["min_notional"]),
-                        fee_maker="NULL" if fees_key["maker"] == '' else float(
-                            fees_key["maker"]),
-                        fee_taker="NULL" if fees_key["taker"] == '' else float(
-                            fees_key["taker"]))
-                    self._logger.debug(INSERT_BINANCE_INFO_SYMBOL_SQL)
-                    curs.execute(INSERT_BINANCE_INFO_SYMBOL_SQL)
-            # Huobi
-            # to_be_continue
-            # Gate
-            # to_be_continue
+            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             self._conn.commit()
             curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
@@ -590,6 +708,8 @@ class DB(object):
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
         try:
             curs = self._conn.cursor()
+            TEMP_SQL_TITLE = INSERT_TRADE_BACKTEST_HISTORY_SQL_TITLE
+            TEMP_SQL_VALUE = []
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
                 timeStamp = utcnow_timestamp()
@@ -598,22 +718,21 @@ class DB(object):
                 if ratio == '':
                     ratio = self._okex.getTradeFees()[0]["taker"]
                 fee = float(ratio) * float(price) * float(quantity)
-                INSERT_OKEX_TRADE_BACKTEST_HISTORY_SQL = INSERT_TRADE_BACKTEST_HISTORY_SQL.substitute(
-                    server=str(self._okexConf["exchange"]),
-                    timeStamp=int(timeStamp),
-                    order_id=str(order_id),
-                    status=str(status),
-                    type=str(type),
-                    fSymbol=str(fSymbol),
-                    tSymbol=str(tSymbol),
-                    ask_or_bid=str(ask_or_bid),
-                    ask_bid_price=float(price),
-                    ask_bid_size=float(quantity),
-                    filled_price=float(price),
-                    filled_size=float(quantity),
-                    fee=float(fee))
-                self._logger.debug(INSERT_OKEX_TRADE_BACKTEST_HISTORY_SQL)
-                curs.execute(INSERT_OKEX_TRADE_BACKTEST_HISTORY_SQL)
+                TEMP_SQL_VALUE.append(
+                    INSERT_TRADE_BACKTEST_HISTORY_SQL_VALUE.substitute(
+                        server=str(self._okexConf["exchange"]),
+                        timeStamp=int(timeStamp),
+                        order_id=str(order_id),
+                        status=str(status),
+                        type=str(type),
+                        fSymbol=str(fSymbol),
+                        tSymbol=str(tSymbol),
+                        ask_or_bid=str(ask_or_bid),
+                        ask_bid_price=float(price),
+                        ask_bid_size=float(quantity),
+                        filled_price=float(price),
+                        filled_size=float(quantity),
+                        fee=float(fee)))
             # Binance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
                 timeStamp = utcnow_timestamp()
@@ -622,26 +741,28 @@ class DB(object):
                 if ratio == '':
                     ratio = self._binance.getTradeFees()[0]["taker"]
                 fee = float(ratio) * float(price) * float(quantity)
-                INSERT_BINANCE_TRADE_BACKTEST_HISTORY_SQL = INSERT_TRADE_BACKTEST_HISTORY_SQL.substitute(
-                    server=str(self._binanceConf["exchange"]),
-                    timeStamp=int(timeStamp),
-                    order_id=str(order_id),
-                    status=str(status),
-                    type=str(type),
-                    fSymbol=str(fSymbol),
-                    tSymbol=str(tSymbol),
-                    ask_or_bid=str(ask_or_bid),
-                    ask_bid_price=float(price),
-                    ask_bid_size=float(quantity),
-                    filled_price=float(price),
-                    filled_size=float(quantity),
-                    fee=float(fee))
-                self._logger.debug(INSERT_BINANCE_TRADE_BACKTEST_HISTORY_SQL)
-                curs.execute(INSERT_BINANCE_TRADE_BACKTEST_HISTORY_SQL)
+                TEMP_SQL_VALUE.append(
+                    INSERT_TRADE_BACKTEST_HISTORY_SQL_VALUE.substitute(
+                        server=str(self._binanceConf["exchange"]),
+                        timeStamp=int(timeStamp),
+                        order_id=str(order_id),
+                        status=str(status),
+                        type=str(type),
+                        fSymbol=str(fSymbol),
+                        tSymbol=str(tSymbol),
+                        ask_or_bid=str(ask_or_bid),
+                        ask_bid_price=float(price),
+                        ask_bid_size=float(quantity),
+                        filled_price=float(price),
+                        filled_size=float(quantity),
+                        fee=float(fee)))
             # Huobi
             # to_be_continue
             # Gate
             # to_be_continue
+            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             self._conn.commit()
             curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
@@ -661,134 +782,53 @@ class DB(object):
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
         try:
             curs = self._conn.cursor()
+            TEMP_SQL_TITLE = INSERT_TRADE_ORDER_HISTORY_SQL_TITLE
+            TEMP_SQL_VALUE = []
             # OKEX
             if exchange == "all" or self._okexConf["exchange"] in exchange:
                 base = self._okex.createOrder(fSymbol, tSymbol, ask_or_bid,
                                               price, quantity, ratio, type)
-                INSERT_OKEX_TRADE_ORDER_HISTORY_SQL = INSERT_TRADE_ORDER_HISTORY_SQL.substitute(
-                    server=str(self._okexConf["exchange"]),
-                    timeStamp=int(base["timeStamp"]),
-                    order_id=str(base["order_id"]),
-                    status=str(base["status"]),
-                    type=str(base["type"]),
-                    fSymbol=str(base["fSymbol"]),
-                    tSymbol=str(base["tSymbol"]),
-                    ask_or_bid=str(base["ask_or_bid"]),
-                    ask_bid_price=float(base["ask_bid_price"]),
-                    ask_bid_size=float(base["ask_bid_size"]),
-                    filled_price=float(base["filled_price"]),
-                    filled_size=float(base["filled_size"]),
-                    fee=float(base["fee"]))
-                self._logger.debug(INSERT_OKEX_TRADE_ORDER_HISTORY_SQL)
-                curs.execute(INSERT_OKEX_TRADE_ORDER_HISTORY_SQL)
+                TEMP_SQL_VALUE.append(
+                    INSERT_TRADE_ORDER_HISTORY_SQL_VALUE.substitute(
+                        server=str(self._okexConf["exchange"]),
+                        timeStamp=int(base["timeStamp"]),
+                        order_id=str(base["order_id"]),
+                        status=str(base["status"]),
+                        type=str(base["type"]),
+                        fSymbol=str(base["fSymbol"]),
+                        tSymbol=str(base["tSymbol"]),
+                        ask_or_bid=str(base["ask_or_bid"]),
+                        ask_bid_price=float(base["ask_bid_price"]),
+                        ask_bid_size=float(base["ask_bid_size"]),
+                        filled_price=float(base["filled_price"]),
+                        filled_size=float(base["filled_size"]),
+                        fee=float(base["fee"])))
             # Binance
             if exchange == "all" or self._binanceConf["exchange"] in exchange:
                 base = self._binance.createOrder(fSymbol, tSymbol, ask_or_bid,
                                                  price, quantity, ratio, type)
-                INSERT_BINANCE_TRADE_ORDER_HISTORY_SQL = INSERT_TRADE_ORDER_HISTORY_SQL.substitute(
-                    server=str(self._binanceConf["exchange"]),
-                    timeStamp=int(base["timeStamp"]),
-                    order_id=str(base["order_id"]),
-                    status=str(base["status"]),
-                    type=str(base["type"]),
-                    fSymbol=str(base["fSymbol"]),
-                    tSymbol=str(base["tSymbol"]),
-                    ask_or_bid=str(base["ask_or_bid"]),
-                    ask_bid_price=float(base["ask_bid_price"]),
-                    ask_bid_size=float(base["ask_bid_size"]),
-                    filled_price=float(base["filled_price"]),
-                    filled_size=float(base["filled_size"]),
-                    fee=float(base["fee"]))
-                self._logger.debug(INSERT_BINANCE_TRADE_ORDER_HISTORY_SQL)
-                curs.execute(INSERT_BINANCE_TRADE_ORDER_HISTORY_SQL)
-            # Huobi
-            # to_be_continue
-            # Gate
-            # to_be_continue
-            self._conn.commit()
-            curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
-            raise DBException(err)
-
-    def insertAccountWithdrawHistory(self, exchange, asset):
-        self._logger.debug(
-            "src.core.db.db.DB.insertAccountWithdrawHistory: { exchange=%s, asset=%s }"
-            % (exchange, asset))
-        try:
-            curs = self._conn.cursor()
-            timeStamp = utcnow_timestamp()
-            # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                base = self._okex.getAccountAssetDetail(asset)
-                INSERT_OKEX_WITHDRAW_HISTORY_SQL = INSERT_WITHDRAW_HISTORY_SQL.substitute(
-                    server=str(self._okexConf["exchange"]),
-                    timeStamp=int(timeStamp),
-                    asset=str(asset),
-                    deposite=str(
-                        sqlite_escape(', '.join(
-                            json.dumps(b) for b in base["deposit"]))),
-                    withdraw=str(
-                        sqlite_escape(', '.join(
-                            json.dumps(b) for b in base["withdraw"]))))
-                self._logger.debug(INSERT_OKEX_WITHDRAW_HISTORY_SQL)
-                curs.execute(INSERT_OKEX_WITHDRAW_HISTORY_SQL)
-            # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                base = self._binance.getAccountAssetDetail(asset)
-                INSERT_BINANCE_WITHDRAW_HISTORY_SQL = INSERT_WITHDRAW_HISTORY_SQL.substitute(
-                    server=str(self._binanceConf["exchange"]),
-                    timeStamp=int(timeStamp),
-                    asset=str(asset),
-                    deposite=str(
-                        sqlite_escape(', '.join(
-                            json.dumps(b) for b in base["deposit"]))),
-                    withdraw=str(
-                        sqlite_escape(', '.join(
-                            json.dumps(b) for b in base["withdraw"]))))
-                self._logger.debug(INSERT_BINANCE_WITHDRAW_HISTORY_SQL)
-                curs.execute(INSERT_BINANCE_WITHDRAW_HISTORY_SQL)
-            # Huobi
-            # to_be_continue
-            # Gate
-            # to_be_continue
-            self._conn.commit()
-            curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
-            raise DBException(err)
-
-    def insertInfoWithdraw(self, exchange="all"):
-        self._logger.debug(
-            "src.core.db.db.DB.insertInfoWithdraw: { exchange=%s}" % exchange)
-        try:
-            curs = self._conn.cursor()
-            # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                base = self._okex.getAccountLimits()
-                for b in base:
-                    INSERT_OKEX_INFO_WITHDRAW_SQL = INSERT_INFO_WITHDRAW_SQL.substitute(
-                        server=str(self._okexConf["exchange"]),
-                        asset=str(b["asset"]),
-                        can_deposite=str(b["can_deposite"]),
-                        can_withdraw=str(b["can_withdraw"]),
-                        min_withdraw=float(b["min_withdraw"]))
-                    self._logger.debug(INSERT_OKEX_INFO_WITHDRAW_SQL)
-                    curs.execute(INSERT_OKEX_INFO_WITHDRAW_SQL)
-            # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                base = self._binance.getAccountLimits()
-                for b in base:
-                    INSERT_BINANCE_INFO_WITHDRAW_SQL = INSERT_INFO_WITHDRAW_SQL.substitute(
+                TEMP_SQL_VALUE.append(
+                    INSERT_TRADE_ORDER_HISTORY_SQL_VALUE.substitute(
                         server=str(self._binanceConf["exchange"]),
-                        asset=str(b["asset"]),
-                        can_deposite=str(b["can_deposite"]),
-                        can_withdraw=str(b["can_withdraw"]),
-                        min_withdraw=float(b["min_withdraw"]))
-                    self._logger.debug(INSERT_BINANCE_INFO_WITHDRAW_SQL)
-                    curs.execute(INSERT_BINANCE_INFO_WITHDRAW_SQL)
+                        timeStamp=int(base["timeStamp"]),
+                        order_id=str(base["order_id"]),
+                        status=str(base["status"]),
+                        type=str(base["type"]),
+                        fSymbol=str(base["fSymbol"]),
+                        tSymbol=str(base["tSymbol"]),
+                        ask_or_bid=str(base["ask_or_bid"]),
+                        ask_bid_price=float(base["ask_bid_price"]),
+                        ask_bid_size=float(base["ask_bid_size"]),
+                        filled_price=float(base["filled_price"]),
+                        filled_size=float(base["filled_size"]),
+                        fee=float(base["fee"])))
             # Huobi
             # to_be_continue
             # Gate
             # to_be_continue
+            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             self._conn.commit()
             curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
