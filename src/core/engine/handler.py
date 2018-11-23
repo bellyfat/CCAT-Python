@@ -16,8 +16,7 @@ class Handler(object):
     def handleListenAccountBalanceEvent(self, event):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: "
-            + event.type)
+            "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         [exchange] = event.args
         try:
             db = DB()
@@ -69,8 +68,7 @@ class Handler(object):
 
     def handleListenMarketTickerEvent(self, event):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenMarketTickerEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleListenMarketTickerEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         # 接收事件
         [exchange, fSymbol, tSymbol] = event.args
         try:
@@ -83,8 +81,7 @@ class Handler(object):
 
     def handleJudgeMarketKlineEvent(self, event):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
@@ -97,56 +94,48 @@ class Handler(object):
 
     def handleBacktestMarketKlineEvent(self, event):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleBacktestMarketKlineEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleBacktestMarketKlineEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
     def handleBacktestMarketTickerEvent(self, event):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleBacktestMarketTickerEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleBacktestMarketTickerEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
     def handleOrderMarketKlineEvent(self, event):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderMarketKlineEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleOrderMarketKlineEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
     def handleOrderMarketTickerEvent(self, event):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderMarketTickerEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleOrderMarketTickerEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
     def handleOrderConfirmEvent(self, event):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderConfirmEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleOrderConfirmEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
     def handleOrderCancelEvent(self, event):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderCancelEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleOrderCancelEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
     def handleStatisticBacktestEvent(self, event):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleStatisticBacktestEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleStatisticBacktestEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
     def handleStatisticOrderEvent(self, event):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleStatisticOrderEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleStatisticOrderEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args))
         # 接收事件
         pass

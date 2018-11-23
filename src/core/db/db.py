@@ -286,7 +286,7 @@ class DB(object):
             raise DBException(err)
 
     def insertMarketDepth(self, exchange, fSymbol, tSymbol, limit=100):
-        self._logger.debug("src.core.db.db.DB.insertMarketDepth: { exchange=%s, fSymbol=%s, tSymbol=%s, limit=%s }" % (exchange, fSymbol， tSymbol, limit))
+        self._logger.debug("src.core.db.db.DB.insertMarketDepth: { exchange=%s, fSymbol=%s, tSymbol=%s, limit=%s }" % (exchange, fSymbol, tSymbol, limit))
         try:
             curs = self._conn.cursor()
             # OKEX
@@ -383,7 +383,7 @@ class DB(object):
             raise DBException(err)
 
     def insertMarketTicker(self, exchange, fSymbol, tSymbol):
-        self._logger.debug("src.core.db.db.DB.insertMarketTicker: { exchange=%s, fSymbol=%s, tSymbol=%s }" % (exchange, fSymbol， tSymbol))
+        self._logger.debug("src.core.db.db.DB.insertMarketTicker: { exchange=%s, fSymbol=%s, tSymbol=%s }" % (exchange, fSymbol, tSymbol))
         try:
             curs = self._conn.cursor()
             # OKEX

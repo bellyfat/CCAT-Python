@@ -32,7 +32,7 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getViewInfoSymbolPairs(self):
-        res = db.getViewInfoSymbolPairs("okex", "binance")
+        res = db.getViewInfoSymbolPairs(["okex", "binance"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -163,32 +163,32 @@ class TestDB(unittest.TestCase):
 # list of test_db
 # db test items
 test_db = [
-    # TestDB("test_initDB"),
-    # TestDB("test_getTables"),
-    # TestDB("test_creatTables"),
+    TestDB("test_initDB"),
+    TestDB("test_creatTables"),
+    TestDB("test_getTables"),
     TestDB("test_getAccountBalanceHistory"),
-    # TestDB("test_getAccountWithdrawHistory"),
-    # TestDB("test_getMarketDepth"),
-    # TestDB("test_getMarketKline"),
-    # TestDB("test_getMarketTicker"),
-    # TestDB("test_getInfoServer"),
-    # TestDB("test_getInfoSymbol"),
-    # TestDB("test_getInfoWithdraw"),
-    # TestDB("test_getTradeBacktestHistory"),
-    # TestDB("test_getTradeOrderHistory"),
-    # TestDB("test_insertAccountBalanceHistory"),
-    # TestDB("test_insertAccountWithdrawHistory"),
-    # TestDB("test_insertMarketDepth"),
-    # TestDB("test_insertMarketKline"),
-    # TestDB("test_insertMarketTicker"),
-    # TestDB("test_insertInfoServer"),
-    # TestDB("test_insertInfoSymbol"),
-    # TestDB("test_insertInfoWithdraw"),
-    # TestDB("test_insertTradeBacktestHistory"),
+    TestDB("test_getAccountWithdrawHistory"),
+    TestDB("test_getMarketDepth"),
+    TestDB("test_getMarketKline"),
+    TestDB("test_getMarketTicker"),
+    TestDB("test_getInfoServer"),
+    TestDB("test_getInfoSymbol"),
+    TestDB("test_getInfoWithdraw"),
+    TestDB("test_getTradeBacktestHistory"),
+    TestDB("test_getTradeOrderHistory"),
+    TestDB("test_insertAccountBalanceHistory"),
+    TestDB("test_insertAccountWithdrawHistory"),
+    TestDB("test_insertMarketDepth"),
+    TestDB("test_insertMarketKline"),
+    TestDB("test_insertMarketTicker"),
+    TestDB("test_insertInfoServer"),
+    TestDB("test_insertInfoSymbol"),
+    TestDB("test_insertInfoWithdraw"),
+    TestDB("test_insertTradeBacktestHistory"),
     # TestDB("test_insertTradeOrderHistory"),
-    # TestDB("test_getViews"),
-    # TestDB("test_creatViews"),
-    # TestDB("test_getViewInfoSymbolPairs"),
+    TestDB("test_creatViews"),
+    TestDB("test_getViews"),
+    TestDB("test_getViewInfoSymbolPairs"),
 ]
 
 if __name__ == "__main__":

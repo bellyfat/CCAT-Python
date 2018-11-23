@@ -38,9 +38,9 @@ if __name__ == '__main__':
     __eventEngine.start()
 
     # app update
-    # util.updateDBAccountBalance(sender)
+    util.updateDBAccountBalance(sender)
     # util.updateDBAccountWithdraw(sender)
-    util.updateDBMarketKline(sender)
+    # util.updateDBMarketKline(sender)
 
 
     # stop engine
