@@ -103,6 +103,23 @@ class Util(object):
             raise ApplicationException(err)
 
     # Market Kline 数据
+    def updateDBMarketDepth(self, sender):
+        self._logger.debug("src.core.util.util.Util.updateDBMarketKline")
+        try:
+            db = DB()
+            res = db.getViewInfoSymbolPairs(self._mainCof["exchanges"])
+            for r in res:
+                time.sleep(1.25 / float(
+                    self._serverLimits.at[r["server"], "requests_second"]))
+                sender.sendListenMarketDepthEvent(r["server"], r["fSymbol"],
+                                                  r["tSymbol"])
+        except DBException as err:
+            errStr = "src.core.util.util.Util.updateDBMarketKline: %s" % ApplicationException(
+                err)
+            self._logger.critical(errStr)
+            raise ApplicationException(err)
+
+    # Market Kline 数据
     def updateDBMarketKline(self, sender):
         self._logger.debug("src.core.util.util.Util.updateDBMarketKline")
         try:

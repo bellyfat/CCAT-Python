@@ -38,14 +38,15 @@ if __name__ == '__main__':
     __eventEngine.start()
 
     # app update
-    util.updateDBAccountBalance(sender)
-    util.updateDBAccountWithdraw(sender)
-    util.updateDBMarketKline(sender)
+    # util.updateDBAccountBalance(sender)
+    # util.updateDBAccountWithdraw(sender)
+    util.updateDBMarketDepth(sender)
+    # util.updateDBMarketKline(sender)
 
 
     # stop engine
     time.sleep(2)
-    __eventEngine.stop()
+    # __eventEngine.stop()
 
     # unregister engine
     register.unregister()

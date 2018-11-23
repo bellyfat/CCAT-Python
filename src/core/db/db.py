@@ -245,7 +245,6 @@ class DB(object):
             "src.core.db.db.DB.insertAccountBalanceHistory: { exchange=%s }" %
             exchange)
         try:
-            curs = self._conn.cursor()
             timeStamp = utcnow_timestamp()
             TEMP_SQL_TITLE = INSERT_ACCOUNT_BALANCE_HISTORY_SQL_TITLE
             TEMP_SQL_VALUE = []
@@ -285,11 +284,13 @@ class DB(object):
             # Gate
             # if exchange == "all" or "gate" in exchange:
             # to_be_continue
-            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            self._conn.commit()
-            curs.close()
+            if not TEMP_SQL_VALUE==[]:
+                curs = self._conn.cursor()
+                TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+                self._logger.debug(TEMP_SQL)
+                curs.execute(TEMP_SQL)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
@@ -298,7 +299,6 @@ class DB(object):
             "src.core.db.db.DB.insertAccountWithdrawHistory: { exchange=%s, asset=%s }"
             % (exchange, asset))
         try:
-            curs = self._conn.cursor()
             timeStamp = utcnow_timestamp()
             TEMP_SQL_TITLE = INSERT_WITHDRAW_HISTORY_SQL_TITLE
             TEMP_SQL_VALUE = []
@@ -334,11 +334,13 @@ class DB(object):
             # to_be_continue
             # Gate
             # to_be_continue
-            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            self._conn.commit()
-            curs.close()
+            if not TEMP_SQL_VALUE==[]:
+                curs = self._conn.cursor()
+                TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+                self._logger.debug(TEMP_SQL)
+                curs.execute(TEMP_SQL)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
@@ -346,7 +348,6 @@ class DB(object):
         self._logger.debug(
             "src.core.db.db.DB.insertInfoServer: { exchange=%s }" % exchange)
         try:
-            curs = self._conn.cursor()
             TEMP_SQL_TITLE = INSERT_INFO_SERVER_SQL_TITLE
             TEMP_SQL_VALUE = []
             # OKEX
@@ -383,11 +384,13 @@ class DB(object):
             # to_be_continue
             # Gate
             # to_be_continue
-            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            self._conn.commit()
-            curs.close()
+            if not TEMP_SQL_VALUE==[]:
+                curs = self._conn.cursor()
+                TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+                self._logger.debug(TEMP_SQL)
+                curs.execute(TEMP_SQL)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
@@ -395,7 +398,6 @@ class DB(object):
         self._logger.debug(
             "src.core.db.db.DB.insertInfoSymbol: { exchange=%s }" % exchange)
         try:
-            curs = self._conn.cursor()
             TEMP_SQL_TITLE = INSERT_INFO_SYMBOL_SQL_TITLE
             TEMP_SQL_VALUE = []
             # OKEX
@@ -489,11 +491,13 @@ class DB(object):
             # to_be_continue
             # Gate
             # to_be_continue
-            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            self._conn.commit()
-            curs.close()
+            if not TEMP_SQL_VALUE==[]:
+                curs = self._conn.cursor()
+                TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+                self._logger.debug(TEMP_SQL)
+                curs.execute(TEMP_SQL)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
@@ -501,7 +505,6 @@ class DB(object):
         self._logger.debug(
             "src.core.db.db.DB.insertInfoWithdraw: { exchange=%s}" % exchange)
         try:
-            curs = self._conn.cursor()
             TEMP_SQL_TITLE = INSERT_INFO_WITHDRAW_SQL_TITLE
             TEMP_SQL_VALUE = []
             # OKEX
@@ -530,11 +533,13 @@ class DB(object):
             # to_be_continue
             # Gate
             # to_be_continue
-            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            self._conn.commit()
-            curs.close()
+            if not TEMP_SQL_VALUE==[]:
+                curs = self._conn.cursor()
+                TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+                self._logger.debug(TEMP_SQL)
+                curs.execute(TEMP_SQL)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
@@ -543,7 +548,6 @@ class DB(object):
             "src.core.db.db.DB.insertMarketDepth: { exchange=%s, fSymbol=%s, tSymbol=%s, limit=%s }"
             % (exchange, fSymbol, tSymbol, limit))
         try:
-            curs = self._conn.cursor()
             TEMP_SQL_TITLE = INSERT_MARKET_DEPTH_SQL_TITLE
             TEMP_SQL_VALUE = []
             # OKEX
@@ -582,11 +586,13 @@ class DB(object):
             # Gate
             # if exchange == "all" or "gate" in exchange:
             # to_be_continue
-            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            self._conn.commit()
-            curs.close()
+            if not TEMP_SQL_VALUE==[]:
+                curs = self._conn.cursor()
+                TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+                self._logger.debug(TEMP_SQL)
+                curs.execute(TEMP_SQL)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
@@ -596,7 +602,6 @@ class DB(object):
             "src.core.db.db.DB.insertMarketKline: { exchange=%s, fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s }"
             % (exchange, fSymbol, tSymbol, interval, start, end))
         try:
-            curs = self._conn.cursor()
             TEMP_SQL_TITLE = INSERT_MARKET_KLINE_SQL_TITLE
             TEMP_SQL_VALUE = []
             # OKEX
@@ -637,11 +642,13 @@ class DB(object):
             # Gate
             # if exchange == "all" or "gate" in exchange:
             # to_be_continue
-            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            self._conn.commit()
-            curs.close()
+            if not TEMP_SQL_VALUE==[]:
+                curs = self._conn.cursor()
+                TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+                self._logger.debug(TEMP_SQL)
+                curs.execute(TEMP_SQL)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
             self._logger.critical(TEMP_SQL)
             raise DBException(err)
@@ -651,7 +658,6 @@ class DB(object):
             "src.core.db.db.DB.insertMarketTicker: { exchange=%s, fSymbol=%s, tSymbol=%s }"
             % (exchange, fSymbol, tSymbol))
         try:
-            curs = self._conn.cursor()
             TEMP_SQL_TITLE = INSERT_MARKET_TIKER_SQL_TITLE
             TEMP_SQL_VALUE = []
             # OKEX
@@ -686,11 +692,13 @@ class DB(object):
             # Gate
             # if exchange == "all" or "gate" in exchange:
             # to_be_continue
-            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            self._conn.commit()
-            curs.close()
+            if not TEMP_SQL_VALUE==[]:
+                curs = self._conn.cursor()
+                TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+                self._logger.debug(TEMP_SQL)
+                curs.execute(TEMP_SQL)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
@@ -707,7 +715,6 @@ class DB(object):
             "src.core.db.db.DB.insertTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }"
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
         try:
-            curs = self._conn.cursor()
             TEMP_SQL_TITLE = INSERT_TRADE_BACKTEST_HISTORY_SQL_TITLE
             TEMP_SQL_VALUE = []
             # OKEX
@@ -760,11 +767,13 @@ class DB(object):
             # to_be_continue
             # Gate
             # to_be_continue
-            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            self._conn.commit()
-            curs.close()
+            if not TEMP_SQL_VALUE==[]:
+                curs = self._conn.cursor()
+                TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+                self._logger.debug(TEMP_SQL)
+                curs.execute(TEMP_SQL)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
@@ -781,7 +790,6 @@ class DB(object):
             "src.core.db.db.DB.insertTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }"
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
         try:
-            curs = self._conn.cursor()
             TEMP_SQL_TITLE = INSERT_TRADE_ORDER_HISTORY_SQL_TITLE
             TEMP_SQL_VALUE = []
             # OKEX
@@ -826,10 +834,12 @@ class DB(object):
             # to_be_continue
             # Gate
             # to_be_continue
-            TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            self._conn.commit()
-            curs.close()
+            if not TEMP_SQL_VALUE==[]:
+                curs = self._conn.cursor()
+                TEMP_SQL = TEMP_SQL_TITLE + ','.join(TEMP_SQL_VALUE) + ';'
+                self._logger.debug(TEMP_SQL)
+                curs.execute(TEMP_SQL)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
