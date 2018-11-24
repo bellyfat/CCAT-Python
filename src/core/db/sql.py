@@ -53,66 +53,54 @@ GET_INFO_WITHDRAW_SQL = '''
 '''
 
 # insert db account balance history sql
-INSERT_ACCOUNT_BALANCE_HISTORY_SQL_TITLE = '''
+INSERT_ACCOUNT_BALANCE_HISTORY_SQL = '''
     INSERT INTO ACCOUNT_BALANCE_HISTORY (server, timeStamp, asset, balance, free, locked)
     VALUES (?, ?, ?, ?, ?, ?)'''
-INSERT_ACCOUNT_BALANCE_HISTORY_SQL_VALUE = Template('''('$server', $timeStamp, '$asset', $balance, $free, $locked)''')
 
 # insert db account withdraw history sql
-INSERT_ACCOUNT_WITHDRAW_HISTORY_SQL_TITLE = '''
+INSERT_ACCOUNT_WITHDRAW_HISTORY_SQL = '''
     INSERT INTO ACCOUNT_WITHDRAW_HISTORY (server, timeStamp, asset, deposite, withdraw)
     VALUES (?, ?, ?, ?, ?)'''
-INSERT_ACCOUNT_WITHDRAW_HISTORY_SQL_VALUE = Template('''('$server', $timeStamp, '$asset', '$deposite', '$withdraw')''')
 
 # insert db info server sql
-INSERT_INFO_SERVER_SQL_TITLE = '''
+INSERT_INFO_SERVER_SQL = '''
     INSERT OR REPLACE INTO INFO_SERVER (server, requests_second, orders_second, orders_day, webSockets_second)
     VALUES (?, ?, ?, ?, ?)'''
-INSERT_INFO_SERVER_SQL_VALUE = Template('''('$server', $requests_second, $orders_second, $orders_day, $webSockets_second)''')
 
 # insert db info symbol sql
-INSERT_INFO_SYMBOL_SQL_TITLE = '''
+INSERT_INFO_SYMBOL_SQL = '''
     INSERT INTO INFO_SYMBOL (server, fSymbol, tSymbol, limit_price_precision, limit_price_max, limit_price_min, limit_price_step, limit_size_precision, limit_size_max, limit_size_min, limit_size_step, limit_min_notional, fee_maker, fee_taker)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
-INSERT_INFO_SYMBOL_SQL_VALUE = Template('''('$server', '$fSymbol', '$tSymbol', $limit_price_precision, $limit_price_max, $limit_price_min, $limit_price_step, $limit_size_precision, $limit_size_max, $limit_size_min, $limit_size_step, $limit_min_notional, $fee_maker, $fee_taker)''')
 
 # insert db info withdraw sql
-INSERT_INFO_WITHDRAW_SQL_TITLE = '''
+INSERT_INFO_WITHDRAW_SQL = '''
     INSERT INTO INFO_WITHDRAW (server, asset, can_deposite, can_withdraw, min_withdraw)
     VALUES (?, ?, ?, ?, ?)'''
-INSERT_INFO_WITHDRAW_SQL_VALUE = Template('''('$server', '$asset', '$can_deposite', '$can_withdraw', $min_withdraw)''')
-
 
 # insert db market depth sql
-INSERT_MARKET_DEPTH_SQL_TITLE = '''
+INSERT_MARKET_DEPTH_SQL = '''
     INSERT INTO MARKET_DEPTH (server, timeStamp, fSymbol, tSymbol, bid_price_size, ask_price_size)
     VALUES (?, ?, ?, ?, ?, ?)'''
-INSERT_MARKET_DEPTH_SQL_VALUE = Template('''('$server', $timeStamp, '$fSymbol', '$tSymbol', '$bid_price_size', '$ask_price_size')''')
 
 # insert db market kline sql
-INSERT_MARKET_KLINE_SQL_TITLE = '''
+INSERT_MARKET_KLINE_SQL = '''
     INSERT INTO MARKET_KLINE (server, timeStamp, fSymbol, tSymbol, open, high, low, close, volume)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'''
-INSERT_MARKET_KLINE_SQL_VALUE = Template('''('$server', $timeStamp, '$fSymbol', '$tSymbol', $open, $high, $low, $close, $volume)''')
 
 # insert db market tiker sql
-INSERT_MARKET_TIKER_SQL_TITLE = '''
+INSERT_MARKET_TIKER_SQL = '''
     INSERT INTO MARKET_TIKER (server, timeStamp, fSymbol, tSymbol, bid_one_price, bid_one_size, ask_one_price, ask_one_size)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
-INSERT_MARKET_TIKER_SQL_VALUE = Template('''('$server', $timeStamp, '$fSymbol', '$tSymbol', $bid_one_price, $bid_one_size, $ask_one_price, $ask_one_size)''')
 
 # insert db trade backtest history sql
-INSERT_TRADE_BACKTEST_HISTORY_SQL_TITLE = '''
+INSERT_TRADE_BACKTEST_HISTORY_SQL = '''
     INSERT OR REPLACE INTO TRADE_BACKTEST_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
-INSERT_TRADE_BACKTEST_HISTORY_SQL_VALUE = Template('''('$server', $timeStamp, '$order_id', '$status', '$type', '$fSymbol', '$tSymbol', '$ask_or_bid', $ask_bid_price, $ask_bid_size, $filled_price, $filled_size, $fee)''')
 
 # insert db trade order history sql
-INSERT_TRADE_ORDER_HISTORY_SQL_TITLE = '''
+INSERT_TRADE_ORDER_HISTORY_SQL = '''
     INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
-INSERT_TRADE_ORDER_HISTORY_SQL_VALUE = Template('''('$server', $timeStamp, '$order_id', '$status', '$type', '$fSymbol', '$tSymbol', '$ask_or_bid', $ask_bid_price, $ask_bid_size, $filled_price, $filled_size, $fee)''')
-
 
 # get db talbes sql
 GET_TABLES_SQL = '''
