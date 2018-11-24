@@ -40,13 +40,13 @@ if __name__ == '__main__':
     # app update
     # util.updateDBAccountBalance(sender)
     # util.updateDBAccountWithdraw(sender)
-    util.updateDBMarketDepth(sender)
-    # util.updateDBMarketKline(sender)
+    # util.updateDBMarketDepth(sender)
+    util.updateDBMarketKline(sender)
 
 
     # stop engine
-    time.sleep(2)
-    # __eventEngine.stop()
+    time.sleep(1)
+    __eventEngine.stop()
 
     # unregister engine
     register.unregister()

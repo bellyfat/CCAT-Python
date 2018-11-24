@@ -54,7 +54,7 @@ class Sender(object):
             "src.core.engine.sender.Sender.sendListenMarketDepthEvent: " +
             json.dumps(TEMP_EVENT))
         # 发送事件
-        pass
+        self._engine.sendEvent(event)
 
     def sendListenMarketKlineEvent(self, exchange, fSymbol, tSymbol, interval,
                                    start, end):
