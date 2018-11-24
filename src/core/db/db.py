@@ -156,6 +156,17 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
+    def delMarketKline(self):
+        self._logger.debug("src.core.db.db.DB.delMarketKline")
+        self._logger.debug(DEL_MARKET_KLINE_SQL)
+        try:
+            curs = self._conn.cursor()
+            curs.execute(DEL_MARKET_KLINE_SQL)
+            self._conn.commit()
+            curs.close()
+        except sqlite3.Error as err:
+            raise DBException(err)
+
     def getMarketTicker(self):
         self._logger.debug("src.core.db.db.DB.getMarketTicker")
         self._logger.debug(GET_MARKET_TIKER_SQL)

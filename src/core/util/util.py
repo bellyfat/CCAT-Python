@@ -4,7 +4,6 @@ import os
 import time
 
 import pandas as pd
-
 from src.core.config import Config
 from src.core.db.db import DB
 from src.core.util.exceptions import ApplicationException, DBException
@@ -124,6 +123,7 @@ class Util(object):
         self._logger.debug("src.core.util.util.Util.updateDBMarketKline")
         try:
             db = DB()
+            db.delMarketKline()
             res = db.getViewInfoSymbolPairs(self._mainCof["exchanges"])
             start = utcnow_timestamp() - 24 * 60 * 60 * 1000
             end = utcnow_timestamp()
@@ -133,7 +133,6 @@ class Util(object):
                 sender.sendListenMarketKlineEvent(
                     r["server"], r["fSymbol"], r["tSymbol"], "1h",
                     timestamp_to_isoformat(start), timestamp_to_isoformat(end))
-
         except DBException as err:
             errStr = "src.core.util.util.Util.updateDBMarketKline: %s" % ApplicationException(
                 err)

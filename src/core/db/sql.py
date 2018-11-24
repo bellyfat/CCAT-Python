@@ -23,6 +23,10 @@ GET_MARKET_DEPTH_SQL = '''
 GET_MARKET_KLINE_SQL = '''
     SELECT * FROM MARKET_KLINE;
 '''
+# delete db market kline sql
+DEL_MARKET_KLINE_SQL = '''
+    DELETE FROM MARKET_KLINE;
+'''
 # get db market ticker sql
 GET_MARKET_TIKER_SQL = '''
     SELECT * FROM MARKET_TIKER;
@@ -54,12 +58,12 @@ GET_INFO_WITHDRAW_SQL = '''
 
 # insert db account balance history sql
 INSERT_ACCOUNT_BALANCE_HISTORY_SQL = '''
-    INSERT INTO ACCOUNT_BALANCE_HISTORY (server, timeStamp, asset, balance, free, locked)
+    INSERT OR REPLACE INTO ACCOUNT_BALANCE_HISTORY (server, timeStamp, asset, balance, free, locked)
     VALUES (?, ?, ?, ?, ?, ?)'''
 
 # insert db account withdraw history sql
 INSERT_ACCOUNT_WITHDRAW_HISTORY_SQL = '''
-    INSERT INTO ACCOUNT_WITHDRAW_HISTORY (server, timeStamp, asset, deposite, withdraw)
+    INSERT OR REPLACE INTO ACCOUNT_WITHDRAW_HISTORY (server, timeStamp, asset, deposite, withdraw)
     VALUES (?, ?, ?, ?, ?)'''
 
 # insert db info server sql
@@ -69,27 +73,27 @@ INSERT_INFO_SERVER_SQL = '''
 
 # insert db info symbol sql
 INSERT_INFO_SYMBOL_SQL = '''
-    INSERT INTO INFO_SYMBOL (server, fSymbol, tSymbol, limit_price_precision, limit_price_max, limit_price_min, limit_price_step, limit_size_precision, limit_size_max, limit_size_min, limit_size_step, limit_min_notional, fee_maker, fee_taker)
+    INSERT OR REPLACE INTO INFO_SYMBOL (server, fSymbol, tSymbol, limit_price_precision, limit_price_max, limit_price_min, limit_price_step, limit_size_precision, limit_size_max, limit_size_min, limit_size_step, limit_min_notional, fee_maker, fee_taker)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # insert db info withdraw sql
 INSERT_INFO_WITHDRAW_SQL = '''
-    INSERT INTO INFO_WITHDRAW (server, asset, can_deposite, can_withdraw, min_withdraw)
+    INSERT OR REPLACE INTO INFO_WITHDRAW (server, asset, can_deposite, can_withdraw, min_withdraw)
     VALUES (?, ?, ?, ?, ?)'''
 
 # insert db market depth sql
 INSERT_MARKET_DEPTH_SQL = '''
-    INSERT INTO MARKET_DEPTH (server, timeStamp, fSymbol, tSymbol, bid_price_size, ask_price_size)
+    INSERT OR REPLACE INTO MARKET_DEPTH (server, timeStamp, fSymbol, tSymbol, bid_price_size, ask_price_size)
     VALUES (?, ?, ?, ?, ?, ?)'''
 
 # insert db market kline sql
 INSERT_MARKET_KLINE_SQL = '''
-    INSERT INTO MARKET_KLINE (server, timeStamp, fSymbol, tSymbol, open, high, low, close, volume)
+    INSERT OR REPLACE INTO MARKET_KLINE (server, timeStamp, fSymbol, tSymbol, open, high, low, close, volume)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # insert db market tiker sql
 INSERT_MARKET_TIKER_SQL = '''
-    INSERT INTO MARKET_TIKER (server, timeStamp, fSymbol, tSymbol, bid_one_price, bid_one_size, ask_one_price, ask_one_size)
+    INSERT OR REPLACE INTO MARKET_TIKER (server, timeStamp, fSymbol, tSymbol, bid_one_price, bid_one_size, ask_one_price, ask_one_size)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # insert db trade backtest history sql
@@ -114,7 +118,7 @@ CREATE_TABELS_SQL = '''
     CREATE TABLE IF NOT EXISTS `TRADE_ORDER_HISTORY` (
     	`server`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
-    	`order_id`	TEXT NOT NULL UNIQUE,
+    	`order_id`	TEXT NOT NULL,
     	`status`	TEXT,
     	`type`	TEXT NOT NULL,
     	`fSymbol`	TEXT NOT NULL,
@@ -124,12 +128,13 @@ CREATE_TABELS_SQL = '''
     	`ask_bid_size`	REAL NOT NULL,
     	`filled_price`	REAL,
     	`filled_size`	REAL,
-    	`fee`	REAL
+    	`fee`	REAL,
+        PRIMARY KEY (order_id)
     );
     CREATE TABLE IF NOT EXISTS `TRADE_BACKTEST_HISTORY` (
     	`server`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
-    	`order_id`	TEXT NOT NULL UNIQUE,
+    	`order_id`	TEXT NOT NULL,
     	`status`	TEXT,
     	`type`	TEXT NOT NULL,
     	`fSymbol`	TEXT NOT NULL,
@@ -139,7 +144,8 @@ CREATE_TABELS_SQL = '''
     	`ask_bid_size`	REAL NOT NULL,
     	`filled_price`	REAL,
     	`filled_size`	REAL,
-    	`fee`	REAL
+    	`fee`	REAL,
+        PRIMARY KEY (order_id)
     );
     CREATE TABLE IF NOT EXISTS `MARKET_TIKER` (
     	`server`	TEXT NOT NULL,
@@ -149,7 +155,8 @@ CREATE_TABELS_SQL = '''
     	`bid_one_price`	REAL,
     	`bid_one_size`	REAL,
     	`ask_one_price`	REAL,
-    	`ask_one_size`	REAL
+    	`ask_one_size`	REAL,
+        PRIMARY KEY (server, timeStamp, fSymbol, tSymbol)
     );
     CREATE TABLE IF NOT EXISTS `MARKET_KLINE` (
     	`server`	TEXT NOT NULL,
@@ -160,7 +167,8 @@ CREATE_TABELS_SQL = '''
     	`high`	REAL,
     	`low`	REAL,
     	`close`	REAL,
-    	`volume`	REAL
+    	`volume`	REAL,
+        PRIMARY KEY (server, timeStamp, fSymbol, tSymbol)
     );
     CREATE TABLE IF NOT EXISTS `MARKET_DEPTH` (
     	`server`	TEXT NOT NULL,
@@ -168,14 +176,16 @@ CREATE_TABELS_SQL = '''
     	`fSymbol`	TEXT NOT NULL,
     	`tSymbol`	TEXT NOT NULL,
     	`bid_price_size`	BLOB,
-    	`ask_price_size`	BLOB
+    	`ask_price_size`	BLOB,
+        PRIMARY KEY (server, timeStamp, fSymbol, tSymbol)
     );
     CREATE TABLE IF NOT EXISTS `INFO_WITHDRAW` (
     	`server`	TEXT NOT NULL,
     	`asset`	TEXT NOT NULL,
     	`can_deposite`	TEXT NOT NULL,
     	`can_withdraw`	TEXT NOT NULL,
-    	`min_withdraw`	REAL
+    	`min_withdraw`	REAL,
+        PRIMARY KEY (server, asset)
     );
     CREATE TABLE IF NOT EXISTS `INFO_SYMBOL` (
     	`server`	TEXT NOT NULL,
@@ -191,21 +201,24 @@ CREATE_TABELS_SQL = '''
     	`limit_size_step`	REAL,
     	`limit_min_notional`	REAL,
     	`fee_maker`	REAL,
-    	`fee_taker`	REAL
+    	`fee_taker`	REAL,
+        PRIMARY KEY (server, fSymbol, tSymbol)
     );
     CREATE TABLE IF NOT EXISTS `INFO_SERVER` (
-    	`server`	TEXT NOT NULL UNIQUE,
+    	`server`	TEXT NOT NULL,
     	`requests_second`	REAL,
     	`orders_second`	REAL,
     	`orders_day`	REAL,
-    	`webSockets_second`	REAL
+    	`webSockets_second`	REAL,
+        PRIMARY KEY (server)
     );
     CREATE TABLE IF NOT EXISTS `ACCOUNT_WITHDRAW_HISTORY` (
     	`server`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
     	`asset`	TEXT NOT NULL,
     	`deposite`	TEXT,
-    	`withdraw`	TEXT
+    	`withdraw`	TEXT,
+        PRIMARY KEY (server, timeStamp, asset)
     );
     CREATE TABLE IF NOT EXISTS `ACCOUNT_BALANCE_HISTORY` (
     	`server`	TEXT NOT NULL,
@@ -213,7 +226,8 @@ CREATE_TABELS_SQL = '''
     	`asset`	TEXT NOT NULL,
     	`balance`	REAL,
     	`free`	REAL,
-    	`locked`	REAL
+    	`locked`	REAL,
+        PRIMARY KEY (server, timeStamp, asset)
     );
     COMMIT;
 '''
@@ -245,5 +259,16 @@ CREATE_VIEWS_SQL = '''
             FROM ACCOUNT_WITHDRAW_HISTORY B1
             LEFT JOIN ACCOUNT_WITHDRAW_HISTORY B2 ON B1.server = B2.server AND B1.asset = B2.asset AND B1.timeStamp < B2.timeStamp
             WHERE (B1.deposite<>'' OR B1.withdraw <>'') and B2.server IS NULL;
+    CREATE VIEW IF NOT EXISTS VIEW_MARKET_KLINE_CURRENT
+    	AS
+    		SELECT *
+    		FROM (
+    			SELECT M1.*, M2.close as tSymbol_usdt, M1.close*M1.volume*M2.close as price_volume_usdt
+    			FROM MARKET_KLINE M1
+    			JOIN MARKET_KLINE M2 ON M1.server = M2.server AND M1.timeStamp = M2.timeStamp AND M1.tSymbol = M2.fSymbol AND M1.tSymbol<>'USDT' AND M2.tSymbol ='USDT'
+    		UNION
+    			SELECT M1.*, M1.close as tSymbol_usdt, M1.close*M1.volume price_volume_usdt
+    			FROM MARKET_KLINE M1
+    			WHERE M1.tSymbol = 'USDT' );
     COMMIT;
 '''
