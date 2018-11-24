@@ -10,9 +10,9 @@
   },
   "main":{
     "exchanges" : ["okex", "binance"],
+    "excludeCoins": [],
     "baseCoin": "USDT",
-    "targetCoin": "USDT",
-    "excludeCoins": []
+    "basePriceVolume": "100"
   },
   "engine":{
     "epoch": "0.1"

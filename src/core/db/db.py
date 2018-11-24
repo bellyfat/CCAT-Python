@@ -62,11 +62,28 @@ class DB(object):
 
     def creatViews(self):
         self._logger.debug("src.core.db.db.DB.creatViews")
-        self._logger.debug(CREATE_VIEWS_SQL)
         try:
             curs = self._conn.cursor()
-            curs.executescript(CREATE_VIEWS_SQL)
+            TEMP_SQL = CREATE_VIEWS_SQL.substitute(
+                baseCoin=str(Config()._main["baseCoin"]),
+                basePriceVolume=int(Config()._main["basePriceVolume"]))
+            self._logger.debug(TEMP_SQL)
+            curs.executescript(TEMP_SQL)
             curs.close()
+        except sqlite3.Error as err:
+            raise DBException(err)
+
+    def getViewMarketSymbolPairs(self, exchange):
+        self._logger.debug("src.core.db.db.DB.getViewMarketSymbolPairs")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_MARKET_SYMBOL_PAIRS_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
         except sqlite3.Error as err:
             raise DBException(err)
 

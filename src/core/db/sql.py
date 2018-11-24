@@ -2,11 +2,18 @@
 
 from string import Template
 
-# get db view symbol info sql
+
+# get db view market symbol sql
+GET_VIEW_MARKET_SYMBOL_PAIRS_SQL = Template('''
+    SELECT * FROM VIEW_MARKET_SYMBOL WHERE server IN $server
+''')
+
+# get db view info symbol sql
 GET_VIEW_INFO_SYMBOL_PAIRS_SQL = Template('''
     SELECT * FROM VIEW_INFO_SYMBOL WHERE server IN $server
 ''')
 
+# get db view account balance current sql
 GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL = Template('''
     SELECT * FROM VIEW_ACCOUNT_BALANCE_CURRENT WHERE server IN $server;
 ''')
@@ -239,7 +246,7 @@ GET_VIEWS_SQL = '''
     ORDER BY name;
 '''
 # creat view sql
-CREATE_VIEWS_SQL = '''
+CREATE_VIEWS_SQL = Template('''
     BEGIN TRANSACTION;
     CREATE VIEW IF NOT EXISTS VIEW_INFO_SYMBOL
         AS
@@ -265,10 +272,30 @@ CREATE_VIEWS_SQL = '''
     		FROM (
     			SELECT M1.*, M2.close as tSymbol_usdt, M1.close*M1.volume*M2.close as price_volume_usdt
     			FROM MARKET_KLINE M1
-    			JOIN MARKET_KLINE M2 ON M1.server = M2.server AND M1.timeStamp = M2.timeStamp AND M1.tSymbol = M2.fSymbol AND M1.tSymbol<>'USDT' AND M2.tSymbol ='USDT'
+    			JOIN MARKET_KLINE M2 ON M1.server = M2.server AND M1.timeStamp = M2.timeStamp AND M1.tSymbol = M2.fSymbol AND M1.tSymbol<>'$baseCoin' AND M2.tSymbol ='$baseCoin'
     		UNION
     			SELECT M1.*, M1.close as tSymbol_usdt, M1.close*M1.volume price_volume_usdt
     			FROM MARKET_KLINE M1
-    			WHERE M1.tSymbol = 'USDT' );
+    			WHERE M1.tSymbol = '$baseCoin' );
+    CREATE VIEW IF NOT EXISTS VIEW_MARKET_SYMBOL
+    	AS
+    		SELECT DISTINCT V1.server, V1.fSymbol, V1.tSymbol
+    		FROM(
+    				SELECT DISTINCT server, fSymbol, tSymbol
+    				FROM VIEW_INFO_SYMBOL
+    				EXCEPT
+    				SELECT DISTINCT server, fSymbol, tSymbol
+    				FROM VIEW_MARKET_KLINE_CURRENT
+    				WHERE price_volume_usdt < $basePriceVolume
+    			) V1
+    			LEFT JOIN(
+    				SELECT DISTINCT server, fSymbol, tSymbol
+    				FROM VIEW_INFO_SYMBOL
+    				EXCEPT
+    				SELECT DISTINCT server, fSymbol, tSymbol
+    				FROM VIEW_MARKET_KLINE_CURRENT
+    				WHERE price_volume_usdt < $basePriceVolume
+    			) V2 ON V1.server <> V2.server AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
+    		WHERE V2.server IS NOT NULL;
     COMMIT;
-'''
+''')
