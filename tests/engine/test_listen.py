@@ -35,7 +35,7 @@ if __name__ == '__main__':
     register.register()
 
     # start engine
-    __eventEngine.start()
+    # __eventEngine.start()
 
     # app update
     # util.updateDBAccountBalance(sender)
@@ -43,10 +43,10 @@ if __name__ == '__main__':
     # util.updateDBMarketKline(sender)
     util.updateDBMarketTicker(sender)
 
+    # time.sleep(2) # for engine begin handle
 
     # stop engine
-    time.sleep(1)
-    __eventEngine.stop()
+    # __eventEngine.stop()
 
     # unregister engine
     register.unregister()

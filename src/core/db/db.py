@@ -18,11 +18,12 @@ from src.core.util.log import Logger
 class DB(object):
     def __init__(self):
         proxies = Config()._proxies
-        dbStr = os.path.join(os.getcwd(), Config()._db["url"])
-        self._dbStr = dbStr
-        self._conn = sqlite3.connect(dbStr)
+        # self._dbStr = ":memory:" # for break through speed limit only
+        self._dbStr = os.path.join(os.getcwd(), Config()._db["url"])
+        self._dbTimeout = int(Config()._db["timeout"])
+        self._conn = sqlite3.connect(self._dbStr, timeout=self._dbTimeout)
         self._conn.row_factory = dict_factory
-        # self._conn.execute("PRAGMA synchronous = 0")
+        # self._conn.execute("PRAGMA synchronous = 0") # for break through speed limit only
         self._okexConf = Config()._okex
         self._okex = Okex(self._okexConf["exchange"],
                           self._okexConf["api_key"],
@@ -41,11 +42,12 @@ class DB(object):
         self._logger.debug("src.core.db.db.DB.initDB")
         try:
             self._conn.close()
+            os.chmod(self._dbStr, 0o664)  # 设置读写权限
             os.remove(self._dbStr)
             self._conn = sqlite3.connect(self._dbStr)
-            os.chmod(self._dbStr, 0o664)  # 设置读写权限
             self._conn.row_factory = dict_factory
-            # self._conn.execute("PRAGMA synchronous = 0")
+            # self._conn.execute("PRAGMA synchronous = 0") # for break through speed limit only
+            os.chmod(self._dbStr, 0o664)  # 设置读写权限
         except IOError as err:
             raise DBException(err)
 

@@ -28,7 +28,8 @@
   },
   "db":{
     "type": "sqlite3",
-    "url": "CCAT.db"
+    "url": "CCAT.db"，
+    "timeout": "30"
   },
   "proxies": {
     "type": "http",
