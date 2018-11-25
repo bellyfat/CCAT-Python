@@ -22,7 +22,7 @@ class DB(object):
         self._dbStr = dbStr
         self._conn = sqlite3.connect(dbStr)
         self._conn.row_factory = dict_factory
-        os.chmod(self._dbStr, 0o664)  # 设置读写权限
+        # self._conn.execute("PRAGMA synchronous = 0")
         self._okexConf = Config()._okex
         self._okex = Okex(self._okexConf["exchange"],
                           self._okexConf["api_key"],
@@ -43,8 +43,9 @@ class DB(object):
             self._conn.close()
             os.remove(self._dbStr)
             self._conn = sqlite3.connect(self._dbStr)
-            self._conn.row_factory = dict_factory
             os.chmod(self._dbStr, 0o664)  # 设置读写权限
+            self._conn.row_factory = dict_factory
+            # self._conn.execute("PRAGMA synchronous = 0")
         except IOError as err:
             raise DBException(err)
 
@@ -304,9 +305,9 @@ class DB(object):
             # if exchange == "all" or "gate" in exchange:
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
-                curs = self._conn.cursor()
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
@@ -350,9 +351,9 @@ class DB(object):
             # Gate
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
-                curs = self._conn.cursor()
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
@@ -394,9 +395,9 @@ class DB(object):
             # Gate
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
-                curs = self._conn.cursor()
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
@@ -478,9 +479,9 @@ class DB(object):
             # Gate
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
-                curs = self._conn.cursor()
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
@@ -516,9 +517,9 @@ class DB(object):
             # Gate
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
-                curs = self._conn.cursor()
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
@@ -558,9 +559,9 @@ class DB(object):
             # if exchange == "all" or "gate" in exchange:
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
-                curs = self._conn.cursor()
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
@@ -604,9 +605,9 @@ class DB(object):
             # if exchange == "all" or "gate" in exchange:
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
-                curs = self._conn.cursor()
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
@@ -650,9 +651,9 @@ class DB(object):
             # if exchange == "all" or "gate" in exchange:
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
-                curs = self._conn.cursor()
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
@@ -709,9 +710,9 @@ class DB(object):
             # Gate
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
-                curs = self._conn.cursor()
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
@@ -770,9 +771,9 @@ class DB(object):
             # Gate
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
-                curs = self._conn.cursor()
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()

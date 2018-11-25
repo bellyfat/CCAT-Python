@@ -122,9 +122,21 @@ class Util(object):
             raise ApplicationException(err)
 
     # Market数据
-    def updateDBMarket(self):
-        self._logger.debug("src.core.util.util.Util.updateDBMarket")
-        pass
+    def updateDBMarketTicker(self, sender):
+        self._logger.debug("src.core.util.util.Util.updateDBMarketTicker")
+        try:
+            db = DB()
+            res = db.getViewMarketSymbolPairs(self._mainCof["exchanges"])
+            for r in res:
+                time.sleep(1.25 / float(
+                    self._serverLimits.at[r["server"], "requests_second"]))
+                sender.sendListenMarketTickerEvent(r["server"], r["fSymbol"],
+                                                   r["tSymbol"])
+        except DBException as err:
+            errStr = "src.core.util.util.Util.updateDBMarketTicker: %s" % ApplicationException(
+                err)
+            self._logger.critical(errStr)
+            raise ApplicationException(err)
 
     # Trade数据
     def updateDBTrade(self):
