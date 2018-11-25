@@ -31,6 +31,16 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_getViewMarketSymbolPairs(self):
+        res = db.getViewMarketSymbolPairs(["okex", "binance"])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getViewAccountBalanceCurrent(self):
+        res = db.getViewAccountBalanceCurrent(["okex", "binance"])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
     def test_getViewInfoSymbolPairs(self):
         res = db.getViewInfoSymbolPairs(["okex", "binance"])
         logger.debug(res)
@@ -188,6 +198,8 @@ test_db = [
     # TestDB("test_insertTradeOrderHistory"),
     TestDB("test_creatViews"),
     TestDB("test_getViews"),
+    TestDB("test_getViewAccountBalanceCurrent"),
+    TestDB("test_getViewMarketSymbolPairs"),
     TestDB("test_getViewInfoSymbolPairs"),
 ]
 
