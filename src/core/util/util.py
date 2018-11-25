@@ -84,7 +84,7 @@ class Util(object):
             # res = db.getInfoWithdraw()
             # for r in res:
             #     if r["can_deposite"] == "True" or r["can_withdraw"] == "True":
-            #         time.sleep(1.25 / float(
+            #         time.sleep(float(self._mainCof["apiEpochSaveBound"]) / float(
             #             self._serverLimits.at[r["server"], "requests_second"]))
             #         sender.sendListenAccountWithdrawEvent(
             #             r["server"], r["asset"])
@@ -92,7 +92,7 @@ class Util(object):
             # fast update
             res = db.getViewAccountBalanceCurrent(self._mainCof["exchanges"])
             for r in res:
-                time.sleep(1.25 / float(
+                time.sleep(float(self._mainCof["apiEpochSaveBound"]) / float(
                     self._serverLimits.at[r["server"], "requests_second"]))
                 sender.sendListenAccountWithdrawEvent(r["server"], r["asset"])
 
@@ -121,7 +121,7 @@ class Util(object):
             end = utcnow_timestamp()
             tds = []
             for server in self._mainCof["exchanges"]:
-                epoch = 1.25 / float(
+                epoch = float(self._mainCof["apiEpochSaveBound"]) / float(
                     self._serverLimits.at[server, "requests_second"])
                 res = db.getViewInfoSymbolPairs([server])
                 td = Thread(
@@ -155,7 +155,7 @@ class Util(object):
             db = DB()
             tds = []
             for server in self._mainCof["exchanges"]:
-                epoch = 1.25 / float(
+                epoch = float(self._mainCof["apiEpochSaveBound"]) / float(
                     self._serverLimits.at[server, "requests_second"])
                 res = db.getViewMarketSymbolPairs([server])
                 td = Thread(
