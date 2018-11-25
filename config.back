@@ -12,10 +12,12 @@
     "exchanges" : ["okex", "binance"],
     "excludeCoins": [],
     "baseCoin": "USDT",
-    "basePriceVolume": "100"
+    "basePriceVolume": "100",
+    "apiEpochSaveBound": "1.25"
   },
   "engine":{
-    "epoch": "0.1"
+    "epoch": "0.1",
+    "maxProcess": "512"
   },
   "event":{
     "lowTimeout": "30",

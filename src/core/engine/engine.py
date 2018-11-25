@@ -30,7 +30,7 @@ class EventEngine(object):
         # 保存事件处理进程池
         self.__processPool = []
         # 事件引擎主进程
-        self.__mainProcess = Process(target=self.__run)
+        self.__mainProcess = None # Process(target=self.__run)
         # logger
         self.__logger = Logger()
 
@@ -133,6 +133,7 @@ class EventEngine(object):
         self.__logger.info("src.core.engine.engine.EventEngine.start")
         self.__active.value = True
         # 开启事件引擎主进程
+        self.__mainProcess = Process(target=self.__run)
         self.__mainProcess.start()
 
     # 暂停事件引擎

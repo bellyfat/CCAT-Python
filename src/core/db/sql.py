@@ -2,7 +2,6 @@
 
 from string import Template
 
-
 # get db view market symbol sql
 GET_VIEW_MARKET_SYMBOL_PAIRS_SQL = Template('''
     SELECT * FROM VIEW_MARKET_SYMBOL WHERE server IN $server
@@ -252,8 +251,7 @@ CREATE_VIEWS_SQL = Template('''
         AS
         	SELECT S1.*
             FROM INFO_SYMBOL S1,INFO_SYMBOL S2
-            WHERE S1.server<>S2.server AND S1.fSymbol = S2.fSymbol AND S1.tSymbol = S2.tSymbol
-            ORDER BY fSymbol, tSymbol;
+            WHERE S1.server<>S2.server AND S1.fSymbol = S2.fSymbol AND S1.tSymbol = S2.tSymbol;
     CREATE VIEW IF NOT EXISTS VIEW_ACCOUNT_BALANCE_CURRENT
         AS
 			SELECT B1.*
@@ -268,15 +266,13 @@ CREATE_VIEWS_SQL = Template('''
             WHERE (B1.deposite<>'' OR B1.withdraw <>'') and B2.server IS NULL;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_KLINE_CURRENT
     	AS
-    		SELECT *
-    		FROM (
     			SELECT M1.*, M2.close as tSymbol_usdt, M1.close*M1.volume*M2.close as price_volume_usdt
     			FROM MARKET_KLINE M1
     			JOIN MARKET_KLINE M2 ON M1.server = M2.server AND M1.timeStamp = M2.timeStamp AND M1.tSymbol = M2.fSymbol AND M1.tSymbol<>'$baseCoin' AND M2.tSymbol ='$baseCoin'
     		UNION
-    			SELECT M1.*, M1.close as tSymbol_usdt, M1.close*M1.volume price_volume_usdt
+    			SELECT M1.*, M1.close as tSymbol_usdt, M1.close*M1.volume as price_volume_usdt
     			FROM MARKET_KLINE M1
-    			WHERE M1.tSymbol = '$baseCoin' );
+    			WHERE M1.tSymbol = '$baseCoin';
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_SYMBOL
     	AS
     		SELECT DISTINCT V1.server, V1.fSymbol, V1.tSymbol
@@ -297,5 +293,28 @@ CREATE_VIEWS_SQL = Template('''
     				WHERE price_volume_usdt < $basePriceVolume
     			) V2 ON V1.server <> V2.server AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
     		WHERE V2.server IS NOT NULL;
+    CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT
+    	AS
+    		SELECT V1.*, V1.bid_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as bid_one_price_usdt, V1.bid_one_size*V1.bid_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as bid_one_price_size_usdt, V1.ask_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as ask_one_price_usdt, V1.ask_one_size*V1.ask_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as ask_one_price_size_usdt
+    		FROM(
+    			SELECT M1.*
+    			FROM MARKET_TIKER M1
+    			LEFT JOIN MARKET_TIKER M2 ON M1.server = M2.server AND M1.fSymbol = M2.fSymbol AND M1.tSymbol = M2.tSymbol AND M1.timeStamp < M2.timeStamp
+    			WHERE M2.server IS NULL
+    		) V1
+    		JOIN(
+    			SELECT M1.*
+    			FROM MARKET_TIKER M1
+    			LEFT JOIN MARKET_TIKER M2 ON M1.server = M2.server AND M1.fSymbol = M2.fSymbol AND M1.tSymbol = M2.tSymbol AND M1.timeStamp < M2.timeStamp
+    			WHERE M2.server IS NULL
+    		) V2 ON V1.server = V2.server AND V1.tSymbol = V2.fSymbol AND V1.tSymbol<>'$baseCoin' AND V2.tSymbol ='$baseCoin'
+    	UNION
+    		SELECT V3.*, V3.bid_one_price as bid_one_price_usdt, V3.bid_one_size*V3.bid_one_price as bid_one_price_size_usdt, V3.ask_one_price as ask_one_price_usdt, V3.ask_one_size*V3.ask_one_price as ask_one_price_size_usdt 
+    		FROM(
+    			SELECT M1.*
+    			FROM MARKET_TIKER M1
+    			LEFT JOIN MARKET_TIKER M2 ON M1.server = M2.server AND M1.fSymbol = M2.fSymbol AND M1.tSymbol = M2.tSymbol AND M1.timeStamp < M2.timeStamp
+    			WHERE M2.server IS NULL AND M1.tSymbol='$baseCoin'
+    		) V3;
     COMMIT;
 ''')
