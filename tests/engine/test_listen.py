@@ -27,26 +27,26 @@ if __name__ == '__main__':
     register = Register(__eventEngine, handler)
 
     # app init
-    # util.initDB()
-    # util.initDBInfo()
+    util.initDB()
+    util.initDBInfo()
     util.initServerLimits()
 
     # register engine
     register.register()
 
     # start engine
-    # __eventEngine.start()
+    __eventEngine.start()
 
     # app update
-    # util.updateDBAccountBalance(sender)
-    # util.updateDBAccountWithdraw(sender)
-    # util.updateDBMarketKline(sender)
+    util.updateDBAccountBalance(sender)
+    util.updateDBAccountWithdraw(sender)
+    util.updateDBMarketKline(sender)
     util.updateDBMarketTicker(sender)
 
-    # time.sleep(2) # for engine begin handle
 
     # stop engine
-    # __eventEngine.stop()
+    time.sleep(2) # for engine begin handle
+    __eventEngine.stop()
 
     # unregister engine
     register.unregister()

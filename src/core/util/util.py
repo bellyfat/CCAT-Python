@@ -2,8 +2,10 @@
 
 import os
 import time
+from threading import Thread, current_thread
 
 import pandas as pd
+
 from src.core.config import Config
 from src.core.db.db import DB
 from src.core.util.exceptions import ApplicationException, DBException
@@ -101,38 +103,70 @@ class Util(object):
             raise ApplicationException(err)
 
     # Market Kline 数据
+    def threadSendListenMarketKlineEvent(self, sender, res, start, end, epoch):
+        self._logger.debug(
+            "src.core.util.util.Util.threadSendListenMarketKlineEvent: {thread: %s, sender: %s, res: %s, epoch: %s}"
+            % (current_thread().name, sender, type(res), epoch))
+        for r in res:
+            time.sleep(epoch)
+            sender.sendListenMarketKlineEvent(r["server"], r["fSymbol"],
+                                              r["tSymbol"], "1h", start, end)
+
     def updateDBMarketKline(self, sender):
         self._logger.debug("src.core.util.util.Util.updateDBMarketKline")
         try:
             db = DB()
             db.delMarketKline()
-            res = db.getViewInfoSymbolPairs(self._mainCof["exchanges"])
             start = utcnow_timestamp() - 24 * 60 * 60 * 1000
             end = utcnow_timestamp()
-            for r in res:
-                time.sleep(1.25 / float(
-                    self._serverLimits.at[r["server"], "requests_second"]))
-                sender.sendListenMarketKlineEvent(
-                    r["server"], r["fSymbol"], r["tSymbol"], "1h",
-                    timestamp_to_isoformat(start), timestamp_to_isoformat(end))
+            tds = []
+            for server in self._mainCof["exchanges"]:
+                epoch = 1.25 / float(
+                    self._serverLimits.at[server, "requests_second"])
+                res = db.getViewInfoSymbolPairs([server])
+                td = Thread(
+                    target=self.threadSendListenMarketKlineEvent,
+                    name="%s-thread" % server,
+                    args=(sender, res, timestamp_to_isoformat(start),
+                          timestamp_to_isoformat(end), epoch))
+                tds.append(td)
+                td.start()
+            for td in tds:
+                td.join()
         except DBException as err:
             errStr = "src.core.util.util.Util.updateDBMarketKline: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
-    # Market数据
+    # Market ticker 数据
+    def threadSendListenMarketTickerEvent(self, sender, res, epoch):
+        self._logger.debug(
+            "src.core.util.util.Util.threadSendListenMarketTickerEvent: {thread: %s, sender: %s, res: %s, epoch: %s}"
+            % (current_thread().name, sender, type(res), epoch))
+        for r in res:
+            time.sleep(epoch)
+            sender.sendListenMarketTickerEvent(r["server"], r["fSymbol"],
+                                               r["tSymbol"])
+
     def updateDBMarketTicker(self, sender):
         self._logger.debug("src.core.util.util.Util.updateDBMarketTicker")
         try:
             db = DB()
-            res = db.getViewMarketSymbolPairs(self._mainCof["exchanges"])
-            for r in res:
-                time.sleep(1.25 / float(
-                    self._serverLimits.at[r["server"], "requests_second"]))
-                sender.sendListenMarketTickerEvent(r["server"], r["fSymbol"],
-                                                   r["tSymbol"])
-        except DBException as err:
+            tds = []
+            for server in self._mainCof["exchanges"]:
+                epoch = 1.25 / float(
+                    self._serverLimits.at[server, "requests_second"])
+                res = db.getViewMarketSymbolPairs([server])
+                td = Thread(
+                    target=self.threadSendListenMarketTickerEvent,
+                    name="%s-thread" % server,
+                    args=(sender, res, epoch))
+                tds.append(td)
+                td.start()
+            for td in tds:
+                td.join()
+        except (Exception, DBException) as err:
             errStr = "src.core.util.util.Util.updateDBMarketTicker: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
