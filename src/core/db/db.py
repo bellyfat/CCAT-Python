@@ -77,6 +77,45 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
+    def getViewMarketTickerDisCurrent(self):
+        self._logger.debug("src.core.db.db.DB.getViewMarketTickerDisCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_MARKET_TICKER_CURRENT_DIS_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
+    def getViewMarketTickerCurrent(self):
+        self._logger.debug("src.core.db.db.DB.getViewMarketTickerCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_MARKET_TICKER_CURRENT_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
+    def getViewMarketKlineCurrent(self):
+        self._logger.debug("src.core.db.db.DB.getViewMarketKlineCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_MARKET_KLINE_CURRENT_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
     def getViewMarketSymbolPairs(self, exchange):
         self._logger.debug("src.core.db.db.DB.getViewMarketSymbolPairs")
         try:
@@ -110,6 +149,20 @@ class DB(object):
         try:
             curs = self._conn.cursor()
             TEMP_SQL = GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
+    def getViewAccountWithdrawCurrent(self, exchange):
+        self._logger.debug("src.core.db.db.DB.getViewAccountWithdrawCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_ACCOUNT_WITHDRAW_CURRENT_SQL.substitute(
                 server=exchange).replace('[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)

@@ -2,6 +2,21 @@
 
 from string import Template
 
+# get db view market kline current sql
+GET_VIEW_MARKET_TICKER_CURRENT_DIS_SQL = '''
+    SELECT * FROM VIEW_MARKET_TICKER_CURRENT_DIS
+''')
+
+# get db view market kline current sql
+GET_VIEW_MARKET_TICKER_CURRENT_SQL = '''
+    SELECT * FROM VIEW_MARKET_TICKER_CURRENT
+''')
+
+# get db view market kline current sql
+GET_VIEW_MARKET_KLINE_CURRENT_SQL = '''
+    SELECT * FROM VIEW_MARKET_KLINE_CURRENT
+''')
+
 # get db view market symbol sql
 GET_VIEW_MARKET_SYMBOL_PAIRS_SQL = Template('''
     SELECT * FROM VIEW_MARKET_SYMBOL WHERE server IN $server
@@ -15,6 +30,11 @@ GET_VIEW_INFO_SYMBOL_PAIRS_SQL = Template('''
 # get db view account balance current sql
 GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL = Template('''
     SELECT * FROM VIEW_ACCOUNT_BALANCE_CURRENT WHERE server IN $server;
+''')
+
+# get db view account withdraw current sql
+GET_VIEW_ACCOUNT_WITHDRAW_CURRENT_SQL = Template('''
+    SELECT * FROM VIEW_ACCOUNT_WITHDRAW_CURRENT WHERE server IN $server;
 ''')
 
 # get db account info sql

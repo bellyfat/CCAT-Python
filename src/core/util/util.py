@@ -171,7 +171,9 @@ class Util(object):
                 err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
+
     # Judge ticker 事件
+
 
     # Trade 事件
     def updateDBTrade(self):
