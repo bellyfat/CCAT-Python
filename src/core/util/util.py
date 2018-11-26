@@ -90,10 +90,11 @@ class Util(object):
             #             r["server"], r["asset"])
             ####################################################################
             # fast update
-            res = db.getViewAccountBalanceCurrent(self._mainCof["exchanges"])
+            res = db.getAccountBalances()
             for r in res:
-                time.sleep(float(self._mainCof["apiEpochSaveBound"]) / float(
-                    self._serverLimits.at[r["server"], "requests_second"]))
+                time.sleep(
+                    float(self._mainCof["apiEpochSaveBound"]) / float(
+                        self._serverLimits.at[r["server"], "requests_second"]))
                 sender.sendListenAccountWithdrawEvent(r["server"], r["asset"])
 
         except DBException as err:
@@ -173,7 +174,19 @@ class Util(object):
             raise ApplicationException(err)
 
     # Judge ticker 事件
-
+    def updateDBJudgeMarketTicker(self, sender):
+        self._logger.debug("src.core.util.util.Util.updateDBJudgeMarketTicker")
+        try:
+            sender.sendJudgeMarketTickerEvent(
+                self._mainCof["excludeCoins"], self._mainCof["baseCoin"],
+                self._mainCof["symbolStartBaseCoin"],
+                self._mainCof["symbolEndBaseCoin"],
+                self._mainCof["symbolEndTimeout"])
+        except Exception as err:
+            errStr = "src.core.util.util.Util.updateDBJudgeMarketTicker: %s" % ApplicationException(
+                err)
+            self._logger.critical(errStr)
+            raise ApplicationException(err)
 
     # Trade 事件
     def updateDBTrade(self):

@@ -116,6 +116,20 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
+    def getViewMarketTickerSymbol(self):
+        self._logger.debug("src.core.db.db.DB.getViewMarketTickerSymbol")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_MARKET_TICKER_SYMBOL_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
+
     def getViewMarketSymbolPairs(self, exchange):
         self._logger.debug("src.core.db.db.DB.getViewMarketSymbolPairs")
         try:
@@ -144,12 +158,11 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getViewAccountBalanceCurrent(self, exchange):
+    def getViewAccountBalanceCurrent(self):
         self._logger.debug("src.core.db.db.DB.getViewAccountBalanceCurrent")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL.substitute(
-                server=exchange).replace('[', '(').replace(']', ')')
+            TEMP_SQL = GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -158,12 +171,11 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getViewAccountWithdrawCurrent(self, exchange):
+    def getViewAccountWithdrawCurrent(self):
         self._logger.debug("src.core.db.db.DB.getViewAccountWithdrawCurrent")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_ACCOUNT_WITHDRAW_CURRENT_SQL.substitute(
-                server=exchange).replace('[', '(').replace(']', ')')
+            TEMP_SQL = GET_VIEW_ACCOUNT_WITHDRAW_CURRENT_SQL
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()

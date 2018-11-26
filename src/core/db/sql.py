@@ -4,38 +4,46 @@ from string import Template
 
 # get db view market kline current sql
 GET_VIEW_MARKET_TICKER_CURRENT_DIS_SQL = '''
-    SELECT * FROM VIEW_MARKET_TICKER_CURRENT_DIS
-''')
+    SELECT * FROM VIEW_MARKET_TICKER_CURRENT_DIS;
+'''
 
 # get db view market kline current sql
 GET_VIEW_MARKET_TICKER_CURRENT_SQL = '''
-    SELECT * FROM VIEW_MARKET_TICKER_CURRENT
-''')
+    SELECT * FROM VIEW_MARKET_TICKER_CURRENT;
+'''
 
 # get db view market kline current sql
 GET_VIEW_MARKET_KLINE_CURRENT_SQL = '''
-    SELECT * FROM VIEW_MARKET_KLINE_CURRENT
-''')
+    SELECT * FROM VIEW_MARKET_KLINE_CURRENT;
+'''
+
+# get db view market symbol sql
+GET_VIEW_MARKET_TICKER_SYMBOL_SQL = '''
+    SELECT V1.*
+    FROM VIEW_MARKET_SYMBOL V1
+    LEFT JOIN VIEW_MARKET_TICKER_CURRENT_DIS V2 ON (V1.server = V2.bid_server OR V1.server = V2.ask_server) AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
+    WHERE V2.bid_server IS NOT NULL;
+'''
 
 # get db view market symbol sql
 GET_VIEW_MARKET_SYMBOL_PAIRS_SQL = Template('''
-    SELECT * FROM VIEW_MARKET_SYMBOL WHERE server IN $server
+    SELECT * FROM VIEW_MARKET_SYMBOL WHERE server IN $server;
 ''')
 
 # get db view info symbol sql
 GET_VIEW_INFO_SYMBOL_PAIRS_SQL = Template('''
-    SELECT * FROM VIEW_INFO_SYMBOL WHERE server IN $server
+    SELECT * FROM VIEW_INFO_SYMBOL WHERE server IN $server;
 ''')
 
 # get db view account balance current sql
-GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL = Template('''
-    SELECT * FROM VIEW_ACCOUNT_BALANCE_CURRENT WHERE server IN $server;
-''')
+GET_VIEW_ACCOUNT_BALANCE_CURRENT_SQL = '''
+    SELECT * FROM VIEW_ACCOUNT_BALANCE_CURRENT;
+'''
 
 # get db view account withdraw current sql
-GET_VIEW_ACCOUNT_WITHDRAW_CURRENT_SQL = Template('''
-    SELECT * FROM VIEW_ACCOUNT_WITHDRAW_CURRENT WHERE server IN $server;
-''')
+GET_VIEW_ACCOUNT_WITHDRAW_CURRENT_SQL = '''
+    SELECT * FROM VIEW_ACCOUNT_WITHDRAW_CURRENT;
+'''
 
 # get db account info sql
 GET_ACCOUNT_INFO_SQL = '''
@@ -295,24 +303,28 @@ CREATE_VIEWS_SQL = Template('''
     			WHERE M1.tSymbol = '$baseCoin';
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_SYMBOL
     	AS
-    		SELECT DISTINCT V1.server, V1.fSymbol, V1.tSymbol
-    		FROM(
-    				SELECT DISTINCT server, fSymbol, tSymbol
-    				FROM VIEW_INFO_SYMBOL
-    				EXCEPT
-    				SELECT DISTINCT server, fSymbol, tSymbol
-    				FROM VIEW_MARKET_KLINE_CURRENT
-    				WHERE price_volume_base < $basePriceVolume
-    			) V1
-    			LEFT JOIN(
-    				SELECT DISTINCT server, fSymbol, tSymbol
-    				FROM VIEW_INFO_SYMBOL
-    				EXCEPT
-    				SELECT DISTINCT server, fSymbol, tSymbol
-    				FROM VIEW_MARKET_KLINE_CURRENT
-    				WHERE price_volume_base < $basePriceVolume
-    			) V2 ON V1.server <> V2.server AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
-    		WHERE V2.server IS NOT NULL;
+            SELECT J2.*
+            FROM(
+                SELECT DISTINCT V1.server, V1.fSymbol, V1.tSymbol
+                FROM(
+                        SELECT DISTINCT server, fSymbol, tSymbol
+                        FROM VIEW_INFO_SYMBOL
+                        EXCEPT
+                        SELECT DISTINCT server, fSymbol, tSymbol
+                        FROM VIEW_MARKET_KLINE_CURRENT
+                        WHERE price_volume_base < $basePriceVolume
+                    ) V1
+                    LEFT JOIN(
+                        SELECT DISTINCT server, fSymbol, tSymbol
+                        FROM VIEW_INFO_SYMBOL
+                        EXCEPT
+                        SELECT DISTINCT server, fSymbol, tSymbol
+                        FROM VIEW_MARKET_KLINE_CURRENT
+                        WHERE price_volume_base < $basePriceVolume
+                    ) V2 ON V1.server <> V2.server AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
+                WHERE V2.server IS NOT NULL
+            ) J1
+            JOIN VIEW_INFO_SYMBOL J2 ON J1.server = J2.server AND J1.fSymbol = J2.fSymbol AND J1.tSymbol = J2.tSymbol;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT
     	AS
         		SELECT V1.*, V1.bid_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as bid_one_price_base, V1.bid_one_size*V1.bid_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as bid_one_price_size_base, V1.ask_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as ask_one_price_base, V1.ask_one_size*V1.ask_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as ask_one_price_size_base

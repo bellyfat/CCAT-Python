@@ -76,7 +76,7 @@ JUDGE_MARKET_TICKER_EVENT = MyTemplate("""
     "type": "JUDGE_MARKET_TICKER_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
-    "args": []
+    "args": ["$excludeCoins", "$baseCoin", "$symbolStartBaseCoin", "$symbolEndBaseCoin", "$symbolEndTimeout"]
 }
 """)
 

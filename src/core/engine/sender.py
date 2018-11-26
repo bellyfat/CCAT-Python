@@ -102,11 +102,16 @@ class Sender(object):
         # 发送事件
         pass
 
-    def sendJudgeMarketTickerEvent(self, args):
+    def sendJudgeMarketTickerEvent(self, excludeCoins, baseCoin, symbolStartBaseCoin, symbolEndBaseCoin, symbolEndTimeout):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             JUDGE_MARKET_TICKER_EVENT.substitute(
-                timeStamp=utcnow_timestamp(), args=""))
+                timeStamp=utcnow_timestamp(),
+                excludeCoins=excludeCoins,
+                baseCoin=baseCoin,
+                symbolStartBaseCoin=symbolStartBaseCoin,
+                symbolEndBaseCoin=symbolEndBaseCoin,
+                symbolEndTimeout=symbolEndTimeout))
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendJudgeMarketTickerEvent: " +
