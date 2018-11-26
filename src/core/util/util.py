@@ -90,7 +90,7 @@ class Util(object):
             #             r["server"], r["asset"])
             ####################################################################
             # fast update
-            res = db.getAccountBalances()
+            res = db.getAccountBalanceHistory()
             for r in res:
                 time.sleep(
                     float(self._mainCof["apiEpochSaveBound"]) / float(
