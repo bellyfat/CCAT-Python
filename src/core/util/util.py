@@ -62,7 +62,7 @@ class Util(object):
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
-    # Account Balance 数据
+    # Account Balance 事件
     def updateDBAccountBalance(self, sender):
         self._logger.debug("src.core.util.util.Util.updateDBAccountBalance")
         try:
@@ -73,7 +73,7 @@ class Util(object):
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
-    # Account Withdraw 数据
+    # Account Withdraw 事件
     def updateDBAccountWithdraw(self, sender):
         self._logger.debug("src.core.util.util.Util.updateDBAccountWithdraw")
         try:
@@ -102,7 +102,7 @@ class Util(object):
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
-    # Market Kline 数据
+    # Market Kline 事件
     def threadSendListenMarketKlineEvent(self, sender, res, start, end, epoch):
         self._logger.debug(
             "src.core.util.util.Util.threadSendListenMarketKlineEvent: {thread: %s, sender: %s, res: %s, epoch: %s}"
@@ -139,7 +139,7 @@ class Util(object):
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
-    # Market ticker 数据
+    # Market ticker 事件
     def threadSendListenMarketTickerEvent(self, sender, res, epoch):
         self._logger.debug(
             "src.core.util.util.Util.threadSendListenMarketTickerEvent: {thread: %s, sender: %s, res: %s, epoch: %s}"
@@ -171,7 +171,8 @@ class Util(object):
                 err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
+    # Judge ticker 事件
 
-    # Trade数据
+    # Trade 事件
     def updateDBTrade(self):
         pass

@@ -13,6 +13,7 @@
     "excludeCoins": [],
     "baseCoin": "USDT",
     "basePriceVolume": "100",
+    "basePriceTimeout": "30",
     "apiEpochSaveBound": "1.25"
   },
   "engine":{

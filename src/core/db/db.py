@@ -69,7 +69,8 @@ class DB(object):
             curs = self._conn.cursor()
             TEMP_SQL = CREATE_VIEWS_SQL.substitute(
                 baseCoin=str(Config()._main["baseCoin"]),
-                basePriceVolume=int(Config()._main["basePriceVolume"]))
+                basePriceVolume=int(Config()._main["basePriceVolume"]),
+                basePriceTimeout=int(Config()._main["basePriceTimeout"]))
             self._logger.debug(TEMP_SQL)
             curs.executescript(TEMP_SQL)
             curs.close()
