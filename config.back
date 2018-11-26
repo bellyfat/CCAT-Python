@@ -10,10 +10,13 @@
   },
   "main":{
     "exchanges" : ["okex", "binance"],
-    "excludeCoins": [],
+    "excludeCoins": ["BCHSV"],
     "baseCoin": "USDT",
-    "basePriceVolume": "100",
+    "basePriceVolume": "1000",
     "basePriceTimeout": "30",
+    "symbolStartBaseCoin": "15",
+    "symbolEndBaseCoin": "20",
+    "symbolEndTimeout": "300",
     "apiEpochSaveBound": "1.25"
   },
   "engine":{
