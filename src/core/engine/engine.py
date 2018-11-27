@@ -4,12 +4,12 @@ import time
 from multiprocessing import Process, Queue, Value
 
 from src.core.config import Config
-from src.core.engine.enums import (HIGH_PRIORITY_ENVENT,
-                                   HIGH_PRIORITY_ENVENT_TIMEOUT,
-                                   LOW_PRIORITY_ENVENT,
-                                   LOW_PRIORITY_ENVENT_TIMEOUT,
-                                   MEDIUM_PRIORITY_ENVENT,
-                                   MEDIUM_PRIORITY_ENVENT_TIMEOUT)
+from src.core.engine.enums import (HIGH_PRIORITY_EVENT,
+                                   HIGH_PRIORITY_EVENT_TIMEOUT,
+                                   LOW_PRIORITY_EVENT,
+                                   LOW_PRIORITY_EVENT_TIMEOUT,
+                                   MEDIUM_PRIORITY_EVENT,
+                                   MEDIUM_PRIORITY_EVENT_TIMEOUT)
 from src.core.util.exceptions import EngineException
 from src.core.util.helper import utcnow_timestamp
 from src.core.util.log import Logger
@@ -18,6 +18,7 @@ from src.core.util.log import Logger
 class EventEngine(object):
     # 初始化事件事件驱动引擎
     def __init__(self):
+        # Config
         self.__engineCof = Config()._engine
         # 保存事件列表 按优先级不同分别保存
         self.__lowEnventQueue = Queue()
@@ -61,7 +62,7 @@ class EventEngine(object):
                     )
                     event = self.__highEventQueue.get(block=False)
                     while utcnow_timestamp(
-                    ) - event.timeStamp > HIGH_PRIORITY_ENVENT_TIMEOUT:
+                    ) - event.timeStamp > HIGH_PRIORITY_EVENT_TIMEOUT:
                         if not self.__highEventQueue.empty():
                             self.__logger.warn(
                                 "src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue TIMEOUT: { type=%s, priority=%s, args=%s }"
@@ -77,7 +78,7 @@ class EventEngine(object):
                     )
                     event = self.__mediumEventQueue.get(block=False)
                     while utcnow_timestamp(
-                    ) - event.timeStamp > MEDIUM_PRIORITY_ENVENT_TIMEOUT:
+                    ) - event.timeStamp > MEDIUM_PRIORITY_EVENT_TIMEOUT:
                         if not self.__mediumEventQueue.empty():
                             self.__logger.warn(
                                 "src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT: { type=%s, priority=%s, args=%s }"
@@ -93,7 +94,7 @@ class EventEngine(object):
                     )
                     event = self.__lowEnventQueue.get(block=False)
                     while utcnow_timestamp(
-                    ) - event.timeStamp > LOW_PRIORITY_ENVENT_TIMEOUT:
+                    ) - event.timeStamp > LOW_PRIORITY_EVENT_TIMEOUT:
                         if not self.__lowEnventQueue.empty():
                             self.__logger.warn(
                                 "src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT: { type=%s, priority=%s, args=%s }"
@@ -193,17 +194,18 @@ class EventEngine(object):
             "src.core.engine.engine.EventEngine.sendEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         # 发送事件 像队列里存入事件
-        if event.priority == LOW_PRIORITY_ENVENT:
+        if event.priority == LOW_PRIORITY_EVENT:
             self.__lowEnventQueue.put(event)
-        if event.priority == MEDIUM_PRIORITY_ENVENT:
+        if event.priority == MEDIUM_PRIORITY_EVENT:
             self.__mediumEventQueue.put(event)
-        if event.priority == HIGH_PRIORITY_ENVENT:
+        if event.priority == HIGH_PRIORITY_EVENT:
             self.__highEventQueue.put(event)
 
 
 class Event(object):
     # 事件对象
     def __init__(self, event):
+        self.id = id(event)
         self.type = event["type"]
         self.priority = event["priority"]
         self.timeStamp = int(event["timeStamp"])

@@ -5,14 +5,14 @@ from src.core.util.helper import MyTemplate
 
 
 # event priority
-LOW_PRIORITY_ENVENT = "low" # p.start()
-MEDIUM_PRIORITY_ENVENT = "medium" # p.start()
-HIGH_PRIORITY_ENVENT = "high" # p.join()运行
+LOW_PRIORITY_EVENT = "low" # p.start()
+MEDIUM_PRIORITY_EVENT = "medium" # p.start()
+HIGH_PRIORITY_EVENT = "high" # p.join()运行
 
 # event timeout in millisenconds
-LOW_PRIORITY_ENVENT_TIMEOUT = float(Config()._event["lowTimeout"])*1000
-MEDIUM_PRIORITY_ENVENT_TIMEOUT = float(Config()._event["mediumTimeout"])*1000
-HIGH_PRIORITY_ENVENT_TIMEOUT = float(Config()._event["highTimeout"])*1000
+LOW_PRIORITY_EVENT_TIMEOUT = float(Config()._event["lowTimeout"])*1000
+MEDIUM_PRIORITY_EVENT_TIMEOUT = float(Config()._event["mediumTimeout"])*1000
+HIGH_PRIORITY_EVENT_TIMEOUT = float(Config()._event["highTimeout"])*1000
 
 
 # listen event list
