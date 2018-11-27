@@ -45,7 +45,6 @@ if __name__ == '__main__':
 
     util.updateDBMarketTicker(sender)
 
-    # util.updateDBJudgeMarketTicker(sender)
 
     # # stop engine
     time.sleep(2) # for engine begin handle

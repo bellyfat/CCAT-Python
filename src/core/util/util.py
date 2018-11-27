@@ -188,6 +188,40 @@ class Util(object):
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
-    # Trade 事件
-    def updateDBTrade(self):
+    # Backtest 事件
+    def updateDBBacktest(self, sender):
+        pass
+
+    # Order 事件
+    def updateDBOrderConfirm(self, sender):
+        pass
+
+    def updateDBOrderTracker(self, sender):
+        pass
+
+    def updateDBOrderCancle(self, sender):
+        pass
+
+    # Statistic 事件
+    def updateDBStatisticBacktest(self, sender):
+        pass
+
+    def updateDBStatisticOrder(self, sender):
+        pass
+
+    # Util 紧急功能
+    # 一键 cancle 撤销所有订单
+    def oneClickCancleOrders(self):
+        pass
+
+    # 一键 order 交易所有币到baseCoin
+    def oneClickOrderBaseCoin(self):
+        pass
+
+    # 一键 withdraw baseCoin 提币到冷钱包
+    def oneClickWithdrawBaseCoin(self):
+        pass
+
+    # 一键 deposite baseCoin 充币到交易所钱包
+    def oneClickDepositeBaseCoin(self):
         pass

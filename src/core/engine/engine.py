@@ -36,12 +36,15 @@ class EventEngine(object):
 
     # 执行事件循环
     def __run(self):
-        self.__logger.info(
+        self.__logger.debug(
             "src.core.engine.engine.EventEngine.__mainProcess.__run")
         while self.__active.value:
             # 执行 Epoch
             time.sleep(float(self.__engineCof["epoch"]))
             # 控制最大进程数量
+            ######################################################
+            ## need update later with Router
+            ######################################################
             for p in self.__processPool:
                 if not p.is_alive():
                     self.__processPool.remove(p)
@@ -102,12 +105,12 @@ class EventEngine(object):
                 # 事件队列非空
                 if not event == None:
                     # 执行事件
-                    self.__logger.info(
+                    self.__logger.debug(
                         "src.core.engine.engine.EventEngine.__mainProcess.__run.__eventQueue: { type=%s, priority=%s, args=%s }"
                         % (event.type, event.priority, event.args))
                     self.__process(event)
                 else:
-                    self.__logger.info(
+                    self.__logger.debug(
                         "src.core.engine.engine.EventEngine.__mainProcess.__run.__eventQueue: empty"
                     )
         # break out while
@@ -186,7 +189,7 @@ class EventEngine(object):
             self.__logger.error(errStr)
 
     def sendEvent(self, event):
-        self.__logger.info(
+        self.__logger.debug(
             "src.core.engine.engine.EventEngine.sendEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         # 发送事件 像队列里存入事件

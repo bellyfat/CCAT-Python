@@ -8,17 +8,26 @@
 # gateException, code = -1004, message = err
 # DBException, code = -2000, message = err
 # EngineException, code = -3000, message = err
-# ApplicationException, code = -4000, message = err
+# RouterException, code = -4000, message = err
+# ApplicationException, code = -5000, message = err
 
 class ApplicationException(Exception):
+
+    def __init__(self, err):
+        self.code = -5000
+        self.message = err
+
+    def __str__(self):  # pragma: no cover
+        return 'ApplicationException(code=%s): %s' % (self.code, self.message)
+
+class RouterException(Exception):
 
     def __init__(self, err):
         self.code = -4000
         self.message = err
 
     def __str__(self):  # pragma: no cover
-        return 'ApplicationException(code=%s): %s' % (self.code, self.message)
-
+        return 'RouterException(code=%s): %s' % (self.code, self.message)
 
 class EngineException(Exception):
 
