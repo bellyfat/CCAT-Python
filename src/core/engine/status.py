@@ -26,8 +26,8 @@ class Status(object):
 
     def addEventStatus(self, event):
         self._logger.info(
-            "src.core.engine.status.Status.addEventStatus: {type:%s, priority:%s, timeStamp:%s, argss:%s}"
-            % (event.type, event.priority, event.timeStamp, event.args))
+            "src.core.engine.status.Status.addEventStatus: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         self.ID.value = self.ID.value + 1
         item = {
             "id": self.ID.value,
@@ -43,13 +43,13 @@ class Status(object):
 
     def updateEventStatus(self, event):
         self._logger.info(
-            "src.core.engine.status.Status.updateEventStatus: {type:%s, priority:%s, timeStamp:%s, argss:%s}"
-            % (event.type, event.priority, event.timeStamp, event.args))
+            "src.core.engine.status.Status.updateEventStatus: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         for item in self._status:
             pass
 
     def delEventStatus(self, event):
         self._logger.info(
-            "src.core.engine.status.Status.delEventStatus: {type:%s, priority:%s, timeStamp:%s, argss:%s}"
-            % (event.type, event.priority, event.timeStamp, event.args))
+            "src.core.engine.status.Status.delEventStatus: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         pass

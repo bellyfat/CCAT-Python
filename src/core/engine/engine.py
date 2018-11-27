@@ -4,6 +4,7 @@ import time
 from multiprocessing import Process, Queue, Value
 
 from src.core.config import Config
+from src.core.engine.status import Status
 from src.core.engine.enums import (HIGH_PRIORITY_EVENT,
                                    HIGH_PRIORITY_EVENT_TIMEOUT,
                                    LOW_PRIORITY_EVENT,
@@ -65,8 +66,8 @@ class EventEngine(object):
                     ) - event.timeStamp > HIGH_PRIORITY_EVENT_TIMEOUT:
                         if not self.__highEventQueue.empty():
                             self.__logger.warn(
-                                "src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue TIMEOUT: { type=%s, priority=%s, args=%s }"
-                                % (event.type, event.priority, event.args))
+                                "src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+                                % (event.id, event.type, event.priority, event.timeStamp, event.args))
                             event = self.__highEventQueue.get(block=False)
                         else:
                             event = None
@@ -81,8 +82,8 @@ class EventEngine(object):
                     ) - event.timeStamp > MEDIUM_PRIORITY_EVENT_TIMEOUT:
                         if not self.__mediumEventQueue.empty():
                             self.__logger.warn(
-                                "src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT: { type=%s, priority=%s, args=%s }"
-                                % (event.type, event.priority, event.args))
+                                "src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+                                % (event.id, event.type, event.priority, event.timeStamp, event.args))
                             event = self.__mediumEventQueue.get(block=False)
                         else:
                             event = None
@@ -97,8 +98,8 @@ class EventEngine(object):
                     ) - event.timeStamp > LOW_PRIORITY_EVENT_TIMEOUT:
                         if not self.__lowEnventQueue.empty():
                             self.__logger.warn(
-                                "src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT: { type=%s, priority=%s, args=%s }"
-                                % (event.type, event.priority, event.args))
+                                "src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+                                % (event.id, event.type, event.priority, event.timeStamp, event.args))
                             event = self.__lowEnventQueue.get(block=False)
                         else:
                             event = None
@@ -107,8 +108,8 @@ class EventEngine(object):
                 if not event == None:
                     # 执行事件
                     self.__logger.debug(
-                        "src.core.engine.engine.EventEngine.__mainProcess.__run.__eventQueue: { type=%s, priority=%s, args=%s }"
-                        % (event.type, event.priority, event.args))
+                        "src.core.engine.engine.EventEngine.__mainProcess.__run.__eventQueue: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+                        % (event.id, event.type, event.priority, event.timeStamp, event.args))
                     self.__process(event)
                 else:
                     self.__logger.debug(
@@ -122,8 +123,8 @@ class EventEngine(object):
     # 执行事件
     def __process(self, event):
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.__mainProcess.__run.__process: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.engine.EventEngine.__mainProcess.__run.__process: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         if event.type in self.__handlers:
             for handler in self.__handlers[event.type]:
                 # 开一个进程去异步处理
@@ -191,8 +192,8 @@ class EventEngine(object):
 
     def sendEvent(self, event):
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.sendEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.engine.EventEngine.sendEvent: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         # 发送事件 像队列里存入事件
         if event.priority == LOW_PRIORITY_EVENT:
             self.__lowEnventQueue.put(event)
