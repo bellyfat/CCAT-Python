@@ -37,7 +37,7 @@ class Logger(object):
         # handler = logging.FileHandler(Logger._logfile, mode="a+")
         handler = logging.handlers.TimedRotatingFileHandler(Logger._logfile, when="d", interval=1, backupCount=7)
         handler.setFormatter(Logger._file_formatter)
-        handler.setLevel(logging.WARNING)
+        handler.setLevel(logging.INFO)
         # 设置控制台日志的格式
         # 定义日志处理器将WARNING或者以上级别的日志发送到 console
         console = logging.StreamHandler()

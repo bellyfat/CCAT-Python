@@ -29,8 +29,10 @@ class EventEngine(object):
         self.__active = Value('b', False)
         # 事件处理字典{'event1': [handler1,handler2] , 'event2':[handler3, ...,handler4]}
         self.__handlers = {}
-        # 保存事件处理进程池
+        # 保存事件处理进程池 控制最大进程数量 以及关闭引擎时处理已启动进程
         self.__processPool = []
+        # 保存已执行事件处理状态
+        self.__status = Status()
         # 事件引擎主进程
         self.__mainProcess = None # Process(target=self.__run)
         # logger
@@ -44,13 +46,7 @@ class EventEngine(object):
             # 执行 Epoch
             time.sleep(float(self.__engineCof["epoch"]))
             # 控制最大进程数量
-            ######################################################
-            ## need update later with Router
-            ######################################################
-            for p in self.__processPool:
-                if not p.is_alive():
-                    self.__processPool.remove(p)
-            if len(self.__processPool) > int(self.__engineCof["maxProcess"]):
+            if self.__status.calcActiveEventNum() > int(self.__engineCof["maxProcess"]):
                 self.__logger.warn(
                     "src.core.engine.engine.EventEngine.__mainProcess.__run.__eventQueue: Too Many"
                 )
@@ -115,10 +111,15 @@ class EventEngine(object):
                     self.__logger.debug(
                         "src.core.engine.engine.EventEngine.__mainProcess.__run.__eventQueue: empty"
                     )
+                    # 趁队列空闲的时候清理进程池
+                    for p in self.__processPool:
+                        if not p.is_alive():
+                            self.__processPool.remove(p)
         # break out while
         # 终止所有事件处理进程
         for p in self.__processPool:
-            p.join()
+            if p.is_alive():
+                p.join()
 
     # 执行事件
     def __process(self, event):
@@ -128,10 +129,14 @@ class EventEngine(object):
         if event.type in self.__handlers:
             for handler in self.__handlers[event.type]:
                 # 开一个进程去异步处理
-                p = Process(target=handler, args=(event, ))
+                p = Process(target=handler, args=(event, self.__status.delEventStatus))
                 # 保存到进程池
                 self.__processPool.append(p)
+                # 同步抄送至事件运行状态表格里
+                self.__status.addEventStatus(event)
+                # 运行进程
                 p.start()
+
 
     # 开启事件引擎
     def start(self):
@@ -202,11 +207,16 @@ class EventEngine(object):
         if event.priority == HIGH_PRIORITY_EVENT:
             self.__highEventQueue.put(event)
 
+    def getEventID(self):
+        id = self.__status.calcEventID()
+        self.__logger.debug("src.core.engine.engine.EventEngine.getEventID: { id=%s}" % id)
+        return id
+
 
 class Event(object):
     # 事件对象
     def __init__(self, event):
-        self.id = id(event)
+        self.id = event["id"]
         self.type = event["type"]
         self.priority = event["priority"]
         self.timeStamp = int(event["timeStamp"])

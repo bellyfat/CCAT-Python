@@ -11,7 +11,6 @@ from src.core.engine.enums import (HIGH_PRIORITY_EVENT,
                                    MEDIUM_PRIORITY_EVENT,
                                    MEDIUM_PRIORITY_EVENT_TIMEOUT)
 from src.core.util.exceptions import EngineException
-from src.core.util.helper import utcnow_timestamp
 from src.core.util.log import Logger
 
 
@@ -24,32 +23,42 @@ class Status(object):
         # logger
         self._logger = Logger()
 
+    def getStatusTable(self):
+        res = [item for item in self._status]
+        if res!=[]:
+            res = pd.DataFrame(res).set_index(["id"], inplace=False)
+        self._logger.debug("src.core.engine.status.Status.getStatusTable:\n\t%s" % res)
+        return res
+
+    def calcEventID(self):
+        self.ID.value = self.ID.value + 1
+        self._logger.debug("src.core.engine.status.Status.calcEventID: { id=%s}" % self.ID.value)
+        return self.ID.value
+
+    def calcActiveEventNum(self):
+        num = len(self._status)
+        self._logger.debug("src.core.engine.status.Status.calcActiveEventNum: { num=%s}" % num)
+        return num
+
     def addEventStatus(self, event):
         self._logger.info(
             "src.core.engine.status.Status.addEventStatus: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
-        self.ID.value = self.ID.value + 1
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         item = {
-            "id": self.ID.value,
+            "id": event.id,
             "type": event.type,
             "priority": event.priority,
             "timeStamp": event.timeStamp,
-            "args": event.args,
-            "creat": utcnow_timestamp(),
-            "start": '',
-            "end": ''
+            "args": event.args
         }
         self._status.append(item)
-
-    def updateEventStatus(self, event):
-        self._logger.info(
-            "src.core.engine.status.Status.updateEventStatus: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
-        for item in self._status:
-            pass
 
     def delEventStatus(self, event):
         self._logger.info(
             "src.core.engine.status.Status.delEventStatus: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
-        pass
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
+        for item in self._status:
+            if item["id"] == event.id:
+                self._status.remove(item)

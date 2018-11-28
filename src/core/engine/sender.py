@@ -19,7 +19,9 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             LISTEN_ACCOUNT_BALANCE_EVENT.substitute(
-                timeStamp=utcnow_timestamp(), server=exchange))
+                id=self._engine.getEventID(),
+                timeStamp=utcnow_timestamp(),
+                server=exchange))
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendListenAccountBalanceEvent: " +
@@ -31,7 +33,10 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             LISTEN_ACCOUNT_WITHDRAW_EVENT.substitute(
-                timeStamp=utcnow_timestamp(), server=exchange, asset=asset))
+                id=self._engine.getEventID(),
+                timeStamp=utcnow_timestamp(),
+                server=exchange,
+                asset=asset))
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendListenAccountWithdrawEvent: " +
@@ -44,6 +49,7 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             LISTEN_MARKET_DEPTH_EVENT.substitute(
+                id=self._engine.getEventID(),
                 timeStamp=utcnow_timestamp(),
                 server=exchange,
                 fSymbol=fSymbol,
@@ -61,6 +67,7 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             LISTEN_MARKET_KLINE_EVENT.substitute(
+                id=self._engine.getEventID(),
                 timeStamp=utcnow_timestamp(),
                 server=exchange,
                 fSymbol=fSymbol,
@@ -79,6 +86,7 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             LISTEN_MARKET_TICKER_EVENT.substitute(
+                id=self._engine.getEventID(),
                 timeStamp=utcnow_timestamp(),
                 server=exchange,
                 fSymbol=fSymbol,
@@ -94,7 +102,9 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             JUDGE_MARKET_KLINE_EVENT.substitute(
-                timeStamp=utcnow_timestamp(), args=""))
+                id=self._engine.getEventID(),
+                timeStamp=utcnow_timestamp(),
+                args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendJudgeMarketKlineEvent: " +
@@ -102,10 +112,13 @@ class Sender(object):
         # 发送事件
         pass
 
-    def sendJudgeMarketTickerEvent(self, excludeCoins, baseCoin, symbolStartBaseCoin, symbolEndBaseCoin, symbolEndTimeout):
+    def sendJudgeMarketTickerEvent(self, excludeCoins, baseCoin,
+                                   symbolStartBaseCoin, symbolEndBaseCoin,
+                                   symbolEndTimeout):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             JUDGE_MARKET_TICKER_EVENT.substitute(
+                id=self._engine.getEventID(),
                 timeStamp=utcnow_timestamp(),
                 excludeCoins=excludeCoins,
                 baseCoin=baseCoin,
@@ -123,7 +136,9 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             BACKTEST_MARKET_KLINE_EVENT.substitute(
-                timeStamp=utcnow_timestamp(), args=""))
+                id=self._engine.getEventID(),
+                timeStamp=utcnow_timestamp(),
+                args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendBacktestMarketKlineEvent: " +
@@ -135,7 +150,9 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             BACKTEST_MARKET_TICKER_EVENT.substitute(
-                timeStamp=utcnow_timestamp(), args=""))
+                id=self._engine.getEventID(),
+                timeStamp=utcnow_timestamp(),
+                args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendBacktestMarketTickerEvent: " +
@@ -147,7 +164,9 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             ORDER_MARKET_KLINE_EVENT.substitute(
-                timeStamp=utcnow_timestamp(), args=""))
+                id=self._engine.getEventID(),
+                timeStamp=utcnow_timestamp(),
+                args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendOrderMarketKlineEvent: " +
@@ -159,7 +178,9 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             ORDER_MARKET_TICKER_EVENT.substitute(
-                timeStamp=utcnow_timestamp(), args=""))
+                id=self._engine.getEventID(),
+                timeStamp=utcnow_timestamp(),
+                args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendOrderMarketTickerEvent: " +
@@ -171,7 +192,9 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             ORDER_CONFIRM_EVENT.substitute(
-                timeStamp=utcnow_timestamp(), args=""))
+                id=self._engine.getEventID(),
+                timeStamp=utcnow_timestamp(),
+                args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendOrderConfirmEvent: " +
@@ -183,7 +206,9 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             ORDER_CANCEL_EVENT.substitute(
-                timeStamp=utcnow_timestamp(), args=""))
+                id=self._engine.getEventID(),
+                timeStamp=utcnow_timestamp(),
+                args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendOrderCancleEvent: " +
@@ -195,7 +220,9 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             STATISTIC_BACKTEST_EVENT.substitute(
-                timeStamp=utcnow_timestamp(), args=""))
+                id=self._engine.getEventID(),
+                timeStamp=utcnow_timestamp(),
+                args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendStatiscBacktestEvent: " +
@@ -207,7 +234,9 @@ class Sender(object):
         # 构造事件对象
         TEMP_EVENT = json.loads(
             STATISTIC_ORDER_EVENT.substitute(
-                timeStamp=utcnow_timestamp(), args=""))
+                id=self._engine.getEventID(),
+                timeStamp=utcnow_timestamp(),
+                args=""))
         event = Event(TEMP_EVENT)
         self._logger.debug(
             "src.core.engine.sender.Sender.sendStatiscOrderEvent: " +
