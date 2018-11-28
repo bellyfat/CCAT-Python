@@ -40,8 +40,8 @@
   "proxies": {
     "type": "http",
     "url": {
-        "http": "http://127.0.0.1:8118",
-        "https": "http://127.0.0.1:8118"
+        "http": "http://127.0.0.1:8123",
+        "https": "http://127.0.01:8123"
     }
   },
   "okex": {
