@@ -17,22 +17,29 @@ from src.core.util.log import Logger
 # db class
 class DB(object):
     def __init__(self):
-        proxies = Config()._proxies
-        # self._dbStr = ":memory:" # for break through speed limit only
+        # config 相关配置
+        proxies = None
+        if Config()._proxies["turnOff"] in ["False", "false", False, "0", 0]:
+            proxies = Config()._proxies["url"]
         self._dbStr = os.path.join(os.getcwd(), Config()._db["url"])
         self._dbTimeout = int(Config()._db["timeout"])
+
+        # 数据库相关设置
+        # self._dbStr = ":memory:" # for break through speed limit only
         self._conn = sqlite3.connect(self._dbStr, timeout=self._dbTimeout)
         self._conn.row_factory = dict_factory
         # self._conn.execute("PRAGMA synchronous = 0") # for break through speed limit only
+
+        # Coin API 相关设置
         self._okexConf = Config()._okex
-        self._okex = Okex(self._okexConf["exchange"],
-                          self._okexConf["api_key"],
-                          self._okexConf["api_secret"],
-                          self._okexConf["passphrase"], proxies["url"])
+        self._okex = Okex(
+            self._okexConf["exchange"], self._okexConf["api_key"],
+            self._okexConf["api_secret"], self._okexConf["passphrase"], proxies)
         self._binanceConf = Config()._binance
-        self._binance = Binance(
-            self._binanceConf["exchange"], self._binanceConf["api_key"],
-            self._binanceConf["api_secret"], proxies["url"])
+        self._binance = Binance(self._binanceConf["exchange"],
+                                self._binanceConf["api_key"],
+                                self._binanceConf["api_secret"], proxies)
+        # logger
         self._logger = Logger()
 
     def __del__(self):
@@ -141,7 +148,6 @@ class DB(object):
             return res
         except sqlite3.Error as err:
             raise DBException(err)
-
 
     def getViewMarketSymbolPairs(self, exchange):
         self._logger.debug("src.core.db.db.DB.getViewMarketSymbolPairs")
