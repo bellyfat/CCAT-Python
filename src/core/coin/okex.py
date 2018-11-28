@@ -3,7 +3,9 @@
 # Okex Class
 
 import json
+
 import requests
+from requests.exceptions import ConnectionError, ReadTimeout
 
 from src.core.coin.coin import Coin
 from src.core.coin.lib.okex_v3_api.account_api import AccountAPI
@@ -15,9 +17,10 @@ from src.core.coin.lib.okex_v3_api.spot_api import SpotAPI
 from src.core.util.exceptions import OkexException
 from src.core.util.helper import date_to_milliseconds, interval_to_milliseconds
 
-class Okex(Coin):
 
-    def __init__(self, exchange, api_key, api_secret, passphrase, proxies=None):
+class Okex(Coin):
+    def __init__(self, exchange, api_key, api_secret, passphrase,
+                 proxies=None):
         super(Okex, self).__init__(exchange, api_key, api_secret, proxies)
         self._passphrase = passphrase
         self._client = Client(api_key, api_secret, passphrase, False)
@@ -26,7 +29,13 @@ class Okex(Coin):
 
     # get config
     def getConfig(self):
-        return {"exchange": self._exchange, "api_key": self._api_key, "api_secret": self._api_secret, "passphrase": self._passphrase, "proxies": self._proxies}
+        return {
+            "exchange": self._exchange,
+            "api_key": self._api_key,
+            "api_secret": self._api_secret,
+            "passphrase": self._passphrase,
+            "proxies": self._proxies
+        }
 
     # set proxy
     def setProxy(self, proxies):
@@ -37,7 +46,8 @@ class Okex(Coin):
         try:
             res = self._client._get_timestamp(self._proxies)
             return date_to_milliseconds(res)
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # perseconds qurry and orders rate limits
@@ -67,13 +77,12 @@ class Okex(Coin):
             for b in base:
                 fSymbol = b["base_currency"]
                 tSymbol = b["quote_currency"]
-                res.append({
-                    "fSymbol": fSymbol,
-                    "tSymbol": tSymbol
-                })
+                res.append({"fSymbol": fSymbol, "tSymbol": tSymbol})
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
+
     # def getServerSymbols(self):
     #     # not all api defined, get form cryptoCompare
     #     try:
@@ -132,14 +141,15 @@ class Okex(Coin):
                     "min_notional": min_notional
                 })
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
     def getMarketOrderbookTicker(self, fSymbol, tSymbol):
         try:
-            ticker = self._spotAPI.get_depth(
-                fSymbol + "-" + tSymbol, '1',  '', self._proxies)
+            ticker = self._spotAPI.get_depth(fSymbol + "-" + tSymbol, '1', '',
+                                             self._proxies)
             res = {
                 "timeStamp": date_to_milliseconds(ticker["timestamp"]),
                 "fSymbol": fSymbol,
@@ -150,7 +160,8 @@ class Okex(Coin):
                 "ask_one_size": float(ticker["asks"][0][1])
             }
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # a specific symbol's orderbook with depth
@@ -173,8 +184,8 @@ class Okex(Coin):
         '''
         try:
             instrument_id = fSymbol + "-" + tSymbol
-            ticker = self._spotAPI.get_depth(
-                instrument_id, limit,  '', self._proxies)
+            ticker = self._spotAPI.get_depth(instrument_id, limit, '',
+                                             self._proxies)
             res = {
                 "timeStamp": date_to_milliseconds(ticker["timestamp"]),
                 "fSymbol": fSymbol,
@@ -183,7 +194,8 @@ class Okex(Coin):
                 "ask_price_size": ticker["asks"]
             }
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # a specific symbols kline/candlesticks
@@ -203,22 +215,23 @@ class Okex(Coin):
         try:
             instrument_id = fSymbol + "-" + tSymbol
             granularity = int(interval_to_milliseconds(interval) / 1000)
-            kline = self._spotAPI.get_kline(
-                instrument_id, start, end, granularity, self._proxies)
+            kline = self._spotAPI.get_kline(instrument_id, start, end,
+                                            granularity, self._proxies)
             res = []
             for k in kline:
                 res.append({
                     "timeStamp": date_to_milliseconds(k["time"]),
-                    "fSymbol" : fSymbol,
-                    "tSymbol" : tSymbol,
-                    "open":k["open"],
-                    "high":k["high"],
-                    "low":k["low"],
-                    "close":k["close"],
-                    "volume":k["volume"]
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "open": k["open"],
+                    "high": k["high"],
+                    "low": k["low"],
+                    "close": k["close"],
+                    "volume": k["volume"]
                 })
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get symbol trade fees
@@ -226,79 +239,121 @@ class Okex(Coin):
         '''
         币币手续费： 挂单成交0.1%， 吃单成交0.15%
         '''
-        res = [{
-            "symbol": "all",
-            "maker": 0.001,
-            "taker": 0.0015
-        }]
+        res = [{"symbol": "all", "maker": 0.001, "taker": 0.0015}]
         return res
 
     # get current trade
-    def getTradeOpen(self, fSymbol='', tSymbol='', ratio='', froms='', to='', limit='100'):
+    def getTradeOpen(self,
+                     fSymbol='',
+                     tSymbol='',
+                     ratio='',
+                     froms='',
+                     to='',
+                     limit='100'):
         try:
             instrument_id = ''
             if fSymbol and tSymbol:
                 instrument_id = fSymbol + "-" + tSymbol
-            orders = self._spotAPI.get_orders_pending(
-                instrument_id, froms, to, limit, self._proxies)
+            orders = self._spotAPI.get_orders_pending(instrument_id, froms, to,
+                                                      limit, self._proxies)
             res = []
             if ratio == '':
                 ratio = self.getTradeFees()[0]["taker"]
             for item in orders[0]:
                 ask_or_bid = "ask" if item["side"] == "buy" else "bid"
-                filled_price = float(item["filled_size"]) if float(item["filled_size"]) == 0 else float(
-                    item["filled_notional"]) / float(item["filled_size"])
+                filled_price = float(item["filled_size"]) if float(
+                    item["filled_size"]) == 0 else float(
+                        item["filled_notional"]) / float(item["filled_size"])
                 res.append({
-                    "timeStamp": date_to_milliseconds(item["timestamp"]),
-                    "order_id": item["order_id"],
-                    "status": "open",
-                    "type": item["type"],
-                    "fSymbol": fSymbol,
-                    "tSymbol": tSymbol,
-                    "ask_or_bid": ask_or_bid,
-                    "ask_bid_price": float(item["price"]),
-                    "ask_bid_size": float(item["size"]),
-                    "filled_price": filled_price,
-                    "filled_size": float(item["filled_size"]),
-                    "fee": float(ratio) * float(item["filled_notional"])
+                    "timeStamp":
+                    date_to_milliseconds(item["timestamp"]),
+                    "order_id":
+                    item["order_id"],
+                    "status":
+                    "open",
+                    "type":
+                    item["type"],
+                    "fSymbol":
+                    fSymbol,
+                    "tSymbol":
+                    tSymbol,
+                    "ask_or_bid":
+                    ask_or_bid,
+                    "ask_bid_price":
+                    float(item["price"]),
+                    "ask_bid_size":
+                    float(item["size"]),
+                    "filled_price":
+                    filled_price,
+                    "filled_size":
+                    float(item["filled_size"]),
+                    "fee":
+                    float(ratio) * float(item["filled_notional"])
                 })
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get history trade
-    def getTradeHistory(self, fSymbol, tSymbol, ratio='', froms='', to='', limit='100'):
+    def getTradeHistory(self,
+                        fSymbol,
+                        tSymbol,
+                        ratio='',
+                        froms='',
+                        to='',
+                        limit='100'):
         try:
             instrument_id = fSymbol + "-" + tSymbol
-            orders = self._spotAPI.get_orders_list(
-                "all", instrument_id, froms, to, limit, self._proxies)
+            orders = self._spotAPI.get_orders_list("all", instrument_id, froms,
+                                                   to, limit, self._proxies)
             res = []
             if ratio == '':
                 ratio = self.getTradeFees()[0]["taker"]
             for item in orders[0]:
                 ask_or_bid = "ask" if item["side"] == "buy" else "bid"
-                filled_price = float(item["filled_size"]) if float(item["filled_size"]) == 0 else float(
-                    item["filled_notional"]) / float(item["filled_size"])
+                filled_price = float(item["filled_size"]) if float(
+                    item["filled_size"]) == 0 else float(
+                        item["filled_notional"]) / float(item["filled_size"])
                 res.append({
-                    "timeStamp": date_to_milliseconds(item["timestamp"]),
-                    "order_id": item["order_id"],
-                    "status": item["status"],
-                    "type": item["type"],
-                    "fSymbol": fSymbol,
-                    "tSymbol": tSymbol,
-                    "ask_or_bid": ask_or_bid,
-                    "ask_bid_price": float(item["price"]),
-                    "ask_bid_size": float(item["size"]),
-                    "filled_price": filled_price,
-                    "filled_size": float(item["filled_size"]),
-                    "fee": float(ratio) * float(item["filled_notional"])
+                    "timeStamp":
+                    date_to_milliseconds(item["timestamp"]),
+                    "order_id":
+                    item["order_id"],
+                    "status":
+                    item["status"],
+                    "type":
+                    item["type"],
+                    "fSymbol":
+                    fSymbol,
+                    "tSymbol":
+                    tSymbol,
+                    "ask_or_bid":
+                    ask_or_bid,
+                    "ask_bid_price":
+                    float(item["price"]),
+                    "ask_bid_size":
+                    float(item["size"]),
+                    "filled_price":
+                    filled_price,
+                    "filled_size":
+                    float(item["filled_size"]),
+                    "fee":
+                    float(ratio) * float(item["filled_notional"])
                 })
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get succeed trade
-    def getTradeSucceed(self, fSymbol, tSymbol, ratio='', froms='', to='', limit='100'):
+    def getTradeSucceed(self,
+                        fSymbol,
+                        tSymbol,
+                        ratio='',
+                        froms='',
+                        to='',
+                        limit='100'):
         try:
             instrument_id = fSymbol + "-" + tSymbol
             orders = self._spotAPI.get_orders_list(
@@ -308,24 +363,38 @@ class Okex(Coin):
                 ratio = self.getTradeFees()[0]["taker"]
             for item in orders[0]:
                 ask_or_bid = "ask" if item["side"] == "buy" else "bid"
-                filled_price = float(item["filled_size"]) if float(item["filled_size"]) == 0 else float(
-                    item["filled_notional"]) / float(item["filled_size"])
+                filled_price = float(item["filled_size"]) if float(
+                    item["filled_size"]) == 0 else float(
+                        item["filled_notional"]) / float(item["filled_size"])
                 res.append({
-                    "timeStamp": date_to_milliseconds(item["timestamp"]),
-                    "order_id": item["order_id"],
-                    "status": item["status"],
-                    "type": item["type"],
-                    "fSymbol": fSymbol,
-                    "tSymbol": tSymbol,
-                    "ask_or_bid": ask_or_bid,
-                    "ask_bid_price": float(item["price"]),
-                    "ask_bid_size": float(item["size"]),
-                    "filled_price": filled_price,
-                    "filled_size": float(item["filled_size"]),
-                    "fee": float(ratio) * float(item["filled_notional"])
+                    "timeStamp":
+                    date_to_milliseconds(item["timestamp"]),
+                    "order_id":
+                    item["order_id"],
+                    "status":
+                    item["status"],
+                    "type":
+                    item["type"],
+                    "fSymbol":
+                    fSymbol,
+                    "tSymbol":
+                    tSymbol,
+                    "ask_or_bid":
+                    ask_or_bid,
+                    "ask_bid_price":
+                    float(item["price"]),
+                    "ask_bid_size":
+                    float(item["size"]),
+                    "filled_price":
+                    filled_price,
+                    "filled_size":
+                    float(item["filled_size"]),
+                    "fee":
+                    float(ratio) * float(item["filled_notional"])
                 })
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get account all asset balance
@@ -341,7 +410,8 @@ class Okex(Coin):
                     "locked": float(b["frozen"])
                 })
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get account asset deposit and withdraw limits
@@ -352,20 +422,29 @@ class Okex(Coin):
             for b in base:
                 if "min_withdrawal" in b.keys():
                     res.append({
-                        "asset": b["currency"],
-                        "can_deposite": str(b["can_deposit"]) in ["true", "True", "1"],
-                        "can_withdraw": str(b["can_withdraw"]) in ["true", "True", "1"],
-                        "min_withdraw": float(b["min_withdrawal"])
+                        "asset":
+                        b["currency"],
+                        "can_deposite":
+                        str(b["can_deposit"]) in ["true", "True", "1"],
+                        "can_withdraw":
+                        str(b["can_withdraw"]) in ["true", "True", "1"],
+                        "min_withdraw":
+                        float(b["min_withdrawal"])
                     })
                 else:
                     res.append({
-                        "asset": b["currency"],
-                        "can_deposite": str(b["can_deposit"]) in ["true", "True", "1"],
-                        "can_withdraw": str(b["can_withdraw"]) in ["true", "True", "1"],
-                        "min_withdraw": 0.0
+                        "asset":
+                        b["currency"],
+                        "can_deposite":
+                        str(b["can_deposit"]) in ["true", "True", "1"],
+                        "can_withdraw":
+                        str(b["can_withdraw"]) in ["true", "True", "1"],
+                        "min_withdraw":
+                        0.0
                     })
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get account asset balance
@@ -379,44 +458,53 @@ class Okex(Coin):
                 "locked": float(base["frozen"])
             }
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # get account asset deposit and withdraw history detail
     def getAccountAssetDetail(self, asset, **kwargs):
         try:
-            base = self._accountAPI.get_ledger_record(0, 1, 100, asset, '', self._proxies)
+            base = self._accountAPI.get_ledger_record(0, 1, 100, asset, '',
+                                                      self._proxies)
             deposite = []
             withdraw = []
             for b in base[0]:
-                if float(b["amount"])>=0:
+                if float(b["amount"]) >= 0:
                     deposite.append(b)
                 else:
                     withdraw.append(b)
-            res = {
-                "deposit": deposite,
-                "withdraw": withdraw
-            }
+            res = {"deposit": deposite, "withdraw": withdraw}
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # create orders default limit
-    def createOrder(self, fSymbol, tSymbol, ask_or_bid, price, quantity, ratio='', type="limit"):
+    def createOrder(self,
+                    fSymbol,
+                    tSymbol,
+                    ask_or_bid,
+                    price,
+                    quantity,
+                    ratio='',
+                    type="limit"):
         #  for speed up, lib not check, check from local db.data
         try:
             instrument_id = fSymbol + "-" + tSymbol
             side = 'buy' if ask_or_bid == "ask" else 'sell'
-            base = self._spotAPI.take_order(
-                type, side, instrument_id, quantity, 1, '', price, '', self._proxies)
+            base = self._spotAPI.take_order(type, side, instrument_id,
+                                            quantity, 1, '', price, '',
+                                            self._proxies)
             order_id = base["order_id"]
-            info = self._spotAPI.get_order_info(
-                order_id, instrument_id, self._proxies)
+            info = self._spotAPI.get_order_info(order_id, instrument_id,
+                                                self._proxies)
             if ratio == '':
                 ratio = self.getTradeFees()[0]["taker"]
             ask_or_bid = "ask" if info["side"] == "buy" else "bid"
-            filled_price = float(info["filled_size"]) if float(info["filled_size"]) == 0 else float(
-                info["filled_notional"]) / float(info["filled_size"])
+            filled_price = float(info["filled_size"]) if float(
+                info["filled_size"]) == 0 else float(
+                    info["filled_notional"]) / float(info["filled_size"])
             res = {
                 "timeStamp": date_to_milliseconds(info["timestamp"]),
                 "order_id": info["order_id"],
@@ -432,20 +520,22 @@ class Okex(Coin):
                 "fee": float(ratio) * float(info["filled_notional"])
             }
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # check orders done or undone
     def checkOrder(self, fSymbol, tSymbol, orderID, ratio='', **kwargs):
         try:
             instrument_id = fSymbol + "-" + tSymbol
-            info = self._spotAPI.get_order_info(
-                orderID, instrument_id, self._proxies)
+            info = self._spotAPI.get_order_info(orderID, instrument_id,
+                                                self._proxies)
             if ratio == '':
                 ratio = self.getTradeFees()[0]["taker"]
             ask_or_bid = "ask" if info["side"] == "buy" else "bid"
-            filled_price = float(info["filled_size"]) if float(info["filled_size"]) == 0 else float(
-                info["filled_notional"]) / float(info["filled_size"])
+            filled_price = float(info["filled_size"]) if float(
+                info["filled_size"]) == 0 else float(
+                    info["filled_notional"]) / float(info["filled_size"])
             res = {
                 "timeStamp": date_to_milliseconds(info["timestamp"]),
                 "order_id": info["order_id"],
@@ -461,30 +551,26 @@ class Okex(Coin):
                 "fee": float(ratio) * float(info["filled_notional"])
             }
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # cancle the specific order
     def cancleOrder(self, fSymbol, tSymbol, orderID, **kwargs):
         try:
             instrument_id = fSymbol + "-" + tSymbol
-            info = self._spotAPI.get_order_info(
-                orderID, instrument_id, self._proxies)
+            info = self._spotAPI.get_order_info(orderID, instrument_id,
+                                                self._proxies)
             if info["status"] == "open" or info["status"] == "part_filled":
-                base = self._spotAPI.revoke_order(
-                    orderID, instrument_id, self._proxies)
+                base = self._spotAPI.revoke_order(orderID, instrument_id,
+                                                  self._proxies)
                 if base["result"] == True:
-                    res = {
-                        "order_id": orderID,
-                        "status": "cancled"
-                    }
+                    res = {"order_id": orderID, "status": "cancled"}
             else:
-                res = {
-                    "order_id": orderID,
-                    "status": info["status"]
-                }
+                res = {"order_id": orderID, "status": info["status"]}
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # cancle the bathch orders
@@ -493,23 +579,18 @@ class Okex(Coin):
             instrument_id = fSymbol + "-" + tSymbol
             res = []
             for orderID in orderIDs:
-                info = self._spotAPI.get_order_info(
-                    orderID, instrument_id, self._proxies)
+                info = self._spotAPI.get_order_info(orderID, instrument_id,
+                                                    self._proxies)
                 if info["status"] == "open" or info["status"] == "part_filled":
-                    base = self._spotAPI.revoke_order(
-                        orderID, instrument_id, self._proxies)
+                    base = self._spotAPI.revoke_order(orderID, instrument_id,
+                                                      self._proxies)
                     if base["result"] == True:
-                        res.append({
-                            "order_id": orderID,
-                            "status": "cancled"
-                        })
+                        res.append({"order_id": orderID, "status": "cancled"})
                 else:
-                    res.append({
-                        "order_id": orderID,
-                        "status": info["status"]
-                    })
+                    res.append({"order_id": orderID, "status": info["status"]})
             return res
-        except (KeyError, OkexAPIException, OkexRequestException, OkexParamsException) as err:
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
     # deposite asset balance

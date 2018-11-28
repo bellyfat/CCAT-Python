@@ -15,7 +15,7 @@ if __name__ == '__main__':
     os.system("python3 tests/engine/test_listen.py")
 
     # # 2. integration test for test_judge
-    # logger.debug("3.2 sub testing... python3 tests/engine/test_judge.py")
+    logger.debug("3.2 sub testing... python3 tests/engine/test_judge.py")
     # os.system("python3 tests/engine/test_judge.py")
     #
     # # 3. integration test for test_backtest
