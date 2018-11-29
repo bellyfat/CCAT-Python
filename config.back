@@ -36,6 +36,7 @@
 # symbolEndBaseCoin
 # symbolEndTimeout
 # apiEpochSaveBound: control api requests frequency
+
 [Main]
   exchanges = okex, binance
   excludeCoins =
@@ -88,7 +89,7 @@
 # Okex Settings
 [Okex]
   exchange = okex
-  api_key =
+  api_key = 
   api_secret =
   passphrase =
 
