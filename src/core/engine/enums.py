@@ -3,6 +3,10 @@
 from src.core.config import Config
 from src.core.util.helper import MyTemplate
 
+# event status
+QUEUE_STATUS_EVENT = "queue"
+ACTIVE_STATUS_EVENT = "active"
+DONE_STATUS_EVENT = "done"
 
 # event priority
 LOW_PRIORITY_EVENT = "low" # p.start()

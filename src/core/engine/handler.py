@@ -9,8 +9,8 @@ from src.core.util.log import Logger
 
 
 class Handler(object):
-    def __init__(self, sender):
-        self._sender = sender
+    def __init__(self, eventEngine):
+        self._engine = eventEngine
         self._logger = Logger()
 
     def handleListenAccountBalanceEvent(self, event, callback):
@@ -22,7 +22,6 @@ class Handler(object):
         try:
             db = DB()
             db.insertAccountBalanceHistory(exchange)
-            callback(event)
             callback(event)
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: %s" % EngineException(

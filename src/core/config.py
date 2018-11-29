@@ -55,6 +55,7 @@ class Config(object):
             # Engine Settings
             Config._Engine_epoch = cf.getfloat('Engine', 'epoch')
             Config._Engine_maxProcess = cf.getfloat('Engine', 'maxProcess')
+            Config._Engine_cacheSize = cf.getfloat('Engine', 'cacheSize')
             # Event Settings
             Config._Event_lowTimeout = cf.getfloat('Event', 'lowTimeout')
             Config._Event_mediumTimeout = cf.getfloat('Event', 'mediumTimeout')

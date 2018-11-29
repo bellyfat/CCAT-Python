@@ -5,17 +5,19 @@ import time
 from threading import Thread, current_thread
 
 import pandas as pd
-
 from src.core.config import Config
 from src.core.db.db import DB
-from src.core.util.exceptions import ApplicationException, DBException
+from src.core.engine.enums import (ACTIVE_STATUS_EVENT, DONE_STATUS_EVENT,
+                                   QUEUE_STATUS_EVENT)
+from src.core.util.exceptions import (ApplicationException, DBException,
+                                      EngineException)
 from src.core.util.helper import timestamp_to_isoformat, utcnow_timestamp
 from src.core.util.log import Logger
 
 
 # util class
 class Util(object):
-    def __init__(self):
+    def __init__(self, eventEngine, sender):
         # Config init
         # Main Settings
         self._exchanges = Config()._Main_exchanges
@@ -29,6 +31,9 @@ class Util(object):
         self._apiEpochSaveBound = Config()._Main_apiEpochSaveBound
         # ServerLimit
         self._serverLimits = None
+        # Engine
+        self._engine = eventEngine
+        self._sender = sender
         # logger
         self._logger = Logger()
 
@@ -40,7 +45,7 @@ class Util(object):
             db.initDB()
             db.creatTables()
             db.creatViews()
-        except DBException as err:
+        except (DBException, EngineException) as err:
             errStr = "src.core.util.util.Util.initDB: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
@@ -54,7 +59,7 @@ class Util(object):
             db.insertInfoServer(self._exchanges)
             db.insertInfoSymbol(self._exchanges)
             db.insertInfoWithdraw(self._exchanges)
-        except DBException as err:
+        except (DBException, EngineException) as err:
             errStr = "src.core.util.util.Util.initDBInfo: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
@@ -68,25 +73,33 @@ class Util(object):
             res = db.getInfoServer()
             self._serverLimits = pd.DataFrame(res).set_index(["server"],
                                                              inplace=False)
-        except DBException as err:
+        except (DBException, EngineException) as err:
             errStr = "src.core.util.util.Util.initServerLimits: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
     # Account Balance 事件
-    def updateDBAccountBalance(self, sender):
+    def updateDBAccountBalance(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBAccountBalance")
         try:
-            sender.sendListenAccountBalanceEvent(self._exchanges)
-        except DBException as err:
+            id = self._sender.sendListenAccountBalanceEvent(self._exchanges)
+            if not async:
+                st = self._engine.getEventStatus(id)
+                start = time.time()
+                while st != DONE_STATUS_EVENT:
+                    st = self._engine.getEventStatus(id)
+                    time.sleep(0.5)
+                if st != DONE_STATUS_EVENT:
+                    self._logger.warning("src.core.util.util.Util.updateDBAccountBalance: Timeout Error, waiting for event handler result timeout.")
+        except (DBException, EngineException) as err:
             errStr = "src.core.util.util.Util.updateDBAccountBalance: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
     # Account Withdraw 事件
-    def updateDBAccountWithdraw(self, sender):
+    def updateDBAccountWithdraw(self):
         self._logger.debug("src.core.util.util.Util.updateDBAccountWithdraw")
         try:
             db = DB()
@@ -98,7 +111,7 @@ class Util(object):
             #     if r["can_deposite"] == "True" or r["can_withdraw"] == "True":
             #         time.sleep(float(self._apiEpochSaveBound) / float(
             #             self._serverLimits.at[r["server"], "requests_second"]))
-            #         sender.sendListenAccountWithdrawEvent(
+            #         self._sender.sendListenAccountWithdrawEvent(
             #             r["server"], r["asset"])
             ####################################################################
             # fast update
@@ -107,9 +120,10 @@ class Util(object):
                 time.sleep(
                     float(self._apiEpochSaveBound) / float(
                         self._serverLimits.at[r["server"], "requests_second"]))
-                sender.sendListenAccountWithdrawEvent(r["server"], r["asset"])
+                self._sender.sendListenAccountWithdrawEvent(
+                    r["server"], r["asset"])
 
-        except DBException as err:
+        except (DBException, EngineException) as err:
             errStr = "src.core.util.util.Util.updateDBAccountWithdraw: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
@@ -122,10 +136,10 @@ class Util(object):
             % (current_thread().name, sender, type(res), epoch))
         for r in res:
             time.sleep(epoch)
-            sender.sendListenMarketKlineEvent(r["server"], r["fSymbol"],
-                                              r["tSymbol"], "1h", start, end)
+            self._sender.sendListenMarketKlineEvent(
+                r["server"], r["fSymbol"], r["tSymbol"], "1h", start, end)
 
-    def updateDBMarketKline(self, sender):
+    def updateDBMarketKline(self):
         self._logger.debug("src.core.util.util.Util.updateDBMarketKline")
         try:
             db = DB()
@@ -146,7 +160,7 @@ class Util(object):
                 td.start()
             for td in tds:
                 td.join()
-        except DBException as err:
+        except (DBException, EngineException) as err:
             errStr = "src.core.util.util.Util.updateDBMarketKline: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
@@ -159,10 +173,10 @@ class Util(object):
             % (current_thread().name, sender, type(res), epoch))
         for r in res:
             time.sleep(epoch)
-            sender.sendListenMarketTickerEvent(r["server"], r["fSymbol"],
-                                               r["tSymbol"])
+            self._sender.sendListenMarketTickerEvent(r["server"], r["fSymbol"],
+                                                     r["tSymbol"])
 
-    def updateDBMarketTicker(self, sender):
+    def updateDBMarketTicker(self):
         self._logger.debug("src.core.util.util.Util.updateDBMarketTicker")
         try:
             db = DB()
@@ -186,10 +200,10 @@ class Util(object):
             raise ApplicationException(err)
 
     # Judge ticker 事件
-    def updateDBJudgeMarketTicker(self, sender):
+    def updateDBJudgeMarketTicker(self):
         self._logger.debug("src.core.util.util.Util.updateDBJudgeMarketTicker")
         try:
-            sender.sendJudgeMarketTickerEvent(
+            self._sender.sendJudgeMarketTickerEvent(
                 self._excludeCoins, self._baseCoin, self._symbolStartBaseCoin,
                 self._symbolEndBaseCoin, self._symbolEndTimeout)
         except Exception as err:
@@ -199,24 +213,24 @@ class Util(object):
             raise ApplicationException(err)
 
     # Backtest 事件
-    def updateDBBacktest(self, sender):
+    def updateDBBacktest(self):
         pass
 
     # Order 事件
-    def updateDBOrderConfirm(self, sender):
+    def updateDBOrderConfirm(self):
         pass
 
-    def updateDBOrderTracker(self, sender):
+    def updateDBOrderTracker(self):
         pass
 
-    def updateDBOrderCancle(self, sender):
+    def updateDBOrderCancle(self):
         pass
 
     # Statistic 事件
-    def updateDBStatisticBacktest(self, sender):
+    def updateDBStatisticBacktest(self):
         pass
 
-    def updateDBStatisticOrder(self, sender):
+    def updateDBStatisticOrder(self):
         pass
 
     # Util 紧急功能
