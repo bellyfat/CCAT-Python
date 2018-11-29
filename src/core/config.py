@@ -32,9 +32,12 @@ class Config(object):
             Config._Debug_debug = cf.getboolean(
                 'Debug', 'debug', fallback=True)
             Config._Debug_level = str(cf['Debug']['level'])
+            if Config._Debug_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+                raise Exception(
+                    "Config Debug Settings Error, debug level not suport.")
             # Main Settings
-            Config._Main_exchanges = cf['Main']['exchanges'].split(',')
-            Config._Main_excludeCoins = cf['Main']['excludeCoins'].split(',')
+            Config._Main_exchanges = str(cf['Main']['exchanges']).replace(' ','').split(',')
+            Config._Main_excludeCoins = str(cf['Main']['excludeCoins']).replace(' ','').split(',')
             Config._Main_baseCoin = str(cf['Main']['baseCoin'])
             Config._Main_basePriceVolume = cf.getfloat('Main',
                                                        'basePriceVolume')
@@ -65,6 +68,9 @@ class Config(object):
                 cf['Log']['url'])[0] == '/' else os.path.join(
                     Config.__cwd, str(cf['Log']['url']))
             Config._Log_level = str(cf['Log']['level'])
+            if Config._Log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+                raise Exception(
+                    "Config Log Settings Error, log level not suport.")
             # DB Settings
             Config._DB_type = str(cf['DB']['type'])
             if Config._DB_type not in ['sqlite3', 'Sqlite3', 'SQLITE3']:

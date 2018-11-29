@@ -17,7 +17,7 @@ from src.core.util.log import Logger
 class Status(object):
     def __init__(self):
         # Status ID
-        self._id = Manager().Value('i', 0)
+        self._id = Value('i', 0)
         self._status = Manager().list()
         # logger
         self._logger = Logger()

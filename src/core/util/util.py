@@ -62,14 +62,14 @@ class Util(object):
 
     # ServerLimit数据
     def initServerLimits(self):
-        self._logger.debug("src.core.util.util.Util.getServerLimits")
+        self._logger.debug("src.core.util.util.Util.initServerLimits")
         try:
             db = DB()
             res = db.getInfoServer()
             self._serverLimits = pd.DataFrame(res).set_index(["server"],
                                                              inplace=False)
         except DBException as err:
-            errStr = "src.core.util.util.Util.getServerLimits: %s" % ApplicationException(
+            errStr = "src.core.util.util.Util.initServerLimits: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
