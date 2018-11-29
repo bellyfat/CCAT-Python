@@ -6,15 +6,16 @@
 # binanceException, code = -1002, message = err
 # huobiException, code = -1003, message = err
 # gateException, code = -1004, message = err
-# DBException, code = -2000, message = err
-# EngineException, code = -3000, message = err
-# RouterException, code = -4000, message = err
-# ApplicationException, code = -5000, message = err
+# ConfigException, code = -2000, message = err
+# DBException, code = -3000, message = err
+# EngineException, code = -4000, message = err
+# RouterException, code = -5000, message = err
+# ApplicationException, code = -6000, message = err
 
 class ApplicationException(Exception):
 
     def __init__(self, err):
-        self.code = -5000
+        self.code = -6000
         self.message = err
 
     def __str__(self):  # pragma: no cover
@@ -23,7 +24,7 @@ class ApplicationException(Exception):
 class RouterException(Exception):
 
     def __init__(self, err):
-        self.code = -4000
+        self.code = -5000
         self.message = err
 
     def __str__(self):  # pragma: no cover
@@ -32,7 +33,7 @@ class RouterException(Exception):
 class EngineException(Exception):
 
     def __init__(self, err):
-        self.code = -3000
+        self.code = -4000
         self.message = err
 
     def __str__(self):  # pragma: no cover
@@ -42,12 +43,21 @@ class EngineException(Exception):
 class DBException(Exception):
 
     def __init__(self, err):
-        self.code = -2000
+        self.code = -3000
         self.message = err
 
     def __str__(self):  # pragma: no cover
         return 'DBException(code=%s): %s' % (self.code, self.message)
 
+
+class ConfigException(Exception):
+
+    def __init__(self, err):
+        self.code = -2000
+        self.message = err
+
+    def __str__(self):  # pragma: no cover
+        return 'ConfigException(code=%s): %s' % (self.code, self.message)
 
 class OkexException(Exception):
 

@@ -16,9 +16,21 @@ from src.core.util.log import Logger
 # util class
 class Util(object):
     def __init__(self):
-        self._logger = Logger()
-        self._mainCof = Config()._main
+        # Config init
+        # Main Settings
+        self._exchanges = Config()._Main_exchanges
+        self._excludeCoins = Config()._Main_excludeCoins
+        self._baseCoin = Config()._Main_baseCoin
+        # self._basePriceVolume = Config()._Main_basePriceVolume
+        # self._basePriceTimeout = Config()._Main_basePriceTimeout
+        self._symbolStartBaseCoin = Config()._Main_symbolStartBaseCoin
+        self._symbolEndBaseCoin = Config()._Main_symbolEndBaseCoin
+        self._symbolEndTimeout = Config()._Main_symbolEndTimeout
+        self._apiEpochSaveBound = Config()._Main_apiEpochSaveBound
+        # ServerLimit
         self._serverLimits = None
+        # logger
+        self._logger = Logger()
 
     # 初始化数据库
     def initDB(self):
@@ -39,9 +51,9 @@ class Util(object):
         self._logger.debug("src.core.util.util.Util.initDBInfo")
         try:
             db = DB()
-            db.insertInfoServer(self._mainCof["exchanges"])
-            db.insertInfoSymbol(self._mainCof["exchanges"])
-            db.insertInfoWithdraw(self._mainCof["exchanges"])
+            db.insertInfoServer(self._exchanges)
+            db.insertInfoSymbol(self._exchanges)
+            db.insertInfoWithdraw(self._exchanges)
         except DBException as err:
             errStr = "src.core.util.util.Util.initDBInfo: %s" % ApplicationException(
                 err)
@@ -66,7 +78,7 @@ class Util(object):
     def updateDBAccountBalance(self, sender):
         self._logger.debug("src.core.util.util.Util.updateDBAccountBalance")
         try:
-            sender.sendListenAccountBalanceEvent(self._mainCof["exchanges"])
+            sender.sendListenAccountBalanceEvent(self._exchanges)
         except DBException as err:
             errStr = "src.core.util.util.Util.updateDBAccountBalance: %s" % ApplicationException(
                 err)
@@ -84,7 +96,7 @@ class Util(object):
             # res = db.getInfoWithdraw()
             # for r in res:
             #     if r["can_deposite"] == "True" or r["can_withdraw"] == "True":
-            #         time.sleep(float(self._mainCof["apiEpochSaveBound"]) / float(
+            #         time.sleep(float(self._apiEpochSaveBound) / float(
             #             self._serverLimits.at[r["server"], "requests_second"]))
             #         sender.sendListenAccountWithdrawEvent(
             #             r["server"], r["asset"])
@@ -93,7 +105,7 @@ class Util(object):
             res = db.getAccountBalanceHistory()
             for r in res:
                 time.sleep(
-                    float(self._mainCof["apiEpochSaveBound"]) / float(
+                    float(self._apiEpochSaveBound) / float(
                         self._serverLimits.at[r["server"], "requests_second"]))
                 sender.sendListenAccountWithdrawEvent(r["server"], r["asset"])
 
@@ -121,8 +133,8 @@ class Util(object):
             start = utcnow_timestamp() - 24 * 60 * 60 * 1000
             end = utcnow_timestamp()
             tds = []
-            for server in self._mainCof["exchanges"]:
-                epoch = float(self._mainCof["apiEpochSaveBound"]) / float(
+            for server in self._exchanges:
+                epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "requests_second"])
                 res = db.getViewInfoSymbolPairs([server])
                 td = Thread(
@@ -155,8 +167,8 @@ class Util(object):
         try:
             db = DB()
             tds = []
-            for server in self._mainCof["exchanges"]:
-                epoch = float(self._mainCof["apiEpochSaveBound"]) / float(
+            for server in self._exchanges:
+                epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "requests_second"])
                 res = db.getViewMarketSymbolPairs([server])
                 td = Thread(
@@ -178,10 +190,8 @@ class Util(object):
         self._logger.debug("src.core.util.util.Util.updateDBJudgeMarketTicker")
         try:
             sender.sendJudgeMarketTickerEvent(
-                self._mainCof["excludeCoins"], self._mainCof["baseCoin"],
-                self._mainCof["symbolStartBaseCoin"],
-                self._mainCof["symbolEndBaseCoin"],
-                self._mainCof["symbolEndTimeout"])
+                self._excludeCoins, self._baseCoin, self._symbolStartBaseCoin,
+                self._symbolEndBaseCoin, self._symbolEndTimeout)
         except Exception as err:
             errStr = "src.core.util.util.Util.updateDBJudgeMarketTicker: %s" % ApplicationException(
                 err)

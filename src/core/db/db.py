@@ -17,28 +17,40 @@ from src.core.util.log import Logger
 # db class
 class DB(object):
     def __init__(self):
-        # config 相关配置
-        proxies = None
-        if Config()._proxies["turnOff"] in ["False", "false", False, "0", 0]:
-            proxies = Config()._proxies["url"]
-        self._dbStr = os.path.join(os.getcwd(), Config()._db["url"])
-        self._dbTimeout = int(Config()._db["timeout"])
+        # config init
+        # exchanges
+        self._exchanges = Config()._Main_exchanges
+        self._baseCoin = Config()._Main_baseCoin
+        self._basePriceVolume = Config()._Main_basePriceVolume
+        self._basePriceTimeout = Config()._Main_basePriceTimeout
+        # proxies
+        self._proxies = Config()._Proxies_url if Config(
+        )._Proxies_proxies else None
+        # DB
+        self._dbStr = Config()._DB_url
+        self._dbTimeout = Config()._DB_timeout
+        self._dbSynchronous = Config()._DB_synchronous
+        # Okex
+        self._Okex_exchange = Config()._Okex_exchange
+        self._Okex_api_key = Config()._Okex_api_key
+        self._Okex_api_secret = Config()._Okex_api_secret
+        self._Okex_passphrase = Config()._Okex_passphrase
+        # Binance
+        self._Binance_exchange = Config()._Binance_exchange
+        self._Binance_api_key = Config()._Binance_api_key
+        self._Binance_api_secret = Config()._Binance_api_secret
 
-        # 数据库相关设置
-        # self._dbStr = ":memory:" # for break through speed limit only
+        # 数据库 init
         self._conn = sqlite3.connect(self._dbStr, timeout=self._dbTimeout)
         self._conn.row_factory = dict_factory
-        # self._conn.execute("PRAGMA synchronous = 0") # for break through speed limit only
-
-        # Coin API 相关设置
-        self._okexConf = Config()._okex
-        self._okex = Okex(
-            self._okexConf["exchange"], self._okexConf["api_key"],
-            self._okexConf["api_secret"], self._okexConf["passphrase"], proxies)
-        self._binanceConf = Config()._binance
-        self._binance = Binance(self._binanceConf["exchange"],
-                                self._binanceConf["api_key"],
-                                self._binanceConf["api_secret"], proxies)
+        if self._dbSynchronous:
+            self._conn.execute("PRAGMA synchronous = 0")
+        # Coin API init
+        self._Okex = Okex(self._Okex_exchange, self._Okex_api_key,
+                          self._Okex_api_secret, self._Okex_passphrase,
+                          self._proxies)
+        self._Binance = Binance(self._Binance_exchange, self._Binance_api_key,
+                                self._Binance_api_secret, self._proxies)
         # logger
         self._logger = Logger()
 
@@ -53,7 +65,8 @@ class DB(object):
             os.remove(self._dbStr)
             self._conn = sqlite3.connect(self._dbStr)
             self._conn.row_factory = dict_factory
-            # self._conn.execute("PRAGMA synchronous = 0") # for break through speed limit only
+            if self._dbSynchronous:
+                self._conn.execute("PRAGMA synchronous = 0")
             os.chmod(self._dbStr, 0o664)  # 设置读写权限
         except IOError as err:
             raise DBException(err)
@@ -75,9 +88,9 @@ class DB(object):
         try:
             curs = self._conn.cursor()
             TEMP_SQL = CREATE_VIEWS_SQL.substitute(
-                baseCoin=str(Config()._main["baseCoin"]),
-                basePriceVolume=int(Config()._main["basePriceVolume"]),
-                basePriceTimeout=int(Config()._main["basePriceTimeout"]))
+                baseCoin=str(self._baseCoin),
+                basePriceVolume=int(self._basePriceVolume),
+                basePriceTimeout=int(self._basePriceTimeout))
             self._logger.debug(TEMP_SQL)
             curs.executescript(TEMP_SQL)
             curs.close()
@@ -365,23 +378,22 @@ class DB(object):
             TEMP_SQL_TITLE = INSERT_ACCOUNT_BALANCE_HISTORY_SQL
             TEMP_SQL_VALUE = []
             # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                base = self._okex.getAccountBalances()
+            if exchange == "all" or self._Okex_exchange in exchange:
+                base = self._Okex.getAccountBalances()
                 for b in base:
                     if b["balance"] > 0:
-                        TEMP_SQL_VALUE.append((str(self._okexConf["exchange"]),
+                        TEMP_SQL_VALUE.append((str(self._Okex_exchange),
                                                int(timeStamp), str(b["asset"]),
                                                float(b["balance"]),
                                                float(b["free"]),
                                                float(b["locked"])))
             # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                base = self._binance.getAccountBalances()
+            if exchange == "all" or self._Binance_exchange in exchange:
+                base = self._Binance.getAccountBalances()
                 for b in base:
                     if b["balance"] > 0:
-                        TEMP_SQL_VALUE.append((str(
-                            self._binanceConf["exchange"]), int(timeStamp),
-                                               str(b["asset"]),
+                        TEMP_SQL_VALUE.append((str(self._Binance_exchange),
+                                               int(timeStamp), str(b["asset"]),
                                                float(b["balance"]),
                                                float(b["free"]),
                                                float(b["locked"])))
@@ -410,11 +422,10 @@ class DB(object):
             TEMP_SQL_TITLE = INSERT_ACCOUNT_WITHDRAW_HISTORY_SQL
             TEMP_SQL_VALUE = []
             # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                base = self._okex.getAccountAssetDetail(asset)
+            if exchange == "all" or self._Okex_exchange in exchange:
+                base = self._Okex.getAccountAssetDetail(asset)
                 TEMP_SQL_VALUE.append(
-                    (str(self._okexConf["exchange"]), int(timeStamp),
-                     str(asset),
+                    (str(self._Okex_exchange), int(timeStamp), str(asset),
                      str(
                          sqlite_escape(', '.join(
                              json.dumps(b) for b in base["deposit"]))),
@@ -422,11 +433,10 @@ class DB(object):
                          sqlite_escape(', '.join(
                              json.dumps(b) for b in base["withdraw"])))))
             # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                base = self._binance.getAccountAssetDetail(asset)
+            if exchange == "all" or self._Binance_exchange in exchange:
+                base = self._Binance.getAccountAssetDetail(asset)
                 TEMP_SQL_VALUE.append(
-                    (str(self._binanceConf["exchange"]), int(timeStamp),
-                     str(asset),
+                    (str(self._Binance_exchange), int(timeStamp), str(asset),
                      str(
                          sqlite_escape(';'.join(
                              json.dumps(b) for b in base["deposit"]))),
@@ -454,10 +464,10 @@ class DB(object):
             TEMP_SQL_TITLE = INSERT_INFO_SERVER_SQL
             TEMP_SQL_VALUE = []
             # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                res = self._okex.getServerLimits()
+            if exchange == "all" or self._Okex_exchange in exchange:
+                res = self._Okex.getServerLimits()
                 TEMP_SQL_VALUE.append(
-                    (str(self._okexConf["exchange"]),
+                    (str(self._Okex_exchange),
                      "NULL" if res["requests_second"] == '' else float(
                          res["requests_second"]),
                      "NULL" if res["orders_second"] == '' else float(
@@ -466,10 +476,10 @@ class DB(object):
                      "NULL" if res["webSockets_second"] == '' else float(
                          res["webSockets_second"])))
             # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                res = self._binance.getServerLimits()
+            if exchange == "all" or self._Binance_exchange in exchange:
+                res = self._Binance.getServerLimits()
                 TEMP_SQL_VALUE.append(
-                    (str(self._binanceConf["exchange"]),
+                    (str(self._Binance_exchange),
                      "NULL" if res["requests_second"] == '' else float(
                          res["requests_second"]),
                      "NULL" if res["orders_second"] == '' else float(
@@ -498,13 +508,13 @@ class DB(object):
             TEMP_SQL_TITLE = INSERT_INFO_SYMBOL_SQL
             TEMP_SQL_VALUE = []
             # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                base = self._okex.getSymbolsLimits()
-                fees = self._okex.getTradeFees()
+            if exchange == "all" or self._Okex_exchange in exchange:
+                base = self._Okex.getSymbolsLimits()
+                fees = self._Okex.getTradeFees()
                 for b in base:
                     fees_key = fees[0]
                     TEMP_SQL_VALUE.append(
-                        (str(self._okexConf["exchange"]), str(b["fSymbol"]),
+                        (str(self._Okex_exchange), str(b["fSymbol"]),
                          str(b["tSymbol"]),
                          "NULL" if b["tSymbol_price"]["precision"] == '' else
                          float(b["tSymbol_price"]["precision"]),
@@ -528,17 +538,17 @@ class DB(object):
                          "NULL" if fees_key["taker"] == '' else float(
                              fees_key["taker"])))
             # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                base = self._binance.getSymbolsLimits()
-                fees = self._binance.getTradeFees()
+            if exchange == "all" or self._Binance_exchange in exchange:
+                base = self._Binance.getSymbolsLimits()
+                fees = self._Binance.getTradeFees()
                 for b in base:
                     fees_key = ''
                     for f in fees:
                         if f["symbol"] == b["fSymbol"] + b["tSymbol"]:
                             fees_key = f
                             TEMP_SQL_VALUE.append(
-                                (str(self._binanceConf["exchange"]),
-                                 str(b["fSymbol"]), str(b["tSymbol"]), "NULL"
+                                (str(self._Binance_exchange), str(
+                                    b["fSymbol"]), str(b["tSymbol"]), "NULL"
                                  if b["tSymbol_price"]["precision"] == '' else
                                  float(b["tSymbol_price"]["precision"]),
                                  "NULL" if b["tSymbol_price"]["max"] == '' else
@@ -582,19 +592,19 @@ class DB(object):
             TEMP_SQL_TITLE = INSERT_INFO_WITHDRAW_SQL
             TEMP_SQL_VALUE = []
             # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                base = self._okex.getAccountLimits()
+            if exchange == "all" or self._Okex_exchange in exchange:
+                base = self._Okex.getAccountLimits()
                 for b in base:
-                    TEMP_SQL_VALUE.append((str(self._okexConf["exchange"]),
+                    TEMP_SQL_VALUE.append((str(self._Okex_exchange),
                                            str(b["asset"]),
                                            str(b["can_deposite"]),
                                            str(b["can_withdraw"]),
                                            float(b["min_withdraw"])))
             # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                base = self._binance.getAccountLimits()
+            if exchange == "all" or self._Binance_exchange in exchange:
+                base = self._Binance.getAccountLimits()
                 for b in base:
-                    TEMP_SQL_VALUE.append((str(self._binanceConf["exchange"]),
+                    TEMP_SQL_VALUE.append((str(self._Binance_exchange),
                                            str(b["asset"]),
                                            str(b["can_deposite"]),
                                            str(b["can_withdraw"]),
@@ -621,22 +631,21 @@ class DB(object):
             TEMP_SQL_TITLE = INSERT_MARKET_DEPTH_SQL
             TEMP_SQL_VALUE = []
             # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                base = self._okex.getMarketOrderbookDepth(
+            if exchange == "all" or self._Okex_exchange in exchange:
+                base = self._Okex.getMarketOrderbookDepth(
                     fSymbol, tSymbol, limit)
                 TEMP_SQL_VALUE.append(
-                    (str(self._okexConf["exchange"]), int(base["timeStamp"]),
+                    (str(self._Okex_exchange), int(base["timeStamp"]),
                      str(base["fSymbol"]), str(base["tSymbol"]),
                      str(sqlite_escape(json.dumps(base["bid_price_size"]))),
                      str(sqlite_escape(json.dumps(base["ask_price_size"])))))
             # Binnance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                base = self._binance.getMarketOrderbookDepth(
+            if exchange == "all" or self._Binance_exchange in exchange:
+                base = self._Binance.getMarketOrderbookDepth(
                     fSymbol, tSymbol, limit)
                 TEMP_SQL_VALUE.append(
-                    (str(self._binanceConf["exchange"]),
-                     int(base["timeStamp"]), str(base["fSymbol"]),
-                     str(base["tSymbol"]),
+                    (str(self._Binance_exchange), int(base["timeStamp"]),
+                     str(base["fSymbol"]), str(base["tSymbol"]),
                      str(sqlite_escape(json.dumps(base["bid_price_size"]))),
                      str(sqlite_escape(json.dumps(base["ask_price_size"])))))
             # Huobi
@@ -664,27 +673,25 @@ class DB(object):
             TEMP_SQL_TITLE = INSERT_MARKET_KLINE_SQL
             TEMP_SQL_VALUE = []
             # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                base = self._okex.getMarketKline(fSymbol, tSymbol, interval,
+            if exchange == "all" or self._Okex_exchange in exchange:
+                base = self._Okex.getMarketKline(fSymbol, tSymbol, interval,
                                                  start, end)
                 for b in base:
                     TEMP_SQL_VALUE.append(
-                        (str(self._okexConf["exchange"]), int(b["timeStamp"]),
+                        (str(self._Okex_exchange), int(b["timeStamp"]),
                          str(b["fSymbol"]), str(b["tSymbol"]),
                          float(b["open"]), float(b["high"]), float(b["low"]),
                          float(b["close"]), float(b["volume"])))
             # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                base = self._binance.getMarketKline(fSymbol, tSymbol, interval,
+            if exchange == "all" or self._Binance_exchange in exchange:
+                base = self._Binance.getMarketKline(fSymbol, tSymbol, interval,
                                                     start, end)
                 for b in base:
-                    TEMP_SQL_VALUE.append((str(self._binanceConf["exchange"]),
-                                           int(b["timeStamp"]),
-                                           str(b["fSymbol"]),
-                                           str(b["tSymbol"]), float(b["open"]),
-                                           float(b["high"]), float(b["low"]),
-                                           float(b["close"]), float(
-                                               b["volume"])))
+                    TEMP_SQL_VALUE.append(
+                        (str(self._Binance_exchange), int(b["timeStamp"]),
+                         str(b["fSymbol"]), str(b["tSymbol"]),
+                         float(b["open"]), float(b["high"]), float(b["low"]),
+                         float(b["close"]), float(b["volume"])))
             # Huobi
             # if exchange == "all" or "huobi" in exchange:
             # to_be_continue
@@ -709,9 +716,9 @@ class DB(object):
             TEMP_SQL_TITLE = INSERT_MARKET_TIKER_SQL
             TEMP_SQL_VALUE = []
             # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                base = self._okex.getMarketOrderbookTicker(fSymbol, tSymbol)
-                TEMP_SQL_VALUE.append((str(self._okexConf["exchange"]),
+            if exchange == "all" or self._Okex_exchange in exchange:
+                base = self._Okex.getMarketOrderbookTicker(fSymbol, tSymbol)
+                TEMP_SQL_VALUE.append((str(self._Okex_exchange),
                                        int(base["timeStamp"]),
                                        str(base["fSymbol"]),
                                        str(base["tSymbol"]),
@@ -720,9 +727,9 @@ class DB(object):
                                        float(base["ask_one_price"]),
                                        float(base["ask_one_size"])))
             # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                base = self._binance.getMarketOrderbookTicker(fSymbol, tSymbol)
-                TEMP_SQL_VALUE.append((str(self._binanceConf["exchange"]),
+            if exchange == "all" or self._Binance_exchange in exchange:
+                base = self._Binance.getMarketOrderbookTicker(fSymbol, tSymbol)
+                TEMP_SQL_VALUE.append((str(self._Binance_exchange),
                                        int(base["timeStamp"]),
                                        str(base["fSymbol"]),
                                        str(base["tSymbol"]),
@@ -763,29 +770,27 @@ class DB(object):
             TEMP_SQL_TITLE = INSERT_TRADE_BACKTEST_HISTORY_SQL
             TEMP_SQL_VALUE = []
             # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
+            if exchange == "all" or self._Okex_exchange in exchange:
                 timeStamp = utcnow_timestamp()
                 order_id = '0x' + str(timeStamp)
                 status = 'filled'
                 if ratio == '':
-                    ratio = self._okex.getTradeFees()[0]["taker"]
+                    ratio = self._Okex.getTradeFees()[0]["taker"]
                 fee = float(ratio) * float(price) * float(quantity)
-                TEMP_SQL_VALUE.append((str(self._okexConf["exchange"]),
-                                       int(timeStamp), str(order_id),
-                                       str(status), str(type), str(fSymbol),
-                                       str(tSymbol), str(ask_or_bid),
-                                       float(price), float(quantity),
-                                       float(price), float(quantity),
-                                       float(fee)))
+                TEMP_SQL_VALUE.append(
+                    (str(self._Okex_exchange), int(timeStamp), str(order_id),
+                     str(status), str(type), str(fSymbol), str(tSymbol),
+                     str(ask_or_bid), float(price), float(quantity),
+                     float(price), float(quantity), float(fee)))
             # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
+            if exchange == "all" or self._Binance_exchange in exchange:
                 timeStamp = utcnow_timestamp()
                 order_id = '0x' + str(timeStamp)
                 status = 'filled'
                 if ratio == '':
-                    ratio = self._binance.getTradeFees()[0]["taker"]
+                    ratio = self._Binance.getTradeFees()[0]["taker"]
                 fee = float(ratio) * float(price) * float(quantity)
-                TEMP_SQL_VALUE.append((str(self._binanceConf["exchange"]),
+                TEMP_SQL_VALUE.append((str(self._Binance_exchange),
                                        int(timeStamp), str(order_id),
                                        str(status), str(type), str(fSymbol),
                                        str(tSymbol), str(ask_or_bid),
@@ -822,10 +827,10 @@ class DB(object):
             TEMP_SQL_TITLE = INSERT_TRADE_ORDER_HISTORY_SQL
             TEMP_SQL_VALUE = []
             # OKEX
-            if exchange == "all" or self._okexConf["exchange"] in exchange:
-                base = self._okex.createOrder(fSymbol, tSymbol, ask_or_bid,
+            if exchange == "all" or self._Okex_exchange in exchange:
+                base = self._Okex.createOrder(fSymbol, tSymbol, ask_or_bid,
                                               price, quantity, ratio, type)
-                TEMP_SQL_VALUE.append((str(self._okexConf["exchange"]),
+                TEMP_SQL_VALUE.append((str(self._Okex_exchange),
                                        int(base["timeStamp"]),
                                        str(base["order_id"]),
                                        str(base["status"]), str(base["type"]),
@@ -838,10 +843,10 @@ class DB(object):
                                        float(base["filled_size"]),
                                        float(base["fee"])))
             # Binance
-            if exchange == "all" or self._binanceConf["exchange"] in exchange:
-                base = self._binance.createOrder(fSymbol, tSymbol, ask_or_bid,
+            if exchange == "all" or self._Binance_exchange in exchange:
+                base = self._Binance.createOrder(fSymbol, tSymbol, ask_or_bid,
                                                  price, quantity, ratio, type)
-                TEMP_SQL_VALUE.append((str(self._binanceConf["exchange"]),
+                TEMP_SQL_VALUE.append((str(self._Binance_exchange),
                                        int(base["timeStamp"]),
                                        str(base["order_id"]),
                                        str(base["status"]), str(base["type"]),

@@ -10,10 +10,15 @@ from src.core.util.log import Logger
 from src.core.config import Config
 from src.core.coin.binance import Binance
 
-proxies = Config()._proxies
-binanceConf = Config()._binance
-binance = Binance(binanceConf["exchange"], binanceConf["api_key"],
-                  binanceConf["api_secret"], proxies["url"])
+# proxies
+_proxies = Config()._Proxies_url if Config()._Proxies_proxies else None
+# Binance
+_Binance_exchange = Config()._Binance_exchange
+_Binance_api_key = Config()._Binance_api_key
+_Binance_api_secret = Config()._Binance_api_secret
+
+binance = Binance(_Binance_exchange, _Binance_api_key,
+                        _Binance_api_secret, _proxies)
 logger = Logger()
 
 
@@ -21,16 +26,13 @@ class TestBinance(unittest.TestCase):
     def test_getConfig(self):
         res = binance.getConfig()
         logger.debug(res)
-        self.assertEqual(res["exchange"], binanceConf["exchange"])
-        self.assertEqual(res["api_key"], binanceConf["api_key"])
-        self.assertEqual(res["api_secret"], binanceConf["api_secret"])
-        self.assertEqual(res["proxies"], proxies["url"])
+        self.assertEqual(res["exchange"], _Binance_exchange)
 
     def test_setProxy(self):
-        binance.setProxy(proxies["url"])
+        binance.setProxy(_proxies)
         res = binance.getConfig()
         logger.debug(res)
-        self.assertEqual(res["proxies"], proxies["url"])
+        self.assertEqual(res["proxies"], _proxies)
 
     def test_getServerTime(self):
         res = binance.getServerTime()

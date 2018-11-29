@@ -17,8 +17,7 @@ from src.core.util.log import Logger
 class Status(object):
     def __init__(self):
         # Status ID
-        self.ID = Value('i', 0)
-        # columns = ["id", "type", "priority", "timeStamp", "args", "creat", "start", "end"]
+        self._id = Manager().Value('i', 0)
         self._status = Manager().list()
         # logger
         self._logger = Logger()
@@ -31,9 +30,9 @@ class Status(object):
         return res
 
     def calcEventID(self):
-        self.ID.value = self.ID.value + 1
-        self._logger.debug("src.core.engine.status.Status.calcEventID: { id=%s}" % self.ID.value)
-        return self.ID.value
+        self._id.value = self._id.value + 1
+        self._logger.debug("src.core.engine.status.Status.calcEventID: { id=%s}" % self._id.value)
+        return self._id.value
 
     def calcActiveEventNum(self):
         num = len(self._status)

@@ -19,8 +19,9 @@ from src.core.util.log import Logger
 class EventEngine(object):
     # 初始化事件事件驱动引擎
     def __init__(self):
-        # Config
-        self.__engineCof = Config()._engine
+        # Config init
+        self.__epoch = Config()._Engine_epoch
+        self.__maxProcess = Config()._Engine_maxProcess
         # 保存事件列表 按优先级不同分别保存
         self.__lowEnventQueue = Queue()
         self.__mediumEventQueue = Queue()
@@ -44,9 +45,9 @@ class EventEngine(object):
             "src.core.engine.engine.EventEngine.__mainProcess.__run")
         while self.__active.value:
             # 执行 Epoch
-            time.sleep(float(self.__engineCof["epoch"]))
+            time.sleep(self.__epoch)
             # 控制最大进程数量
-            if self.__status.calcActiveEventNum() > int(self.__engineCof["maxProcess"]):
+            if self.__status.calcActiveEventNum() > int(self.__maxProcess):
                 self.__logger.warn(
                     "src.core.engine.engine.EventEngine.__mainProcess.__run.__eventQueue: Too Many"
                 )

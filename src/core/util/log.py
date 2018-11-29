@@ -10,10 +10,8 @@ from src.core.config import Config
 
 class Logger(object):
 
-    _type = Config()._log["type"]
-    _fileStr = Config()._log["url"]
-    # _fileStr = time.strftime('%Y_%m_%d_%H_%M_%S', time.localtime(time.time())) + "_CCAT_Python_Spam.log"
-    _logfile = os.path.join(os.getcwd(),"log", _fileStr)
+    _type = Config()._Log_type
+    _logfile = Config()._Log_url
     _file_formatter = logging.Formatter('%(asctime)s pid=%(process)d %(levelname)-4s: %(message)s')
     _console_formatter = colorlog.ColoredFormatter(
         "%(log_color)s%(asctime)s pid=%(process)d %(levelname)-4s: %(reset)s%(blue)s%(message)s",
