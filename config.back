@@ -1,61 +1,111 @@
-{
-  "version": "CCAT 0.0.1",
-  "register": {
-    "user": "CCATer",
-    "email": "",
-    "phone": "",
-    "pwd": "",
-    "series": "",
-    "regCode": ""
-  },
-  "main":{
-    "exchanges" : ["okex", "binance"],
-    "baseCoin": "USDT",
-    "targetCoin": "USDT",
-    "excludeCoins": []
-  },
-  "engine":{
-    "epoch": "0.1"
-  },
-  "event":{
-    "lowTimeout": "30",
-    "mediumTimeout": "15",
-    "highTimeout": "5"
-  },
-  "log":{
-    "type":"CCAT",
-    "url":"CCAT_Python_Spam.log"
-  },
-  "db":{
-    "type": "sqlite3",
-    "url": "CCAT.db"
-  },
-  "proxies": {
-    "type": "http",
-    "url": {
-        "http": "http://127.0.0.1:8118",
-        "https": "http://127.0.0.1:8118"
-    }
-  },
-  "okex": {
-    "exchange": "okex",
-    "api_key": "",
-    "api_secret": "",
-    "passphrase": ""
-  },
-  "binance": {
-    "exchange": "binance",
-    "api_key": "",
-    "api_secret": ""
-  },
-  "huobi": {
-    "exchange": "huobi",
-    "api_key": "",
-    "api_secret": ""
-  },
-  "gate": {
-    "exchange": "gate",
-    "api_key": "",
-    "api_secret": ""
-  }
-}
+# Version Info
+[Version]
+  version = CCAT-Python 0.0.1
+
+# Author Info
+[Author]
+  author = Paul Zhang
+  email = paulplayergg@gmail.com
+
+# Register Settings
+# pwd: hash value, auto generate
+# series: auto generate
+# regCode: contact author to get regCode
+[Register]
+  user = CCATer
+  email =
+  phone =
+  pwd =
+  series =
+  regCode =
+
+# Debug Settings
+# debug: debug switch
+# level: should be one in [DEBUG INFO WARNING ERROR CRITICAL]
+[Debug]
+  debug = True
+  level = DEBUG
+
+# Main Settings
+# exchanges: exchanges will be listened
+# excludeCoins: exclude coins
+# baseCoin: base coin for value compare
+# basePriceVolume: min price volume turnover
+# basePriceTimeout: price valid period
+# symbolStartBaseCoin
+# symbolEndBaseCoin
+# symbolEndTimeout
+# apiEpochSaveBound: control api requests frequency
+[Main]
+  exchanges = okex, binance
+  excludeCoins =
+  baseCoin = USDT
+  basePriceVolume = 1000
+  basePriceTimeout = 30
+  symbolStartBaseCoin = 15
+  symbolEndBaseCoin = 20
+  symbolEndTimeout = 300
+  apiEpochSaveBound = 1.25
+
+# Engine Settings
+[Engine]
+  epoch = 0.1
+  maxProcess = 512
+
+# Event Settings
+[Event]
+  lowTimeout = 30
+  mediumTimeout = 15
+  highTimeout = 5
+
+# Log Settings
+# url: log file path
+# level should be one in [DEBUG INFO WARNING ERROR CRITICAL]
+[Log]
+  type = Default
+  url = log/CCAT_Python_Spam.log
+  level = INFO
+
+# DB Settings
+# url: db file path, ":memory:" for break through speed limit only
+# timeout: db connection timeout
+# synchronous: db PRAGMA settings
+[DB]
+  type = Sqlite3
+  url = CCAT.db
+  timeout = 30
+  synchronous = False
+
+# Proxies Settings
+# proxies: proxies switch
+# type: only http suport
+[Proxies]
+  proxies = True
+  type = http
+  http_proxy = http://127.0.0.1:8123
+  https_proxy = http://127.0.0.1:8123
+
+# Okex Settings
+[Okex]
+  exchange = okex
+  api_key =
+  api_secret =
+  passphrase =
+
+# Binance Settings
+[Binance]
+  exchange = binance
+  api_key =
+  api_secret =
+
+# Huobi Settings
+[Huobi]
+  exchange = huobi
+  api_key =
+  api_secret =
+
+# Gate Settings
+[Gate]
+  exchange = gate
+  api_key =
+  api_secret =

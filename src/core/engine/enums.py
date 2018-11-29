@@ -5,19 +5,20 @@ from src.core.util.helper import MyTemplate
 
 
 # event priority
-LOW_PRIORITY_ENVENT = "low" # p.start()
-MEDIUM_PRIORITY_ENVENT = "medium" # p.start()
-HIGH_PRIORITY_ENVENT = "high" # p.join()运行
+LOW_PRIORITY_EVENT = "low" # p.start()
+MEDIUM_PRIORITY_EVENT = "medium" # p.start()
+HIGH_PRIORITY_EVENT = "high" # p.join()运行
 
-# event timeout in milisenconds
-LOW_PRIORITY_ENVENT_TIMEOUT = float(Config()._event["lowTimeout"])*1000
-MEDIUM_PRIORITY_ENVENT_TIMEOUT = float(Config()._event["mediumTimeout"])*1000
-HIGH_PRIORITY_ENVENT_TIMEOUT = float(Config()._event["highTimeout"])*1000
+# event timeout in millisenconds
+LOW_PRIORITY_EVENT_TIMEOUT = Config()._Event_lowTimeout*1000
+MEDIUM_PRIORITY_EVENT_TIMEOUT = Config()._Event_mediumTimeout*1000
+HIGH_PRIORITY_EVENT_TIMEOUT = Config()._Event_highTimeout*1000
 
 
 # listen event list
 LISTEN_ACCOUNT_BALANCE_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "LISTEN_ACCOUNT_BALANCE_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
@@ -27,6 +28,7 @@ LISTEN_ACCOUNT_BALANCE_EVENT = MyTemplate("""
 
 LISTEN_ACCOUNT_WITHDRAW_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "LISTEN_ACCOUNT_WITHDRAW_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
@@ -36,6 +38,7 @@ LISTEN_ACCOUNT_WITHDRAW_EVENT = MyTemplate("""
 
 LISTEN_MARKET_KLINE_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "LISTEN_MARKET_KLINE_EVENT",
     "priority": "medium",
     "timeStamp": "$timeStamp",
@@ -45,6 +48,7 @@ LISTEN_MARKET_KLINE_EVENT = MyTemplate("""
 
 LISTEN_MARKET_TICKER_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "LISTEN_MARKET_TICKER_EVENT",
     "priority": "medium",
     "timeStamp": "$timeStamp",
@@ -54,6 +58,7 @@ LISTEN_MARKET_TICKER_EVENT = MyTemplate("""
 
 LISTEN_MARKET_DEPTH_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "LISTEN_MARKET_DEPTH_EVENT",
     "priority": "medium",
     "timeStamp": "$timeStamp",
@@ -64,6 +69,7 @@ LISTEN_MARKET_DEPTH_EVENT = MyTemplate("""
 # judge event list
 JUDGE_MARKET_KLINE_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "JUDGE_MARKET_KLINE_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
@@ -73,16 +79,18 @@ JUDGE_MARKET_KLINE_EVENT = MyTemplate("""
 
 JUDGE_MARKET_TICKER_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "JUDGE_MARKET_TICKER_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
-    "args": []
+    "args": ["$excludeCoins", "$baseCoin", "$symbolStartBaseCoin", "$symbolEndBaseCoin", "$symbolEndTimeout"]
 }
 """)
 
 # backtest event list
 BACKTEST_MARKET_KLINE_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "BACKTEST_MARKET_KLINE_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
@@ -92,6 +100,7 @@ BACKTEST_MARKET_KLINE_EVENT = MyTemplate("""
 
 BACKTEST_MARKET_TICKER_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "BACKTEST_MARKET_TICKER_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
@@ -102,6 +111,7 @@ BACKTEST_MARKET_TICKER_EVENT = MyTemplate("""
 # order event list
 ORDER_MARKET_KLINE_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "BACKTEST_MARKET_KLINE_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
@@ -111,6 +121,7 @@ ORDER_MARKET_KLINE_EVENT = MyTemplate("""
 
 ORDER_MARKET_TICKER_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "BACKTEST_MARKET_TICKER_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
@@ -120,6 +131,7 @@ ORDER_MARKET_TICKER_EVENT = MyTemplate("""
 
 ORDER_CONFIRM_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "ORDER_CONFIRM_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
@@ -129,6 +141,7 @@ ORDER_CONFIRM_EVENT = MyTemplate("""
 
 ORDER_CANCEL_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "ORDER_CANCEL_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
@@ -139,6 +152,7 @@ ORDER_CANCEL_EVENT = MyTemplate("""
 # statistic event list
 STATISTIC_BACKTEST_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "STATISTIC_BACKTEST_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
@@ -148,6 +162,7 @@ STATISTIC_BACKTEST_EVENT = MyTemplate("""
 
 STATISTIC_ORDER_EVENT = MyTemplate("""
 {
+    "id": "$id",
     "type": "STATISTIC_ORDER_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",

@@ -18,8 +18,8 @@ __logger = Logger()
 
 # Begin Test
 if __name__ == '__main__':
-    # constant var
-
+    # exec time
+    start = time.time()
     # clase instanse
     util = Util()
     sender = Sender(__eventEngine)
@@ -27,8 +27,8 @@ if __name__ == '__main__':
     register = Register(__eventEngine, handler)
 
     # app init
-    util.initDB()
-    util.initDBInfo()
+    # util.initDB()
+    # util.initDBInfo()
     util.initServerLimits()
 
     # register engine
@@ -38,13 +38,22 @@ if __name__ == '__main__':
     __eventEngine.start()
 
     # app update
-    util.updateDBAccountBalance(sender)
-    util.updateDBAccountWithdraw(sender)
+
+    # util.updateDBAccountBalance(sender)
+
+    # util.updateDBAccountWithdraw(sender)
+    # util.updateDBMarketKline(sender)
+
+    util.updateDBMarketTicker(sender)
 
 
-    # stop engine
-    time.sleep(5)
+    # # stop engine
+    time.sleep(2) # for engine begin handle
     __eventEngine.stop()
 
     # unregister engine
     register.unregister()
+
+    # exec time
+    end = time.time()
+    __logger.debug("tests.engine.test_listen finished in %0.3fs" % float(end-start))

@@ -4,17 +4,23 @@ import os
 import sys
 import unittest
 
-sys.path.append(os.getcwd())
-
 from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.util.log import Logger
 
+sys.path.append(os.getcwd())
 
-proxies = Config()._proxies
-okexConf = Config()._okex
-okex = Okex(okexConf["exchange"], okexConf["api_key"],
-            okexConf["api_secret"], okexConf["passphrase"], proxies["url"])
+
+# proxies
+_proxies = Config()._Proxies_url if Config()._Proxies_proxies else None
+# Okex
+_Okex_exchange = Config()._Okex_exchange
+_Okex_api_key = Config()._Okex_api_key
+_Okex_api_secret = Config()._Okex_api_secret
+_Okex_passphrase = Config()._Okex_passphrase
+
+okex = Okex(_Okex_exchange, _Okex_api_key, _Okex_api_secret, _Okex_passphrase,
+            _proxies)
 logger = Logger()
 
 
@@ -22,16 +28,13 @@ class TestOkex(unittest.TestCase):
     def test_getConfig(self):
         res = okex.getConfig()
         logger.debug(res)
-        self.assertEqual(res["exchange"], okexConf["exchange"])
-        self.assertEqual(res["api_key"], okexConf["api_key"])
-        self.assertEqual(res["api_secret"], okexConf["api_secret"])
-        self.assertEqual(res["proxies"], proxies["url"])
+        self.assertEqual(res["exchange"], _Okex_exchange)
 
     def test_setProxy(self):
-        okex.setProxy(proxies["url"])
+        okex.setProxy(_proxies)
         res = okex.getConfig()
         logger.debug(res)
-        self.assertEqual(res["proxies"], proxies["url"])
+        self.assertEqual(res["proxies"], _proxies)
 
     def test_getServerTime(self):
         res = okex.getServerTime()
@@ -64,7 +67,9 @@ class TestOkex(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     def test_getMarketKline(self):
-        res = okex.getMarketKline("STC", "BTC", "1m", "2018-11-11T00:00:00.000Z", "2018-11-11T01:00:00.000Z")
+        res = okex.getMarketKline("STC", "BTC", "1m",
+                                  "2018-11-11T00:00:00.000Z",
+                                  "2018-11-11T01:00:00.000Z")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -124,7 +129,8 @@ class TestOkex(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     def test_cancleBatchOrder(self):
-        res = okex.cancleBatchOrder("TRX", "USDT", ["1771669234011136", "1771614029560832"])
+        res = okex.cancleBatchOrder("TRX", "USDT",
+                                    ["1771669234011136", "1771614029560832"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 

@@ -14,28 +14,38 @@ __logger = Logger()
 
 
 # Init App
-def initAPP(self):
-    self._logger.debug("src.core.main.initAPP")
+def initAPP(util, sender):
+    __logger.debug("src.core.main.initAPP")
     try:
-        self.initDB()
-        self.initDBInfo()
-        self.initServerLimits()
+        util.initDB()
+        util.initDBInfo()
+        util.initServerLimits()
+        util.updateDBAccountBalance(sender)
+        util.updateDBAccountWithdraw(sender)
+        util.updateDBMarketKline(sender)
     except ApplicationException as err:
         errStr = "src.core.main.initAPP: %s" % ApplicationException(err)
-        self._logger.critical(errStr)
+        __logger.critical(errStr)
         raise ApplicationException(err)
 
 # Update App
-def updateAPP(self, listen):
-    pass
+def updateAPP(util, sender):
+    __logger.debug("src.core.main.initAPP")
+    try:
+        util.initServerLimits()
+        util.updateDBMarketKline(sender)
+    except ApplicationException as err:
+        errStr = "src.core.main.initAPP: %s" % ApplicationException(err)
+        __logger.critical(errStr)
+        raise ApplicationException(err)
 
 # Begin Test
 if __name__ == '__main__':
     # define var
-    util = Util(__eventEngine)
+    util = Util()
+    sender = Sender(__eventEngine)
+    handler = Handler(sender)
+    register = Register(__eventEngine, handler)
 
-    # app init
-    util.initAPP()
-
-    # app update
-    util.updateDBAccount()
+    # app
+    pass

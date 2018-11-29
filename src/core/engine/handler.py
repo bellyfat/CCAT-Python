@@ -13,143 +13,163 @@ class Handler(object):
         self._sender = sender
         self._logger = Logger()
 
-    def handleListenAccountBalanceEvent(self, event):
+    def handleListenAccountBalanceEvent(self, event, callback):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: "
-            + event.type)
+            "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         [exchange] = event.args
         try:
             db = DB()
             db.insertAccountBalanceHistory(exchange)
+            callback(event)
+            callback(event)
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: %s" % EngineException(
                 err)
             self._logger.error(errStr)
 
-    def handleListenAccountWithdrawEvent(self, event):
+    def handleListenAccountWithdrawEvent(self, event, callback):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: "
-            + event.type)
+            "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         [exchange, asset] = event.args
         try:
             db = DB()
             db.insertAccountWithdrawHistory(exchange, asset)
+            callback(event)
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: %s" % EngineException(
                 err)
             self._logger.error(errStr)
 
-    def handleListenMarketDepthEvent(self, event):
+    def handleListenMarketDepthEvent(self, event, callback):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenMarketDepthEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleListenMarketDepthEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         [exchange, fSymbol, tSymbol, limit] = event.args
         try:
             db = DB()
             db.insertMarketDepth(exchange, fSymbol, tSymbol, limit)
+            callback(event)
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleListenDepthEvent: %s" % EngineException(
                 err)
             self._logger.error(errStr)
 
-    def handleListenMarketKlineEvent(self, event):
+    def handleListenMarketKlineEvent(self, event, callback):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenMarketKlineEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleListenMarketKlineEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         [exchange, fSymbol, tSymbol, interval, start, end] = event.args
         try:
             db = DB()
             db.insertMarketKline(exchange, fSymbol, tSymbol, interval, start,
                                  end)
+            callback(event)
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleListenKlineEvent: %s" % EngineException(
                 err)
             self._logger.error(errStr)
 
-    def handleListenMarketTickerEvent(self, event):
+    def handleListenMarketTickerEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenMarketTickerEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleListenMarketTickerEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         # 接收事件
         [exchange, fSymbol, tSymbol] = event.args
         try:
             db = DB()
             db.insertMarketTicker(exchange, fSymbol, tSymbol)
+            callback(event)
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleListenTickerEvent: %s" % EngineException(
                 err)
             self._logger.error(errStr)
 
-    def handleJudgeMarketKlineEvent(self, event):
+    def handleJudgeMarketKlineEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
-    def handleJudgeMarketTickerEvent(self, event):
+    def handleJudgeMarketTickerEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleJudgeMarketTickerEvent: " +
             event.type)
         # 接收事件
-        pass
+        [excludeCoins, baseCoin, symbolStartBaseCoin, symbolEndBaseCoin, symbolEndTimeout] = event.args
+        try:
+            db = DB()
+            resTicker = db.getViewMarketTickerDisCurrent()
+            if resTicker != []:
+                resBalance = db.getViewAccountBalanceCurrent()
+                resSymbol = db.getViewMarketTickerSymbol()
+                # 判断是否产生交易信号
 
-    def handleBacktestMarketKlineEvent(self, event):
+
+            callback(event)
+        except DBException as err:
+            errStr = "src.core.engine.handler.Handler.handleJudgeMarketTickerEvent: %s" % EngineException(
+                err)
+            self._logger.error(errStr)
+
+    def handleBacktestMarketKlineEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleBacktestMarketKlineEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleBacktestMarketKlineEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
-    def handleBacktestMarketTickerEvent(self, event):
+    def handleBacktestMarketTickerEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleBacktestMarketTickerEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleBacktestMarketTickerEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
-    def handleOrderMarketKlineEvent(self, event):
+    def handleOrderMarketKlineEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderMarketKlineEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleOrderMarketKlineEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
-    def handleOrderMarketTickerEvent(self, event):
+    def handleOrderMarketTickerEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderMarketTickerEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleOrderMarketTickerEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
-    def handleOrderConfirmEvent(self, event):
+    def handleOrderConfirmEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderConfirmEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleOrderConfirmEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
-    def handleOrderCancelEvent(self, event):
+    def handleOrderCancelEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderCancelEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleOrderCancelEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
-    def handleStatisticBacktestEvent(self, event):
+    def handleStatisticBacktestEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleStatisticBacktestEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleStatisticBacktestEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
-    def handleStatisticOrderEvent(self, event):
+    def handleStatisticOrderEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleStatisticOrderEvent: " +
-            event.type)
+            "src.core.engine.handler.Handler.handleStatisticOrderEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
         # 接收事件
         pass

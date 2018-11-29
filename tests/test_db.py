@@ -6,7 +6,6 @@ import unittest
 sys.path.append(os.getcwd())
 
 from src.core.db.db import DB
-from src.core.config import Config
 from src.core.util.log import Logger
 
 db = DB()
@@ -31,13 +30,49 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewInfoSymbolPairs(self):
-        res = db.getViewInfoSymbolPairs("okex", "binance")
+    def test_getViewMarketTickerTraCurrent(self):
+        res = db.getViewAccountWithdrawCurrent()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewInfoSymbolItem(self):
-        res = db.getViewInfoSymbolItem("okex", "ETH", "USDT")
+    def test_getViewMarketTickerDisCurrent(self):
+        res = db.getViewAccountWithdrawCurrent()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getViewMarketTickerCurrent(self):
+        res = db.getViewAccountWithdrawCurrent()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getViewMarketKlineCurrent(self):
+        res = db.getViewAccountWithdrawCurrent()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getViewMarketTickerSymbol(self):
+        res = db.getViewAccountWithdrawCurrent()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getViewAccountWithdrawCurrent(self):
+        res = db.getViewAccountWithdrawCurrent()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+
+    def test_getViewMarketSymbolPairs(self):
+        res = db.getViewMarketSymbolPairs(["okex", "binance"])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getViewAccountBalanceCurrent(self):
+        res = db.getViewAccountBalanceCurrent()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getViewInfoSymbolPairs(self):
+        res = db.getViewInfoSymbolPairs(["okex", "binance"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -168,33 +203,41 @@ class TestDB(unittest.TestCase):
 # list of test_db
 # db test items
 test_db = [
-    # TestDB("test_initDB"),
-    # TestDB("test_getTables"),
-    # TestDB("test_creatTables"),
+    TestDB("test_initDB"),
+    TestDB("test_creatTables"),
+    TestDB("test_getTables"),
     TestDB("test_getAccountBalanceHistory"),
-    # TestDB("test_getAccountWithdrawHistory"),
-    # TestDB("test_getMarketDepth"),
-    # TestDB("test_getMarketKline"),
-    # TestDB("test_getMarketTicker"),
-    # TestDB("test_getInfoServer"),
-    # TestDB("test_getInfoSymbol"),
-    # TestDB("test_getInfoWithdraw"),
-    # TestDB("test_getTradeBacktestHistory"),
-    # TestDB("test_getTradeOrderHistory"),
-    # TestDB("test_insertAccountBalanceHistory"),
-    # TestDB("test_insertAccountWithdrawHistory"),
-    # TestDB("test_insertMarketDepth"),
-    # TestDB("test_insertMarketKline"),
-    # TestDB("test_insertMarketTicker"),
-    # TestDB("test_insertInfoServer"),
-    # TestDB("test_insertInfoSymbol"),
-    # TestDB("test_insertInfoWithdraw"),
-    # TestDB("test_insertTradeBacktestHistory"),
+    TestDB("test_getAccountWithdrawHistory"),
+    TestDB("test_getMarketDepth"),
+    TestDB("test_getMarketKline"),
+    TestDB("test_getMarketTicker"),
+    TestDB("test_getInfoServer"),
+    TestDB("test_getInfoSymbol"),
+    TestDB("test_getInfoWithdraw"),
+    TestDB("test_getTradeBacktestHistory"),
+    TestDB("test_getTradeOrderHistory"),
+    TestDB("test_insertAccountBalanceHistory"),
+    TestDB("test_insertAccountWithdrawHistory"),
+    TestDB("test_insertMarketDepth"),
+    TestDB("test_insertMarketKline"),
+    TestDB("test_insertMarketTicker"),
+    TestDB("test_insertInfoServer"),
+    TestDB("test_insertInfoSymbol"),
+    TestDB("test_insertInfoWithdraw"),
+    TestDB("test_insertTradeBacktestHistory"),
     # TestDB("test_insertTradeOrderHistory"),
-    # TestDB("test_getViews"),
-    # TestDB("test_creatViews"),
-    # TestDB("test_getViewInfoSymbolPairs"),
-    # TestDB("test_getViewInfoSymbolItem"),
+    TestDB("test_creatViews"),
+    TestDB("test_getViews"),
+    TestDB("test_getViewMarketTickerTraCurrent"),
+    TestDB("test_getViewMarketTickerDisCurrent"),
+    TestDB("test_getViewMarketTickerCurrent"),
+    TestDB("test_getViewMarketKlineCurrent"),
+    TestDB("test_getViewAccountBalanceCurrent"),
+    TestDB("test_getViewMarketTickerSymbol"),
+    TestDB("test_getViewAccountWithdrawCurrent"),
+    TestDB("test_getViewMarketSymbolPairs"),
+    TestDB("test_getViewAccountBalanceCurrent"),
+    TestDB("test_getViewInfoSymbolPairs"),
 ]
 
 if __name__ == "__main__":
