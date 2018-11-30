@@ -52,6 +52,8 @@ class Config(object):
                 'Main', 'symbolEndTimeout')
             Config._Main_apiEpochSaveBound = cf.getfloat(
                 'Main', 'apiEpochSaveBound')
+            Config._Main_apiResultEpoch = cf.getfloat(
+                'Main', 'apiResultEpoch')
             # Engine Settings
             Config._Engine_epoch = cf.getfloat('Engine', 'epoch')
             Config._Engine_maxProcess = cf.getfloat('Engine', 'maxProcess')

@@ -22,11 +22,11 @@ class Handler(object):
         try:
             db = DB()
             db.insertAccountBalanceHistory(exchange)
-            callback(event)
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: %s" % EngineException(
                 err)
             self._logger.error(errStr)
+        callback(event)
 
     def handleListenAccountWithdrawEvent(self, event, callback):
         # 接收事件
@@ -37,11 +37,11 @@ class Handler(object):
         try:
             db = DB()
             db.insertAccountWithdrawHistory(exchange, asset)
-            callback(event)
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: %s" % EngineException(
                 err)
             self._logger.error(errStr)
+        callback(event)
 
     def handleListenMarketDepthEvent(self, event, callback):
         # 接收事件
@@ -52,11 +52,11 @@ class Handler(object):
         try:
             db = DB()
             db.insertMarketDepth(exchange, fSymbol, tSymbol, limit)
-            callback(event)
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleListenDepthEvent: %s" % EngineException(
                 err)
             self._logger.error(errStr)
+        callback(event)
 
     def handleListenMarketKlineEvent(self, event, callback):
         # 接收事件
@@ -68,11 +68,11 @@ class Handler(object):
             db = DB()
             db.insertMarketKline(exchange, fSymbol, tSymbol, interval, start,
                                  end)
-            callback(event)
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleListenKlineEvent: %s" % EngineException(
                 err)
             self._logger.error(errStr)
+        callback(event)
 
     def handleListenMarketTickerEvent(self, event, callback):
         self._logger.debug(
@@ -83,11 +83,11 @@ class Handler(object):
         try:
             db = DB()
             db.insertMarketTicker(exchange, fSymbol, tSymbol)
-            callback(event)
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleListenTickerEvent: %s" % EngineException(
                 err)
             self._logger.error(errStr)
+        callback(event)
 
     def handleJudgeMarketKlineEvent(self, event, callback):
         self._logger.debug(
@@ -109,13 +109,12 @@ class Handler(object):
                 resBalance = db.getViewAccountBalanceCurrent()
                 resSymbol = db.getViewMarketTickerSymbol()
                 # 判断是否产生交易信号
-
-
-            callback(event)
+                pass
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleJudgeMarketTickerEvent: %s" % EngineException(
                 err)
             self._logger.error(errStr)
+        callback(event)
 
     def handleBacktestMarketKlineEvent(self, event, callback):
         self._logger.debug(

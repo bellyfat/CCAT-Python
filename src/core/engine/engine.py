@@ -226,11 +226,11 @@ class EventEngine(object):
     def getEventStatus(self, id):
         status = QUEUE_STATUS_EVENT
         res = self.__status.getActiveStatusTable()
-        if res != []:
+        if not res.empty:
             if id in res.index:
                 status = ACTIVE_STATUS_EVENT
         res = self.__status.getDoneStatusTable()
-        if res != []:
+        if not res.empty:
             if id in res.index:
                 status = DONE_STATUS_EVENT
         self.__logger.debug(
@@ -241,14 +241,14 @@ class EventEngine(object):
     def getActiveEventTable(self):
         res = self.__status.getActiveStatusTable()
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.getActiveEventTable:\n\t%s" %
+            "src.core.engine.engine.EventEngine.getActiveEventTable:\n%s" %
             res)
         return res
 
     def getDoneEventTable(self):
         res = self.__status.getDoneStatusTable()
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.getDoneEventTable:\n\t%s" %
+            "src.core.engine.engine.EventEngine.getDoneEventTable:\n%s" %
             res)
         return res
 

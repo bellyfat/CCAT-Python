@@ -29,6 +29,7 @@ class Util(object):
         self._symbolEndBaseCoin = Config()._Main_symbolEndBaseCoin
         self._symbolEndTimeout = Config()._Main_symbolEndTimeout
         self._apiEpochSaveBound = Config()._Main_apiEpochSaveBound
+        self._apiResultEpoch = Config()._Main_apiResultEpoch
         # ServerLimit
         self._serverLimits = None
         # Engine
@@ -89,9 +90,9 @@ class Util(object):
                 start = time.time()
                 while st != DONE_STATUS_EVENT:
                     st = self._engine.getEventStatus(id)
-                    time.sleep(0.5)
+                    time.sleep(self._apiResultEpoch)
                 if st != DONE_STATUS_EVENT:
-                    self._logger.warning("src.core.util.util.Util.updateDBAccountBalance: Timeout Error, waiting for event handler result timeout.")
+                    self._logger.warn("src.core.util.util.Util.updateDBAccountBalance: Timeout Error, waiting for event handler result timeout.")
         except (DBException, EngineException) as err:
             errStr = "src.core.util.util.Util.updateDBAccountBalance: %s" % ApplicationException(
                 err)
@@ -99,30 +100,63 @@ class Util(object):
             raise ApplicationException(err)
 
     # Account Withdraw 事件
-    def updateDBAccountWithdraw(self):
+    def threadSendListenAccountWithdrawEvent(self, res, epoch, async, timeout):
+        self._logger.debug(
+            "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}"
+            % (current_thread().name, res, epoch, async, timeout))
+        ids=[]
+        for r in res:
+            time.sleep(epoch)
+            id = self._sender.sendListenAccountWithdrawEvent(r["server"], r["asset"])
+            ids.append(id)
+        if not async:
+            st = QUEUE_STATUS_EVENT
+            for id in ids:
+                st = self._engine.getEventStatus(id)
+                start = time.time()
+                while st != DONE_STATUS_EVENT:
+                    st = self._engine.getEventStatus(id)
+                    time.sleep(self._apiResultEpoch)
+            if st != DONE_STATUS_EVENT:
+                self._logger.warn("src.core.util.util.Util.threadSendListenAccountWithdrawEvent: Timeout Error, waiting for event handler result timeout.")
+
+
+    def updateDBAccountWithdraw(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBAccountWithdraw")
         try:
             db = DB()
             ####################################################################
-            # fully update
-            ####################################################################
-            # res = db.getInfoWithdraw()
-            # for r in res:
-            #     if r["can_deposite"] == "True" or r["can_withdraw"] == "True":
-            #         time.sleep(float(self._apiEpochSaveBound) / float(
-            #             self._serverLimits.at[r["server"], "requests_second"]))
-            #         self._sender.sendListenAccountWithdrawEvent(
-            #             r["server"], r["asset"])
+            # fully update: bugs remain {okex res: invlid asset}
+            ###################################################################
+            # tds = []
+            # for server in self._exchanges:
+            #     epoch = float(self._apiEpochSaveBound) / float(
+            #         self._serverLimits.at[server, "info_second"])
+            #     res = db.getInfoWithdraw([server])
+            #     td = Thread(
+            #         target=self.threadSendListenAccountWithdrawEvent,
+            #         name="%s-thread" % server,
+            #         args=(res, epoch, async, timeout))
+            #     tds.append(td)
+            #     td.start()
+            # for td in tds:
+            #     td.join()
             ####################################################################
             # fast update
-            res = db.getAccountBalanceHistory()
-            for r in res:
-                time.sleep(
-                    float(self._apiEpochSaveBound) / float(
-                        self._serverLimits.at[r["server"], "requests_second"]))
-                self._sender.sendListenAccountWithdrawEvent(
-                    r["server"], r["asset"])
-
+            ####################################################################
+            tds = []
+            for server in self._exchanges:
+                epoch = float(self._apiEpochSaveBound) / float(
+                    self._serverLimits.at[server, "info_second"])
+                res = db.getAccountBalanceHistory([server])
+                td = Thread(
+                    target=self.threadSendListenAccountWithdrawEvent,
+                    name="%s-thread" % server,
+                    args=(res, epoch, async, timeout))
+                tds.append(td)
+                td.start()
+            for td in tds:
+                td.join()
         except (DBException, EngineException) as err:
             errStr = "src.core.util.util.Util.updateDBAccountWithdraw: %s" % ApplicationException(
                 err)
@@ -130,10 +164,10 @@ class Util(object):
             raise ApplicationException(err)
 
     # Market Kline 事件
-    def threadSendListenMarketKlineEvent(self, sender, res, start, end, epoch):
+    def threadSendListenMarketKlineEvent(self, res, start, end, epoch):
         self._logger.debug(
-            "src.core.util.util.Util.threadSendListenMarketKlineEvent: {thread: %s, sender: %s, res: %s, epoch: %s}"
-            % (current_thread().name, sender, type(res), epoch))
+            "src.core.util.util.Util.threadSendListenMarketKlineEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s}"
+            % (current_thread().name, res, epoch))
         for r in res:
             time.sleep(epoch)
             self._sender.sendListenMarketKlineEvent(
@@ -149,12 +183,12 @@ class Util(object):
             tds = []
             for server in self._exchanges:
                 epoch = float(self._apiEpochSaveBound) / float(
-                    self._serverLimits.at[server, "requests_second"])
+                    self._serverLimits.at[server, "market_second"])
                 res = db.getViewInfoSymbolPairs([server])
                 td = Thread(
                     target=self.threadSendListenMarketKlineEvent,
                     name="%s-thread" % server,
-                    args=(sender, res, timestamp_to_isoformat(start),
+                    args=(res, timestamp_to_isoformat(start),
                           timestamp_to_isoformat(end), epoch))
                 tds.append(td)
                 td.start()
@@ -167,10 +201,10 @@ class Util(object):
             raise ApplicationException(err)
 
     # Market ticker 事件
-    def threadSendListenMarketTickerEvent(self, sender, res, epoch):
+    def threadSendListenMarketTickerEvent(self, res, epoch):
         self._logger.debug(
-            "src.core.util.util.Util.threadSendListenMarketTickerEvent: {thread: %s, sender: %s, res: %s, epoch: %s}"
-            % (current_thread().name, sender, type(res), epoch))
+            "src.core.util.util.Util.threadSendListenMarketTickerEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s}"
+            % (current_thread().name, res, epoch))
         for r in res:
             time.sleep(epoch)
             self._sender.sendListenMarketTickerEvent(r["server"], r["fSymbol"],
@@ -183,12 +217,12 @@ class Util(object):
             tds = []
             for server in self._exchanges:
                 epoch = float(self._apiEpochSaveBound) / float(
-                    self._serverLimits.at[server, "requests_second"])
+                    self._serverLimits.at[server, "market_second"])
                 res = db.getViewMarketSymbolPairs([server])
                 td = Thread(
                     target=self.threadSendListenMarketTickerEvent,
                     name="%s-thread" % server,
-                    args=(sender, res, epoch))
+                    args=(res, epoch))
                 tds.append(td)
                 td.start()
             for td in tds:

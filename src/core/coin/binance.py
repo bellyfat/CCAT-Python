@@ -66,9 +66,9 @@ class Binance(Coin):
                 if b["rateLimitType"] == "ORDERS" and b["interval"] == "DAY":
                     orders_day = float(b["limit"])
             res = {
-                "requests_second": requests_second,
+                "info_second": requests_second,
+                "market_second": requests_second,
                 "orders_second": orders_second,
-                "orders_day": orders_day,
                 "webSockets_second": ''
             }
             return res

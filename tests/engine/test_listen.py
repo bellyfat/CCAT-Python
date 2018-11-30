@@ -39,9 +39,10 @@ if __name__ == '__main__':
 
     # app update
 
-    util.updateDBAccountBalance(async=False)
+    # util.updateDBAccountBalance(async=False)
 
-    # util.updateDBAccountWithdraw()
+    util.updateDBAccountWithdraw(async=False, timeout=10)
+
     # util.updateDBMarketKline()
     #
     # util.updateDBMarketTicker()

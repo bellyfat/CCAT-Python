@@ -238,12 +238,14 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getAccountBalanceHistory(self):
+    def getAccountBalanceHistory(self, exchange):
         self._logger.debug("src.core.db.db.DB.getAccountBalanceHistory")
-        self._logger.debug(GET_ACCOUNT_INFO_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_ACCOUNT_INFO_SQL)
+            TEMP_SQL = GET_ACCOUNT_BALANCE_HISTORY_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.error(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -347,22 +349,24 @@ class DB(object):
 
     def getAccountWithdrawHistory(self):
         self._logger.debug("src.core.db.db.DB.getAccountWithdrawHistory")
-        self._logger.debug(GET_WITHDRAW_HISTORY_SQL)
+        self._logger.debug(GET_ACCOUNT_WITHDRAW_HISTORY_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_WITHDRAW_HISTORY_SQL)
+            curs.execute(GET_ACCOUNT_WITHDRAW_HISTORY_SQL)
             res = curs.fetchall()
             curs.close()
             return res
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getInfoWithdraw(self):
+    def getInfoWithdraw(self, exchange):
         self._logger.debug("src.core.db.db.DB.getInfoWithdraw")
-        self._logger.debug(GET_INFO_WITHDRAW_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_INFO_WITHDRAW_SQL)
+            TEMP_SQL = GET_INFO_WITHDRAW_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.error(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -468,11 +472,11 @@ class DB(object):
                 res = self._Okex.getServerLimits()
                 TEMP_SQL_VALUE.append(
                     (str(self._Okex_exchange),
-                     "NULL" if res["requests_second"] == '' else float(
-                         res["requests_second"]),
-                     "NULL" if res["orders_second"] == '' else float(
-                         res["orders_second"]), "NULL"
-                     if res["orders_day"] == '' else float(res["orders_day"]),
+                     "NULL" if res["info_second"] == '' else float(
+                         res["info_second"]),
+                     "NULL" if res["market_second"] == '' else float(
+                         res["market_second"]), "NULL"
+                     if res["orders_second"] == '' else float(res["orders_second"]),
                      "NULL" if res["webSockets_second"] == '' else float(
                          res["webSockets_second"])))
             # Binance
@@ -480,11 +484,11 @@ class DB(object):
                 res = self._Binance.getServerLimits()
                 TEMP_SQL_VALUE.append(
                     (str(self._Binance_exchange),
-                     "NULL" if res["requests_second"] == '' else float(
-                         res["requests_second"]),
-                     "NULL" if res["orders_second"] == '' else float(
-                         res["orders_second"]), "NULL"
-                     if res["orders_day"] == '' else float(res["orders_day"]),
+                     "NULL" if res["info_second"] == '' else float(
+                         res["info_second"]),
+                     "NULL" if res["market_second"] == '' else float(
+                         res["market_second"]), "NULL"
+                     if res["orders_second"] == '' else float(res["orders_second"]),
                      "NULL" if res["webSockets_second"] == '' else float(
                          res["webSockets_second"])))
             # Huobi

@@ -21,16 +21,20 @@ class Status(object):
         res = [item for item in self._activeStatus]
         if res != []:
             res = pd.DataFrame(res).set_index(["id"], inplace=False)
+        else:
+            res = pd.DataFrame()
         self._logger.debug(
-            "src.core.engine.status.Status.getActiveStatusTable:\n\t%s" % res)
+            "src.core.engine.status.Status.getActiveStatusTable:\n%s" % res)
         return res
 
     def getDoneStatusTable(self):
         res = [item for item in self._doneStatus]
         if res != []:
             res = pd.DataFrame(res).set_index(["id"], inplace=False)
+        else:
+            res = pd.DataFrame()
         self._logger.debug(
-            "src.core.engine.status.Status.getDoneStatusTable:\n\t%s" % res)
+            "src.core.engine.status.Status.getDoneStatusTable:\n%s" % res)
         return res
 
     def calcEventID(self):

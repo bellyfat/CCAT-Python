@@ -51,9 +51,9 @@ GET_VIEW_ACCOUNT_WITHDRAW_CURRENT_SQL = '''
 '''
 
 # get db account info sql
-GET_ACCOUNT_INFO_SQL = '''
-    SELECT * FROM ACCOUNT_BALANCE_HISTORY;
-'''
+GET_ACCOUNT_BALANCE_HISTORY_SQL = Template('''
+    SELECT DISTINCT server, asset FROM ACCOUNT_BALANCE_HISTORY WHERE server IN $server;
+''')
 # get db market depth sql
 GET_MARKET_DEPTH_SQL = '''
     SELECT * FROM MARKET_DEPTH;
@@ -87,13 +87,13 @@ GET_TRADE_ORDER_HISTORY_SQL = '''
     SELECT * FROM TRADE_ORDER_HISTORY;
 '''
 # get db withdraw history sql
-GET_WITHDRAW_HISTORY_SQL = '''
+GET_ACCOUNT_WITHDRAW_HISTORY_SQL = '''
     SELECT * FROM ACCOUNT_WITHDRAW_HISTORY;
 '''
 # get db withdraw info sql
-GET_INFO_WITHDRAW_SQL = '''
-    SELECT * FROM INFO_WITHDRAW;
-'''
+GET_INFO_WITHDRAW_SQL = Template('''
+    SELECT * FROM INFO_WITHDRAW WHERE server IN $server AND can_deposite='True' AND can_withdraw='True';
+''')
 
 # insert db account balance history sql
 INSERT_ACCOUNT_BALANCE_HISTORY_SQL = '''
@@ -107,7 +107,7 @@ INSERT_ACCOUNT_WITHDRAW_HISTORY_SQL = '''
 
 # insert db info server sql
 INSERT_INFO_SERVER_SQL = '''
-    INSERT OR REPLACE INTO INFO_SERVER (server, requests_second, orders_second, orders_day, webSockets_second)
+    INSERT OR REPLACE INTO INFO_SERVER (server, info_second, market_second, orders_second, webSockets_second)
     VALUES (?, ?, ?, ?, ?)'''
 
 # insert db info symbol sql
@@ -245,9 +245,9 @@ CREATE_TABELS_SQL = '''
     );
     CREATE TABLE IF NOT EXISTS `INFO_SERVER` (
     	`server`	TEXT NOT NULL,
-    	`requests_second`	REAL,
+    	`info_second`	REAL,
+    	`market_second`	REAL,
     	`orders_second`	REAL,
-    	`orders_day`	REAL,
     	`webSockets_second`	REAL,
         PRIMARY KEY (server)
     );
