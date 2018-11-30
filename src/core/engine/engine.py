@@ -68,6 +68,7 @@ class EventEngine(object):
                                 "src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
                                 % (event.id, event.type, event.priority,
                                    event.timeStamp, event.args))
+                            self.__status.delEventStatus(event)
                             event = self.__highEventQueue.get(block=False)
                         else:
                             event = None
@@ -85,6 +86,7 @@ class EventEngine(object):
                                 "src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
                                 % (event.id, event.type, event.priority,
                                    event.timeStamp, event.args))
+                            self.__status.delEventStatus(event)
                             event = self.__mediumEventQueue.get(block=False)
                         else:
                             event = None
@@ -102,6 +104,7 @@ class EventEngine(object):
                                 "src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
                                 % (event.id, event.type, event.priority,
                                    event.timeStamp, event.args))
+                            self.__status.delEventStatus(event)
                             event = self.__lowEnventQueue.get(block=False)
                         else:
                             event = None
