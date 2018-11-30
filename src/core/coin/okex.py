@@ -50,7 +50,7 @@ class Okex(Coin):
                 OkexRequestException, OkexParamsException) as err:
             raise OkexException(err)
 
-    # perseconds qurry and orders rate limits
+    # per seconds qurry and orders rate limits
     def getServerLimits(self):
         '''
         REST API

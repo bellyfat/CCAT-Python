@@ -45,3 +45,17 @@ class Huobi(Coin):
             raise Exception(res)
         except Exception as err:
             raise HuobiException(err)
+
+    # per seconds qurry and orders rate limits
+    def getServerLimits(self):
+        '''
+        REST API
+        限制频率（每个接口，只针对交易api，行情api不限制）为10秒100次。
+        '''
+        res = {
+            "info_second": 60,
+            "market_second": 60,
+            "orders_second": 10,
+            "webSockets_second": ''
+        }
+        return res
