@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from HuobiDMUtil import http_get_request, api_key_post
+from .HuobiDMUtil import http_get_request, api_key_post
 
 class HuobiDM:
 

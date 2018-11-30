@@ -4,11 +4,11 @@ import os
 import sys
 import unittest
 
+sys.path.append(os.getcwd())
+
 from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.util.log import Logger
-
-sys.path.append(os.getcwd())
 
 
 # proxies

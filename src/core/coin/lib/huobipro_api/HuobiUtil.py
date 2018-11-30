@@ -12,6 +12,7 @@ import urllib.request
 import requests
 
 # API 请求地址
+COMMON_URL = "https://api.huobi.pro"
 MARKET_URL = "https://api.huobi.pro"
 TRADE_URL = "https://api.huobi.pro"
 
@@ -19,7 +20,7 @@ TRADE_URL = "https://api.huobi.pro"
 TIMEOUT = 10
 
 
-def http_get_request(url, params, add_to_headers=None):
+def http_get_request(url, params, add_to_headers=None, proxies=None):
     headers = {
         "Content-type":
         "application/x-www-form-urlencoded",
@@ -30,7 +31,8 @@ def http_get_request(url, params, add_to_headers=None):
         headers.update(add_to_headers)
     postdata = urllib.parse.urlencode(params)
     try:
-        response = requests.get(url, postdata, headers=headers, timeout=TIMEOUT)
+        response = requests.get(
+            url, postdata, headers=headers, proxies=proxies, timeout=TIMEOUT)
         if response.status_code == 200:
             return response.json()
         else:
@@ -39,7 +41,7 @@ def http_get_request(url, params, add_to_headers=None):
         raise Exception("httpGet failed, detail is:%s,%s" % (response.text, e))
 
 
-def http_post_request(url, params, add_to_headers=None):
+def http_post_request(url, params, add_to_headers=None, proxies=None):
     headers = {
         "Accept": "application/json",
         'Content-Type': 'application/json'
@@ -48,16 +50,18 @@ def http_post_request(url, params, add_to_headers=None):
         headers.update(add_to_headers)
     postdata = json.dumps(params)
     try:
-        response = requests.post(url, postdata, headers=headers, timeout=TIMEOUT)
+        response = requests.post(
+            url, postdata, headers=headers, proxies=proxies, timeout=TIMEOUT)
         if response.status_code == 200:
             return response.json()
         else:
             return
     except BaseException as e:
-        raise Exception("httpPost failed, detail is:%s,%s" % (response.text, e))
+        raise Exception(
+            "httpPost failed, detail is:%s,%s" % (response.text, e))
 
 
-def api_key_get(params, request_path, ACCESS_KEY, SECRET_KEY):
+def api_key_get(params, request_path, ACCESS_KEY, SECRET_KEY, proxies=None):
     method = 'GET'
     timestamp = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S')
     params.update({
@@ -74,10 +78,10 @@ def api_key_get(params, request_path, ACCESS_KEY, SECRET_KEY):
                                      SECRET_KEY)
 
     url = host_url + request_path
-    return http_get_request(url, params)
+    return http_get_request(url, params, add_to_headers=None, proxies=proxies)
 
 
-def api_key_post(params, request_path, ACCESS_KEY, SECRET_KEY):
+def api_key_post(params, request_path, ACCESS_KEY, SECRET_KEY, proxies=None):
     method = 'POST'
     timestamp = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S')
     params_to_sign = {
@@ -94,7 +98,7 @@ def api_key_post(params, request_path, ACCESS_KEY, SECRET_KEY):
                                              request_path, SECRET_KEY)
     url = host_url + request_path + '?' + urllib.parse.urlencode(
         params_to_sign)
-    return http_post_request(url, params)
+    return http_post_request(url, params, add_to_headers=None, proxies=proxies)
 
 
 def createSign(pParams, method, host_url, request_path, secret_key):

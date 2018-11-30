@@ -106,6 +106,7 @@
   exchange = huobi
   api_key =
   api_secret =
+  acct_id = 
 
 # Gate Settings
 [Gate]

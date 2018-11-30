@@ -108,6 +108,7 @@ class Config(object):
             Config._Huobi_exchange = str(cf['Huobi']['exchange'])
             Config._Huobi_api_key = str(cf['Huobi']['api_key'])
             Config._Huobi_api_secret = str(cf['Huobi']['api_secret'])
+            Config._Huobi_acct_id = str(cf['Huobi']['acct_id'])
             # Gate Setting
             Config._Gate_exchange = str(cf['Gate']['exchange'])
             Config._Gate_api_key = str(cf['Gate']['api_key'])
