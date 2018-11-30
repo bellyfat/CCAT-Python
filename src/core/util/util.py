@@ -219,16 +219,30 @@ class Util(object):
             raise ApplicationException(err)
 
     # Market ticker 事件
-    def threadSendListenMarketTickerEvent(self, res, epoch):
+    def threadSendListenMarketTickerEvent(self, res, epoch, async, timeout):
         self._logger.debug(
-            "src.core.util.util.Util.threadSendListenMarketTickerEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s}"
-            % (current_thread().name, res, epoch))
+            "src.core.util.util.Util.threadSendListenMarketTickerEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}"
+            % (current_thread().name, res, epoch, async, timeout))
+        ids = []
         for r in res:
             time.sleep(epoch)
             self._sender.sendListenMarketTickerEvent(r["server"], r["fSymbol"],
                                                      r["tSymbol"])
+            ids.append(id)
+        if not async:
+            st = QUEUE_STATUS_EVENT
+            startTime = time.time()
+            for id in ids:
+                st = self._engine.getEventStatus(id)
+                while st != DONE_STATUS_EVENT  and time.time()-startTime < timeout:
+                    st = self._engine.getEventStatus(id)
+                    time.sleep(self._apiResultEpoch)
+            if st != DONE_STATUS_EVENT:
+                self._logger.warn(
+                    "src.core.util.util.Util.threadSendListenMarketTickerEvent: Timeout Error, waiting for event handler result timeout."
+                )
 
-    def updateDBMarketTicker(self):
+    def updateDBMarketTicker(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBMarketTicker")
         try:
             db = DB()
@@ -240,7 +254,7 @@ class Util(object):
                 td = Thread(
                     target=self.threadSendListenMarketTickerEvent,
                     name="%s-thread" % server,
-                    args=(res, epoch))
+                    args=(res, epoch, async, timeout))
                 tds.append(td)
                 td.start()
             for td in tds:
