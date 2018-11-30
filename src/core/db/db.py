@@ -244,7 +244,7 @@ class DB(object):
             curs = self._conn.cursor()
             TEMP_SQL = GET_ACCOUNT_BALANCE_HISTORY_SQL.substitute(
                 server=exchange).replace('[', '(').replace(']', ')')
-            self._logger.error(TEMP_SQL)
+            self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
@@ -365,7 +365,7 @@ class DB(object):
             curs = self._conn.cursor()
             TEMP_SQL = GET_INFO_WITHDRAW_SQL.substitute(
                 server=exchange).replace('[', '(').replace(']', ')')
-            self._logger.error(TEMP_SQL)
+            self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()

@@ -5,6 +5,7 @@ import time
 from threading import Thread, current_thread
 
 import pandas as pd
+
 from src.core.config import Config
 from src.core.db.db import DB
 from src.core.engine.enums import (ACTIVE_STATUS_EVENT, DONE_STATUS_EVENT,
@@ -88,7 +89,8 @@ class Util(object):
             if not async:
                 st = self._engine.getEventStatus(id)
                 startTime = time.time()
-                while st != DONE_STATUS_EVENT and time.time()-startTime < timeout:
+                while st != DONE_STATUS_EVENT and time.time(
+                ) - startTime < timeout:
                     st = self._engine.getEventStatus(id)
                     time.sleep(self._apiResultEpoch)
                 if st != DONE_STATUS_EVENT:
@@ -117,7 +119,8 @@ class Util(object):
             startTime = time.time()
             for id in ids:
                 st = self._engine.getEventStatus(id)
-                while st != DONE_STATUS_EVENT  and time.time()-startTime < timeout:
+                while st != DONE_STATUS_EVENT and time.time(
+                ) - startTime < timeout:
                     st = self._engine.getEventStatus(id)
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
@@ -168,11 +171,12 @@ class Util(object):
             raise ApplicationException(err)
 
     # Market Kline 事件
-    def threadSendListenMarketKlineEvent(self, res, start, end, epoch, async, timeout):
+    def threadSendListenMarketKlineEvent(self, res, start, end, epoch, async,
+                                         timeout):
         self._logger.debug(
             "src.core.util.util.Util.threadSendListenMarketKlineEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}"
             % (current_thread().name, res, epoch, async, timeout))
-        ids=[]
+        ids = []
         for r in res:
             time.sleep(epoch)
             id = self._sender.sendListenMarketKlineEvent(
@@ -183,7 +187,8 @@ class Util(object):
             startTime = time.time()
             for id in ids:
                 st = self._engine.getEventStatus(id)
-                while st != DONE_STATUS_EVENT  and time.time()-startTime < timeout:
+                while st != DONE_STATUS_EVENT and time.time(
+                ) - startTime < timeout:
                     st = self._engine.getEventStatus(id)
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
@@ -226,15 +231,16 @@ class Util(object):
         ids = []
         for r in res:
             time.sleep(epoch)
-            self._sender.sendListenMarketTickerEvent(r["server"], r["fSymbol"],
-                                                     r["tSymbol"])
+            id = self._sender.sendListenMarketTickerEvent(
+                r["server"], r["fSymbol"], r["tSymbol"])
             ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
             startTime = time.time()
             for id in ids:
                 st = self._engine.getEventStatus(id)
-                while st != DONE_STATUS_EVENT  and time.time()-startTime < timeout:
+                while st != DONE_STATUS_EVENT and time.time(
+                ) - startTime < timeout:
                     st = self._engine.getEventStatus(id)
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
@@ -266,12 +272,23 @@ class Util(object):
             raise ApplicationException(err)
 
     # Judge ticker 事件
-    def updateDBJudgeMarketTicker(self):
+    def updateDBJudgeMarketTicker(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBJudgeMarketTicker")
         try:
-            self._sender.sendJudgeMarketTickerEvent(
+            id = self._sender.sendJudgeMarketTickerEvent(
                 self._excludeCoins, self._baseCoin, self._symbolStartBaseCoin,
                 self._symbolEndBaseCoin, self._symbolEndTimeout)
+            if not async:
+                st = self._engine.getEventStatus(id)
+                startTime = time.time()
+                while st != DONE_STATUS_EVENT and time.time(
+                ) - startTime < timeout:
+                    st = self._engine.getEventStatus(id)
+                    time.sleep(self._apiResultEpoch)
+                if st != DONE_STATUS_EVENT:
+                    self._logger.warn(
+                        "src.core.util.util.Util.updateDBJudgeMarketTicker: Timeout Error, waiting for event handler result timeout."
+                    )
         except Exception as err:
             errStr = "src.core.util.util.Util.updateDBJudgeMarketTicker: %s" % ApplicationException(
                 err)

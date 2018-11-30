@@ -36,6 +36,7 @@
 # symbolEndBaseCoin
 # symbolEndTimeout
 # apiEpochSaveBound: control api requests frequency
+# apiResultEpoch: control api event async=False timeout
 [Main]
   exchanges = okex, binance
   excludeCoins =

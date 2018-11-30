@@ -94,7 +94,14 @@ class Handler(object):
             "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         # 接收事件
-        pass
+        [args] = event.args
+        try:
+            pass
+        except DBException as err:
+            errStr = "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: %s" % EngineException(
+                err)
+            self._logger.error(errStr)
+        callback(event)
 
     def handleJudgeMarketTickerEvent(self, event, callback):
         self._logger.debug(
@@ -104,8 +111,11 @@ class Handler(object):
         [excludeCoins, baseCoin, symbolStartBaseCoin, symbolEndBaseCoin, symbolEndTimeout] = event.args
         try:
             db = DB()
-            resTicker = db.getViewMarketTickerDisCurrent()
-            if resTicker != []:
+            resDis = db.getViewMarketTickerDisCurrent()
+            resTra = db.getViewMarketTickerTraCurrent()
+            self._logger.info("view_market_ticker_dis_current: \n%s" % resDis)
+            self._logger.info("view_market_ticker_tra_current: \n%s" % resTra)
+            if resDis != []:
                 resBalance = db.getViewAccountBalanceCurrent()
                 resSymbol = db.getViewMarketTickerSymbol()
                 # 判断是否产生交易信号

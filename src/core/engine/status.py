@@ -52,7 +52,7 @@ class Status(object):
         return num
 
     def addEventStatus(self, event):
-        self._logger.info(
+        self._logger.debug(
             "src.core.engine.status.Status.addEventStatus: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
             % (event.id, event.type, event.priority, event.timeStamp,
                event.args))
@@ -66,7 +66,7 @@ class Status(object):
         self._activeStatus.append(item)
 
     def delEventStatus(self, event):
-        self._logger.info(
+        self._logger.debug(
             "src.core.engine.status.Status.delEventStatus: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
             % (event.id, event.type, event.priority, event.timeStamp,
                event.args))
