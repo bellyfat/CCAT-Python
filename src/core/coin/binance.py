@@ -5,6 +5,7 @@
 
 import json
 import math
+from decimal import ROUND_DOWN, ROUND_UP, Decimal
 
 import requests
 import urllib3
@@ -164,20 +165,55 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
-    def getMarketOrderbookTicker(self, fSymbol, tSymbol, **kwargs):
+    def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth='',
+                                 **kwargs):
         try:
+            if aggDepth != '':
+                if float(aggDepth) > 1:
+                    raise Exception("aggDepth must < 1.0")
             symbol = fSymbol + tSymbol
             timeStamp = self._client.get_server_time()
-            ticker = self._client.get_orderbook_ticker(symbol=symbol, **kwargs)
-            res = {
-                "timeStamp": timeStamp["serverTime"],
-                "fSymbol": fSymbol,
-                "tSymbol": tSymbol,
-                "bid_one_price": ticker["bidPrice"],
-                "bid_one_size": ticker["bidQty"],
-                "ask_one_price": ticker["askPrice"],
-                "ask_one_size": ticker["askQty"]
-            }
+            base = self._client.get_order_book(
+                symbol=symbol, limit=100, **kwargs)
+            if aggDepth == '':
+                res = {
+                    "timeStamp": timeStamp,
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "bid_one_price": float(base["bids"][0][0]),
+                    "bid_one_size": float(base["bids"][0][1]),
+                    "ask_one_price": float(base["asks"][0][0]),
+                    "ask_one_size": float(base["asks"][0][1])
+                }
+            else:
+                # calc bids
+                aggPrice = Decimal(base["bids"][0][0]).quantize(
+                    Decimal(str(aggDepth)), rounding=ROUND_DOWN)
+                bid_one_price = float(aggPrice)
+                bid_one_size = 0.0
+                for bid in base["bids"]:
+                    if float(bid[0]) < float(aggPrice):
+                        break
+                    bid_one_size = bid_one_size + float(bid[1])
+                # calc asks
+                aggPrice = Decimal(base["asks"][0][0]).quantize(
+                    Decimal(str(aggDepth)), rounding=ROUND_UP)
+                ask_one_price = float(aggPrice)
+                ask_one_size = 0.0
+                for ask in base["asks"]:
+                    if float(ask[0]) > float(aggPrice):
+                        break
+                    ask_one_size = ask_one_size + float(ask[1])
+                res = {
+                    "timeStamp": timeStamp,
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "bid_one_price": bid_one_price,
+                    "bid_one_size": bid_one_size,
+                    "ask_one_price": ask_one_price,
+                    "ask_one_size": ask_one_size
+                }
+
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
@@ -191,7 +227,6 @@ class Binance(Coin):
             timeStamp = self._client.get_server_time()
             ticker = self._client.get_order_book(
                 symbol=symbol, limit=limit, **kwargs)
-
             res = {
                 "timeStamp": timeStamp["serverTime"],
                 "fSymbol": fSymbol,

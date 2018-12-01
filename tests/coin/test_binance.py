@@ -55,7 +55,7 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getMarketOrderbookTicker(self):
-        res = binance.getMarketOrderbookTicker("IOST", "BTC")
+        res = binance.getMarketOrderbookTicker("ETH", "USDT", 0.1)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 

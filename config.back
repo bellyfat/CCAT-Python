@@ -32,6 +32,8 @@
 # baseCoin: base coin for value compare
 # basePriceVolume: min price volume turnover
 # basePriceTimeout: price valid period
+# marketDepthLimit: market depth limit param
+# marketTickerAggStep: market ticker aggregate param
 # symbolStartBaseCoin
 # symbolEndBaseCoin
 # symbolEndTimeout
@@ -43,6 +45,8 @@
   baseCoin = USDT
   basePriceVolume = 1000
   basePriceTimeout = 30
+  marketDepthLimit = 20
+  marketTickerAggStep = 100
   symbolStartBaseCoin = 15
   symbolEndBaseCoin = 20
   symbolEndTimeout = 300
@@ -50,12 +54,18 @@
   apiResultEpoch = 0.5
 
 # Engine Settings
+# epoch: engine loop epoch
+# maxProcess: engine handle max process
+# cacheSize: engine process result cache size
 [Engine]
   epoch = 0.1
   maxProcess = 512
   cacheSize = 1024
 
 # Event Settings
+# lowTimeout: low event timeout
+# mediumTimeout: medium event timeout
+# highTimeout: high event timeout
 [Event]
   lowTimeout = 60
   mediumTimeout = 30
@@ -106,7 +116,7 @@
   exchange = huobi
   api_key =
   api_secret =
-  acct_id = 
+  acct_id =
 
 # Gate Settings
 [Gate]

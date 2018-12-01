@@ -146,10 +146,13 @@ class Okex(Coin):
             raise OkexException(err)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
-    def getMarketOrderbookTicker(self, fSymbol, tSymbol):
+    def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth=''):
         try:
-            ticker = self._spotAPI.get_depth(fSymbol + "-" + tSymbol, '1', '',
-                                             self._proxies)
+            if aggDepth != '':
+                if float(aggDepth) > 1:
+                    raise Exception("aggDepth must < 1.0")
+            ticker = self._spotAPI.get_depth(fSymbol + "-" + tSymbol, '1',
+                                             aggDepth, self._proxies)
             res = {
                 "timeStamp": date_to_milliseconds(ticker["timestamp"]),
                 "fSymbol": fSymbol,
@@ -165,7 +168,7 @@ class Okex(Coin):
             raise OkexException(err)
 
     # a specific symbol's orderbook with depth
-    def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=100):
+    def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=''):
         '''
         {
             "timestamp": "2016-12-08T20:09:05.508883Z",

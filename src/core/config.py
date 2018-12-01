@@ -47,7 +47,10 @@ class Config(object):
                                                        'basePriceVolume')
             Config._Main_basePriceTimeout = cf.getfloat(
                 'Main', 'basePriceTimeout')
-
+            Config._Main_marketDepthLimit = cf.getint(
+                'Main', 'marketDepthLimit')
+            Config._Main_marketTickerAggStep = cf.getint(
+                'Main', 'marketTickerAggStep')
             Config._Main_symbolStartBaseCoin = cf.getfloat(
                 'Main', 'symbolStartBaseCoin')
             Config._Main_symbolEndBaseCoin = cf.getfloat(
@@ -59,8 +62,8 @@ class Config(object):
             Config._Main_apiResultEpoch = cf.getfloat('Main', 'apiResultEpoch')
             # Engine Settings
             Config._Engine_epoch = cf.getfloat('Engine', 'epoch')
-            Config._Engine_maxProcess = cf.getfloat('Engine', 'maxProcess')
-            Config._Engine_cacheSize = cf.getfloat('Engine', 'cacheSize')
+            Config._Engine_maxProcess = cf.getint('Engine', 'maxProcess')
+            Config._Engine_cacheSize = cf.getint('Engine', 'cacheSize')
             # Event Settings
             Config._Event_lowTimeout = cf.getfloat('Event', 'lowTimeout')
             Config._Event_mediumTimeout = cf.getfloat('Event', 'mediumTimeout')

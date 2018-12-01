@@ -24,8 +24,8 @@ class Util(object):
         self._exchanges = Config()._Main_exchanges
         self._excludeCoins = Config()._Main_excludeCoins
         self._baseCoin = Config()._Main_baseCoin
-        # self._basePriceVolume = Config()._Main_basePriceVolume
-        # self._basePriceTimeout = Config()._Main_basePriceTimeout
+        self._marketDepthLimit = Config()._Main_marketDepthLimit
+        self._marketTickerAggStep = Config()._Main_marketTickerAggStep
         self._symbolStartBaseCoin = Config()._Main_symbolStartBaseCoin
         self._symbolEndBaseCoin = Config()._Main_symbolEndBaseCoin
         self._symbolEndTimeout = Config()._Main_symbolEndTimeout
@@ -169,6 +169,56 @@ class Util(object):
                 err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
+
+    # Market Depth 事件
+    def threadSendListenMarketDepthEvent(self, res, epoch, async, timeout):
+        self._logger.debug(
+            "src.core.util.util.Util.threadSendListenMarketDepthEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}"
+            % (current_thread().name, res, epoch, async, timeout))
+        ids = []
+        for r in res:
+            time.sleep(epoch)
+            id = self._sender.sendListenMarketDepthEvent(
+                r["server"], r["fSymbol"], r["tSymbol"], self._marketDepthLimit)
+            ids.append(id)
+        if not async:
+            st = QUEUE_STATUS_EVENT
+            startTime = time.time()
+            for id in ids:
+                st = self._engine.getEventStatus(id)
+                while st != DONE_STATUS_EVENT and time.time(
+                ) - startTime < timeout:
+                    st = self._engine.getEventStatus(id)
+                    time.sleep(self._apiResultEpoch)
+            if st != DONE_STATUS_EVENT:
+                self._logger.warn(
+                    "src.core.util.util.Util.threadSendListenMarketDepthEvent: Timeout Error, waiting for event handler result timeout."
+                )
+
+
+    def updateDBMarketDepth(self, async=True, timeout=30):
+        self._logger.debug("src.core.util.util.Util.updateDBMarketDepth")
+        try:
+            db = DB()
+            tds = []
+            for server in self._exchanges:
+                epoch = float(self._apiEpochSaveBound) / float(
+                    self._serverLimits.at[server, "market_second"])
+                res = db.getViewMarketSymbolPairs([server])
+                td = Thread(
+                    target=self.threadSendListenMarketDepthEvent,
+                    name="%s-thread" % server,
+                    args=(res, epoch, async, timeout))
+                tds.append(td)
+                td.start()
+            for td in tds:
+                td.join()
+        except (DBException, EngineException) as err:
+            errStr = "src.core.util.util.Util.updateDBMarketKline: %s" % ApplicationException(
+                err)
+            self._logger.critical(errStr)
+            raise ApplicationException(err)
+
 
     # Market Kline 事件
     def threadSendListenMarketKlineEvent(self, res, start, end, epoch, async,

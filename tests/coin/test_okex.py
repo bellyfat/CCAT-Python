@@ -57,7 +57,7 @@ class TestOkex(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getMarketOrderbookTicker(self):
-        res = okex.getMarketOrderbookTicker("STC", "BTC")
+        res = okex.getMarketOrderbookTicker("ETH", "USDT", 0.1)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 

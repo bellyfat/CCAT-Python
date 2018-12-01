@@ -41,6 +41,25 @@ class TestHuobi(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, int)
 
+    def test_getServerLimits(self):
+        res = huobi.getServerLimits()
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_getServerSymbols(self):
+        res = huobi.getServerSymbols()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getSymbolsLimits(self):
+        res = huobi.getSymbolsLimits()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getMarketOrderbookTicker(self):
+        res = huobi.getMarketOrderbookTicker("ETH", "USDT", 0.1)
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
 
 
 if __name__ == "__main__":
