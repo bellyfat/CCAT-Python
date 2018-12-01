@@ -21,10 +21,10 @@ if __name__ == '__main__':
     # exec time
     start = time.time()
     # clase instanse
-    util = Util()
     sender = Sender(__eventEngine)
-    handler = Handler(sender)
+    handler = Handler(__eventEngine)
     register = Register(__eventEngine, handler)
+    util = Util(__eventEngine, sender)
 
     # app init
     util.initServerLimits()
@@ -36,7 +36,9 @@ if __name__ == '__main__':
     __eventEngine.start()
 
     # app update
-    util.updateDBJudgeMarketTicker(sender)
+
+    # util.updateDBMarketTicker(async=False)
+    util.updateDBJudgeMarketTicker(async=False)
 
     # # stop engine
     time.sleep(2) # for engine begin handle

@@ -21,14 +21,14 @@ if __name__ == '__main__':
     # exec time
     start = time.time()
     # clase instanse
-    util = Util()
     sender = Sender(__eventEngine)
-    handler = Handler(sender)
+    handler = Handler(__eventEngine)
     register = Register(__eventEngine, handler)
+    util = Util(__eventEngine, sender)
 
     # app init
-    # util.initDB()
-    # util.initDBInfo()
+    util.initDB()
+    util.initDBInfo()
     util.initServerLimits()
 
     # register engine
@@ -39,12 +39,15 @@ if __name__ == '__main__':
 
     # app update
 
-    # util.updateDBAccountBalance(sender)
+    util.updateDBAccountBalance(async=False)
+    
+    util.updateDBAccountWithdraw()
 
-    # util.updateDBAccountWithdraw(sender)
-    # util.updateDBMarketKline(sender)
+    util.updateDBMarketKline(async=False)
 
-    util.updateDBMarketTicker(sender)
+    util.updateDBMarketDepth()
+
+    util.updateDBMarketTicker()
 
 
     # # stop engine

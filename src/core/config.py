@@ -3,7 +3,7 @@
 import configparser
 import os
 
-from src.core.util.exceptions import ConfigException
+from src.core.util.exceptions import ConfigException, ApplicationException
 
 
 class Config(object):
@@ -32,18 +32,25 @@ class Config(object):
             Config._Debug_debug = cf.getboolean(
                 'Debug', 'debug', fallback=True)
             Config._Debug_level = str(cf['Debug']['level'])
-            if Config._Debug_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+            if Config._Debug_level not in [
+                    'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
+            ]:
                 raise Exception(
                     "Config Debug Settings Error, debug level not suport.")
             # Main Settings
-            Config._Main_exchanges = str(cf['Main']['exchanges']).replace(' ','').split(',')
-            Config._Main_excludeCoins = str(cf['Main']['excludeCoins']).replace(' ','').split(',')
+            Config._Main_exchanges = str(cf['Main']['exchanges']).replace(
+                ' ', '').split(',')
+            Config._Main_excludeCoins = str(
+                cf['Main']['excludeCoins']).replace(' ', '').split(',')
             Config._Main_baseCoin = str(cf['Main']['baseCoin'])
             Config._Main_basePriceVolume = cf.getfloat('Main',
                                                        'basePriceVolume')
-            Config._Main_basePriceTimeout = cf.getfloat('Main',
-                                                       'basePriceTimeout')
-
+            Config._Main_basePriceTimeout = cf.getfloat(
+                'Main', 'basePriceTimeout')
+            Config._Main_marketDepthLimit = cf.getint(
+                'Main', 'marketDepthLimit')
+            Config._Main_marketTickerAggStep = cf.getint(
+                'Main', 'marketTickerAggStep')
             Config._Main_symbolStartBaseCoin = cf.getfloat(
                 'Main', 'symbolStartBaseCoin')
             Config._Main_symbolEndBaseCoin = cf.getfloat(
@@ -52,9 +59,11 @@ class Config(object):
                 'Main', 'symbolEndTimeout')
             Config._Main_apiEpochSaveBound = cf.getfloat(
                 'Main', 'apiEpochSaveBound')
+            Config._Main_apiResultEpoch = cf.getfloat('Main', 'apiResultEpoch')
             # Engine Settings
             Config._Engine_epoch = cf.getfloat('Engine', 'epoch')
-            Config._Engine_maxProcess = cf.getfloat('Engine', 'maxProcess')
+            Config._Engine_maxProcess = cf.getint('Engine', 'maxProcess')
+            Config._Engine_cacheSize = cf.getint('Engine', 'cacheSize')
             # Event Settings
             Config._Event_lowTimeout = cf.getfloat('Event', 'lowTimeout')
             Config._Event_mediumTimeout = cf.getfloat('Event', 'mediumTimeout')
@@ -68,7 +77,9 @@ class Config(object):
                 cf['Log']['url'])[0] == '/' else os.path.join(
                     Config.__cwd, str(cf['Log']['url']))
             Config._Log_level = str(cf['Log']['level'])
-            if Config._Log_level not in ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']:
+            if Config._Log_level not in [
+                    'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
+            ]:
                 raise Exception(
                     "Config Log Settings Error, log level not suport.")
             # DB Settings
@@ -80,7 +91,8 @@ class Config(object):
                 cf['DB']['url'])[0] == '/' else os.path.join(
                     Config.__cwd, str(cf['DB']['url']))
             Config._DB_timeout = cf.getfloat('DB', 'timeout')
-            Config._DB_synchronous = cf.getboolean('DB', 'synchronous', fallback=False)
+            Config._DB_synchronous = cf.getboolean(
+                'DB', 'synchronous', fallback=False)
             # Proxies Settings
             Config._Proxies_proxies = cf.getboolean(
                 'Proxies', 'proxies', fallback=False)
@@ -105,6 +117,7 @@ class Config(object):
             Config._Huobi_exchange = str(cf['Huobi']['exchange'])
             Config._Huobi_api_key = str(cf['Huobi']['api_key'])
             Config._Huobi_api_secret = str(cf['Huobi']['api_secret'])
+            Config._Huobi_acct_id = str(cf['Huobi']['acct_id'])
             # Gate Setting
             Config._Gate_exchange = str(cf['Gate']['exchange'])
             Config._Gate_api_key = str(cf['Gate']['api_key'])
@@ -112,4 +125,4 @@ class Config(object):
 
         except Exception as err:
             errStr = "src.core.config.Config.init: %s" % ConfigException(err)
-            raise ConfigException(err)
+            raise ApplicationException(errStr)

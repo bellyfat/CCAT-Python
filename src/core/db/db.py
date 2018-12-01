@@ -162,6 +162,21 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
+    def getViewMarketSymbolPairsAggDepth(self, exchange, fSymbol, tSymbol):
+        self._logger.debug("src.core.db.db.DB.getViewMarketSymbolPairs")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_MARKET_SYMBOL_PAIRS_AGGDEPTH_SQL.substitute(
+                server=exchange, fSymbol=fSymbol, tSymbol=tSymbol).replace(
+                    '[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
     def getViewMarketSymbolPairs(self, exchange):
         self._logger.debug("src.core.db.db.DB.getViewMarketSymbolPairs")
         try:
@@ -238,12 +253,14 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getAccountBalanceHistory(self):
+    def getAccountBalanceHistory(self, exchange):
         self._logger.debug("src.core.db.db.DB.getAccountBalanceHistory")
-        self._logger.debug(GET_ACCOUNT_INFO_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_ACCOUNT_INFO_SQL)
+            TEMP_SQL = GET_ACCOUNT_BALANCE_HISTORY_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -347,22 +364,24 @@ class DB(object):
 
     def getAccountWithdrawHistory(self):
         self._logger.debug("src.core.db.db.DB.getAccountWithdrawHistory")
-        self._logger.debug(GET_WITHDRAW_HISTORY_SQL)
+        self._logger.debug(GET_ACCOUNT_WITHDRAW_HISTORY_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_WITHDRAW_HISTORY_SQL)
+            curs.execute(GET_ACCOUNT_WITHDRAW_HISTORY_SQL)
             res = curs.fetchall()
             curs.close()
             return res
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getInfoWithdraw(self):
+    def getInfoWithdraw(self, exchange):
         self._logger.debug("src.core.db.db.DB.getInfoWithdraw")
-        self._logger.debug(GET_INFO_WITHDRAW_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_INFO_WITHDRAW_SQL)
+            TEMP_SQL = GET_INFO_WITHDRAW_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -467,24 +486,24 @@ class DB(object):
             if exchange == "all" or self._Okex_exchange in exchange:
                 res = self._Okex.getServerLimits()
                 TEMP_SQL_VALUE.append(
-                    (str(self._Okex_exchange),
-                     "NULL" if res["requests_second"] == '' else float(
-                         res["requests_second"]),
+                    (str(self._Okex_exchange), "NULL" if
+                     res["info_second"] == '' else float(res["info_second"]),
+                     "NULL" if res["market_second"] == '' else float(
+                         res["market_second"]),
                      "NULL" if res["orders_second"] == '' else float(
-                         res["orders_second"]), "NULL"
-                     if res["orders_day"] == '' else float(res["orders_day"]),
+                         res["orders_second"]),
                      "NULL" if res["webSockets_second"] == '' else float(
                          res["webSockets_second"])))
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 res = self._Binance.getServerLimits()
                 TEMP_SQL_VALUE.append(
-                    (str(self._Binance_exchange),
-                     "NULL" if res["requests_second"] == '' else float(
-                         res["requests_second"]),
+                    (str(self._Binance_exchange), "NULL" if
+                     res["info_second"] == '' else float(res["info_second"]),
+                     "NULL" if res["market_second"] == '' else float(
+                         res["market_second"]),
                      "NULL" if res["orders_second"] == '' else float(
-                         res["orders_second"]), "NULL"
-                     if res["orders_day"] == '' else float(res["orders_day"]),
+                         res["orders_second"]),
                      "NULL" if res["webSockets_second"] == '' else float(
                          res["webSockets_second"])))
             # Huobi
@@ -708,16 +727,17 @@ class DB(object):
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
-    def insertMarketTicker(self, exchange, fSymbol, tSymbol):
+    def insertMarketTicker(self, exchange, fSymbol, tSymbol, aggDepth=''):
         self._logger.debug(
-            "src.core.db.db.DB.insertMarketTicker: { exchange=%s, fSymbol=%s, tSymbol=%s }"
-            % (exchange, fSymbol, tSymbol))
+            "src.core.db.db.DB.insertMarketTicker: { exchange=%s, fSymbol=%s, tSymbol=%s aggDepth=%s}"
+            % (exchange, fSymbol, tSymbol, aggDepth))
         try:
             TEMP_SQL_TITLE = INSERT_MARKET_TIKER_SQL
             TEMP_SQL_VALUE = []
             # OKEX
             if exchange == "all" or self._Okex_exchange in exchange:
-                base = self._Okex.getMarketOrderbookTicker(fSymbol, tSymbol)
+                base = self._Okex.getMarketOrderbookTicker(
+                    fSymbol, tSymbol, aggDepth)
                 TEMP_SQL_VALUE.append((str(self._Okex_exchange),
                                        int(base["timeStamp"]),
                                        str(base["fSymbol"]),
@@ -728,7 +748,8 @@ class DB(object):
                                        float(base["ask_one_size"])))
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
-                base = self._Binance.getMarketOrderbookTicker(fSymbol, tSymbol)
+                base = self._Binance.getMarketOrderbookTicker(
+                    fSymbol, tSymbol, aggDepth)
                 TEMP_SQL_VALUE.append((str(self._Binance_exchange),
                                        int(base["timeStamp"]),
                                        str(base["fSymbol"]),

@@ -4,11 +4,11 @@ import os
 import sys
 import unittest
 
+sys.path.append(os.getcwd())
+
 from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.util.log import Logger
-
-sys.path.append(os.getcwd())
 
 
 # proxies
@@ -57,7 +57,7 @@ class TestOkex(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getMarketOrderbookTicker(self):
-        res = okex.getMarketOrderbookTicker("STC", "BTC")
+        res = okex.getMarketOrderbookTicker("ETH", "USDT", 0.1)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 

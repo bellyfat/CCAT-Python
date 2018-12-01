@@ -5,8 +5,9 @@ import sys
 import unittest
 sys.path.append(os.getcwd())
 
-from tests.coin.test_binance import TestBinance
 from tests.coin.test_okex import TestOkex
+from tests.coin.test_binance import TestBinance
+from tests.coin.test_huobi import TestHuobi
 
 
 # list of test_coin
@@ -61,10 +62,18 @@ test_binance = [
     TestBinance("test_cancleBatchOrder"),
     TestBinance("test_depositeAsset"),
     TestBinance("test_withdrawAsset")
-
 ]
 # huobi test items
-test_huobi = []
+test_huobi = [
+    TestHuobi("test_getConfig"),
+    TestHuobi("test_setProxy"),
+    TestHuobi("test_getServerTime"),
+    TestHuobi("test_getServerLimits"),
+    TestHuobi("test_getServerSymbols"),
+    TestHuobi("test_getSymbolsLimits"),
+    TestHuobi("test_getMarketOrderbookTicker"),
+
+]
 # gate test items
 test_gate = []
 
