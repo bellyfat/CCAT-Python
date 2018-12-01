@@ -11,12 +11,12 @@ logger = Logger()
 # Begin Test
 if __name__ == '__main__':
     # 1. integration test for test_listen
-    # logger.debug("3.1 sub testing... python3 tests/engine/test_listen.py")
+    logger.debug("3.1 sub testing... python3 tests/engine/test_listen.py")
     os.system("python3 tests/engine/test_listen.py")
 
     # # 2. integration test for test_judge
     logger.debug("3.2 sub testing... python3 tests/engine/test_judge.py")
-    # os.system("python3 tests/engine/test_judge.py")
+    os.system("python3 tests/engine/test_judge.py")
 
     # # 3. integration test for test_backtest
     # logger.debug("3.3 sub testing... python3 tests/engine/test_backtest.py")

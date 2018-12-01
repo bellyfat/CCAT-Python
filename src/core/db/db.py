@@ -727,7 +727,7 @@ class DB(object):
         except (OkexException, BinanceException, sqlite3.Error) as err:
             raise DBException(err)
 
-    def insertMarketTicker(self, exchange, fSymbol, tSymbol, aggDepth):
+    def insertMarketTicker(self, exchange, fSymbol, tSymbol, aggDepth=''):
         self._logger.debug(
             "src.core.db.db.DB.insertMarketTicker: { exchange=%s, fSymbol=%s, tSymbol=%s aggDepth=%s}"
             % (exchange, fSymbol, tSymbol, aggDepth))

@@ -46,7 +46,7 @@
   basePriceVolume = 1000
   basePriceTimeout = 30
   marketDepthLimit = 20
-  marketTickerAggStep = 100
+  marketTickerAggStep = 1
   symbolStartBaseCoin = 15
   symbolEndBaseCoin = 20
   symbolEndTimeout = 300

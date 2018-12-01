@@ -88,7 +88,7 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getAccountBalanceHistory(self):
-        res = db.getAccountBalanceHistory()
+        res = db.getAccountBalanceHistory(["okex", "binance"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -133,13 +133,13 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getInfoWithdraw(self):
-        res = db.getInfoWithdraw()
+        res = db.getInfoWithdraw(["okex", "binance"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertAccountBalanceHistory(self):
         db.insertAccountBalanceHistory("all")
-        res = db.getAccountBalanceHistory()
+        res = db.getAccountBalanceHistory(["okex"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -195,7 +195,7 @@ class TestDB(unittest.TestCase):
 
     def test_insertInfoWithdraw(self):
         db.insertInfoWithdraw()
-        res = db.getInfoWithdraw()
+        res = db.getInfoWithdraw(["okex", "binance"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
