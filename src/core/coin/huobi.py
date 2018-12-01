@@ -157,9 +157,11 @@ class Huobi(Coin):
                     raise Exception("aggDepth must < 1.0")
             symbol = (fSymbol + tSymbol).lower()
             base = self._huobiAPI.get_depth(symbol, 'step0')
-            # print(base)
-            if not base['status'] == 'ok':
-                raise Exception(base)
+            if not base['status'] == 'ok' or not len(
+                    base['tick']["bids"]) > 0 or not len(
+                        base['tick']["asks"]) > 0:
+                err = "{fSymbol=%s, tSymbol=%s, base=%s}" % (fSymbol, tSymbol, base)
+                raise Exception(err)
             if aggDepth == '':
                 res = {
                     "timeStamp": base["ts"],
@@ -174,7 +176,6 @@ class Huobi(Coin):
                 # calc bids
                 aggPrice = Decimal(base['tick']["bids"][0][0]).quantize(
                     Decimal(str(aggDepth)), rounding=ROUND_DOWN)
-                # print("bid agg: " + str(aggPrice))
                 bid_one_price = float(aggPrice)
                 bid_one_size = 0.0
                 for bid in base['tick']["bids"]:
@@ -184,7 +185,6 @@ class Huobi(Coin):
                 # calc asks
                 aggPrice = Decimal(base['tick']["asks"][0][0]).quantize(
                     Decimal(str(aggDepth)), rounding=ROUND_UP)
-                # print("ask agg: " + str(aggPrice))
                 ask_one_price = float(aggPrice)
                 ask_one_size = 0.0
                 for ask in base['tick']["asks"]:

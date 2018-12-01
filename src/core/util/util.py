@@ -280,9 +280,11 @@ class Util(object):
             % (current_thread().name, res, epoch, async, timeout))
         ids = []
         for r in res:
+            db = DB()
+            aggDepth = db.getViewMarketSymbolPairsAggDepth(self._exchanges, r["fSymbol"], r["tSymbol"])[0]["aggDepth"] * self._marketTickerAggStep
             time.sleep(epoch)
             id = self._sender.sendListenMarketTickerEvent(
-                r["server"], r["fSymbol"], r["tSymbol"])
+                r["server"], r["fSymbol"], r["tSymbol"], aggDepth)
             ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT

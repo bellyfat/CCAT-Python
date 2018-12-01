@@ -45,9 +45,9 @@ if __name__ == '__main__':
     #
     # util.updateDBMarketKline(async=False)
 
-    util.updateDBMarketDepth()
+    # util.updateDBMarketDepth()
 
-    # util.updateDBMarketTicker()
+    util.updateDBMarketTicker()
 
 
     # # stop engine

@@ -31,6 +31,14 @@ GET_VIEW_MARKET_TICKER_SYMBOL_SQL = '''
 '''
 
 # get db view market symbol sql
+GET_VIEW_MARKET_SYMBOL_PAIRS_AGGDEPTH_SQL = Template('''
+    SELECT max(limit_price_step) as aggDepth
+    FROM INFO_SYMBOL
+    WHERE server IN $server and fSymbol='$fSymbol' and tSymbol='$tSymbol';
+''')
+
+
+# get db view market symbol sql
 GET_VIEW_MARKET_SYMBOL_PAIRS_SQL = Template('''
     SELECT * FROM VIEW_MARKET_SYMBOL WHERE server IN $server;
 ''')

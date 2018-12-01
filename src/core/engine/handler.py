@@ -79,10 +79,10 @@ class Handler(object):
             "src.core.engine.handler.Handler.handleListenMarketTickerEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         # 接收事件
-        [exchange, fSymbol, tSymbol] = event.args
+        [exchange, fSymbol, tSymbol, aggDepth] = event.args
         try:
             db = DB()
-            db.insertMarketTicker(exchange, fSymbol, tSymbol)
+            db.insertMarketTicker(exchange, fSymbol, tSymbol, aggDepth)
         except DBException as err:
             errStr = "src.core.engine.handler.Handler.handleListenTickerEvent: %s" % EngineException(
                 err)

@@ -47,7 +47,7 @@ class Okex(Coin):
             res = self._client._get_timestamp(self._proxies)
             return date_to_milliseconds(res)
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # per seconds qurry and orders rate limits
@@ -80,7 +80,7 @@ class Okex(Coin):
                 res.append({"fSymbol": fSymbol, "tSymbol": tSymbol})
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # def getServerSymbols(self):
@@ -142,7 +142,7 @@ class Okex(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
@@ -164,7 +164,7 @@ class Okex(Coin):
             }
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # a specific symbol's orderbook with depth
@@ -198,7 +198,7 @@ class Okex(Coin):
             }
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # a specific symbols kline/candlesticks
@@ -234,7 +234,7 @@ class Okex(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # get symbol trade fees
@@ -295,7 +295,7 @@ class Okex(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # get history trade
@@ -346,7 +346,7 @@ class Okex(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # get succeed trade
@@ -397,7 +397,7 @@ class Okex(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # get account all asset balance
@@ -414,7 +414,7 @@ class Okex(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # get account asset deposit and withdraw limits
@@ -447,7 +447,7 @@ class Okex(Coin):
                     })
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # get account asset balance
@@ -462,7 +462,7 @@ class Okex(Coin):
             }
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # get account asset deposit and withdraw history detail
@@ -480,7 +480,7 @@ class Okex(Coin):
             res = {"deposit": deposite, "withdraw": withdraw}
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # create orders default limit
@@ -524,7 +524,7 @@ class Okex(Coin):
             }
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # check orders done or undone
@@ -555,7 +555,7 @@ class Okex(Coin):
             }
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # cancle the specific order
@@ -573,7 +573,7 @@ class Okex(Coin):
                 res = {"order_id": orderID, "status": info["status"]}
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # cancle the bathch orders
@@ -593,7 +593,7 @@ class Okex(Coin):
                     res.append({"order_id": orderID, "status": info["status"]})
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
-                OkexRequestException, OkexParamsException) as err:
+                OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
     # deposite asset balance

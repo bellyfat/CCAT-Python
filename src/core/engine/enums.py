@@ -56,7 +56,7 @@ LISTEN_MARKET_TICKER_EVENT = MyTemplate("""
     "type": "LISTEN_MARKET_TICKER_EVENT",
     "priority": "medium",
     "timeStamp": "$timeStamp",
-    "args": ["$server", "$fSymbol", "$tSymbol"]
+    "args": ["$server", "$fSymbol", "$tSymbol", "$aggDepth"]
 }
 """)
 

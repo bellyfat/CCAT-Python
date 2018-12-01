@@ -115,7 +115,7 @@ class Sender(object):
             self.__logger.error(errStr)
             raise EngineException(err)
 
-    def sendListenMarketTickerEvent(self, exchange, fSymbol, tSymbol):
+    def sendListenMarketTickerEvent(self, exchange, fSymbol, tSymbol, aggDepth):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
@@ -124,7 +124,8 @@ class Sender(object):
                     timeStamp=utcnow_timestamp(),
                     server=exchange,
                     fSymbol=fSymbol,
-                    tSymbol=tSymbol))
+                    tSymbol=tSymbol,
+                    aggDepth=aggDepth))
             event = Event(TEMP_EVENT)
             self._logger.debug(
                 "src.core.engine.sender.Sender.sendListenMarketTickerEvent: " +

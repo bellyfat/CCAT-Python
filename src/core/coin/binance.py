@@ -51,7 +51,7 @@ class Binance(Coin):
             return res["serverTime"]
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # perseconds qurry and orders rate limits
@@ -75,7 +75,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # all symbols in pairs list baseSymbol quoteSymbol
@@ -90,7 +90,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # def getServerSymbols(self):
@@ -161,7 +161,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
@@ -172,9 +172,13 @@ class Binance(Coin):
                 if float(aggDepth) > 1:
                     raise Exception("aggDepth must < 1.0")
             symbol = fSymbol + tSymbol
-            timeStamp = self._client.get_server_time()
+            timeStamp = self._client.get_server_time()["serverTime"]
             base = self._client.get_order_book(
                 symbol=symbol, limit=100, **kwargs)
+            if not 'lastUpdateId' in base.keys() or not len(
+                    base["bids"]) > 0 or not len(base["asks"]) > 0:
+                err = "{fSymbol=%s, tSymbol=%s, base=%s}" % (fSymbol, tSymbol, base)
+                raise BinanceException(err)
             if aggDepth == '':
                 res = {
                     "timeStamp": timeStamp,
@@ -217,7 +221,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # a specific symbol's orderbook with depth
@@ -237,7 +241,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # a specific symbols kline/candlesticks
@@ -280,7 +284,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # get symbol trade fees
@@ -290,7 +294,7 @@ class Binance(Coin):
             return res["tradeFee"]
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # get current trade
@@ -336,7 +340,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # get history trade
@@ -385,7 +389,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # get succeed trade
@@ -433,7 +437,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # get account all asset balance
@@ -451,7 +455,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # get account assets deposit and withdraw limit
@@ -469,7 +473,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # get account asset balance
@@ -485,7 +489,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # get account asset deposit and withdraw history detail
@@ -500,7 +504,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # create orders default limit
@@ -551,7 +555,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # check orders done or undone
@@ -585,7 +589,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # cancle the specific order
@@ -602,7 +606,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # cancle the batch orders
@@ -625,7 +629,7 @@ class Binance(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
-                BinanceWithdrawException) as err:
+                BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
     # deposite asset balance
