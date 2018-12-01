@@ -11,6 +11,7 @@ from requests.exceptions import ConnectionError, ReadTimeout
 from src.core.coin.coin import Coin
 from src.core.coin.lib.huobipro_api.HuobiService import Huobi as HuobiAPI
 from src.core.util.exceptions import HuobiException
+from src.core.util.helper import date_to_milliseconds, interval_to_milliseconds
 
 
 class Huobi(Coin):
@@ -160,7 +161,8 @@ class Huobi(Coin):
             if not base['status'] == 'ok' or not len(
                     base['tick']["bids"]) > 0 or not len(
                         base['tick']["asks"]) > 0:
-                err = "{fSymbol=%s, tSymbol=%s, base=%s}" % (fSymbol, tSymbol, base)
+                err = "{fSymbol=%s, tSymbol=%s} response base=%s" % (fSymbol, tSymbol,
+                                                             base)
                 raise Exception(err)
             if aggDepth == '':
                 res = {
@@ -200,6 +202,96 @@ class Huobi(Coin):
                     "ask_one_price": ask_one_price,
                     "ask_one_size": ask_one_size
                 }
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
+
+    # a specific symbol's orderbook with depth
+    def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=''):
+        '''
+        "tick": {
+            "id": 消息id,
+            "ts": 消息生成时间，单位：毫秒,
+            "bids": 买盘,[price(成交价), amount(成交量)], 按price降序,
+            "asks": 卖盘,[price(成交价), amount(成交量)], 按price升序
+        }
+        '''
+        try:
+            symbol = (fSymbol + tSymbol).lower()
+            base = self._huobiAPI.get_depth(symbol, 'step0')
+            if not base['status'] == 'ok':
+                err = "{fSymbol=%s, tSymbol=%s} response base=%s" % (fSymbol, tSymbol,
+                                                             base)
+                raise Exception(err)
+            if limit != '':
+                limit = min((int(limit), len(base['tick']["bids"]),
+                                  len(base['tick']["asks"])))
+            else:
+                limit = min((len(base['tick']["bids"]),
+                                  len(base['tick']["asks"])))
+            print(limit)
+            res = {
+                "timeStamp": base["ts"],
+                "fSymbol": fSymbol,
+                "tSymbol": tSymbol,
+                "bid_price_size": base['tick']["bids"][0:limit:1],
+                "ask_price_size": base['tick']["asks"][0:limit:1]
+            }
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
+
+    # a specific symbols kline/candlesticks
+    def getMarketKline(self, fSymbol, tSymbol, interval, start, end):
+        '''
+        "data": [
+            {
+                "id": K线id（时间戳）,
+                "amount": 成交量,
+                "count": 成交笔数,
+                "open": 开盘价,
+                "close": 收盘价,当K线为最晚的一根时，是最新成交价
+                "low": 最低价,
+                "high": 最高价,
+                "vol": 成交额, 即 sum(每一笔成交价 * 该笔的成交量)
+            }
+
+        ]
+        '''
+        try:
+            symbol = (fSymbol + tSymbol).lower()
+            period = {
+                "1m":"1min",
+                "5m": "5min",
+                "15m": "15min",
+                "30m": "30min",
+                "60m": "60min",
+                "1d": "1day",
+                "1m": "1mon",
+                "1w": "1week",
+                "1y": "1year"
+                }
+            granularity = interval_to_milliseconds(interval)
+            size = int((date_to_milliseconds(end)-date_to_milliseconds(start))/granularity)
+            if size < 1 or size > 2000:
+                err = "{fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s} calc size=%s error" % (fSymbol, tSymbol, interval, start, end, size)
+                raise Exception(err)
+            base = self._huobiAPI.get_kline(symbol,period[interval],size)
+            if not base['status'] == 'ok':
+                err = "{fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s} response base=%s" % (fSymbol, tSymbol, interval, start, end, base)
+                raise Exception(err)
+            res = []
+            for b in base['data']:
+                res.append({
+                    "timeStamp": base['ts'],
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "open": b["open"],
+                    "high": b["high"],
+                    "low": b["low"],
+                    "close": b["close"],
+                    "volume": b["amount"]
+                })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
             raise HuobiException(err)

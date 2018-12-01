@@ -61,6 +61,18 @@ class TestHuobi(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
+    def test_getMarketOrderbookDepth(self):
+        res = huobi.getMarketOrderbookDepth("ETH", "USDT", 100)
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_getMarketKline(self):
+        res = huobi.getMarketKline("ETH", "USDT", "1m",
+                                  "2018-11-11T00:00:00.000Z",
+                                  "2018-11-11T01:00:00.000Z")
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
 
 if __name__ == "__main__":
     unittest.main()

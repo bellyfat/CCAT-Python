@@ -62,12 +62,12 @@ class TestOkex(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     def test_getMarketOrderbookDepth(self):
-        res = okex.getMarketOrderbookDepth("STC", "BTC", 5)
+        res = okex.getMarketOrderbookDepth("ETH", "USDT", 5)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_getMarketKline(self):
-        res = okex.getMarketKline("STC", "BTC", "1m",
+        res = okex.getMarketKline("ETH", "USDT", "1m",
                                   "2018-11-11T00:00:00.000Z",
                                   "2018-11-11T01:00:00.000Z")
         logger.debug(res)
@@ -84,12 +84,12 @@ class TestOkex(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getTradeHistory(self):
-        res = okex.getTradeHistory("TRX", "USDT")
+        res = okex.getTradeHistory("ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getTradeSucceed(self):
-        res = okex.getTradeSucceed("TRX", "USDT")
+        res = okex.getTradeSucceed("ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 

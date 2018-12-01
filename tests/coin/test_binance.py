@@ -60,13 +60,13 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     def test_getMarketOrderbookDepth(self):
-        res = binance.getMarketOrderbookDepth("IOST", "BTC", 5)
+        res = binance.getMarketOrderbookDepth("ETH", "USDT", 5)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_getMarketKline(self):
         res = binance.getMarketKline(
-            "IOST", "BTC", "1m", "2018-11-11T00:00:00.000Z", "2018-11-11T01:00:00.000Z")
+            "ETH", "USDT", "1m", "2018-11-11T00:00:00.000Z", "2018-11-11T01:00:00.000Z")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
