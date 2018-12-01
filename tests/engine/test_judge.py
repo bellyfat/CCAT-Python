@@ -37,7 +37,7 @@ if __name__ == '__main__':
 
     # app update
 
-    # util.updateDBMarketTicker(async=False)
+    util.updateDBMarketTicker(async=False)
     util.updateDBJudgeMarketTicker(async=False)
 
     # # stop engine
