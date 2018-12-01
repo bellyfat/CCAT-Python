@@ -65,14 +65,14 @@ test_binance = [
 ]
 # huobi test items
 test_huobi = [
-    # TestHuobi("test_getConfig"),
-    # TestHuobi("test_setProxy"),
-    # TestHuobi("test_getServerTime"),
-    # TestHuobi("test_getServerLimits"),
-    # TestHuobi("test_getServerSymbols"),
-    # TestHuobi("test_getSymbolsLimits"),
-    # TestHuobi("test_getMarketOrderbookTicker"),
-    # TestHuobi("test_getMarketOrderbookDepth"),
+    TestHuobi("test_getConfig"),
+    TestHuobi("test_setProxy"),
+    TestHuobi("test_getServerTime"),
+    TestHuobi("test_getServerLimits"),
+    TestHuobi("test_getServerSymbols"),
+    TestHuobi("test_getSymbolsLimits"),
+    TestHuobi("test_getMarketOrderbookTicker"),
+    TestHuobi("test_getMarketOrderbookDepth"),
     TestHuobi("test_getMarketKline"),
 
 ]
