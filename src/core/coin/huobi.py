@@ -12,7 +12,8 @@ from src.core.coin.coin import Coin
 from src.core.coin.enums import *
 from src.core.coin.lib.huobipro_api.HuobiService import Huobi as HuobiAPI
 from src.core.util.exceptions import HuobiException
-from src.core.util.helper import date_to_milliseconds, interval_to_milliseconds
+from src.core.util.helper import (date_to_milliseconds,
+                                  interval_to_milliseconds, utcnow_timestamp)
 
 
 class Huobi(Coin):
@@ -665,10 +666,13 @@ class Huobi(Coin):
     # get account asset deposit and withdraw history detail
     def getAccountAssetDetail(self, asset):
         try:
-            deRes = self._huobiAPI.get_deposit_withdraw(asset.lower(), type='deposit', froms='0', size='100')
-            wiRes = self._huobiAPI.get_deposit_withdraw(asset.lower(), type='withdraw', froms='0', size='100')
-            if not deRes['status'] == 'ok' or not wiRes['status'] == 'ok' :
-                err = "{asset=%s} response deRes=%s, wiRes=%s" % (asset, deRes, wiRes)
+            deRes = self._huobiAPI.get_deposit_withdraw(
+                asset.lower(), type='deposit', froms='0', size='100')
+            wiRes = self._huobiAPI.get_deposit_withdraw(
+                asset.lower(), type='withdraw', froms='0', size='100')
+            if not deRes['status'] == 'ok' or not wiRes['status'] == 'ok':
+                err = "{asset=%s} response deRes=%s, wiRes=%s" % (asset, deRes,
+                                                                  wiRes)
                 raise Exception(err)
             deposit = []
             for de in deRes['data']:
@@ -680,3 +684,155 @@ class Huobi(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
             raise HuobiException(err)
+
+    # create orders default limit
+    def createOrder(self,
+                    fSymbol,
+                    tSymbol,
+                    ask_or_bid,
+                    price,
+                    quantity,
+                    ratio='',
+                    type="limit"):
+        #  for speed up, lib not check, check from local db.data
+        try:
+            symbol = (fSymbol + tSymbol).lower()
+            source = 'api'
+            if ask_or_bid == ORDER_SIDE_BUY and type == ORDER_TYPE_LIMIT:
+                _type = 'buy-limit'
+            if ask_or_bid == ORDER_SIDE_BUY and type == ORDER_TYPE_MARKET:
+                _type = 'buy-market'
+            if ask_or_bid == ORDER_SIDE_SELL and type == ORDER_TYPE_LIMIT:
+                _type = 'sell-limit'
+            if ask_or_bid == ORDER_SIDE_SELL and type == ORDER_TYPE_MARKET:
+                _type = 'sell-market'
+            timeStamp = utcnow_timestamp()
+            base = self._huobiAPI.send_order(quantity, source, symbol, _type,
+                                             price)
+            if not base['status'] == 'ok':
+                err = "{fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, quantity=%s, ratio=%s, type=%s} response base=%s" % (
+                    fSymbol, tSymbol, ask_or_bid, price, quantity, ratio, type,
+                    base)
+                raise Exception(err)
+            # if ratio == '':
+            #     ratio = self.getTradeFees()[0]["taker"]
+            res = {
+                "timeStamp": timeStamp,
+                "order_id": base["data"],
+                "status": ORDER_STATUS_ORDERING,
+                "type": self.__TYPE[_type],
+                "fSymbol": fSymbol,
+                "tSymbol": tSymbol,
+                "ask_or_bid": ask_or_bid,
+                "ask_bid_price": float(price),
+                "ask_bid_size": float(quantity),
+                "filled_price": 0.0,
+                "filled_size": 0.0,
+                "fee": 0.0
+            }
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
+
+    # check orders done or undone
+    def checkOrder(self, orderID, fSymbol='', tSymbol='', ratio=''):
+        try:
+            base = self._huobiAPI.order_info(orderID)
+            if not base['status'] == 'ok':
+                err = "{orderID=%s, fSymbol=%s, tSymbol=%s, ratio=%s} response base=%s" % (
+                    orderID, fSymbol, tSymbol, ratio, base)
+                raise Exception(err)
+            # if ratio == '':
+            #     ratio = self.getTradeFees()[0]["taker"]
+            b = base['data']
+            filled_price = 0.0 if float(b["field-amount"]) == 0 else float(
+                b["field-cash-amount"]) / float(b["field-amount"])
+            res = {
+                "timeStamp": b["created-at"],
+                "order_id": b["id"],
+                "status": self.__STATUS[b["state"]],
+                "type": self.__TYPE[b["type"]],
+                "fSymbol": fSymbol,
+                "tSymbol": tSymbol,
+                "ask_or_bid": self.__SIDE[b["type"]],
+                "ask_bid_price": float(b["price"]),
+                "ask_bid_size": float(b["amount"]),
+                "filled_price": filled_price,
+                "filled_size": float(b["field-amount"]),
+                "fee": float(b["field-fees"])
+                # "fee": float(b["field-cash-amount"]) * ratio
+            }
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
+
+    # cancel orders done or undone
+    def cancelOrder(self, orderID, fSymbol='', tSymbol=''):
+        try:
+            ba = self._huobiAPI.order_info(orderID)
+            if not ba['status'] == 'ok':
+                err = "{orderID=%s, fSymbol=%s, tSymbol=%s} response ba=%s" % (
+                    orderID, fSymbol, tSymbol, ba)
+                raise Exception(err)
+            if self.__STATUS[ba['data'][
+                    "state"]] == ORDER_STATUS_OPEN or self.__STATUS[
+                        ba['data']["state"]] == ORDER_STATUS_PART_FILLED:
+                base = self._huobiAPI.cancel_order(orderID)
+                rebase = self._huobiAPI.order_info(orderID)
+                if not base['status'] == 'ok' or not rebase['status'] == 'ok':
+                    err = "{orderID=%s, fSymbol=%s, tSymbol=%s} response base=%s" % (
+                        orderID, fSymbol, tSymbol, base)
+                    raise Exception(err)
+                res = {
+                    "order_id": orderID,
+                    "status": self.__STATUS[rebase['data']["state"]]
+                }
+            else:
+                res = {
+                    "order_id": orderID,
+                    "status": self.__STATUS[ba['data']["state"]]
+                }
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
+
+    # cancel the bathch orders
+    def cancelBatchOrder(self, orderIDs, fSymbol='', tSymbol=''):
+        try:
+            res = []
+            for orderID in orderIDs:
+                ba = self._huobiAPI.order_info(orderID)
+                if not ba['status'] == 'ok':
+                    err = "{orderID=%s, fSymbol=%s, tSymbol=%s} response ba=%s" % (
+                        orderID, fSymbol, tSymbol, ba)
+                    raise Exception(err)
+                if self.__STATUS[ba['data'][
+                        "state"]] == ORDER_STATUS_OPEN or self.__STATUS[
+                            ba['data']["state"]] == ORDER_STATUS_PART_FILLED:
+                    base = self._huobiAPI.cancel_order(orderID)
+                    rebase = self._huobiAPI.order_info(orderID)
+                    if not base['status'] == 'ok' or not base[
+                            'status'] == 'ok' or not rebase['status'] == 'ok':
+                        err = "{orderID=%s, fSymbol=%s, tSymbol=%s} response base=%s, rebase" % (
+                            orderID, fSymbol, tSymbol, base, rebase)
+                        raise Exception(err)
+                    res.append({
+                        "order_id": orderID,
+                        "status": self.__STATUS[rebase['data']["state"]]
+                    })
+                else:
+                    res.append({
+                        "order_id": orderID,
+                        "status": self.__STATUS[ba['data']["state"]]
+                    })
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
+
+    # deposit asset balance
+    def depositAsset(self, asset):
+        pass
+
+    # withdraw asset balance
+    def withdrawAsset(self, asset):
+        pass

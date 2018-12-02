@@ -566,7 +566,7 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # check orders done or undone
-    def checkOrder(self, fSymbol, tSymbol, orderID, ratio=''):
+    def checkOrder(self, orderID, fSymbol, tSymbol, ratio=''):
         try:
             symbol = fSymbol + tSymbol
             params = {"symbol": symbol, "orderId": orderID}
@@ -596,8 +596,8 @@ class Binance(Coin):
                 BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
-    # cancle the specific order
-    def cancleOrder(self, fSymbol, tSymbol, orderID):
+    # cancel the specific order
+    def cancelOrder(self, orderID, fSymbol, tSymbol):
         try:
             symbol = fSymbol + tSymbol
             params = {"symbol": symbol, "orderId": orderID}
@@ -616,8 +616,8 @@ class Binance(Coin):
                 BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
-    # cancle the batch orders
-    def cancleBatchOrder(self, fSymbol, tSymbol, orderIDs):
+    # cancel the batch orders
+    def cancelBatchOrder(self, orderIDs, fSymbol, tSymbol):
         try:
             symbol = fSymbol + tSymbol
             res = []

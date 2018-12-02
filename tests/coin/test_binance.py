@@ -115,23 +115,22 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     def test_createOrder(self):
-        res = binance.createOrder("ETH", "USDT", "ask", 150, 0.05)
+        res = binance.createOrder("ETH", "USDT", "bid", 10, 0.05)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_checkOrder(self):
-        res = binance.checkOrder("ETH", "USDT", "102624667")
+        res = binance.checkOrder("102624667", "ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
-    def test_cancleOrder(self):
-        res = binance.cancleOrder("ETH", "USDT", "135080289")
+    def test_cancelOrder(self):
+        res = binance.cancelOrder("135080289", "ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
-    def test_cancleBatchOrder(self):
-        res = binance.cancleBatchOrder("ETH", "USDT",
-                                       ["134809076", "134809137"])
+    def test_cancelBatchOrder(self):
+        res = binance.cancelBatchOrder(["134809076", "134809137"], "ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 

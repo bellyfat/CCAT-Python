@@ -114,5 +114,31 @@ class TestHuobi(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
+    def test_createOrder(self):
+        res = huobi.createOrder("ETH", "USDT", "bid", 10, 0.05)
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_checkOrder(self):
+        res = huobi.checkOrder("18252501002", "ETH", "USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_cancelOrder(self):
+        res = huobi.cancelOrder("18252501002", "ETH", "USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_cancelBatchOrder(self):
+        res = huobi.cancelBatchOrder(["18252501002", "18253191905"],"ETH", "USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_depositeAsset(self):
+        pass
+
+    def test_withdrawAsset(self):
+        pass
+
 if __name__ == "__main__":
     unittest.main()

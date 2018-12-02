@@ -114,23 +114,22 @@ class TestOkex(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     def test_createOrder(self):
-        res = okex.createOrder("ETH", "USDT", "ask", 150, 0.001)
+        res = okex.createOrder("ETH", "USDT", "bid", 10, 0.001)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_checkOrder(self):
-        res = okex.checkOrder("TRX", "USDT", "1771669234011136")
+        res = okex.checkOrder("1771669234011136", "TRX", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
-    def test_cancleOrder(self):
-        res = okex.cancleOrder("TRX", "USDT", "1771669234011136")
+    def test_cancelOrder(self):
+        res = okex.cancelOrder("1771669234011136", "TRX", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
-    def test_cancleBatchOrder(self):
-        res = okex.cancleBatchOrder("TRX", "USDT",
-                                    ["1771669234011136", "1771614029560832"])
+    def test_cancelBatchOrder(self):
+        res = okex.cancelBatchOrder(["1771669234011136", "1771614029560832"], "TRX", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 

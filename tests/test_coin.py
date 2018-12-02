@@ -32,8 +32,8 @@ test_okex = [
     TestOkex("test_getAccountAssetDetail"),
     # TestOkex("test_createOrder"),
     TestOkex("test_checkOrder"),
-    TestOkex("test_cancleOrder"),
-    TestOkex("test_cancleBatchOrder"),
+    TestOkex("test_cancelOrder"),
+    TestOkex("test_cancelBatchOrder"),
     TestOkex("test_depositeAsset"),
     TestOkex("test_withdrawAsset")
 ]
@@ -58,36 +58,36 @@ test_binance = [
     TestBinance("test_getAccountAssetDetail"),
     # TestBinance("test_createOrder"),
     TestBinance("test_checkOrder"),
-    TestBinance("test_cancleOrder"),
-    TestBinance("test_cancleBatchOrder"),
+    TestBinance("test_cancelOrder"),
+    TestBinance("test_cancelBatchOrder"),
     TestBinance("test_depositeAsset"),
     TestBinance("test_withdrawAsset")
 ]
 # huobi test items
 test_huobi = [
-    # TestHuobi("test_getConfig"),
-    # TestHuobi("test_setProxy"),
-    # TestHuobi("test_getServerTime"),
-    # TestHuobi("test_getServerLimits"),
-    # TestHuobi("test_getServerSymbols"),
-    # TestHuobi("test_getSymbolsLimits"),
-    # TestHuobi("test_getMarketOrderbookTicker"),
-    # TestHuobi("test_getMarketOrderbookDepth"),
-    # TestHuobi("test_getMarketKline"),
-    # TestHuobi("test_getTradeFees"),
-    # TestHuobi("test_getTradeOpen"),
-    # TestHuobi("test_getTradeHistory"),
-    # TestHuobi("test_getTradeSucceed"),
-    # TestHuobi("test_getAccountBalances"),
-    # TestHuobi("test_getAccountLimits"),
-    # TestHuobi("test_getAccountAssetBalance"),
+    TestHuobi("test_getConfig"),
+    TestHuobi("test_setProxy"),
+    TestHuobi("test_getServerTime"),
+    TestHuobi("test_getServerLimits"),
+    TestHuobi("test_getServerSymbols"),
+    TestHuobi("test_getSymbolsLimits"),
+    TestHuobi("test_getMarketOrderbookTicker"),
+    TestHuobi("test_getMarketOrderbookDepth"),
+    TestHuobi("test_getMarketKline"),
+    TestHuobi("test_getTradeFees"),
+    TestHuobi("test_getTradeOpen"),
+    TestHuobi("test_getTradeHistory"),
+    TestHuobi("test_getTradeSucceed"),
+    TestHuobi("test_getAccountBalances"),
+    TestHuobi("test_getAccountLimits"),
+    TestHuobi("test_getAccountAssetBalance"),
     TestHuobi("test_getAccountAssetDetail"),
-    # # TestHuobi("test_createOrder"),
-    # TestHuobi("test_checkOrder"),
-    # TestHuobi("test_cancleOrder"),
-    # TestHuobi("test_cancleBatchOrder"),
-    # TestHuobi("test_depositeAsset"),
-    # TestHuobi("test_withdrawAsset")
+    # TestHuobi("test_createOrder"),
+    TestHuobi("test_checkOrder"),
+    TestHuobi("test_cancelOrder"),
+    TestHuobi("test_cancelBatchOrder"),
+    TestHuobi("test_depositeAsset"),
+    TestHuobi("test_withdrawAsset")
 
 ]
 # gate test items
@@ -99,8 +99,8 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
     runner = unittest.TextTestRunner(verbosity=2)
     # add tests
-    # suite.addTests(test_okex)
-    # suite.addTests(test_binance)
+    suite.addTests(test_okex)
+    suite.addTests(test_binance)
     suite.addTests(test_huobi)
     suite.addTests(test_gate)
     # run test

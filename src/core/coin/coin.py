@@ -111,17 +111,17 @@ class Coin(object):
 
     @abstractmethod
     # check orders done or undone
-    def checkOrder(self, fSymbol, tSymbol, orderID, ratio):
+    def checkOrder(self, orderID, fSymbol, tSymbol, ratio):
         pass
 
     @abstractmethod
-    # cancle the specific order
-    def cancleOrder(self, fSymbol, tSymbol, orderID):
+    # cancel the specific order
+    def cancelOrder(self, orderID, fSymbol, tSymbol):
         pass
 
     @abstractmethod
-    # cancle the batch orders
-    def cancleBatchOrder(self, fSymbol, tSymbol, orderIDs):
+    # cancel the batch orders
+    def cancelBatchOrder(self, orderIDs, fSymbol, tSymbol):
         pass
 
     @abstractmethod

@@ -521,7 +521,7 @@ class Okex(Coin):
             raise OkexException(err)
 
     # check orders done or undone
-    def checkOrder(self, fSymbol, tSymbol, orderID, ratio=''):
+    def checkOrder(self, orderID, fSymbol, tSymbol, ratio=''):
         try:
             instrument_id = fSymbol + "-" + tSymbol
             info = self._spotAPI.get_order_info(orderID, instrument_id,
@@ -550,8 +550,8 @@ class Okex(Coin):
                 OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
-    # cancle the specific order
-    def cancleOrder(self, fSymbol, tSymbol, orderID):
+    # cancel the specific order
+    def cancelOrder(self, orderID, fSymbol, tSymbol):
         try:
             instrument_id = fSymbol + "-" + tSymbol
             info = self._spotAPI.get_order_info(orderID, instrument_id,
@@ -574,8 +574,8 @@ class Okex(Coin):
                 OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
-    # cancle the bathch orders
-    def cancleBatchOrder(self, fSymbol, tSymbol, orderIDs):
+    # cancel the bathch orders
+    def cancelBatchOrder(self, orderIDs, fSymbol, tSymbol):
         try:
             instrument_id = fSymbol + "-" + tSymbol
             res = []
