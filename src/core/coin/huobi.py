@@ -279,7 +279,7 @@ class Huobi(Coin):
                 "5m": "5min",
                 "15m": "15min",
                 "30m": "30min",
-                "60m": "60min",
+                "1h": "60min",
                 "1d": "1day",
                 "1m": "1mon",
                 "1w": "1week",
@@ -587,7 +587,7 @@ class Huobi(Coin):
                             "type"] == "frozen":
                         res[i]["locked"] = float(b["balance"])
             for i in range(len(res)):
-                res[i]["currency"] = res[i]["currency"].upper()
+                res[i]["asset"] = res[i]["asset"].upper()
                 res[i]["balance"] = res[i]["free"] + res[i]["locked"]
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
