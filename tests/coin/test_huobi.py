@@ -89,6 +89,11 @@ class TestHuobi(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_getTradeSucceed(self):
+        res = huobi.getTradeSucceed("ETH", "USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
 
 if __name__ == "__main__":
     unittest.main()

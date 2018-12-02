@@ -16,6 +16,30 @@ from src.core.util.helper import date_to_milliseconds, interval_to_milliseconds
 
 
 class Huobi(Coin):
+
+    __STATUS = {
+        "submitting": ORDER_STATUS_ORDERING,
+        "submitted": ORDER_STATUS_OPEN,
+        "partial-filled": ORDER_STATUS_PART_FILLED,
+        "partial-canceled": ORDER_STATUS_CANCELING,
+        "filled": ORDER_STATUS_FILLED,
+        "canceled": ORDER_STATUS_CANCELED
+    }
+
+    __TYPE = {
+        "buy-market": ORDER_TYPE_MARKET,
+        "sell-market": ORDER_TYPE_MARKET,
+        "buy-limit": ORDER_TYPE_LIMIT,
+        "sell-limit": ORDER_TYPE_LIMIT
+    }
+
+    __SIDE = {
+        "buy-market": ORDER_SIDE_BUY,
+        "sell-market": ORDER_SIDE_SELL,
+        "buy-limit": ORDER_SIDE_BUY,
+        "sell-limit": ORDER_SIDE_SELL
+    }
+
     def __init__(self,
                  exchange,
                  api_key,
@@ -310,11 +334,7 @@ class Huobi(Coin):
         return res
 
     # get current trade
-    def getTradeOpen(self,
-                     fSymbol,
-                     tSymbol,
-                     limit='100',
-                     ratio=''):
+    def getTradeOpen(self, fSymbol, tSymbol, limit='100', ratio=''):
         '''
         /* GET /v1/orders/openOrders */
         {
@@ -351,46 +371,34 @@ class Huobi(Coin):
                 err = "{fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s} response base=%s" % (
                     fSymbol, tSymbol, limit, ratio, base)
                 raise Exception(err)
-            types = {
-                "buy-market": "market",
-                "sell-market": "market",
-                "buy-limit": "limit",
-                "sell-limit": "limit"
-            }
-            sides = {
-                "buy-market": "bid",
-                "sell-market": "ask",
-                "buy-limit": "bid",
-                "sell-limit": "ask"
-            }
             res = []
-            if ratio == '':
-                ratio = self.getTradeFees()[0]["taker"]
+            # if ratio == '':
+            #     ratio = self.getTradeFees()[0]["taker"]
             for b in base['data']:
+                filled_price = 0.0 if float(
+                    b["filled-amount"]) == 0 else float(
+                        b["filled-cash-amount"]) / float(b["filled-amount"])
                 res.append({
                     "timeStamp": b["created-at"],
                     "order_id": b["id"],
-                    "status": "open",
-                    "type": types[b["type"]],
+                    "status": ORDER_STATUS_OPEN,
+                    "type": self.__TYPE[b["type"]],
                     "fSymbol": fSymbol,
                     "tSymbol": tSymbol,
-                    "ask_or_bid": sides[b["type"]],
+                    "ask_or_bid": self.__SIDE[b["type"]],
                     "ask_bid_price": float(b["price"]),
                     "ask_bid_size": float(b["amount"]),
-                    "filled_price": float(b["filled-amount"]),
-                    "filled_size": float(b["filled-cash-amount"]),
+                    "filled_price": filled_price,
+                    "filled_size": float(b["filled-amount"]),
                     "fee": float(b["filled-fees"])
+                    # "fee": float(b["filled-cash-amount"]) * ratio
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
             raise HuobiException(err)
 
     # get history trade
-    def getTradeHistory(self,
-                        fSymbol,
-                        tSymbol,
-                        limit='100',
-                        ratio=''):
+    def getTradeHistory(self, fSymbol, tSymbol, limit='100', ratio=''):
         '''
         /* GET /v1/order/orders */
         {
@@ -420,44 +428,100 @@ class Huobi(Coin):
         '''
         try:
             symbol = (fSymbol + tSymbol).lower()
-            states = "pre-submitted,submitted,partial-filled,partial-canceled,filled,canceled"
+            states = "submitting,submitted,partial-filled,partial-canceled,filled,canceled"
             types = "buy-market,sell-market,buy-limit,sell-limit"
             size = limit
-            base = self._huobiAPI.orders_list(
-                symbol, states, types, '', '', '', '', size)
+            base = self._huobiAPI.orders_list(symbol, states, types, '', '',
+                                              '', '', size)
             if not base['status'] == 'ok':
                 err = "{fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s} response base=%s" % (
                     fSymbol, tSymbol, limit, ratio, base)
                 raise Exception(err)
-            types = {
-                "buy-market": "market",
-                "sell-market": "market",
-                "buy-limit": "limit",
-                "sell-limit": "limit"
-            }
-            sides = {
-                "buy-market": "bid",
-                "sell-market": "ask",
-                "buy-limit": "bid",
-                "sell-limit": "ask"
-            }
             res = []
-            if ratio == '':
-                ratio = self.getTradeFees()[0]["taker"]
+            # if ratio == '':
+            #     ratio = self.getTradeFees()[0]["taker"]
             for b in base['data']:
+                filled_price = 0.0 if float(b["field-amount"]) == 0 else float(
+                    b["field-cash-amount"]) / float(b["field-amount"])
                 res.append({
                     "timeStamp": b["created-at"],
                     "order_id": b["id"],
-                    "status": b["state"],
-                    "type": types[b["type"]],
+                    "status": self.__STATUS[b["state"]],
+                    "type": self.__TYPE[b["type"]],
                     "fSymbol": fSymbol,
                     "tSymbol": tSymbol,
-                    "ask_or_bid": sides[b["type"]],
+                    "ask_or_bid": self.__SIDE[b["type"]],
                     "ask_bid_price": float(b["price"]),
                     "ask_bid_size": float(b["amount"]),
-                    "filled_price": float(b["field-amount"]),
-                    "filled_size": float(b["field-cash-amount"]),
+                    "filled_price": filled_price,
+                    "filled_size": float(b["field-amount"]),
                     "fee": float(b["field-fees"])
+                    # "fee": float(b["field-cash-amount"]) * ratio
+                })
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
+
+    # get succeed trade
+    def getTradeSucceed(self, fSymbol, tSymbol, limit='100', ratio=''):
+        '''
+        /* GET /v1/order/orders */
+        {
+          "status": "ok",
+          "data": [
+            {
+              "id": 59378,
+              "symbol": "ethusdt",
+              "account-id": 100009,
+              "amount": "10.1000000000",
+              "price": "100.1000000000",
+              "created-at": 1494901162595,
+              "type": "buy-limit",
+              "field-amount": "10.1000000000",
+              "field-cash-amount": "1011.0100000000",
+              "field-fees": "0.0202000000",
+              "finished-at": 1494901400468,
+              "user-id": 1000,
+              "source": "api",
+              "state": "filled",
+              "canceled-at": 0,
+              "exchange": "huobi",
+              "batch": ""
+            }
+          ]
+        }
+        '''
+        try:
+            symbol = (fSymbol + tSymbol).lower()
+            states = "filled"
+            types = "buy-market,sell-market,buy-limit,sell-limit"
+            size = limit
+            base = self._huobiAPI.orders_list(symbol, states, types, '', '',
+                                              '', '', size)
+            if not base['status'] == 'ok':
+                err = "{fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s} response base=%s" % (
+                    fSymbol, tSymbol, limit, ratio, base)
+                raise Exception(err)
+            res = []
+            # if ratio == '':
+            #     ratio = self.getTradeFees()[0]["taker"]
+            for b in base['data']:
+                filled_price = 0.0 if float(b["field-amount"]) == 0 else float(
+                    b["field-cash-amount"]) / float(b["field-amount"])
+                res.append({
+                    "timeStamp": b["created-at"],
+                    "order_id": b["id"],
+                    "status": self.__STATUS[b["state"]],
+                    "type": self.__TYPE[b["type"]],
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "ask_or_bid": self.__SIDE[b["type"]],
+                    "ask_bid_price": float(b["price"]),
+                    "ask_bid_size": float(b["amount"]),
+                    "filled_price": filled_price,
+                    "filled_size": float(b["field-amount"]),
+                    "fee": float(b["field-fees"])
+                    # "fee": float(b["field-cash-amount"]) * ratio
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:

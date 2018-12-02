@@ -35,10 +35,7 @@ class Binance(Coin):
         "CANCELED": ORDER_STATUS_CANCELED
     }
 
-    __TYPE = {
-        "LIMIT": ORDER_TYPE_LIMIT,
-        "MARKET": ORDER_TYPE_MARKET
-    }
+    __TYPE = {"LIMIT": ORDER_TYPE_LIMIT, "MARKET": ORDER_TYPE_MARKET}
 
     __SIDE = {"BUY": ORDER_SIDE_BUY, "SELL": ORDER_SIDE_SELL}
 
@@ -190,8 +187,7 @@ class Binance(Coin):
                     raise Exception("aggDepth must < 1.0")
             symbol = fSymbol + tSymbol
             timeStamp = self._client.get_server_time()["serverTime"]
-            base = self._client.get_order_book(
-                symbol=symbol, limit=100)
+            base = self._client.get_order_book(symbol=symbol, limit=100)
             if not 'lastUpdateId' in base.keys() or not len(
                     base["bids"]) > 0 or not len(base["asks"]) > 0:
                 err = "{fSymbol=%s, tSymbol=%s, base=%s}" % (fSymbol, tSymbol,
@@ -247,8 +243,7 @@ class Binance(Coin):
         try:
             symbol = fSymbol + tSymbol
             timeStamp = self._client.get_server_time()
-            ticker = self._client.get_order_book(
-                symbol=symbol, limit=limit)
+            ticker = self._client.get_order_book(symbol=symbol, limit=limit)
             res = {
                 "timeStamp": timeStamp["serverTime"],
                 "fSymbol": fSymbol,
@@ -316,11 +311,7 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # get current trade
-    def getTradeOpen(self,
-                     fSymbol='',
-                     tSymbol='',
-                     limit='100',
-                     ratio=''):
+    def getTradeOpen(self, fSymbol='', tSymbol='', limit='100', ratio=''):
         try:
             if fSymbol and tSymbol:
                 symbol = fSymbol + tSymbol
@@ -334,14 +325,14 @@ class Binance(Coin):
             for item in orders:
                 filled_price = 0.0 if float(
                     item["executedQty"]) == 0 else float(
-                        item["cummulativeQuoteQty"]) / float(item["price"])
+                        item["cummulativeQuoteQty"]) / float(item["executedQty"])
                 res.append({
                     "timeStamp":
                     item["time"],
                     "order_id":
                     item["orderId"],
                     "status":
-                    self.__STATUS["NEW"],
+                    ORDER_STATUS_OPEN,
                     "type":
                     self.__TYPE[item["type"]],
                     "fSymbol":
@@ -368,11 +359,7 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # get history trade
-    def getTradeHistory(self,
-                        fSymbol,
-                        tSymbol,
-                        limit='100',
-                        ratio=''):
+    def getTradeHistory(self, fSymbol, tSymbol, limit='100', ratio=''):
         try:
             symbol = fSymbol + tSymbol
             orders = self._client.get_all_orders(symbol=symbol)
@@ -418,11 +405,7 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # get succeed trade
-    def getTradeSucceed(self,
-                        fSymbol,
-                        tSymbol,
-                        limit='100',
-                        ratio=''):
+    def getTradeSucceed(self, fSymbol, tSymbol, limit='100', ratio=''):
         try:
             symbol = fSymbol + tSymbol
             orders = self._client.get_all_orders(symbol=symbol)
@@ -623,7 +606,10 @@ class Binance(Coin):
                 base = self._client.cancel_order(**params)
                 res = {"order_id": orderID, "status": ORDER_STATUS_CANCELED}
             else:
-                res = {"order_id": orderID, "status": self.__STATUS[info["status"]]}
+                res = {
+                    "order_id": orderID,
+                    "status": self.__STATUS[info["status"]]
+                }
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
@@ -641,7 +627,10 @@ class Binance(Coin):
                 if info["status"] == "NEW" or info[
                         "status"] == "PARTIALLY_FILLED":
                     base = self._client.cancel_order(**params)
-                    res.append({"order_id": orderID, "status": ORDER_STATUS_CANCELED})
+                    res.append({
+                        "order_id": orderID,
+                        "status": ORDER_STATUS_CANCELED
+                    })
                 else:
                     res.append({
                         "order_id": orderID,

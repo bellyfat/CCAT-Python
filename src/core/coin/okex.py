@@ -30,10 +30,7 @@ class Okex(Coin):
         "cancelled": ORDER_STATUS_CANCELED
     }
 
-    __TYPE = {
-        "limit": ORDER_TYPE_LIMIT,
-        "market": ORDER_TYPE_MARKET
-    }
+    __TYPE = {"limit": ORDER_TYPE_LIMIT, "market": ORDER_TYPE_MARKET}
 
     __SIDE = {"buy": ORDER_SIDE_BUY, "sell": ORDER_SIDE_SELL}
 
@@ -284,7 +281,7 @@ class Okex(Coin):
                     "order_id":
                     item["order_id"],
                     "status":
-                    self.__STATUS["open"],
+                    ORDER_STATUS_OPEN,
                     "type":
                     self.__TYPE[item["type"]],
                     "fSymbol":
@@ -563,9 +560,15 @@ class Okex(Coin):
                 base = self._spotAPI.revoke_order(orderID, instrument_id,
                                                   self._proxies)
                 if base["result"] == True:
-                    res = {"order_id": orderID, "status":  ORDER_STATUS_CANCELED}
+                    res = {
+                        "order_id": orderID,
+                        "status": ORDER_STATUS_CANCELED
+                    }
             else:
-                res = {"order_id": orderID, "status":  self.__STATUS[info["status"]]}
+                res = {
+                    "order_id": orderID,
+                    "status": self.__STATUS[info["status"]]
+                }
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
@@ -583,9 +586,15 @@ class Okex(Coin):
                     base = self._spotAPI.revoke_order(orderID, instrument_id,
                                                       self._proxies)
                     if base["result"] == True:
-                        res.append({"order_id": orderID, "status": ORDER_STATUS_CANCELED})
+                        res.append({
+                            "order_id": orderID,
+                            "status": ORDER_STATUS_CANCELED
+                        })
                 else:
-                    res.append({"order_id": orderID, "status": self.__STATUS[info["status"]]})
+                    res.append({
+                        "order_id": orderID,
+                        "status": self.__STATUS[info["status"]]
+                    })
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:

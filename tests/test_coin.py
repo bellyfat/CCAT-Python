@@ -77,7 +77,7 @@ test_huobi = [
     # TestHuobi("test_getTradeFees"),
     TestHuobi("test_getTradeOpen"),
     TestHuobi("test_getTradeHistory"),
-    # TestHuobi("test_getTradeSucceed"),
+    TestHuobi("test_getTradeSucceed"),
     # TestHuobi("test_getAccountBalances"),
     # TestHuobi("test_getAccountLimits"),
     # TestHuobi("test_getAccountAssetBalance"),
@@ -100,8 +100,8 @@ if __name__ == '__main__':
     runner = unittest.TextTestRunner(verbosity=2)
     # add tests
     # suite.addTests(test_okex)
-    suite.addTests(test_binance)
-    # suite.addTests(test_huobi)
+    # suite.addTests(test_binance)
+    suite.addTests(test_huobi)
     suite.addTests(test_gate)
     # run test
     runner.run(suite)
