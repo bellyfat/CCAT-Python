@@ -616,7 +616,7 @@ class DB(object):
                 for b in base:
                     TEMP_SQL_VALUE.append((str(self._Okex_exchange),
                                            str(b["asset"]),
-                                           str(b["can_deposite"]),
+                                           str(b["can_deposit"]),
                                            str(b["can_withdraw"]),
                                            float(b["min_withdraw"])))
             # Binance
@@ -625,7 +625,7 @@ class DB(object):
                 for b in base:
                     TEMP_SQL_VALUE.append((str(self._Binance_exchange),
                                            str(b["asset"]),
-                                           str(b["can_deposite"]),
+                                           str(b["can_deposit"]),
                                            str(b["can_withdraw"]),
                                            float(b["min_withdraw"])))
             # Huobi

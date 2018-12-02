@@ -147,7 +147,7 @@ class Huobi:
         """
 
         if not self.__acct_id:
-            accounts = get_accounts()
+            accounts = self.get_accounts()
             self.__acct_id = accounts['data'][0]['id']
 
         url = "/v1/account/accounts/{0}/balance".format(self.__acct_id)
@@ -168,7 +168,7 @@ class Huobi:
         """
         if not self.__acct_id:
             try:
-                accounts = get_accounts()
+                accounts = self.get_accounts()
                 self.__acct_id = accounts['data'][0]['id']
             except BaseException as e:
                 raise Exception('get acct_id error.%s' % e)
@@ -368,6 +368,16 @@ class Huobi:
 
         return api_key_post(params, url, self.__access_key, self.__secret_key, self.__proxies)
 
+    def get_deposit_withdraw(self, currency, type, froms='0', size='100'):
+        params = {
+            'currency': currency,
+            'type': type,
+            'from': froms,
+            'size': size
+        }
+        url = '/v1/query/deposit-withdraw'
+        return api_key_get(params, url, self.__access_key, self.__secret_key, self.__proxies)
+
     '''
     借贷API
     '''
@@ -384,7 +394,7 @@ class Huobi:
         """
         if not self.__acct_id:
             try:
-                accounts = get_accounts()
+                accounts = self.get_accounts()
                 self.__acct_id = accounts['data'][0]['id']
             except BaseException as e:
                 raise Exception('get acct_id error.%s' % e)

@@ -421,7 +421,7 @@ class Okex(Coin):
                     res.append({
                         "asset":
                         b["currency"],
-                        "can_deposite":
+                        "can_deposit":
                         str(b["can_deposit"]) in ["true", "True", "1"],
                         "can_withdraw":
                         str(b["can_withdraw"]) in ["true", "True", "1"],
@@ -432,7 +432,7 @@ class Okex(Coin):
                     res.append({
                         "asset":
                         b["currency"],
-                        "can_deposite":
+                        "can_deposit":
                         str(b["can_deposit"]) in ["true", "True", "1"],
                         "can_withdraw":
                         str(b["can_withdraw"]) in ["true", "True", "1"],
@@ -464,14 +464,14 @@ class Okex(Coin):
         try:
             base = self._accountAPI.get_ledger_record(0, 1, 100, asset, '',
                                                       self._proxies)
-            deposite = []
+            deposit = []
             withdraw = []
             for b in base[0]:
                 if float(b["amount"]) >= 0:
-                    deposite.append(b)
+                    deposit.append(b)
                 else:
                     withdraw.append(b)
-            res = {"deposit": deposite, "withdraw": withdraw}
+            res = {"deposit": deposit, "withdraw": withdraw}
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
@@ -600,8 +600,8 @@ class Okex(Coin):
                 OkexRequestException, OkexParamsException, Exception) as err:
             raise OkexException(err)
 
-    # deposite asset balance
-    def depositeAsset(self, asset):
+    # deposit asset balance
+    def depositAsset(self, asset):
         pass
 
     # withdraw asset balance

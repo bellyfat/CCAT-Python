@@ -62,6 +62,24 @@ GET_VIEW_ACCOUNT_WITHDRAW_CURRENT_SQL = '''
 GET_ACCOUNT_BALANCE_HISTORY_SQL = Template('''
     SELECT DISTINCT server, asset FROM ACCOUNT_BALANCE_HISTORY WHERE server IN $server;
 ''')
+# get db withdraw history sql
+GET_ACCOUNT_WITHDRAW_HISTORY_SQL = '''
+    SELECT * FROM ACCOUNT_WITHDRAW_HISTORY;
+'''
+
+# get db server info sql
+GET_INFO_SERVER_SQL = '''
+    SELECT * FROM INFO_SERVER;
+'''
+# get db symbol info sql
+GET_INFO_SYMBOL_SQL = '''
+    SELECT * FROM INFO_SYMBOL;
+'''
+# get db withdraw info sql
+GET_INFO_WITHDRAW_SQL = Template('''
+    SELECT * FROM INFO_WITHDRAW WHERE server IN $server;
+''')
+
 # get db market depth sql
 GET_MARKET_DEPTH_SQL = '''
     SELECT * FROM MARKET_DEPTH;
@@ -78,14 +96,7 @@ DEL_MARKET_KLINE_SQL = '''
 GET_MARKET_TIKER_SQL = '''
     SELECT * FROM MARKET_TIKER;
 '''
-# get db server info sql
-GET_INFO_SERVER_SQL = '''
-    SELECT * FROM INFO_SERVER;
-'''
-# get db symbol info sql
-GET_INFO_SYMBOL_SQL = '''
-    SELECT * FROM INFO_SYMBOL;
-'''
+
 # get db trade backtest history sql
 GET_TRADE_BACKTEST_HISTORY_SQL = '''
     SELECT * FROM TRADE_BACKTEST_HISTORY;
@@ -94,14 +105,6 @@ GET_TRADE_BACKTEST_HISTORY_SQL = '''
 GET_TRADE_ORDER_HISTORY_SQL = '''
     SELECT * FROM TRADE_ORDER_HISTORY;
 '''
-# get db withdraw history sql
-GET_ACCOUNT_WITHDRAW_HISTORY_SQL = '''
-    SELECT * FROM ACCOUNT_WITHDRAW_HISTORY;
-'''
-# get db withdraw info sql
-GET_INFO_WITHDRAW_SQL = Template('''
-    SELECT * FROM INFO_WITHDRAW WHERE server IN $server AND can_deposite='True' AND can_withdraw='True';
-''')
 
 # insert db account balance history sql
 INSERT_ACCOUNT_BALANCE_HISTORY_SQL = '''
@@ -110,7 +113,7 @@ INSERT_ACCOUNT_BALANCE_HISTORY_SQL = '''
 
 # insert db account withdraw history sql
 INSERT_ACCOUNT_WITHDRAW_HISTORY_SQL = '''
-    INSERT OR REPLACE INTO ACCOUNT_WITHDRAW_HISTORY (server, timeStamp, asset, deposite, withdraw)
+    INSERT OR REPLACE INTO ACCOUNT_WITHDRAW_HISTORY (server, timeStamp, asset, deposit, withdraw)
     VALUES (?, ?, ?, ?, ?)'''
 
 # insert db info server sql
@@ -125,7 +128,7 @@ INSERT_INFO_SYMBOL_SQL = '''
 
 # insert db info withdraw sql
 INSERT_INFO_WITHDRAW_SQL = '''
-    INSERT OR REPLACE INTO INFO_WITHDRAW (server, asset, can_deposite, can_withdraw, min_withdraw)
+    INSERT OR REPLACE INTO INFO_WITHDRAW (server, asset, can_deposit, can_withdraw, min_withdraw)
     VALUES (?, ?, ?, ?, ?)'''
 
 # insert db market depth sql
@@ -229,7 +232,7 @@ CREATE_TABELS_SQL = '''
     CREATE TABLE IF NOT EXISTS `INFO_WITHDRAW` (
     	`server`	TEXT NOT NULL,
     	`asset`	TEXT NOT NULL,
-    	`can_deposite`	TEXT NOT NULL,
+    	`can_deposit`	TEXT NOT NULL,
     	`can_withdraw`	TEXT NOT NULL,
     	`min_withdraw`	REAL,
         PRIMARY KEY (server, asset)
@@ -263,7 +266,7 @@ CREATE_TABELS_SQL = '''
     	`server`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
     	`asset`	TEXT NOT NULL,
-    	`deposite`	TEXT,
+    	`deposit`	TEXT,
     	`withdraw`	TEXT,
         PRIMARY KEY (server, timeStamp, asset)
     );
@@ -304,7 +307,7 @@ CREATE_VIEWS_SQL = Template('''
             SELECT B1.*
             FROM ACCOUNT_WITHDRAW_HISTORY B1
             LEFT JOIN ACCOUNT_WITHDRAW_HISTORY B2 ON B1.server = B2.server AND B1.asset = B2.asset AND B1.timeStamp < B2.timeStamp
-            WHERE (B1.deposite<>'' OR B1.withdraw <>'') and B2.server IS NULL;
+            WHERE (B1.deposit<>'' OR B1.withdraw <>'') and B2.server IS NULL;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_KLINE_CURRENT
     	AS
     			SELECT M1.*, M2.close as tSymbol_base, M1.close*M1.volume*M2.close as price_volume_base

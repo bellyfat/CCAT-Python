@@ -94,6 +94,25 @@ class TestHuobi(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_getAccountBalances(self):
+        res = huobi.getAccountBalances()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getAccountLimits(self):
+        res = huobi.getAccountLimits()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getAccountAssetBalance(self):
+        res = huobi.getAccountAssetBalance("USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_getAccountAssetDetail(self):
+        res = huobi.getAccountAssetDetail("ETH")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
 
 if __name__ == "__main__":
     unittest.main()

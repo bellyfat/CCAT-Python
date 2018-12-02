@@ -75,12 +75,12 @@ class Coin(object):
 
     @abstractmethod
     # get history trade
-    def getTradeHistory(self, fSymbol, tSymbol, froms, to, limit, ratio):
+    def getTradeHistory(self, fSymbol, tSymbol, limit, ratio):
         pass
 
     @abstractmethod
     # get succeed trade
-    def getTradeSucceed(self, fSymbol, tSymbol, froms, to, limit, ratio):
+    def getTradeSucceed(self, fSymbol, tSymbol, limit, ratio):
         pass
 
     @abstractmethod

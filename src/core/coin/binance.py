@@ -478,7 +478,7 @@ class Binance(Coin):
             for key, value in base["assetDetail"].items():
                 res.append({
                     "asset": key,
-                    "can_deposite": value["depositStatus"],
+                    "can_deposit": value["depositStatus"],
                     "can_withdraw": value["withdrawStatus"],
                     "min_withdraw": float(value["minWithdrawAmount"])
                 })
@@ -507,10 +507,10 @@ class Binance(Coin):
     # get account asset deposit and withdraw history detail
     def getAccountAssetDetail(self, asset=''):
         try:
-            deposite = self._client.get_deposit_history(asset=asset)
+            deposit = self._client.get_deposit_history(asset=asset)
             withdraw = self._client.get_withdraw_history(asset=asset)
             res = {
-                "deposit": deposite["depositList"],
+                "deposit": deposit["depositList"],
                 "withdraw": withdraw["withdrawList"]
             }
             return res
@@ -642,8 +642,8 @@ class Binance(Coin):
                 BinanceWithdrawException, Exception) as err:
             raise BinanceException(err)
 
-    # deposite asset balance
-    def depositeAsset(self, asset):
+    # deposit asset balance
+    def depositAsset(self, asset):
         pass
 
     # withdraw asset balance

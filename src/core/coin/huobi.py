@@ -526,3 +526,157 @@ class Huobi(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
             raise HuobiException(err)
+
+    # get account all asset balance
+    def getAccountBalances(self):
+        '''
+        /* GET /v1/account/accounts/'account-id'/balance */
+        {
+          "status": "ok",
+          "data": {
+            "id": 100009,
+            "type": "spot",
+            "state": "working",
+            "list": [
+              {
+                "currency": "usdt",
+                "type": "trade",
+                "balance": "500009195917.4362872650"
+              },
+              {
+                "currency": "usdt",
+                "type": "frozen",
+                "balance": "328048.1199920000"
+              },
+             {
+                "currency": "etc",
+                "type": "trade",
+                "balance": "499999894616.1302471000"
+              },
+              {
+                "currency": "etc",
+                "type": "frozen",
+                "balance": "9786.6783000000"
+              }
+             {
+                "currency": "eth",
+                "type": "trade",
+                "balance": "499999894616.1302471000"
+              },
+              {
+                "currency": "eth",
+                "type": "frozen",
+                "balance": "9786.6783000000"
+              }
+            ],
+            "user-id": 1000
+          }
+        }
+        '''
+        try:
+            base = self._huobiAPI.get_balance()
+            if not base['status'] == 'ok':
+                err = "response base=%s" % base
+                raise Exception(err)
+            currencies = []
+            res = []
+            for b in base['data']['list']:
+                if b["currency"] not in currencies:
+                    currencies.append(b["currency"])
+                    res.append({
+                        "asset": b["currency"],
+                        "balance": 0.0,
+                        "free": 0.0,
+                        "locked": 0.0
+                    })
+            for i in range(len(res)):
+                for b in base['data']['list']:
+                    if res[i]["asset"] == b["currency"] and b[
+                            "type"] == "trade":
+                        res[i]["free"] = float(b["balance"])
+                    if res[i]["asset"] == b["currency"] and b[
+                            "type"] == "frozen":
+                        res[i]["locked"] = float(b["balance"])
+            for i in range(len(res)):
+                res[i]["balance"] = res[i]["free"] + res[i]["locked"]
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
+
+    # get account asset deposit and withdraw limits
+    def getAccountLimits(self):
+        '''
+        /* GET /v1/common/currencys */
+        {
+          "status": "ok",
+          "data": [
+            "usdt",
+            "eth",
+            "etc"
+          ]
+        }
+        '''
+        try:
+            base = self._huobiAPI.get_currencies()
+            print(base)
+            if not base['status'] == 'ok':
+                err = "response base=%s" % base
+                raise Exception(err)
+            res = []
+            for b in base['data']:
+                res.append({
+                    "asset": b,
+                    "can_deposit": '',
+                    "can_withdraw": '',
+                    "min_withdraw": ''
+                })
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
+
+    # get account asset balance
+    def getAccountAssetBalance(self, asset):
+        try:
+            base = self._huobiAPI.get_balance()
+            if not base['status'] == 'ok':
+                err = "{asset=%s} response base=%s" % (asset, base)
+                raise Exception(err)
+            res = {}
+            for b in base['data']['list']:
+                if b["currency"] == asset.lower():
+                    res = {
+                        "asset": b["currency"],
+                        "balance": 0.0,
+                        "free": 0.0,
+                        "locked": 0.0
+                    }
+            if res != {}:
+                for b in base['data']['list']:
+                    if res["asset"] == b["currency"] and b["type"] == "trade":
+                        res["free"] = float(b["balance"])
+                    if res["asset"] == b["currency"] and b["type"] == "frozen":
+                        res["locked"] = float(b["balance"])
+            if res != {}:
+                res["balance"] = res["free"] + res["locked"]
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
+
+    # get account asset deposit and withdraw history detail
+    def getAccountAssetDetail(self, asset):
+        try:
+            deRes = self._huobiAPI.get_deposit_withdraw(asset.lower(), type='deposit', froms='0', size='100')
+            wiRes = self._huobiAPI.get_deposit_withdraw(asset.lower(), type='withdraw', froms='0', size='100')
+            if not deRes['status'] == 'ok' or not wiRes['status'] == 'ok' :
+                err = "{asset=%s} response deRes=%s, wiRes=%s" % (asset, deRes, wiRes)
+                raise Exception(err)
+            deposit = []
+            for de in deRes['data']:
+                deposit.append(de)
+            withdraw = []
+            for wi in wiRes['data']:
+                withdraw.appen(wi)
+            res = {"deposit": deposit, "withdraw": withdraw}
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
