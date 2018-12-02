@@ -12,18 +12,36 @@ import urllib3
 from requests.exceptions import ConnectionError, ReadTimeout
 
 from src.core.coin.coin import Coin
+from src.core.coin.enums import *
 from src.core.coin.lib.binance_api.client import Client
 from src.core.coin.lib.binance_api.enums import *
 from src.core.coin.lib.binance_api.exceptions import (BinanceAPIException,
                                                       BinanceOrderException,
                                                       BinanceRequestException,
                                                       BinanceWithdrawException)
+from src.core.coin.lib.binance_api.helpers import date_to_milliseconds
 from src.core.util.exceptions import BinanceException
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class Binance(Coin):
+
+    __STATUS = {
+        "PENDING_CANCEL": ORDER_STATUS_CANCELING,
+        "NEW": ORDER_STATUS_OPEN,
+        "PARTIALLY_FILLED": ORDER_STATUS_PART_FILLED,
+        "FILLED": ORDER_STATUS_FILLED,
+        "CANCELED": ORDER_STATUS_CANCELED
+    }
+
+    __TYPE = {
+        "LIMIT": ORDER_TYPE_LIMIT,
+        "MARKET": ORDER_TYPE_MARKET
+    }
+
+    __SIDE = {"BUY": ORDER_SIDE_BUY, "SELL": ORDER_SIDE_SELL}
+
     def __init__(self, exchange, api_key, api_secret, proxies=None):
         super(Binance, self).__init__(exchange, api_key, api_secret, proxies)
         self._client = Client(api_key, api_secret, {
@@ -165,8 +183,7 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
-    def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth='',
-                                 **kwargs):
+    def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth=''):
         try:
             if aggDepth != '':
                 if float(aggDepth) > 1:
@@ -174,10 +191,11 @@ class Binance(Coin):
             symbol = fSymbol + tSymbol
             timeStamp = self._client.get_server_time()["serverTime"]
             base = self._client.get_order_book(
-                symbol=symbol, limit=100, **kwargs)
+                symbol=symbol, limit=100)
             if not 'lastUpdateId' in base.keys() or not len(
                     base["bids"]) > 0 or not len(base["asks"]) > 0:
-                err = "{fSymbol=%s, tSymbol=%s, base=%s}" % (fSymbol, tSymbol, base)
+                err = "{fSymbol=%s, tSymbol=%s, base=%s}" % (fSymbol, tSymbol,
+                                                             base)
                 raise BinanceException(err)
             if aggDepth == '':
                 res = {
@@ -225,12 +243,12 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # a specific symbol's orderbook with depth
-    def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=100, **kwargs):
+    def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=100):
         try:
             symbol = fSymbol + tSymbol
             timeStamp = self._client.get_server_time()
             ticker = self._client.get_order_book(
-                symbol=symbol, limit=limit, **kwargs)
+                symbol=symbol, limit=limit)
             res = {
                 "timeStamp": timeStamp["serverTime"],
                 "fSymbol": fSymbol,
@@ -288,9 +306,9 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # get symbol trade fees
-    def getTradeFees(self, **kwargs):
+    def getTradeFees(self):
         try:
-            res = self._client.get_trade_fee(**kwargs)
+            res = self._client.get_trade_fee()
             return res["tradeFee"]
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
@@ -298,16 +316,22 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # get current trade
-    def getTradeOpen(self, fSymbol, tSymbol, ratio='', **kwargs):
+    def getTradeOpen(self,
+                     fSymbol='',
+                     tSymbol='',
+                     limit='100',
+                     ratio=''):
         try:
-            symbol = fSymbol + tSymbol
-            orders = self._client.get_open_orders(symbol=symbol, **kwargs)
+            if fSymbol and tSymbol:
+                symbol = fSymbol + tSymbol
+                orders = self._client.get_open_orders(symbol=symbol)
+            else:
+                orders = self._client.get_open_orders()
             if ratio == '':
                 ratio = self._client.get_trade_fee(
                     symbol=symbol)["tradeFee"][0]["taker"]
             res = []
             for item in orders:
-                ask_or_bid = "ask" if item["side"] == "BUY" else "bid"
                 filled_price = 0.0 if float(
                     item["executedQty"]) == 0 else float(
                         item["cummulativeQuoteQty"]) / float(item["price"])
@@ -317,15 +341,15 @@ class Binance(Coin):
                     "order_id":
                     item["orderId"],
                     "status":
-                    "open",
+                    self.__STATUS["NEW"],
                     "type":
-                    item["type"].lower(),
+                    self.__TYPE[item["type"]],
                     "fSymbol":
                     fSymbol,
                     "tSymbol":
                     tSymbol,
                     "ask_or_bid":
-                    ask_or_bid,
+                    self.__SIDE[item["side"]],
                     "ask_bid_price":
                     float(item["price"]),
                     "ask_bid_size":
@@ -344,18 +368,19 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # get history trade
-    def getTradeHistory(self, fSymbol, tSymbol, ratio='', **kwargs):
+    def getTradeHistory(self,
+                        fSymbol,
+                        tSymbol,
+                        limit='100',
+                        ratio=''):
         try:
             symbol = fSymbol + tSymbol
-            orders = self._client.get_all_orders(symbol=symbol, **kwargs)
+            orders = self._client.get_all_orders(symbol=symbol)
             if ratio == '':
                 ratio = self._client.get_trade_fee(
                     symbol=symbol)["tradeFee"][0]["taker"]
             res = []
             for item in orders:
-                status = "open" if item["status"] == "NEW" else item[
-                    "status"].lower()
-                ask_or_bid = "ask" if item["side"] == "BUY" else "bid"
                 filled_price = 0.0 if float(
                     item["executedQty"]) == 0 else float(
                         item["cummulativeQuoteQty"]) / float(
@@ -366,15 +391,15 @@ class Binance(Coin):
                     "order_id":
                     item["orderId"],
                     "status":
-                    status,
+                    self.__STATUS[item["status"]],
                     "type":
-                    item["type"].lower(),
+                    self.__TYPE[item["type"]],
                     "fSymbol":
                     fSymbol,
                     "tSymbol":
                     tSymbol,
                     "ask_or_bid":
-                    ask_or_bid,
+                    self.__SIDE[item["side"]],
                     "ask_bid_price":
                     float(item["price"]),
                     "ask_bid_size":
@@ -393,10 +418,14 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # get succeed trade
-    def getTradeSucceed(self, fSymbol, tSymbol, ratio='', **kwargs):
+    def getTradeSucceed(self,
+                        fSymbol,
+                        tSymbol,
+                        limit='100',
+                        ratio=''):
         try:
             symbol = fSymbol + tSymbol
-            orders = self._client.get_all_orders(symbol=symbol, **kwargs)
+            orders = self._client.get_all_orders(symbol=symbol)
             if ratio == '':
                 ratio = self._client.get_trade_fee(
                     symbol=symbol)["tradeFee"][0]["taker"]
@@ -414,15 +443,15 @@ class Binance(Coin):
                         "order_id":
                         item["orderId"],
                         "status":
-                        item["status"].lower(),
+                        self.__STATUS[item["status"]],
                         "type":
-                        item["type"].lower(),
+                        self.__TYPE[item["type"]],
                         "fSymbol":
                         fSymbol,
                         "tSymbol":
                         tSymbol,
                         "ask_or_bid":
-                        ask_or_bid,
+                        self.__SIDE[item["side"]],
                         "ask_bid_price":
                         float(item["price"]),
                         "ask_bid_size":
@@ -441,9 +470,9 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # get account all asset balance
-    def getAccountBalances(self, **kwargs):
+    def getAccountBalances(self):
         try:
-            base = self._client.get_account(**kwargs)
+            base = self._client.get_account()
             res = []
             for b in base["balances"]:
                 res.append({
@@ -459,9 +488,9 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # get account assets deposit and withdraw limit
-    def getAccountLimits(self, **kwargs):
+    def getAccountLimits(self):
         try:
-            base = self._client.get_asset_details(**kwargs)
+            base = self._client.get_asset_details()
             res = []
             for key, value in base["assetDetail"].items():
                 res.append({
@@ -477,9 +506,9 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # get account asset balance
-    def getAccountAssetBalance(self, asset, **kwargs):
+    def getAccountAssetBalance(self, asset):
         try:
-            base = self._client.get_asset_balance(asset=asset, **kwargs)
+            base = self._client.get_asset_balance(asset=asset)
             res = {
                 "asset": base["asset"],
                 "balance": float(base["free"]) + float(base["locked"]),
@@ -493,10 +522,10 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # get account asset deposit and withdraw history detail
-    def getAccountAssetDetail(self, asset='', **kwargs):
+    def getAccountAssetDetail(self, asset=''):
         try:
-            deposite = self._client.get_deposit_history(asset=asset, **kwargs)
-            withdraw = self._client.get_withdraw_history(asset=asset, **kwargs)
+            deposite = self._client.get_deposit_history(asset=asset)
+            withdraw = self._client.get_withdraw_history(asset=asset)
             res = {
                 "deposit": deposite["depositList"],
                 "withdraw": withdraw["withdrawList"]
@@ -515,8 +544,7 @@ class Binance(Coin):
                     price,
                     quantity,
                     ratio='',
-                    type=ORDER_TYPE_LIMIT,
-                    **kwargs):
+                    type=ORDER_TYPE_LIMIT):
         # for speed up, lib not check, check from local db.data
         try:
             symbol = fSymbol + tSymbol
@@ -526,26 +554,22 @@ class Binance(Coin):
                 "type": type,
                 "timeInForce": TIME_IN_FORCE_GTC,
                 "quantity": quantity,
-                "price": price,
-                **kwargs
+                "price": price
             }
             base = self._client.create_order(**params)
             if ratio == '':
                 ratio = self._client.get_trade_fee(
                     symbol=symbol)["tradeFee"][0]["taker"]
-            status = "open" if base["status"] == "NEW" else base[
-                "status"].lower()
-            ask_or_bid = "ask" if base["side"] == "BUY" else "bid"
             filled_price = 0.0 if float(base["executedQty"]) == 0 else float(
                 base["cummulativeQuoteQty"]) / float(base["executedQty"])
             res = {
                 "timeStamp": base["transactTime"],
                 "order_id": base["orderId"],
-                "status": status,
-                "type": base["type"].lower(),
+                "status": self.__STATUS[base["status"]],
+                "type": self.__TYPE[base["type"]],
                 "fSymbol": fSymbol,
                 "tSymbol": tSymbol,
-                "ask_or_bid": ask_or_bid,
+                "ask_or_bid": self.__SIDE[base["side"]],
                 "ask_bid_price": float(base["price"]),
                 "ask_bid_size": float(base["origQty"]),
                 "filled_price": filled_price,
@@ -559,27 +583,24 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # check orders done or undone
-    def checkOrder(self, fSymbol, tSymbol, orderID, ratio='', **kwargs):
+    def checkOrder(self, fSymbol, tSymbol, orderID, ratio=''):
         try:
             symbol = fSymbol + tSymbol
-            params = {"symbol": symbol, "orderId": orderID, **kwargs}
+            params = {"symbol": symbol, "orderId": orderID}
             base = self._client.get_order(**params)
             if ratio == '':
                 ratio = self._client.get_trade_fee(
                     symbol=symbol)["tradeFee"][0]["taker"]
-            status = "open" if base["status"] == "NEW" else base[
-                "status"].lower()
-            ask_or_bid = "ask" if base["side"] == "BUY" else "bid"
             filled_price = 0.0 if float(base["executedQty"]) == 0 else float(
                 base["cummulativeQuoteQty"]) / float(base["executedQty"])
             res = {
                 "timeStamp": base["time"],
                 "order_id": base["orderId"],
-                "status": status,
-                "type": base["type"].lower(),
+                "status": self.__STATUS[base["status"]],
+                "type": self.__TYPE[base["type"]],
                 "fSymbol": fSymbol,
                 "tSymbol": tSymbol,
-                "ask_or_bid": ask_or_bid,
+                "ask_or_bid": self.__SIDE[base["side"]],
                 "ask_bid_price": float(base["price"]),
                 "ask_bid_size": float(base["origQty"]),
                 "filled_price": filled_price,
@@ -593,16 +614,16 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # cancle the specific order
-    def cancleOrder(self, fSymbol, tSymbol, orderID, **kwargs):
+    def cancleOrder(self, fSymbol, tSymbol, orderID):
         try:
             symbol = fSymbol + tSymbol
-            params = {"symbol": symbol, "orderId": orderID, **kwargs}
+            params = {"symbol": symbol, "orderId": orderID}
             info = self._client.get_order(**params)
             if info["status"] == "NEW" or info["status"] == "PARTIALLY_FILLED":
                 base = self._client.cancel_order(**params)
-                res = {"order_id": orderID, "status": "cancled"}
+                res = {"order_id": orderID, "status": ORDER_STATUS_CANCELED}
             else:
-                res = {"order_id": orderID, "status": info["status"].lower()}
+                res = {"order_id": orderID, "status": self.__STATUS[info["status"]]}
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
@@ -610,21 +631,21 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # cancle the batch orders
-    def cancleBatchOrder(self, fSymbol, tSymbol, orderIDs, **kwargs):
+    def cancleBatchOrder(self, fSymbol, tSymbol, orderIDs):
         try:
             symbol = fSymbol + tSymbol
             res = []
             for orderID in orderIDs:
-                params = {"symbol": symbol, "orderId": orderID, **kwargs}
+                params = {"symbol": symbol, "orderId": orderID}
                 info = self._client.get_order(**params)
                 if info["status"] == "NEW" or info[
                         "status"] == "PARTIALLY_FILLED":
                     base = self._client.cancel_order(**params)
-                    res.append({"order_id": orderID, "status": "cancled"})
+                    res.append({"order_id": orderID, "status": ORDER_STATUS_CANCELED})
                 else:
                     res.append({
                         "order_id": orderID,
-                        "status": info["status"].lower()
+                        "status": self.__STATUS[info["status"]]
                     })
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
@@ -633,9 +654,9 @@ class Binance(Coin):
             raise BinanceException(err)
 
     # deposite asset balance
-    def depositeAsset(self, asset, **kwargs):
+    def depositeAsset(self, asset):
         pass
 
     # withdraw asset balance
-    def withdrawAsset(self, asset, **kwargs):
+    def withdrawAsset(self, asset):
         pass

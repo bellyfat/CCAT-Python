@@ -140,18 +140,18 @@ class Huobi:
         return api_key_get(params, path, self.__access_key, self.__secret_key, self.__proxies)
 
     # 获取当前账户资产
-    def get_balance(self, acct_id=None):
+    def get_balance(self):
         """
         :param acct_id
         :return:
         """
 
-        if not acct_id:
+        if not self.__acct_id:
             accounts = get_accounts()
-            acct_id = accounts['data'][0]['id']
+            self.__acct_id = accounts['data'][0]['id']
 
-        url = "/v1/account/accounts/{0}/balance".format(acct_id)
-        params = {"account-id": acct_id}
+        url = "/v1/account/accounts/{0}/balance".format(self.__acct_id)
+        params = {"account-id": self.__acct_id}
         return api_key_get(params, url, self.__access_key, self.__secret_key, self.__proxies)
 
     # 下单
@@ -293,17 +293,16 @@ class Huobi:
         return api_key_get(params, url, self.__access_key, self.__secret_key, self.__proxies)
 
     # 查询所有当前帐号下未成交订单
-    def open_orders(self, account_id, symbol, side='', size=10):
+    def open_orders(self, account_id='', symbol='', side='', size=10):
         """
         :param symbol:
         :return:
         """
         params = {}
         url = "/v1/order/openOrders"
-        if symbol:
-            params['symbol'] = symbol
-        if account_id:
+        if account_id and symbol:
             params['account-id'] = account_id
+            params['symbol'] = symbol
         if side:
             params['side'] = side
         if size:

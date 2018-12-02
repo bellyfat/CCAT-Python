@@ -4,12 +4,11 @@ import os
 import sys
 import unittest
 
-sys.path.append(os.getcwd())
-
 from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.util.log import Logger
 
+sys.path.append(os.getcwd())
 
 # proxies
 _proxies = Config()._Proxies_url if Config()._Proxies_proxies else None
@@ -79,6 +78,7 @@ class TestOkex(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getTradeOpen(self):
+        # res = okex.getTradeOpen("", "")
         res = okex.getTradeOpen("ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
@@ -113,10 +113,10 @@ class TestOkex(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
-    # def test_createOrder(self):
-    #     res = okex.createOrder("ETH", "USDT", "ask", 150, 0.001)
-    #     logger.debug(res)
-    #     self.assertIsInstance(res, dict)
+    def test_createOrder(self):
+        res = okex.createOrder("ETH", "USDT", "ask", 150, 0.001)
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
 
     def test_checkOrder(self):
         res = okex.checkOrder("TRX", "USDT", "1771669234011136")

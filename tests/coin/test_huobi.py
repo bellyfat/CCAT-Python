@@ -73,6 +73,22 @@ class TestHuobi(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_getTradeFees(self):
+        res = huobi.getTradeFees()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getTradeOpen(self):
+        # res = huobi.getTradeOpen("", "")
+        res = huobi.getTradeOpen("ETH", "USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getTradeHistory(self):
+        res = huobi.getTradeHistory("ETH", "USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -9,6 +9,7 @@ import requests
 from requests.exceptions import ConnectionError, ReadTimeout
 
 from src.core.coin.coin import Coin
+from src.core.coin.enums import *
 from src.core.coin.lib.huobipro_api.HuobiService import Huobi as HuobiAPI
 from src.core.util.exceptions import HuobiException
 from src.core.util.helper import date_to_milliseconds, interval_to_milliseconds
@@ -161,8 +162,8 @@ class Huobi(Coin):
             if not base['status'] == 'ok' or not len(
                     base['tick']["bids"]) > 0 or not len(
                         base['tick']["asks"]) > 0:
-                err = "{fSymbol=%s, tSymbol=%s} response base=%s" % (fSymbol, tSymbol,
-                                                             base)
+                err = "{fSymbol=%s, tSymbol=%s} response base=%s" % (
+                    fSymbol, tSymbol, base)
                 raise Exception(err)
             if aggDepth == '':
                 res = {
@@ -220,15 +221,15 @@ class Huobi(Coin):
             symbol = (fSymbol + tSymbol).lower()
             base = self._huobiAPI.get_depth(symbol, 'step0')
             if not base['status'] == 'ok':
-                err = "{fSymbol=%s, tSymbol=%s} response base=%s" % (fSymbol, tSymbol,
-                                                             base)
+                err = "{fSymbol=%s, tSymbol=%s} response base=%s" % (
+                    fSymbol, tSymbol, base)
                 raise Exception(err)
             if limit != '':
                 limit = min((int(limit), len(base['tick']["bids"]),
-                                  len(base['tick']["asks"])))
+                             len(base['tick']["asks"])))
             else:
                 limit = min((len(base['tick']["bids"]),
-                                  len(base['tick']["asks"])))
+                             len(base['tick']["asks"])))
             print(limit)
             res = {
                 "timeStamp": base["ts"],
@@ -261,7 +262,7 @@ class Huobi(Coin):
         try:
             symbol = (fSymbol + tSymbol).lower()
             period = {
-                "1m":"1min",
+                "1m": "1min",
                 "5m": "5min",
                 "15m": "15min",
                 "30m": "30min",
@@ -270,15 +271,19 @@ class Huobi(Coin):
                 "1m": "1mon",
                 "1w": "1week",
                 "1y": "1year"
-                }
+            }
             granularity = interval_to_milliseconds(interval)
-            size = int((date_to_milliseconds(end)-date_to_milliseconds(start))/granularity)
+            size = int(
+                (date_to_milliseconds(end) - date_to_milliseconds(start)) /
+                granularity)
             if size < 1 or size > 2000:
-                err = "{fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s} calc size=%s error" % (fSymbol, tSymbol, interval, start, end, size)
+                err = "{fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s} calc size=%s error" % (
+                    fSymbol, tSymbol, interval, start, end, size)
                 raise Exception(err)
-            base = self._huobiAPI.get_kline(symbol,period[interval],size)
+            base = self._huobiAPI.get_kline(symbol, period[interval], size)
             if not base['status'] == 'ok':
-                err = "{fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s} response base=%s" % (fSymbol, tSymbol, interval, start, end, base)
+                err = "{fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s} response base=%s" % (
+                    fSymbol, tSymbol, interval, start, end, base)
                 raise Exception(err)
             res = []
             for b in base['data']:
@@ -291,6 +296,168 @@ class Huobi(Coin):
                     "low": b["low"],
                     "close": b["close"],
                     "volume": b["amount"]
+                })
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
+
+    # get symbol trade fees
+    def getTradeFees(self):
+        '''
+        币币手续费： 挂单成交0.1%， 吃单成交0.15%
+        '''
+        res = [{"symbol": "all", "maker": 0.002, "taker": 0.002}]
+        return res
+
+    # get current trade
+    def getTradeOpen(self,
+                     fSymbol,
+                     tSymbol,
+                     limit='100',
+                     ratio=''):
+        '''
+        /* GET /v1/orders/openOrders */
+        {
+          "status": "ok",
+          "data": [
+            {
+              "id": 5454937,
+              "symbol": "ethusdt",
+              "account-id": 30925,
+              "amount": "1.000000000000000000",
+              "price": "0.453000000000000000",
+              "created-at": 1530604762277,
+              "type": "sell-limit",
+              "filled-amount": "0.0",
+              "filled-cash-amount": "0.0",
+              "filled-fees": "0.0",
+              "source": "web",
+              "state": "submitted"
+            }
+          ]
+        }
+        '''
+        try:
+            symbol = ''
+            account_id = ''
+            if fSymbol and tSymbol:
+                symbol = (fSymbol + tSymbol).lower()
+                account_id = self._acct_id if self._acct_id else self._huobiAPI.get_accounts(
+                )['data'][0]['id']
+            side = ''
+            size = limit
+            base = self._huobiAPI.open_orders(account_id, symbol, side, size)
+            if not base['status'] == 'ok':
+                err = "{fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s} response base=%s" % (
+                    fSymbol, tSymbol, limit, ratio, base)
+                raise Exception(err)
+            types = {
+                "buy-market": "market",
+                "sell-market": "market",
+                "buy-limit": "limit",
+                "sell-limit": "limit"
+            }
+            sides = {
+                "buy-market": "bid",
+                "sell-market": "ask",
+                "buy-limit": "bid",
+                "sell-limit": "ask"
+            }
+            res = []
+            if ratio == '':
+                ratio = self.getTradeFees()[0]["taker"]
+            for b in base['data']:
+                res.append({
+                    "timeStamp": b["created-at"],
+                    "order_id": b["id"],
+                    "status": "open",
+                    "type": types[b["type"]],
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "ask_or_bid": sides[b["type"]],
+                    "ask_bid_price": float(b["price"]),
+                    "ask_bid_size": float(b["amount"]),
+                    "filled_price": float(b["filled-amount"]),
+                    "filled_size": float(b["filled-cash-amount"]),
+                    "fee": float(b["filled-fees"])
+                })
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            raise HuobiException(err)
+
+    # get history trade
+    def getTradeHistory(self,
+                        fSymbol,
+                        tSymbol,
+                        limit='100',
+                        ratio=''):
+        '''
+        /* GET /v1/order/orders */
+        {
+          "status": "ok",
+          "data": [
+            {
+              "id": 59378,
+              "symbol": "ethusdt",
+              "account-id": 100009,
+              "amount": "10.1000000000",
+              "price": "100.1000000000",
+              "created-at": 1494901162595,
+              "type": "buy-limit",
+              "field-amount": "10.1000000000",
+              "field-cash-amount": "1011.0100000000",
+              "field-fees": "0.0202000000",
+              "finished-at": 1494901400468,
+              "user-id": 1000,
+              "source": "api",
+              "state": "filled",
+              "canceled-at": 0,
+              "exchange": "huobi",
+              "batch": ""
+            }
+          ]
+        }
+        '''
+        try:
+            symbol = (fSymbol + tSymbol).lower()
+            states = "pre-submitted,submitted,partial-filled,partial-canceled,filled,canceled"
+            types = "buy-market,sell-market,buy-limit,sell-limit"
+            size = limit
+            base = self._huobiAPI.orders_list(
+                symbol, states, types, '', '', '', '', size)
+            if not base['status'] == 'ok':
+                err = "{fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s} response base=%s" % (
+                    fSymbol, tSymbol, limit, ratio, base)
+                raise Exception(err)
+            types = {
+                "buy-market": "market",
+                "sell-market": "market",
+                "buy-limit": "limit",
+                "sell-limit": "limit"
+            }
+            sides = {
+                "buy-market": "bid",
+                "sell-market": "ask",
+                "buy-limit": "bid",
+                "sell-limit": "ask"
+            }
+            res = []
+            if ratio == '':
+                ratio = self.getTradeFees()[0]["taker"]
+            for b in base['data']:
+                res.append({
+                    "timeStamp": b["created-at"],
+                    "order_id": b["id"],
+                    "status": b["state"],
+                    "type": types[b["type"]],
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "ask_or_bid": sides[b["type"]],
+                    "ask_bid_price": float(b["price"]),
+                    "ask_bid_size": float(b["amount"]),
+                    "filled_price": float(b["field-amount"]),
+                    "filled_size": float(b["field-cash-amount"]),
+                    "fee": float(b["field-fees"])
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
