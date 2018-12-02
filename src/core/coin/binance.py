@@ -415,7 +415,6 @@ class Binance(Coin):
             res = []
             for item in orders:
                 if item["status"] == "FILLED":
-                    ask_or_bid = "ask" if item["side"] == "BUY" else "bid"
                     filled_price = 0.0 if float(
                         item["executedQty"]) == 0 else float(
                             item["cummulativeQuoteQty"]) / float(
@@ -533,7 +532,7 @@ class Binance(Coin):
             symbol = fSymbol + tSymbol
             params = {
                 "symbol": symbol,
-                "side": SIDE_BUY if ask_or_bid == "ask" else SIDE_SELL,
+                "side": SIDE_BUY if ask_or_bid == ORDER_SIDE_BUY else SIDE_SELL,
                 "type": type,
                 "timeInForce": TIME_IN_FORCE_GTC,
                 "quantity": quantity,

@@ -5,7 +5,9 @@ import os
 import sqlite3
 
 from src.core.coin.binance import Binance
+from src.core.coin.huobi import Huobi
 from src.core.coin.okex import Okex
+from src.core.coin.enums import *
 from src.core.config import Config
 from src.core.db.sql import *
 from src.core.util.exceptions import (BinanceException, DBException,
@@ -39,6 +41,11 @@ class DB(object):
         self._Binance_exchange = Config()._Binance_exchange
         self._Binance_api_key = Config()._Binance_api_key
         self._Binance_api_secret = Config()._Binance_api_secret
+        # Huobi
+        self._Huobi_exchange = Config()._Huobi_exchange
+        self._Huobi_api_key = Config()._Huobi_api_key
+        self._Huobi_api_secret = Config()._Huobi_api_secret
+        self._Huobi_acct_id = Config()._Huobi_acct_id
 
         # 数据库 init
         self._conn = sqlite3.connect(self._dbStr, timeout=self._dbTimeout)
@@ -51,6 +58,9 @@ class DB(object):
                           self._proxies)
         self._Binance = Binance(self._Binance_exchange, self._Binance_api_key,
                                 self._Binance_api_secret, self._proxies)
+        self._Huobi = Huobi(self._Huobi_exchange, self._Huobi_api_key,
+                            self._Huobi_api_secret, self._Huobi_acct_id,
+                            self._proxies)
         # logger
         self._logger = Logger()
 
@@ -417,10 +427,17 @@ class DB(object):
                                                float(b["free"]),
                                                float(b["locked"])))
             # Huobi
-            # if exchange == "all" or "huobi" in exchange:
-            # to_be_continue
-            # Gate
-            # if exchange == "all" or "gate" in exchange:
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                base = self._Huobi.getAccountBalances()
+                for b in base:
+                    if b["balance"] > 0:
+                        TEMP_SQL_VALUE.append((str(self._Huobi_exchange),
+                                               int(timeStamp), str(b["asset"]),
+                                               float(b["balance"]),
+                                               float(b["free"]),
+                                               float(b["locked"])))
+            # Others
+            # if exchange == "all" or "Others" in exchange:
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
@@ -446,10 +463,10 @@ class DB(object):
                 TEMP_SQL_VALUE.append(
                     (str(self._Okex_exchange), int(timeStamp), str(asset),
                      str(
-                         sqlite_escape(', '.join(
+                         sqlite_escape(','.join(
                              json.dumps(b) for b in base["deposit"]))),
                      str(
-                         sqlite_escape(', '.join(
+                         sqlite_escape(','.join(
                              json.dumps(b) for b in base["withdraw"])))))
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
@@ -457,14 +474,23 @@ class DB(object):
                 TEMP_SQL_VALUE.append(
                     (str(self._Binance_exchange), int(timeStamp), str(asset),
                      str(
-                         sqlite_escape(';'.join(
+                         sqlite_escape(','.join(
                              json.dumps(b) for b in base["deposit"]))),
                      str(
-                         sqlite_escape(';'.join(
+                         sqlite_escape(','.join(
                              json.dumps(b) for b in base["withdraw"])))))
             # Huobi
-            # to_be_continue
-            # Gate
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                base = self._Huobi.getAccountAssetDetail(asset)
+                TEMP_SQL_VALUE.append(
+                    (str(self._Huobi_exchange), int(timeStamp), str(asset),
+                     str(
+                         sqlite_escape(','.join(
+                             json.dumps(b) for b in base["deposit"]))),
+                     str(
+                         sqlite_escape(','.join(
+                             json.dumps(b) for b in base["withdraw"])))))
+            # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
@@ -507,8 +533,18 @@ class DB(object):
                      "NULL" if res["webSockets_second"] == '' else float(
                          res["webSockets_second"])))
             # Huobi
-            # to_be_continue
-            # Gate
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                res = self._Huobi.getServerLimits()
+                TEMP_SQL_VALUE.append(
+                    (str(self._Huobi_exchange), "NULL" if
+                     res["info_second"] == '' else float(res["info_second"]),
+                     "NULL" if res["market_second"] == '' else float(
+                         res["market_second"]),
+                     "NULL" if res["orders_second"] == '' else float(
+                         res["orders_second"]),
+                     "NULL" if res["webSockets_second"] == '' else float(
+                         res["webSockets_second"])))
+            # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
@@ -591,8 +627,40 @@ class DB(object):
                                  "NULL" if fees_key["taker"] == '' else float(
                                      fees_key["taker"])))
             # Huobi
-            # to_be_continue
-            # Gate
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                base = self._Huobi.getSymbolsLimits()
+                fees = self._Huobi.getTradeFees()
+                for b in base:
+                    fees_key = ''
+                    for f in fees:
+                        if f["symbol"] == b["fSymbol"] + b["tSymbol"]:
+                            fees_key = f
+                            TEMP_SQL_VALUE.append(
+                                (str(self._Huobi_exchange), str(b["fSymbol"]),
+                                 str(b["tSymbol"]), "NULL"
+                                 if b["tSymbol_price"]["precision"] == '' else
+                                 float(b["tSymbol_price"]["precision"]),
+                                 "NULL" if b["tSymbol_price"]["max"] == '' else
+                                 float(b["tSymbol_price"]["max"]),
+                                 "NULL" if b["tSymbol_price"]["min"] == '' else
+                                 float(b["tSymbol_price"]["min"]),
+                                 "NULL" if b["tSymbol_price"]["step"] == ''
+                                 else float(b["tSymbol_price"]["step"]),
+                                 "NULL" if b["fSymbol_size"]["precision"] == ''
+                                 else float(b["fSymbol_size"]["precision"]),
+                                 "NULL" if b["fSymbol_size"]["max"] == '' else
+                                 float(b["fSymbol_size"]["max"]),
+                                 "NULL" if b["fSymbol_size"]["min"] == '' else
+                                 float(b["fSymbol_size"]["min"]),
+                                 "NULL" if b["fSymbol_size"]["step"] == '' else
+                                 float(b["fSymbol_size"]["step"]),
+                                 "NULL" if b["min_notional"] == '' else float(
+                                     b["min_notional"]),
+                                 "NULL" if fees_key["maker"] == '' else float(
+                                     fees_key["maker"]),
+                                 "NULL" if fees_key["taker"] == '' else float(
+                                     fees_key["taker"])))
+            # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
@@ -616,21 +684,37 @@ class DB(object):
                 for b in base:
                     TEMP_SQL_VALUE.append((str(self._Okex_exchange),
                                            str(b["asset"]),
-                                           str(b["can_deposit"]),
-                                           str(b["can_withdraw"]),
-                                           float(b["min_withdraw"])))
+                                           "NULL" if b["can_deposit"] == ''
+                                           else str(b["can_deposit"]),
+                                           "NULL" if b["can_withdraw"] == ''
+                                           else str(b["can_withdraw"]),
+                                           "NULL" if b["min_withdraw"] == ''
+                                           else float(b["min_withdraw"])))
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 base = self._Binance.getAccountLimits()
                 for b in base:
                     TEMP_SQL_VALUE.append((str(self._Binance_exchange),
                                            str(b["asset"]),
-                                           str(b["can_deposit"]),
-                                           str(b["can_withdraw"]),
-                                           float(b["min_withdraw"])))
+                                           "NULL" if b["can_deposit"] == ''
+                                           else str(b["can_deposit"]),
+                                           "NULL" if b["can_withdraw"] == ''
+                                           else str(b["can_withdraw"]),
+                                           "NULL" if b["min_withdraw"] == ''
+                                           else float(b["min_withdraw"])))
             # Huobi
-            # to_be_continue
-            # Gate
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                base = self._Huobi.getAccountLimits()
+                for b in base:
+                    TEMP_SQL_VALUE.append((str(self._Huobi_exchange),
+                                           str(b["asset"]),
+                                           "NULL" if b["can_deposit"] == ''
+                                           else str(b["can_deposit"]),
+                                           "NULL" if b["can_withdraw"] == ''
+                                           else str(b["can_withdraw"]),
+                                           "NULL" if b["min_withdraw"] == ''
+                                           else float(b["min_withdraw"])))
+            # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
@@ -668,10 +752,15 @@ class DB(object):
                      str(sqlite_escape(json.dumps(base["bid_price_size"]))),
                      str(sqlite_escape(json.dumps(base["ask_price_size"])))))
             # Huobi
-            # if exchange == "all" or "huobi" in exchange:
-            # to_be_continue
-            # Gate
-            # if exchange == "all" or "gate" in exchange:
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                base = self._Huobi.getMarketOrderbookDepth(
+                    fSymbol, tSymbol, limit)
+                TEMP_SQL_VALUE.append(
+                    (str(self._Huobi_exchange), int(base["timeStamp"]),
+                     str(base["fSymbol"]), str(base["tSymbol"]),
+                     str(sqlite_escape(json.dumps(base["bid_price_size"]))),
+                     str(sqlite_escape(json.dumps(base["ask_price_size"])))))
+            # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
@@ -712,10 +801,16 @@ class DB(object):
                          float(b["open"]), float(b["high"]), float(b["low"]),
                          float(b["close"]), float(b["volume"])))
             # Huobi
-            # if exchange == "all" or "huobi" in exchange:
-            # to_be_continue
-            # Gate
-            # if exchange == "all" or "gate" in exchange:
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                base = self._Huobi.getMarketKline(fSymbol, tSymbol, interval,
+                                                  start, end)
+                for b in base:
+                    TEMP_SQL_VALUE.append(
+                        (str(self._Huobi_exchange), int(b["timeStamp"]),
+                         str(b["fSymbol"]), str(b["tSymbol"]),
+                         float(b["open"]), float(b["high"]), float(b["low"]),
+                         float(b["close"]), float(b["volume"])))
+            # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
@@ -758,12 +853,19 @@ class DB(object):
                                        float(base["bid_one_size"]),
                                        float(base["ask_one_price"]),
                                        float(base["ask_one_size"])))
-
             # Huobi
-            # if exchange == "all" or "huobi" in exchange:
-            # to_be_continue
-            # Gate
-            # if exchange == "all" or "gate" in exchange:
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                base = self._Huobi.getMarketOrderbookTicker(
+                    fSymbol, tSymbol, aggDepth)
+                TEMP_SQL_VALUE.append((str(self._Huobi_exchange),
+                                       int(base["timeStamp"]),
+                                       str(base["fSymbol"]),
+                                       str(base["tSymbol"]),
+                                       float(base["bid_one_price"]),
+                                       float(base["bid_one_size"]),
+                                       float(base["ask_one_price"]),
+                                       float(base["ask_one_size"])))
+            # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
@@ -783,7 +885,7 @@ class DB(object):
                                    price,
                                    quantity,
                                    ratio='',
-                                   type="limit"):
+                                   type=ORDER_TYPE_LIMIT):
         self._logger.debug(
             "src.core.db.db.DB.insertTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }"
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
@@ -819,8 +921,19 @@ class DB(object):
                                        float(price), float(quantity),
                                        float(fee)))
             # Huobi
-            # to_be_continue
-            # Gate
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                timeStamp = utcnow_timestamp()
+                order_id = '0x' + str(timeStamp)
+                status = 'filled'
+                if ratio == '':
+                    ratio = self._Huobi.getTradeFees()[0]["taker"]
+                fee = float(ratio) * float(price) * float(quantity)
+                TEMP_SQL_VALUE.append(
+                    (str(self._Huobi_exchange), int(timeStamp), str(order_id),
+                     str(status), str(type), str(fSymbol), str(tSymbol),
+                     str(ask_or_bid), float(price), float(quantity),
+                     float(price), float(quantity), float(fee)))
+            # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
@@ -840,7 +953,7 @@ class DB(object):
                                 price,
                                 quantity,
                                 ratio='',
-                                type="limit"):
+                                type=ORDER_TYPE_LIMIT):
         self._logger.debug(
             "src.core.db.db.DB.insertTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }"
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
@@ -880,8 +993,22 @@ class DB(object):
                                        float(base["filled_size"]),
                                        float(base["fee"])))
             # Huobi
-            # to_be_continue
-            # Gate
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                base = self._Huobi.createOrder(fSymbol, tSymbol, ask_or_bid,
+                                               price, quantity, ratio, type)
+                TEMP_SQL_VALUE.append((str(self._Huobi_exchange),
+                                       int(base["timeStamp"]),
+                                       str(base["order_id"]),
+                                       str(base["status"]), str(base["type"]),
+                                       str(base["fSymbol"]),
+                                       str(base["tSymbol"]),
+                                       str(base["ask_or_bid"]),
+                                       float(base["ask_bid_price"]),
+                                       float(base["ask_bid_size"]),
+                                       float(base["filled_price"]),
+                                       float(base["filled_size"]),
+                                       float(base["fee"])))
+            # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)

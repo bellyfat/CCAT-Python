@@ -225,15 +225,15 @@ CREATE_TABELS_SQL = '''
     	`timeStamp`	INTEGER NOT NULL,
     	`fSymbol`	TEXT NOT NULL,
     	`tSymbol`	TEXT NOT NULL,
-    	`bid_price_size`	BLOB,
-    	`ask_price_size`	BLOB,
+    	`bid_price_size`	TEXT,
+    	`ask_price_size`	TEXT,
         PRIMARY KEY (server, timeStamp, fSymbol, tSymbol)
     );
     CREATE TABLE IF NOT EXISTS `INFO_WITHDRAW` (
     	`server`	TEXT NOT NULL,
     	`asset`	TEXT NOT NULL,
-    	`can_deposit`	TEXT NOT NULL,
-    	`can_withdraw`	TEXT NOT NULL,
+    	`can_deposit`	TEXT,
+    	`can_withdraw`	TEXT,
     	`min_withdraw`	REAL,
         PRIMARY KEY (server, asset)
     );

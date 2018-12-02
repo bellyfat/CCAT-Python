@@ -489,7 +489,7 @@ class Okex(Coin):
         #  for speed up, lib not check, check from local db.data
         try:
             instrument_id = fSymbol + "-" + tSymbol
-            side = 'buy' if ask_or_bid == "ask" else 'sell'
+            side = 'buy' if ask_or_bid == ORDER_SIDE_BUY else 'sell'
             base = self._spotAPI.take_order(type, side, instrument_id,
                                             quantity, 1, '', price, '',
                                             self._proxies)
