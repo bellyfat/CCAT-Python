@@ -102,8 +102,8 @@ class Huobi(Coin):
             tSymbol = ''
             res = []
             for b in base['data']:
-                fSymbol = b["base-currency"]
-                tSymbol = b["quote-currency"]
+                fSymbol = b["base-currency"].upper()
+                tSymbol = b["quote-currency"].upper()
                 res.append({"fSymbol": fSymbol, "tSymbol": tSymbol})
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
@@ -127,23 +127,12 @@ class Huobi(Coin):
             base = self._huobiAPI.get_symbols()
             if not base['status'] == 'ok':
                 raise Exception(base)
-            fSymbol = ''
-            tSymbol = ''
-            tSymbol_price_precision = ''
-            tSymbol_price_max = ''
-            tSymbol_price_min = ''
-            tSymbol_price_step = ''
-            fSymbol_size_precision = ''
-            fSymbol_size_max = ''
-            fSymbol_size_min = ''
-            fSymbol_size_step = ''
-            min_notional = ''
             res = []
             for b in base['data']:
                 # if not b["symbol-partition"]="main":
                 #     continue
-                fSymbol = b["base-currency"]
-                tSymbol = b["quote-currency"]
+                fSymbol = b["base-currency"].upper()
+                tSymbol = b["quote-currency"].upper()
                 tSymbol_price_precision = math.pow(10,
                                                    -int(b["price-precision"]))
                 tSymbol_price_max = ''
@@ -255,7 +244,6 @@ class Huobi(Coin):
             else:
                 limit = min((len(base['tick']["bids"]),
                              len(base['tick']["asks"])))
-            print(limit)
             res = {
                 "timeStamp": base["ts"],
                 "fSymbol": fSymbol,
@@ -599,6 +587,7 @@ class Huobi(Coin):
                             "type"] == "frozen":
                         res[i]["locked"] = float(b["balance"])
             for i in range(len(res)):
+                res[i]["currency"] = res[i]["currency"].upper()
                 res[i]["balance"] = res[i]["free"] + res[i]["locked"]
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
@@ -619,14 +608,13 @@ class Huobi(Coin):
         '''
         try:
             base = self._huobiAPI.get_currencies()
-            print(base)
             if not base['status'] == 'ok':
                 err = "response base=%s" % base
                 raise Exception(err)
             res = []
             for b in base['data']:
                 res.append({
-                    "asset": b,
+                    "asset": b.upper(),
                     "can_deposit": '',
                     "can_withdraw": '',
                     "min_withdraw": ''
@@ -658,6 +646,7 @@ class Huobi(Coin):
                     if res["asset"] == b["currency"] and b["type"] == "frozen":
                         res["locked"] = float(b["balance"])
             if res != {}:
+                res["asset"] = res["asset"].upper()
                 res["balance"] = res["free"] + res["locked"]
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
@@ -774,8 +763,8 @@ class Huobi(Coin):
                 err = "{orderID=%s, fSymbol=%s, tSymbol=%s} response ba=%s" % (
                     orderID, fSymbol, tSymbol, ba)
                 raise Exception(err)
-            if self.__STATUS[ba['data'][
-                    "state"]] == ORDER_STATUS_OPEN or self.__STATUS[
+            if self.__STATUS[
+                    ba['data']["state"]] == ORDER_STATUS_OPEN or self.__STATUS[
                         ba['data']["state"]] == ORDER_STATUS_PART_FILLED:
                 base = self._huobiAPI.cancel_order(orderID)
                 rebase = self._huobiAPI.order_info(orderID)

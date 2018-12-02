@@ -631,35 +631,31 @@ class DB(object):
                 base = self._Huobi.getSymbolsLimits()
                 fees = self._Huobi.getTradeFees()
                 for b in base:
-                    fees_key = ''
-                    for f in fees:
-                        if f["symbol"] == b["fSymbol"] + b["tSymbol"]:
-                            fees_key = f
-                            TEMP_SQL_VALUE.append(
-                                (str(self._Huobi_exchange), str(b["fSymbol"]),
-                                 str(b["tSymbol"]), "NULL"
-                                 if b["tSymbol_price"]["precision"] == '' else
-                                 float(b["tSymbol_price"]["precision"]),
-                                 "NULL" if b["tSymbol_price"]["max"] == '' else
-                                 float(b["tSymbol_price"]["max"]),
-                                 "NULL" if b["tSymbol_price"]["min"] == '' else
-                                 float(b["tSymbol_price"]["min"]),
-                                 "NULL" if b["tSymbol_price"]["step"] == ''
-                                 else float(b["tSymbol_price"]["step"]),
-                                 "NULL" if b["fSymbol_size"]["precision"] == ''
-                                 else float(b["fSymbol_size"]["precision"]),
-                                 "NULL" if b["fSymbol_size"]["max"] == '' else
-                                 float(b["fSymbol_size"]["max"]),
-                                 "NULL" if b["fSymbol_size"]["min"] == '' else
-                                 float(b["fSymbol_size"]["min"]),
-                                 "NULL" if b["fSymbol_size"]["step"] == '' else
-                                 float(b["fSymbol_size"]["step"]),
-                                 "NULL" if b["min_notional"] == '' else float(
-                                     b["min_notional"]),
-                                 "NULL" if fees_key["maker"] == '' else float(
-                                     fees_key["maker"]),
-                                 "NULL" if fees_key["taker"] == '' else float(
-                                     fees_key["taker"])))
+                    fees_key = fees[0]
+                    TEMP_SQL_VALUE.append(
+                        (str(self._Huobi_exchange), str(b["fSymbol"]),
+                         str(b["tSymbol"]),
+                         "NULL" if b["tSymbol_price"]["precision"] == '' else
+                         float(b["tSymbol_price"]["precision"]),
+                         "NULL" if b["tSymbol_price"]["max"] == '' else float(
+                             b["tSymbol_price"]["max"]),
+                         "NULL" if b["tSymbol_price"]["min"] == '' else float(
+                             b["tSymbol_price"]["min"]),
+                         "NULL" if b["tSymbol_price"]["step"] == '' else float(
+                             b["tSymbol_price"]["step"]),
+                         "NULL" if b["fSymbol_size"]["precision"] == '' else
+                         float(b["fSymbol_size"]["precision"]),
+                         "NULL" if b["fSymbol_size"]["max"] == '' else float(
+                             b["fSymbol_size"]["max"]),
+                         "NULL" if b["fSymbol_size"]["min"] == '' else float(
+                             b["fSymbol_size"]["min"]),
+                         "NULL" if b["fSymbol_size"]["step"] == '' else float(
+                             b["fSymbol_size"]["step"]), "NULL" if
+                         b["min_notional"] == '' else float(b["min_notional"]),
+                         "NULL" if fees_key["maker"] == '' else float(
+                             fees_key["maker"]),
+                         "NULL" if fees_key["taker"] == '' else float(
+                             fees_key["taker"])))
             # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:

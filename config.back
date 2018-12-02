@@ -118,8 +118,8 @@
   api_secret =
   acct_id =
 
-# Gate Settings
-[Gate]
-  exchange = gate
+# Other Settings
+[Other]
+  exchange = other
   api_key =
   api_secret =
