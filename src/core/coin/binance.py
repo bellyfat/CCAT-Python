@@ -318,7 +318,8 @@ class Binance(Coin):
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
                 BinanceWithdrawException, Exception) as err:
-            raise BinanceException(err)
+            errStr = "src.core.coin.binance.Binance.getTradeFees: exception err=%s" % err
+            raise BinanceException(errStr)
 
     # get current trade
     def getTradeOpen(self, fSymbol='', tSymbol='', limit='100', ratio=''):
@@ -536,7 +537,7 @@ class Binance(Coin):
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
                 BinanceWithdrawException, Exception) as err:
-            errStr = "src.core.coin.binance.Binance.getAccountAssetBalance: { asset=%s }, exception err=%s" % (
+            errStr = "src.core.coin.binance.Binance.getAccountAssetDetail: { asset=%s }, exception err=%s" % (
                 asset, err)
             raise BinanceException(errStr)
 
@@ -668,7 +669,7 @@ class Binance(Coin):
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
                 BinanceWithdrawException, Exception) as err:
-            errStr = "src.core.coin.binance.Binance.cancelOrder: { orderIDs=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
+            errStr = "src.core.coin.binance.Binance.cancelBatchOrder: { orderIDs=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
                 orderIDs, fSymbol, tSymbol, err)
             raise BinanceException(errStr)
 

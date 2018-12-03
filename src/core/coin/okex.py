@@ -494,7 +494,7 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            errStr = "src.core.coin.okex.Okex.getAccountAssetBalance: { asset=%s }, exception err=%s" % (
+            errStr = "src.core.coin.okex.Okex.getAccountAssetDetail: { asset=%s }, exception err=%s" % (
                 asset, err)
             raise OkexException(errStr)
 
@@ -626,7 +626,7 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            errStr = "src.core.coin.okex.Okex.cancelOrder: { orderIDs=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
+            errStr = "src.core.coin.okex.Okex.cancelBatchOrder: { orderIDs=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
                 orderIDs, fSymbol, tSymbol, err)
             raise OkexException(errStr)
 
