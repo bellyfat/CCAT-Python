@@ -17,7 +17,7 @@ MARKET_URL = "https://api.huobi.pro"
 TRADE_URL = "https://api.huobi.pro"
 
 # timeout in 10 seconds:
-TIMEOUT = 5
+TIMEOUT = 10
 
 
 def http_get_request(url, params, add_to_headers=None, proxies=None):
