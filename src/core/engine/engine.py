@@ -229,11 +229,11 @@ class EventEngine(object):
     def getEventStatus(self, id):
         status = QUEUE_STATUS_EVENT
         res = self.__status.getActiveStatusTable()
-        if not res:
+        if len(res)>0:
             if id in res:
                 status = ACTIVE_STATUS_EVENT
         res = self.__status.getDoneStatusTable()
-        if not res:
+        if len(res)>0:
             if id in res:
                 status = DONE_STATUS_EVENT
         self.__logger.debug(

@@ -46,21 +46,69 @@ class Util(object):
             db.initDB()
             db.creatTables()
             db.creatViews()
-        except (DBException, EngineException) as err:
+        except (DBException, Exception) as err:
             errStr = "src.core.util.util.Util.initDB: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
     # Info数据
+    def threadInsertInfoServer(self, server):
+        try:
+            db = DB()
+            db.insertInfoServer(server)
+        except (DBException, Exception) as err:
+            errStr = "src.core.util.util.Util.threadInsertInfoServer: %s" % ApplicationException(
+                err)
+            self._logger.critical(errStr)
+            raise ApplicationException(err)
+
+    def threadInsertInfoSymbol(self, server):
+        try:
+            db = DB()
+            db.insertInfoSymbol(server)
+        except (DBException, Exception) as err:
+            errStr = "src.core.util.util.Util.threadInsertInfoSymbol: %s" % ApplicationException(
+                err)
+            self._logger.critical(errStr)
+            raise ApplicationException(err)
+
+    def threadInsertInfoWithdraw(self, server):
+        try:
+            db = DB()
+            db.insertInfoWithdraw(server)
+        except (DBException, Exception) as err:
+            errStr = "src.core.util.util.Util.threadInsertInfoWithdraw: %s" % ApplicationException(
+                err)
+            self._logger.critical(errStr)
+            raise ApplicationException(err)
+
     def initDBInfo(self):
         self._logger.debug("src.core.util.util.Util.initDBInfo")
         try:
-            db = DB()
-            db.insertInfoServer(self._exchanges)
-            db.insertInfoSymbol(self._exchanges)
-            db.insertInfoWithdraw(self._exchanges)
-        except (DBException, EngineException) as err:
+            tds = []
+            for server in self._exchanges:
+                td = Thread(
+                    target=self.threadInsertInfoServer,
+                    name="%s-threadInsertInfoServer" % server,
+                    args=([server],))
+                tds.append(td)
+                td.start()
+                td = Thread(
+                    target=self.threadInsertInfoSymbol,
+                    name="%s-threadInsertInfoSymbol" % server,
+                    args=([server],))
+                tds.append(td)
+                td.start()
+                td = Thread(
+                    target=self.threadInsertInfoWithdraw,
+                    name="%s-threadInsertInfoWithdraw" % server,
+                    args=([server],))
+                tds.append(td)
+                td.start()
+            for td in tds:
+                td.join()
+        except Exception as err:
             errStr = "src.core.util.util.Util.initDBInfo: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
@@ -74,7 +122,7 @@ class Util(object):
             res = db.getInfoServer()
             self._serverLimits = pd.DataFrame(res).set_index(["server"],
                                                              inplace=False)
-        except (DBException, EngineException) as err:
+        except (DBException, Exception) as err:
             errStr = "src.core.util.util.Util.initServerLimits: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
@@ -157,7 +205,7 @@ class Util(object):
                 res = db.getAccountBalanceHistory([server])
                 td = Thread(
                     target=self.threadSendListenAccountWithdrawEvent,
-                    name="%s-thread" % server,
+                    name="%s-threadSendListenAccountWithdrawEvent" % server,
                     args=(res, epoch, async, timeout))
                 tds.append(td)
                 td.start()
@@ -206,7 +254,7 @@ class Util(object):
                 res = db.getViewMarketSymbolPairs([server])
                 td = Thread(
                     target=self.threadSendListenMarketDepthEvent,
-                    name="%s-thread" % server,
+                    name="%s-threadSendListenMarketDepthEvent" % server,
                     args=(res, epoch, async, timeout))
                 tds.append(td)
                 td.start()
@@ -258,7 +306,7 @@ class Util(object):
                 res = db.getViewInfoSymbolPairs([server])
                 td = Thread(
                     target=self.threadSendListenMarketKlineEvent,
-                    name="%s-thread" % server,
+                    name="%s-threadSendListenMarketKlineEvent" % server,
                     args=(res, timestamp_to_isoformat(start),
                           timestamp_to_isoformat(end), epoch, async, timeout))
                 tds.append(td)
@@ -311,7 +359,7 @@ class Util(object):
                 res = db.getViewMarketSymbolPairs([server])
                 td = Thread(
                     target=self.threadSendListenMarketTickerEvent,
-                    name="%s-thread" % server,
+                    name="%s-threadSendListenMarketTickerEvent" % server,
                     args=(res, epoch, async, timeout))
                 tds.append(td)
                 td.start()

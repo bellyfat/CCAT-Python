@@ -27,8 +27,8 @@ if __name__ == '__main__':
     util = Util(__eventEngine, sender)
 
     # app init
-    # util.initDB()
-    # util.initDBInfo()
+    util.initDB()
+    util.initDBInfo()
     util.initServerLimits()
 
     # register engine
