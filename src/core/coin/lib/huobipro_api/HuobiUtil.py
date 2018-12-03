@@ -17,7 +17,7 @@ MARKET_URL = "https://api.huobi.pro"
 TRADE_URL = "https://api.huobi.pro"
 
 # timeout in 10 seconds:
-TIMEOUT = 10
+TIMEOUT = 5
 
 
 def http_get_request(url, params, add_to_headers=None, proxies=None):
@@ -36,9 +36,10 @@ def http_get_request(url, params, add_to_headers=None, proxies=None):
         if response.status_code == 200:
             return response.json()
         else:
-            return
+            raise Exception(
+                "httpGet failed, detail is: response=%s" % response.text)
     except BaseException as e:
-        raise Exception("httpGet failed, detail is:%s,%s" % (response.text, e))
+        raise Exception("httpGet failed, detail is: err=%s" % e)
 
 
 def http_post_request(url, params, add_to_headers=None, proxies=None):
@@ -55,10 +56,10 @@ def http_post_request(url, params, add_to_headers=None, proxies=None):
         if response.status_code == 200:
             return response.json()
         else:
-            return
+            raise Exception(
+                "httpPost failed, detail is: response=%s" % response.text)
     except BaseException as e:
-        raise Exception(
-            "httpPost failed, detail is:%s,%s" % (response.text, e))
+        raise Exception("httpPost failed, detail is: err=%s" % e)
 
 
 def api_key_get(params, request_path, ACCESS_KEY, SECRET_KEY, proxies=None):
