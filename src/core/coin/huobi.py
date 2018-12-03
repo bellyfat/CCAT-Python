@@ -85,8 +85,8 @@ class Huobi(Coin):
         限制频率（每个接口，只针对交易api，行情api不限制）为10秒100次。
         '''
         res = {
-            "info_second": 60,
-            "market_second": 60,
+            "info_second": 30,
+            "market_second": 30,
             "orders_second": 10,
             "webSockets_second": ''
         }
@@ -294,7 +294,7 @@ class Huobi(Coin):
                     fSymbol, tSymbol, interval, start, end, size)
                 raise Exception(err)
             base = self._huobiAPI.get_kline(symbol, period[interval], size)
-            if not base['status'] == 'ok':
+            if not base['status'] == 'ok' or base['data'] == []:
                 err = "{fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s} response base=%s" % (
                     fSymbol, tSymbol, interval, start, end, base)
                 raise Exception(err)
@@ -312,7 +312,8 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "{fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s} response base=%s, exception err=%s" % (fSymbol, tSymbol, interval, start, end, base, err)
+            raise HuobiException(errStr)
 
     # get symbol trade fees
     def getTradeFees(self):

@@ -66,9 +66,10 @@ class TestOkex(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     def test_getMarketKline(self):
-        res = okex.getMarketKline("ETH", "USDT", "1m",
-                                  "2018-11-11T00:00:00.000Z",
-                                  "2018-11-11T01:00:00.000Z")
+        res = okex.getMarketKline("ETH", "USDT", "1h",
+                                  "2018-12-02T00:00:00.000Z",
+                                  "2018-12-03T00:00:00.000Z")
+        logger.debug(len(res))
         logger.debug(res)
         self.assertIsInstance(res, list)
 

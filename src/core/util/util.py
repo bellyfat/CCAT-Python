@@ -5,7 +5,6 @@ import time
 from threading import Thread, current_thread
 
 import pandas as pd
-
 from src.core.config import Config
 from src.core.db.db import DB
 from src.core.engine.enums import (ACTIVE_STATUS_EVENT, DONE_STATUS_EVENT,
@@ -179,7 +178,8 @@ class Util(object):
         for r in res:
             time.sleep(epoch)
             id = self._sender.sendListenMarketDepthEvent(
-                r["server"], r["fSymbol"], r["tSymbol"], self._marketDepthLimit)
+                r["server"], r["fSymbol"], r["tSymbol"],
+                self._marketDepthLimit)
             ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
@@ -194,7 +194,6 @@ class Util(object):
                 self._logger.warn(
                     "src.core.util.util.Util.threadSendListenMarketDepthEvent: Timeout Error, waiting for event handler result timeout."
                 )
-
 
     def updateDBMarketDepth(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBMarketDepth")
@@ -214,11 +213,10 @@ class Util(object):
             for td in tds:
                 td.join()
         except (DBException, EngineException) as err:
-            errStr = "src.core.util.util.Util.updateDBMarketKline: %s" % ApplicationException(
+            errStr = "src.core.util.util.Util.updateDBMarketDepth: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
-
 
     # Market Kline 事件
     def threadSendListenMarketKlineEvent(self, res, start, end, epoch, async,
@@ -251,8 +249,8 @@ class Util(object):
         try:
             db = DB()
             db.delMarketKline()
-            start = utcnow_timestamp() - 24 * 60 * 60 * 1000
-            end = utcnow_timestamp()
+            end = utcnow_timestamp() - 12 * 60 * 60 * 1000
+            start = end - 24 * 60 * 60 * 1000
             tds = []
             for server in self._exchanges:
                 epoch = float(self._apiEpochSaveBound) / float(
@@ -281,7 +279,9 @@ class Util(object):
         ids = []
         for r in res:
             db = DB()
-            aggDepth = db.getViewMarketSymbolPairsAggDepth(self._exchanges, r["fSymbol"], r["tSymbol"])[0]["aggDepth"] * self._marketTickerAggStep
+            aggDepth = db.getViewMarketSymbolPairsAggDepth(
+                self._exchanges, r["fSymbol"],
+                r["tSymbol"])[0]["aggDepth"] * self._marketTickerAggStep
             time.sleep(epoch)
             id = self._sender.sendListenMarketTickerEvent(
                 r["server"], r["fSymbol"], r["tSymbol"], aggDepth)

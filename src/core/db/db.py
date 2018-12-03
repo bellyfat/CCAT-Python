@@ -446,7 +446,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
+        except (OkexException, BinanceException, sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def insertAccountWithdrawHistory(self, exchange, asset):
@@ -499,7 +499,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
+        except (OkexException, BinanceException, sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def insertInfoServer(self, exchange="all"):
@@ -553,7 +553,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
+        except (OkexException, BinanceException, sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def insertInfoSymbol(self, exchange="all"):
@@ -665,7 +665,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
+        except (OkexException, BinanceException, sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def insertInfoWithdraw(self, exchange="all"):
@@ -719,7 +719,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
+        except (OkexException, BinanceException, sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def insertMarketDepth(self, exchange, fSymbol, tSymbol, limit=100):
@@ -765,7 +765,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
+        except (OkexException, BinanceException, sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def insertMarketKline(self, exchange, fSymbol, tSymbol, interval, start,
@@ -815,7 +815,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
+        except (OkexException, BinanceException, sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def insertMarketTicker(self, exchange, fSymbol, tSymbol, aggDepth=''):
@@ -870,7 +870,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
+        except (OkexException, BinanceException, sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def insertTradeBacktestHistory(self,
@@ -938,7 +938,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
+        except (OkexException, BinanceException, sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def insertTradeOrderHistory(self,
@@ -1013,5 +1013,5 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error) as err:
+        except (OkexException, BinanceException, sqlite3.Error, Exception) as err:
             raise DBException(err)

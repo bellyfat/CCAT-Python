@@ -293,9 +293,10 @@ CREATE_VIEWS_SQL = Template('''
     BEGIN TRANSACTION;
     CREATE VIEW IF NOT EXISTS VIEW_INFO_SYMBOL
         AS
-        	SELECT S1.*
-            FROM INFO_SYMBOL S1,INFO_SYMBOL S2
-            WHERE S1.server<>S2.server AND S1.fSymbol = S2.fSymbol AND S1.tSymbol = S2.tSymbol;
+            SELECT DISTINCT S1.*
+            FROM INFO_SYMBOL S1
+            LEFT JOIN INFO_SYMBOL S2 ON S1.server<>S2.server AND S1.fSymbol = S2.fSymbol AND S1.tSymbol = S2.tSymbol
+            WHERE S2.server is not NULL;
     CREATE VIEW IF NOT EXISTS VIEW_ACCOUNT_BALANCE_CURRENT
         AS
 			SELECT B1.*

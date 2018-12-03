@@ -27,8 +27,8 @@ if __name__ == '__main__':
     util = Util(__eventEngine, sender)
 
     # app init
-    util.initDB()
-    util.initDBInfo()
+    # util.initDB()
+    # util.initDBInfo()
     util.initServerLimits()
 
     # register engine
@@ -39,19 +39,19 @@ if __name__ == '__main__':
 
     # app update
 
-    util.updateDBAccountBalance(async=False)
+    # util.updateDBAccountBalance(async=False)
 
-    util.updateDBAccountWithdraw()
+    # util.updateDBAccountWithdraw()
 
     util.updateDBMarketKline(async=False)
 
-    util.updateDBMarketDepth()
+    # util.updateDBMarketDepth()
 
-    util.updateDBMarketTicker()
+    # util.updateDBMarketTicker()
 
 
     # # stop engine
-    time.sleep(2) # for engine begin handle
+    time.sleep(5) # for engine begin handle
     __eventEngine.stop()
 
     # unregister engine

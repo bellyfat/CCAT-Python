@@ -10,7 +10,6 @@ from src.core.util.log import Logger
 
 sys.path.append(os.getcwd())
 
-
 # proxies
 _proxies = Config()._Proxies_url if Config()._Proxies_proxies else None
 # Binance
@@ -66,9 +65,10 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     def test_getMarketKline(self):
-        res = binance.getMarketKline("ETH", "USDT", "1m",
-                                     "2018-11-11T00:00:00.000Z",
-                                     "2018-11-11T01:00:00.000Z")
+        res = binance.getMarketKline("ETH", "USDT", "1h",
+                                     "2018-12-02T00:00:00.000Z",
+                                     "2018-12-03T00:00:00.000Z")
+        logger.debug(len(res))
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -130,7 +130,8 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     def test_cancelBatchOrder(self):
-        res = binance.cancelBatchOrder(["134809076", "134809137"], "ETH", "USDT")
+        res = binance.cancelBatchOrder(["134809076", "134809137"], "ETH",
+                                       "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
