@@ -5,6 +5,7 @@ import time
 from threading import Thread, current_thread
 
 import pandas as pd
+
 from src.core.config import Config
 from src.core.db.db import DB
 from src.core.engine.enums import (ACTIVE_STATUS_EVENT, DONE_STATUS_EVENT,
@@ -58,8 +59,7 @@ class Util(object):
             db = DB()
             db.insertInfoServer(server)
         except (DBException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadInsertInfoServer: %s" % ApplicationException(
-                err)
+            errStr = "src.core.util.util.Util.threadInsertInfoServer: {server=%s}, exception err=%s" % (server, err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
@@ -68,8 +68,7 @@ class Util(object):
             db = DB()
             db.insertInfoSymbol(server)
         except (DBException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadInsertInfoSymbol: %s" % ApplicationException(
-                err)
+            errStr = "src.core.util.util.Util.threadInsertInfoSymbol: {server=%s}, exception err=%s" % (server, err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
@@ -78,8 +77,7 @@ class Util(object):
             db = DB()
             db.insertInfoWithdraw(server)
         except (DBException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadInsertInfoWithdraw: %s" % ApplicationException(
-                err)
+            errStr = "src.core.util.util.Util.threadInsertInfoWithdraw: {server=%s}, exception err=%s" % (server, err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
@@ -172,7 +170,7 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.warn(
-                    "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: Timeout Error, waiting for event handler result timeout."
+                    "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout." % % (current_thread().name, res, epoch, async, timeout)
                 )
 
     def updateDBAccountWithdraw(self, async=True, timeout=30):
@@ -240,7 +238,7 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.warn(
-                    "src.core.util.util.Util.threadSendListenMarketDepthEvent: Timeout Error, waiting for event handler result timeout."
+                    "src.core.util.util.Util.threadSendListenMarketDepthEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout." % (current_thread().name, res, epoch, async, timeout)
                 )
 
     def updateDBMarketDepth(self, async=True, timeout=30):
@@ -270,8 +268,8 @@ class Util(object):
     def threadSendListenMarketKlineEvent(self, res, start, end, epoch, async,
                                          timeout):
         self._logger.debug(
-            "src.core.util.util.Util.threadSendListenMarketKlineEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}"
-            % (current_thread().name, res, epoch, async, timeout))
+            "src.core.util.util.Util.threadSendListenMarketKlineEvent: {\nthread: %s, \nres: \n%s, start: %s, end: %s, \nepoch: %s, \nasync: %s, \ntimeout: %s}"
+            % (current_thread().name, res, start, end, epoch, async, timeout))
         ids = []
         for r in res:
             time.sleep(epoch)
@@ -289,7 +287,7 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.warn(
-                    "src.core.util.util.Util.threadSendListenMarketKlineEvent: Timeout Error, waiting for event handler result timeout."
+                    "src.core.util.util.Util.threadSendListenMarketKlineEvent: {\nthread: %s, \nres: \n%s, start: %s, end: %s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout." % (current_thread().name, res, start, end, epoch, async, timeout)
                 )
 
     def updateDBMarketKline(self, async=True, timeout=30):
