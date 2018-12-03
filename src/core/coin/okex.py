@@ -63,7 +63,8 @@ class Okex(Coin):
             return date_to_milliseconds(res)
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getServerTime: exception err=%s" % err
+            raise OkexException(errStr)
 
     # per seconds qurry and orders rate limits
     def getServerLimits(self):
@@ -96,7 +97,8 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getServerSymbols: exception err=%s" % err
+            raise OkexException(errStr)
 
     # def getServerSymbols(self):
     #     # not all api defined, get form cryptoCompare
@@ -158,7 +160,8 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getSymbolsLimits: exception err=%s" % err
+            raise OkexException(errStr)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
     def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth=''):
@@ -180,7 +183,9 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getMarketOrderbookTicker: { fSymbol=%s, tSymbol=%s, aggDepth=%s }, exception err=%s" % (
+                fSymbol, tSymbol, aggDepth, err)
+            raise OkexException(errStr)
 
     # a specific symbol's orderbook with depth
     def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=''):
@@ -214,7 +219,9 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getMarketOrderbookDepth: { fSymbol=%s, tSymbol=%s, limit=%s }, exception err=%s" % (
+                fSymbol, tSymbol, limit, err)
+            raise OkexException(errStr)
 
     # a specific symbols kline/candlesticks
     def getMarketKline(self, fSymbol, tSymbol, interval, start, end):
@@ -250,7 +257,9 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getMarketKline: { fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s }, exception err=%s" % (
+                fSymbol, tSymbol, interval, start, end, err)
+            raise OkexException(errStr)
 
     # get symbol trade fees
     def getTradeFees(self):
@@ -304,7 +313,9 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getTradeOpen: { fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s }, exception err=%s" % (
+                fSymbol, tSymbol, limit, ratio, err)
+            raise OkexException(errStr)
 
     # get history trade
     def getTradeHistory(self, fSymbol, tSymbol, limit='100', ratio=''):
@@ -348,7 +359,9 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getTradeHistory: { fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s }, exception err=%s" % (
+                fSymbol, tSymbol, limit, ratio, err)
+            raise OkexException(errStr)
 
     # get succeed trade
     def getTradeSucceed(self, fSymbol, tSymbol, limit='100', ratio=''):
@@ -392,7 +405,9 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getTradeSucceed: { fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s }, exception err=%s" % (
+                fSymbol, tSymbol, limit, ratio, err)
+            raise OkexException(errStr)
 
     # get account all asset balance
     def getAccountBalances(self):
@@ -409,7 +424,8 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getAccountBalances: exception err=%s" % err
+            raise OkexException(errStr)
 
     # get account asset deposit and withdraw limits
     def getAccountLimits(self):
@@ -442,7 +458,8 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getAccountLimits: exception err=%s" % err
+            raise OkexException(errStr)
 
     # get account asset balance
     def getAccountAssetBalance(self, asset):
@@ -457,7 +474,9 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getAccountAssetBalance: { asset=%s }, exception err=%s" % (
+                asset, err)
+            raise OkexException(errStr)
 
     # get account asset deposit and withdraw history detail
     def getAccountAssetDetail(self, asset):
@@ -475,7 +494,9 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.getAccountAssetBalance: { asset=%s }, exception err=%s" % (
+                asset, err)
+            raise OkexException(errStr)
 
     # create orders default limit
     def createOrder(self,
@@ -518,7 +539,10 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.createOrder: { fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, quantity=%s, ratio=%s, type=%s }, exception err=%s" % (
+                fSymbol, tSymbol, ask_or_bid, price, quantity, ratio, type,
+                err)
+            raise OkexException(errStr)
 
     # check orders done or undone
     def checkOrder(self, orderID, fSymbol, tSymbol, ratio=''):
@@ -548,7 +572,9 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.checkOrder: { orderID=%s, fSymbol=%s, tSymbol=%s, ratio=%s }, exception err=%s" % (
+                orderID, fSymbol, tSymbol, ratio, err)
+            raise OkexException(errStr)
 
     # cancel the specific order
     def cancelOrder(self, orderID, fSymbol, tSymbol):
@@ -572,7 +598,9 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.cancelOrder: { orderID=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
+                orderID, fSymbol, tSymbol, err)
+            raise OkexException(errStr)
 
     # cancel the bathch orders
     def cancelBatchOrder(self, orderIDs, fSymbol, tSymbol):
@@ -598,7 +626,9 @@ class Okex(Coin):
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
-            raise OkexException(err)
+            errStr = "src.core.coin.okex.Okex.cancelOrder: { orderIDs=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
+                orderIDs, fSymbol, tSymbol, err)
+            raise OkexException(errStr)
 
     # deposit asset balance
     def depositAsset(self, asset):
