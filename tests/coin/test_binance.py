@@ -4,11 +4,12 @@ import os
 import sys
 import unittest
 
+sys.path.append(os.getcwd())
+
 from src.core.coin.binance import Binance
 from src.core.config import Config
 from src.core.util.log import Logger
 
-sys.path.append(os.getcwd())
 
 # proxies
 _proxies = Config()._Proxies_url if Config()._Proxies_proxies else None

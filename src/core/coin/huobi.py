@@ -71,12 +71,15 @@ class Huobi(Coin):
     # UTC Zone, Unix timestamp in millseconds
     def getServerTime(self):
         try:
-            res = self._huobiAPI.get_timestamp()
-            if not res['status'] == 'ok':
-                raise Exception(res)
-            return int(res['data'])
+            base = self._huobiAPI.get_timestamp()
+            if not base['status'] == 'ok':
+                raise Exception(base)
+            res = int(base["data"])
+            return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.getServerTime: response base=%s, exception err=%s" % (
+                base, err)
+            raise HuobiException(errStr)
 
     # per seconds qurry and orders rate limits
     def getServerLimits(self):
@@ -107,7 +110,9 @@ class Huobi(Coin):
                 res.append({"fSymbol": fSymbol, "tSymbol": tSymbol})
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.getServerSymbols: response base=%s, exception err=%s" % (
+                base, err)
+            raise HuobiException(errStr)
 
     # def getServerSymbols(self):
     #     # not all api defined, get form cryptoCompare
@@ -163,7 +168,9 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.getSymbolsLimits: response base=%s, exception err=%s" % (
+                base, err)
+            raise HuobiException(errStr)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
     def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth=''):
@@ -176,9 +183,7 @@ class Huobi(Coin):
             if not base['status'] == 'ok' or not len(
                     base['tick']["bids"]) > 0 or not len(
                         base['tick']["asks"]) > 0:
-                err = "{fSymbol=%s, tSymbol=%s} response base=%s" % (
-                    fSymbol, tSymbol, base)
-                raise Exception(err)
+                raise Exception(base)
             if aggDepth == '':
                 res = {
                     "timeStamp": base["ts"],
@@ -219,7 +224,9 @@ class Huobi(Coin):
                 }
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.getMarketOrderbookTicker: {fSymbol=%s, tSymbol=%s, aggDepth=%s}, response base=%s, exception err=%s" % (
+                fSymbol, tSymbol, aggDepth, base, err)
+            raise HuobiException(errStr)
 
     # a specific symbol's orderbook with depth
     def getMarketOrderbookDepth(self, fSymbol, tSymbol, limit=''):
@@ -235,9 +242,7 @@ class Huobi(Coin):
             symbol = (fSymbol + tSymbol).lower()
             base = self._huobiAPI.get_depth(symbol, 'step0')
             if not base['status'] == 'ok':
-                err = "{fSymbol=%s, tSymbol=%s} response base=%s" % (
-                    fSymbol, tSymbol, base)
-                raise Exception(err)
+                raise Exception(base)
             if limit != '':
                 limit = min((int(limit), len(base['tick']["bids"]),
                              len(base['tick']["asks"])))
@@ -253,7 +258,9 @@ class Huobi(Coin):
             }
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.getMarketOrderbookDepth: {fSymbol=%s, tSymbol=%s, limit=%s}, response base=%s, exception err=%s" % (
+                fSymbol, tSymbol, limit, base, err)
+            raise HuobiException(errStr)
 
     # a specific symbols kline/candlesticks
     def getMarketKline(self, fSymbol, tSymbol, interval, start, end):
@@ -290,9 +297,7 @@ class Huobi(Coin):
                 (date_to_milliseconds(end) - date_to_milliseconds(start)) /
                 granularity)
             if size < 1 or size > 2000:
-                err = "{fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s} calc size=%s error" % (
-                    fSymbol, tSymbol, interval, start, end, size)
-                raise Exception(err)
+                raise Exception("size must between 1-2000")
             base = self._huobiAPI.get_kline(symbol, period[interval], size)
             if not base['status'] == 'ok' or base['data'] == []:
                 err = "{fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s} response base=%s" % (
@@ -312,7 +317,8 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "{fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s} response base=%s, exception err=%s" % (fSymbol, tSymbol, interval, start, end, base, err)
+            errStr = "src.core.coin.huobi.Huobi.getMarketKline: {fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s}, response base=%s, exception err=%s" % (
+                fSymbol, tSymbol, interval, start, end, base, err)
             raise HuobiException(errStr)
 
     # get symbol trade fees
@@ -358,9 +364,7 @@ class Huobi(Coin):
             size = limit
             base = self._huobiAPI.open_orders(account_id, symbol, side, size)
             if not base['status'] == 'ok':
-                err = "{fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s} response base=%s" % (
-                    fSymbol, tSymbol, limit, ratio, base)
-                raise Exception(err)
+                raise Exception(base)
             res = []
             # if ratio == '':
             #     ratio = self.getTradeFees()[0]["taker"]
@@ -385,7 +389,9 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.getTradeOpen: {fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s}, response base=%s, exception err=%s" % (
+                fSymbol, tSymbol, limit, ratio, base, err)
+            raise HuobiException(errStr)
 
     # get history trade
     def getTradeHistory(self, fSymbol, tSymbol, limit='100', ratio=''):
@@ -424,9 +430,7 @@ class Huobi(Coin):
             base = self._huobiAPI.orders_list(symbol, states, types, '', '',
                                               '', '', size)
             if not base['status'] == 'ok':
-                err = "{fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s} response base=%s" % (
-                    fSymbol, tSymbol, limit, ratio, base)
-                raise Exception(err)
+                raise Exception(base)
             res = []
             # if ratio == '':
             #     ratio = self.getTradeFees()[0]["taker"]
@@ -450,7 +454,9 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.getTradeHistory: {fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s}, response base=%s, exception err=%s" % (
+                fSymbol, tSymbol, limit, ratio, base, err)
+            raise HuobiException(errStr)
 
     # get succeed trade
     def getTradeSucceed(self, fSymbol, tSymbol, limit='100', ratio=''):
@@ -489,9 +495,7 @@ class Huobi(Coin):
             base = self._huobiAPI.orders_list(symbol, states, types, '', '',
                                               '', '', size)
             if not base['status'] == 'ok':
-                err = "{fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s} response base=%s" % (
-                    fSymbol, tSymbol, limit, ratio, base)
-                raise Exception(err)
+                raise Exception(base)
             res = []
             # if ratio == '':
             #     ratio = self.getTradeFees()[0]["taker"]
@@ -515,7 +519,9 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.getTradeSucceed: {fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s}, response base=%s, exception err=%s" % (
+                fSymbol, tSymbol, limit, ratio, base, err)
+            raise HuobiException(errStr)
 
     # get account all asset balance
     def getAccountBalances(self):
@@ -566,8 +572,7 @@ class Huobi(Coin):
         try:
             base = self._huobiAPI.get_balance()
             if not base['status'] == 'ok':
-                err = "response base=%s" % base
-                raise Exception(err)
+                raise Exception(base)
             currencies = []
             res = []
             for b in base['data']['list']:
@@ -592,7 +597,9 @@ class Huobi(Coin):
                 res[i]["balance"] = res[i]["free"] + res[i]["locked"]
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.getAccountBalances: response base=%s, exception err=%s" % (
+                base, err)
+            raise HuobiException(errStr)
 
     # get account asset deposit and withdraw limits
     def getAccountLimits(self):
@@ -610,8 +617,7 @@ class Huobi(Coin):
         try:
             base = self._huobiAPI.get_currencies()
             if not base['status'] == 'ok':
-                err = "response base=%s" % base
-                raise Exception(err)
+                raise Exception(base)
             res = []
             for b in base['data']:
                 res.append({
@@ -622,15 +628,16 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.getAccountLimits: response base=%s, exception err=%s" % (
+                base, err)
+            raise HuobiException(errStr)
 
     # get account asset balance
     def getAccountAssetBalance(self, asset):
         try:
             base = self._huobiAPI.get_balance()
             if not base['status'] == 'ok':
-                err = "{asset=%s} response base=%s" % (asset, base)
-                raise Exception(err)
+                raise Exception(base)
             res = {}
             for b in base['data']['list']:
                 if b["currency"] == asset.lower():
@@ -651,7 +658,9 @@ class Huobi(Coin):
                 res["balance"] = res["free"] + res["locked"]
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.getAccountAssetBalance: {asset=%s}, response base=%s, exception err=%s" % (
+                asset, base, err)
+            raise HuobiException(errStr)
 
     # get account asset deposit and withdraw history detail
     def getAccountAssetDetail(self, asset):
@@ -661,8 +670,7 @@ class Huobi(Coin):
             wiRes = self._huobiAPI.get_deposit_withdraw(
                 asset.lower(), type='withdraw', froms='0', size='100')
             if not deRes['status'] == 'ok' or not wiRes['status'] == 'ok':
-                err = "{asset=%s} response deRes=%s, wiRes=%s" % (asset, deRes,
-                                                                  wiRes)
+                err = "deRes=%s, wiRes=%s" % (deRes, wiRes)
                 raise Exception(err)
             deposit = []
             for de in deRes['data']:
@@ -673,7 +681,9 @@ class Huobi(Coin):
             res = {"deposit": deposit, "withdraw": withdraw}
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.getAccountAssetDetail: {asset=%s}, response base=%s, exception err=%s" % (
+                asset, base, err)
+            raise HuobiException(errStr)
 
     # create orders default limit
     def createOrder(self,
@@ -700,10 +710,7 @@ class Huobi(Coin):
             base = self._huobiAPI.send_order(quantity, source, symbol, _type,
                                              price)
             if not base['status'] == 'ok':
-                err = "{fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, quantity=%s, ratio=%s, type=%s} response base=%s" % (
-                    fSymbol, tSymbol, ask_or_bid, price, quantity, ratio, type,
-                    base)
-                raise Exception(err)
+                raise Exception(base)
             # if ratio == '':
             #     ratio = self.getTradeFees()[0]["taker"]
             res = {
@@ -722,16 +729,17 @@ class Huobi(Coin):
             }
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.createOrder: {fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, quantity=%s, ratio=%s, type=%s}, response base=%s, exception err=%s" % (
+                fSymbol, tSymbol, ask_or_bid, price, quantity, ratio, type,
+                base, err)
+            raise HuobiException(errStr)
 
     # check orders done or undone
     def checkOrder(self, orderID, fSymbol='', tSymbol='', ratio=''):
         try:
             base = self._huobiAPI.order_info(orderID)
             if not base['status'] == 'ok':
-                err = "{orderID=%s, fSymbol=%s, tSymbol=%s, ratio=%s} response base=%s" % (
-                    orderID, fSymbol, tSymbol, ratio, base)
-                raise Exception(err)
+                raise Exception(base)
             # if ratio == '':
             #     ratio = self.getTradeFees()[0]["taker"]
             b = base['data']
@@ -754,15 +762,16 @@ class Huobi(Coin):
             }
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.checkOrder: {orderID=%s, fSymbol=%s, tSymbol=%s, ratio=%s}, response base=%s, exception err=%s" % (
+                orderID, fSymbol, tSymbol, ratio, base, err)
+            raise HuobiException(errStr)
 
     # cancel orders done or undone
     def cancelOrder(self, orderID, fSymbol='', tSymbol=''):
         try:
             ba = self._huobiAPI.order_info(orderID)
             if not ba['status'] == 'ok':
-                err = "{orderID=%s, fSymbol=%s, tSymbol=%s} response ba=%s" % (
-                    orderID, fSymbol, tSymbol, ba)
+                err = "{ ba=%s }" % ba
                 raise Exception(err)
             if self.__STATUS[
                     ba['data']["state"]] == ORDER_STATUS_OPEN or self.__STATUS[
@@ -770,8 +779,7 @@ class Huobi(Coin):
                 base = self._huobiAPI.cancel_order(orderID)
                 rebase = self._huobiAPI.order_info(orderID)
                 if not base['status'] == 'ok' or not rebase['status'] == 'ok':
-                    err = "{orderID=%s, fSymbol=%s, tSymbol=%s} response base=%s" % (
-                        orderID, fSymbol, tSymbol, base)
+                    err = "{ ba=%s, base=%s, rebase=%s }" % (ba, base, rebase)
                     raise Exception(err)
                 res = {
                     "order_id": orderID,
@@ -784,7 +792,9 @@ class Huobi(Coin):
                 }
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.cancelOrder: {orderID=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
+                orderID, fSymbol, tSymbol, err)
+            raise HuobiException(errStr)
 
     # cancel the bathch orders
     def cancelBatchOrder(self, orderIDs, fSymbol='', tSymbol=''):
@@ -793,8 +803,7 @@ class Huobi(Coin):
             for orderID in orderIDs:
                 ba = self._huobiAPI.order_info(orderID)
                 if not ba['status'] == 'ok':
-                    err = "{orderID=%s, fSymbol=%s, tSymbol=%s} response ba=%s" % (
-                        orderID, fSymbol, tSymbol, ba)
+                    err = "{ ba=%s }" % ba
                     raise Exception(err)
                 if self.__STATUS[ba['data'][
                         "state"]] == ORDER_STATUS_OPEN or self.__STATUS[
@@ -803,8 +812,8 @@ class Huobi(Coin):
                     rebase = self._huobiAPI.order_info(orderID)
                     if not base['status'] == 'ok' or not base[
                             'status'] == 'ok' or not rebase['status'] == 'ok':
-                        err = "{orderID=%s, fSymbol=%s, tSymbol=%s} response base=%s, rebase" % (
-                            orderID, fSymbol, tSymbol, base, rebase)
+                        err = "{ ba=%s, base=%s, rebase=%s }" % (ba, base,
+                                                                 rebase)
                         raise Exception(err)
                     res.append({
                         "order_id": orderID,
@@ -817,7 +826,9 @@ class Huobi(Coin):
                     })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            raise HuobiException(err)
+            errStr = "src.core.coin.huobi.Huobi.cancelBatchOrder: {orderID=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
+                orderID, fSymbol, tSymbol, err)
+            raise HuobiException(errStr)
 
     # deposit asset balance
     def depositAsset(self, asset):

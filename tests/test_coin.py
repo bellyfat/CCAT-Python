@@ -3,11 +3,13 @@
 import os
 import sys
 import unittest
+
 sys.path.append(os.getcwd())
 
-from tests.coin.test_okex import TestOkex
 from tests.coin.test_binance import TestBinance
 from tests.coin.test_huobi import TestHuobi
+from tests.coin.test_okex import TestOkex
+
 
 
 # list of test_coin
@@ -88,11 +90,9 @@ test_huobi = [
     TestHuobi("test_cancelBatchOrder"),
     TestHuobi("test_depositeAsset"),
     TestHuobi("test_withdrawAsset")
-
 ]
 # other test items
 # to be continue
-
 
 # Begin Test
 if __name__ == '__main__':

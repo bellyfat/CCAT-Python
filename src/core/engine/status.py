@@ -19,19 +19,20 @@ class Status(object):
     def getActiveStatusTable(self):
         res = [item["id"] for item in self._activeStatus]
         self._logger.debug(
-            "src.core.engine.status.Status.getActiveStatusTable:%s" % res)
+            "src.core.engine.status.Status.getActiveStatusTable: {res=%s }" %
+            res)
         return res
 
     def getDoneStatusTable(self):
         res = [item["id"] for item in self._doneStatus]
         self._logger.debug(
-            "src.core.engine.status.Status.getDoneStatusTable:%s" % res)
+            "src.core.engine.status.Status.getDoneStatusTable: {res=%s }" % res)
         return res
 
     def calcEventID(self):
         self._id.value = self._id.value + 1
         self._logger.debug(
-            "src.core.engine.status.Status.calcEventID: { id=%s}" %
+            "src.core.engine.status.Status.calcEventID: { id=%s }" %
             self._id.value)
         return self._id.value
 
