@@ -2,7 +2,6 @@
 
 from multiprocessing import Manager, Value
 
-import pandas as pd
 from src.core.config import Config
 from src.core.util.log import Logger
 
