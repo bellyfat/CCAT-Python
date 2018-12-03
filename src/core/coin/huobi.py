@@ -77,8 +77,7 @@ class Huobi(Coin):
             res = int(base["data"])
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getServerTime: response base=%s, exception err=%s" % (
-                base, err)
+            errStr = "src.core.coin.huobi.Huobi.getServerTime: exception err=%s" % err
             raise HuobiException(errStr)
 
     # per seconds qurry and orders rate limits
@@ -110,8 +109,7 @@ class Huobi(Coin):
                 res.append({"fSymbol": fSymbol, "tSymbol": tSymbol})
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getServerSymbols: response base=%s, exception err=%s" % (
-                base, err)
+            errStr = "src.core.coin.huobi.Huobi.getServerSymbols: exception err=%s" % err
             raise HuobiException(errStr)
 
     # def getServerSymbols(self):
@@ -168,8 +166,7 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getSymbolsLimits: response base=%s, exception err=%s" % (
-                base, err)
+            errStr = "src.core.coin.huobi.Huobi.getSymbolsLimits: exception err=%s" % err
             raise HuobiException(errStr)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
@@ -224,8 +221,8 @@ class Huobi(Coin):
                 }
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getMarketOrderbookTicker: {fSymbol=%s, tSymbol=%s, aggDepth=%s}, response base=%s, exception err=%s" % (
-                fSymbol, tSymbol, aggDepth, base, err)
+            errStr = "src.core.coin.huobi.Huobi.getMarketOrderbookTicker: {fSymbol=%s, tSymbol=%s, aggDepth=%s}, exception err=%s" % (
+                fSymbol, tSymbol, aggDepth, err)
             raise HuobiException(errStr)
 
     # a specific symbol's orderbook with depth
@@ -258,8 +255,8 @@ class Huobi(Coin):
             }
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getMarketOrderbookDepth: {fSymbol=%s, tSymbol=%s, limit=%s}, response base=%s, exception err=%s" % (
-                fSymbol, tSymbol, limit, base, err)
+            errStr = "src.core.coin.huobi.Huobi.getMarketOrderbookDepth: {fSymbol=%s, tSymbol=%s, limit=%s}, exception err=%s" % (
+                fSymbol, tSymbol, limit, err)
             raise HuobiException(errStr)
 
     # a specific symbols kline/candlesticks
@@ -317,8 +314,8 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getMarketKline: {fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s}, response base=%s, exception err=%s" % (
-                fSymbol, tSymbol, interval, start, end, base, err)
+            errStr = "src.core.coin.huobi.Huobi.getMarketKline: {fSymbol=%s, tSymbol=%s, interval=%s, start=%s, end=%s}, exception err=%s" % (
+                fSymbol, tSymbol, interval, start, end, err)
             raise HuobiException(errStr)
 
     # get symbol trade fees
@@ -389,8 +386,8 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getTradeOpen: {fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s}, response base=%s, exception err=%s" % (
-                fSymbol, tSymbol, limit, ratio, base, err)
+            errStr = "src.core.coin.huobi.Huobi.getTradeOpen: {fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s}, exception err=%s" % (
+                fSymbol, tSymbol, limit, ratio, err)
             raise HuobiException(errStr)
 
     # get history trade
@@ -454,8 +451,8 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getTradeHistory: {fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s}, response base=%s, exception err=%s" % (
-                fSymbol, tSymbol, limit, ratio, base, err)
+            errStr = "src.core.coin.huobi.Huobi.getTradeHistory: {fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s}, exception err=%s" % (
+                fSymbol, tSymbol, limit, ratio, err)
             raise HuobiException(errStr)
 
     # get succeed trade
@@ -519,8 +516,8 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getTradeSucceed: {fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s}, response base=%s, exception err=%s" % (
-                fSymbol, tSymbol, limit, ratio, base, err)
+            errStr = "src.core.coin.huobi.Huobi.getTradeSucceed: {fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s}, exception err=%s" % (
+                fSymbol, tSymbol, limit, ratio, err)
             raise HuobiException(errStr)
 
     # get account all asset balance
@@ -597,8 +594,7 @@ class Huobi(Coin):
                 res[i]["balance"] = res[i]["free"] + res[i]["locked"]
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getAccountBalances: response base=%s, exception err=%s" % (
-                base, err)
+            errStr = "src.core.coin.huobi.Huobi.getAccountBalances: exception err=%s" % err
             raise HuobiException(errStr)
 
     # get account asset deposit and withdraw limits
@@ -628,8 +624,7 @@ class Huobi(Coin):
                 })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getAccountLimits: response base=%s, exception err=%s" % (
-                base, err)
+            errStr = "src.core.coin.huobi.Huobi.getAccountLimits: exception err=%s" % err
             raise HuobiException(errStr)
 
     # get account asset balance
@@ -658,8 +653,8 @@ class Huobi(Coin):
                 res["balance"] = res["free"] + res["locked"]
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getAccountAssetBalance: {asset=%s}, response base=%s, exception err=%s" % (
-                asset, base, err)
+            errStr = "src.core.coin.huobi.Huobi.getAccountAssetBalance: {asset=%s}, exception err=%s" % (
+                asset, err)
             raise HuobiException(errStr)
 
     # get account asset deposit and withdraw history detail
@@ -681,8 +676,8 @@ class Huobi(Coin):
             res = {"deposit": deposit, "withdraw": withdraw}
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.getAccountAssetDetail: {asset=%s}, response base=%s, exception err=%s" % (
-                asset, base, err)
+            errStr = "src.core.coin.huobi.Huobi.getAccountAssetDetail: {asset=%s}, exception err=%s" % (
+                asset, err)
             raise HuobiException(errStr)
 
     # create orders default limit
@@ -729,9 +724,9 @@ class Huobi(Coin):
             }
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.createOrder: {fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, quantity=%s, ratio=%s, type=%s}, response base=%s, exception err=%s" % (
+            errStr = "src.core.coin.huobi.Huobi.createOrder: {fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, quantity=%s, ratio=%s, type=%s}, exception err=%s" % (
                 fSymbol, tSymbol, ask_or_bid, price, quantity, ratio, type,
-                base, err)
+                err)
             raise HuobiException(errStr)
 
     # check orders done or undone
@@ -762,8 +757,8 @@ class Huobi(Coin):
             }
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.checkOrder: {orderID=%s, fSymbol=%s, tSymbol=%s, ratio=%s}, response base=%s, exception err=%s" % (
-                orderID, fSymbol, tSymbol, ratio, base, err)
+            errStr = "src.core.coin.huobi.Huobi.checkOrder: {orderID=%s, fSymbol=%s, tSymbol=%s, ratio=%s}, exception err=%s" % (
+                orderID, fSymbol, tSymbol, ratio, err)
             raise HuobiException(errStr)
 
     # cancel orders done or undone
@@ -826,8 +821,8 @@ class Huobi(Coin):
                     })
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
-            errStr = "src.core.coin.huobi.Huobi.cancelBatchOrder: {orderID=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
-                orderID, fSymbol, tSymbol, err)
+            errStr = "src.core.coin.huobi.Huobi.cancelBatchOrder: {orderIDs=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
+                orderIDs, fSymbol, tSymbol, err)
             raise HuobiException(errStr)
 
     # deposit asset balance

@@ -6,9 +6,9 @@ import unittest
 
 sys.path.append(os.getcwd())
 
-from tests.coin.test_binance import TestBinance
-from tests.coin.test_huobi import TestHuobi
-from tests.coin.test_okex import TestOkex
+from coin.test_binance import TestBinance
+from coin.test_huobi import TestHuobi
+from coin.test_okex import TestOkex
 
 
 
