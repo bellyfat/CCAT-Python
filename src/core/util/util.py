@@ -59,7 +59,8 @@ class Util(object):
             db = DB()
             db.insertInfoServer(server)
         except (DBException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadInsertInfoServer: {server=%s}, exception err=%s" % (server, err)
+            errStr = "src.core.util.util.Util.threadInsertInfoServer: {server=%s}, exception err=%s" % (
+                server, err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
@@ -68,7 +69,8 @@ class Util(object):
             db = DB()
             db.insertInfoSymbol(server)
         except (DBException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadInsertInfoSymbol: {server=%s}, exception err=%s" % (server, err)
+            errStr = "src.core.util.util.Util.threadInsertInfoSymbol: {server=%s}, exception err=%s" % (
+                server, err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
@@ -77,7 +79,8 @@ class Util(object):
             db = DB()
             db.insertInfoWithdraw(server)
         except (DBException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadInsertInfoWithdraw: {server=%s}, exception err=%s" % (server, err)
+            errStr = "src.core.util.util.Util.threadInsertInfoWithdraw: {server=%s}, exception err=%s" % (
+                server, err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
@@ -89,19 +92,19 @@ class Util(object):
                 td = Thread(
                     target=self.threadInsertInfoServer,
                     name="%s-threadInsertInfoServer" % server,
-                    args=([server],))
+                    args=([server], ))
                 tds.append(td)
                 td.start()
                 td = Thread(
                     target=self.threadInsertInfoSymbol,
                     name="%s-threadInsertInfoSymbol" % server,
-                    args=([server],))
+                    args=([server], ))
                 tds.append(td)
                 td.start()
                 td = Thread(
                     target=self.threadInsertInfoWithdraw,
                     name="%s-threadInsertInfoWithdraw" % server,
-                    args=([server],))
+                    args=([server], ))
                 tds.append(td)
                 td.start()
             for td in tds:
@@ -170,8 +173,8 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.warn(
-                    "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout." % % (current_thread().name, res, epoch, async, timeout)
-                )
+                    "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout."
+                    % (current_thread().name, res, epoch, async, timeout))
 
     def updateDBAccountWithdraw(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBAccountWithdraw")
@@ -238,8 +241,8 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.warn(
-                    "src.core.util.util.Util.threadSendListenMarketDepthEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout." % (current_thread().name, res, epoch, async, timeout)
-                )
+                    "src.core.util.util.Util.threadSendListenMarketDepthEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout."
+                    % (current_thread().name, res, epoch, async, timeout))
 
     def updateDBMarketDepth(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBMarketDepth")
@@ -287,8 +290,9 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.warn(
-                    "src.core.util.util.Util.threadSendListenMarketKlineEvent: {\nthread: %s, \nres: \n%s, start: %s, end: %s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout." % (current_thread().name, res, start, end, epoch, async, timeout)
-                )
+                    "src.core.util.util.Util.threadSendListenMarketKlineEvent: {\nthread: %s, \nres: \n%s, start: %s, end: %s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout."
+                    % (current_thread().name, res, start, end, epoch, async,
+                       timeout))
 
     def updateDBMarketKline(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBMarketKline")

@@ -87,8 +87,8 @@ class Huobi(Coin):
         限制频率（每个接口，只针对交易api，行情api不限制）为10秒100次。
         '''
         res = {
-            "info_second": 30,
-            "market_second": 30,
+            "info_second": 20,
+            "market_second": 20,
             "orders_second": 10,
             "webSockets_second": ''
         }
@@ -301,9 +301,11 @@ class Huobi(Coin):
                     fSymbol, tSymbol, interval, start, end, base)
                 raise Exception(err)
             res = []
+            timeStamp =  date_to_milliseconds(start)
             for b in base['data']:
+                timeStamp =  timeStamp + granularity
                 res.append({
-                    "timeStamp": base['ts'],
+                    "timeStamp": timeStamp,
                     "fSymbol": fSymbol,
                     "tSymbol": tSymbol,
                     "open": b["open"],

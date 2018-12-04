@@ -37,7 +37,7 @@ def http_get_request(url, params, add_to_headers=None, proxies=None):
             return response.json()
         else:
             raise Exception(
-                "httpGet failed, detail is: response=%s" % response.text)
+                "request response status failed, status=%s" % response.status_code)
     except BaseException as e:
         raise Exception("httpGet failed, detail is: err=%s" % e)
 
@@ -57,7 +57,7 @@ def http_post_request(url, params, add_to_headers=None, proxies=None):
             return response.json()
         else:
             raise Exception(
-                "httpPost failed, detail is: response=%s" % response.text)
+                "request response status failed, status=%s" % response.status_code)
     except BaseException as e:
         raise Exception("httpPost failed, detail is: err=%s" % e)
 
