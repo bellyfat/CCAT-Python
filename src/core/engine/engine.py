@@ -244,14 +244,14 @@ class EventEngine(object):
     def getActiveEventTable(self):
         res = self.__status.getActiveStatusTable()
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.getActiveEventTable:\n%s" %
+            "src.core.engine.engine.EventEngine.getActiveEventTable:%s" %
             res)
         return res
 
     def getDoneEventTable(self):
         res = self.__status.getDoneStatusTable()
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.getDoneEventTable:\n%s" %
+            "src.core.engine.engine.EventEngine.getDoneEventTable:%s" %
             res)
         return res
 

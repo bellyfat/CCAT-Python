@@ -143,7 +143,7 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
                 if st != DONE_STATUS_EVENT:
                     self._logger.warn(
-                        "src.core.util.util.Util.updateDBAccountBalance: Timeout Error, waiting for event handler result timeout."
+                        "src.core.util.util.Util.updateDBAccountBalance: err=Timeout Error, waiting for event handler result timeout."
                     )
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBAccountBalance: %s" % ApplicationException(
@@ -154,7 +154,7 @@ class Util(object):
     # Account Withdraw 事件
     def threadSendListenAccountWithdrawEvent(self, res, epoch, async, timeout):
         self._logger.debug(
-            "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}"
+            "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}"
             % (current_thread().name, res, epoch, async, timeout))
         ids = []
         for r in res:
@@ -173,7 +173,7 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.warn(
-                    "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout."
+                    "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, err=Timeout Error, waiting for event handler result timeout."
                     % (current_thread().name, res, epoch, async, timeout))
 
     def updateDBAccountWithdraw(self, async=True, timeout=10):
@@ -221,7 +221,7 @@ class Util(object):
     # Market Depth 事件
     def threadSendListenMarketDepthEvent(self, res, epoch, async, timeout):
         self._logger.debug(
-            "src.core.util.util.Util.threadSendListenMarketDepthEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}"
+            "src.core.util.util.Util.threadSendListenMarketDepthEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}"
             % (current_thread().name, res, epoch, async, timeout))
         ids = []
         for r in res:
@@ -241,7 +241,7 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.warn(
-                    "src.core.util.util.Util.threadSendListenMarketDepthEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout."
+                    "src.core.util.util.Util.threadSendListenMarketDepthEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, err=Timeout Error, waiting for event handler result timeout."
                     % (current_thread().name, res, epoch, async, timeout))
 
     def updateDBMarketDepth(self, async=True, timeout=10):
@@ -268,16 +268,16 @@ class Util(object):
             raise ApplicationException(err)
 
     # Market Kline 事件
-    def threadSendListenMarketKlineEvent(self, res, start, end, epoch, async,
+    def threadSendListenMarketKlineEvent(self, res, start, end, interval, epoch, async,
                                          timeout):
         self._logger.debug(
-            "src.core.util.util.Util.threadSendListenMarketKlineEvent: {\nthread: %s, \nres: \n%s, start: %s, end: %s, \nepoch: %s, \nasync: %s, \ntimeout: %s}"
-            % (current_thread().name, res, start, end, epoch, async, timeout))
+            "src.core.util.util.Util.threadSendListenMarketKlineEvent: {thread: %s, res: %s, start: %s, interval: %s, end: %s, epoch: %s, async: %s, timeout: %s}"
+            % (current_thread().name, res, start, end, interval, epoch, async, timeout))
         ids = []
         for r in res:
             time.sleep(epoch)
             id = self._sender.sendListenMarketKlineEvent(
-                r["server"], r["fSymbol"], r["tSymbol"], "1h", start, end)
+                r["server"], r["fSymbol"], r["tSymbol"], interval, start, end)
             ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
@@ -290,8 +290,8 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.warn(
-                    "src.core.util.util.Util.threadSendListenMarketKlineEvent: {\nthread: %s, \nres: \n%s, start: %s, end: %s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout."
-                    % (current_thread().name, res, start, end, epoch, async,
+                    "src.core.util.util.Util.threadSendListenMarketKlineEvent: {thread: %s, res: %s, start: %s, end: %s, interval: %s, epoch: %s, async: %s, timeout: %s}, err=Timeout Error, waiting for event handler result timeout."
+                    % (current_thread().name, res, start, end, interval, epoch, async,
                        timeout))
 
     def updateDBMarketKline(self, async=True, timeout=10):
@@ -299,6 +299,7 @@ class Util(object):
         try:
             db = DB()
             db.delMarketKline()
+            interval = '1h'
             end = utcnow_timestamp() - 12 * 60 * 60 * 1000
             start = end - 24 * 60 * 60 * 1000
             tds = []
@@ -310,7 +311,7 @@ class Util(object):
                     target=self.threadSendListenMarketKlineEvent,
                     name="%s-threadSendListenMarketKlineEvent" % server,
                     args=(res, timestamp_to_isoformat(start),
-                          timestamp_to_isoformat(end), epoch, async, timeout))
+                          timestamp_to_isoformat(end), interval, epoch, async, timeout))
                 tds.append(td)
                 td.start()
             for td in tds:
@@ -324,7 +325,7 @@ class Util(object):
     # Market ticker 事件
     def threadSendListenMarketTickerEvent(self, res, epoch, async, timeout):
         self._logger.debug(
-            "src.core.util.util.Util.threadSendListenMarketTickerEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}"
+            "src.core.util.util.Util.threadSendListenMarketTickerEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}"
             % (current_thread().name, res, epoch, async, timeout))
         ids = []
         for r in res:
@@ -347,7 +348,7 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.warn(
-                    "src.core.util.util.Util.threadSendListenMarketTickerEvent: Timeout Error, waiting for event handler result timeout."
+                    "src.core.util.util.Util.threadSendListenMarketTickerEvent: err=Timeout Error, waiting for event handler result timeout."
                 )
 
     def updateDBMarketTicker(self, async=True, timeout=10):
@@ -392,7 +393,7 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
                 if st != DONE_STATUS_EVENT:
                     self._logger.warn(
-                        "src.core.util.util.Util.updateDBJudgeMarketTicker: Timeout Error, waiting for event handler result timeout."
+                        "src.core.util.util.Util.updateDBJudgeMarketTicker: err=Timeout Error, waiting for event handler result timeout."
                     )
         except Exception as err:
             errStr = "src.core.util.util.Util.updateDBJudgeMarketTicker: %s" % ApplicationException(
