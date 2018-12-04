@@ -73,7 +73,7 @@ class Client(object):
     AGG_BUYER_MAKES = 'm'
     AGG_BEST_MATCH = 'M'
 
-    TIMEOUT = 10
+    TIMEOUT = 5
 
     def __init__(self, api_key, api_secret, requests_params=None):
         """Binance API Client constructor

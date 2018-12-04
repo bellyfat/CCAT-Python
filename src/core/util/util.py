@@ -130,7 +130,7 @@ class Util(object):
             raise ApplicationException(err)
 
     # Account Balance 事件
-    def updateDBAccountBalance(self, async=True, timeout=30):
+    def updateDBAccountBalance(self, async=True, timeout=10):
         self._logger.debug("src.core.util.util.Util.updateDBAccountBalance")
         try:
             id = self._sender.sendListenAccountBalanceEvent(self._exchanges)
@@ -145,7 +145,7 @@ class Util(object):
                     self._logger.warn(
                         "src.core.util.util.Util.updateDBAccountBalance: Timeout Error, waiting for event handler result timeout."
                     )
-        except (DBException, EngineException) as err:
+        except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBAccountBalance: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
@@ -176,7 +176,7 @@ class Util(object):
                     "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout."
                     % (current_thread().name, res, epoch, async, timeout))
 
-    def updateDBAccountWithdraw(self, async=True, timeout=30):
+    def updateDBAccountWithdraw(self, async=True, timeout=10):
         self._logger.debug("src.core.util.util.Util.updateDBAccountWithdraw")
         try:
             db = DB()
@@ -212,7 +212,7 @@ class Util(object):
                 td.start()
             for td in tds:
                 td.join()
-        except (DBException, EngineException) as err:
+        except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBAccountWithdraw: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
@@ -244,7 +244,7 @@ class Util(object):
                     "src.core.util.util.Util.threadSendListenMarketDepthEvent: {\nthread: %s, \nres: \n%s, \nepoch: %s, \nasync: %s, \ntimeout: %s}, Timeout Error, waiting for event handler result timeout."
                     % (current_thread().name, res, epoch, async, timeout))
 
-    def updateDBMarketDepth(self, async=True, timeout=30):
+    def updateDBMarketDepth(self, async=True, timeout=10):
         self._logger.debug("src.core.util.util.Util.updateDBMarketDepth")
         try:
             db = DB()
@@ -261,7 +261,7 @@ class Util(object):
                 td.start()
             for td in tds:
                 td.join()
-        except (DBException, EngineException) as err:
+        except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBMarketDepth: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
@@ -294,7 +294,7 @@ class Util(object):
                     % (current_thread().name, res, start, end, epoch, async,
                        timeout))
 
-    def updateDBMarketKline(self, async=True, timeout=30):
+    def updateDBMarketKline(self, async=True, timeout=10):
         self._logger.debug("src.core.util.util.Util.updateDBMarketKline")
         try:
             db = DB()
@@ -315,7 +315,7 @@ class Util(object):
                 td.start()
             for td in tds:
                 td.join()
-        except (DBException, EngineException) as err:
+        except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBMarketKline: %s" % ApplicationException(
                 err)
             self._logger.critical(errStr)
@@ -350,7 +350,7 @@ class Util(object):
                     "src.core.util.util.Util.threadSendListenMarketTickerEvent: Timeout Error, waiting for event handler result timeout."
                 )
 
-    def updateDBMarketTicker(self, async=True, timeout=30):
+    def updateDBMarketTicker(self, async=True, timeout=10):
         self._logger.debug("src.core.util.util.Util.updateDBMarketTicker")
         try:
             db = DB()
@@ -373,8 +373,11 @@ class Util(object):
             self._logger.critical(errStr)
             raise ApplicationException(err)
 
-    # Judge ticker 事件
-    def updateDBJudgeMarketTicker(self, async=True, timeout=30):
+    # Judge 事件
+    def updateDBJudgeMarketKline(self):
+        pass
+
+    def updateDBJudgeMarketTicker(self, async=True, timeout=10):
         self._logger.debug("src.core.util.util.Util.updateDBJudgeMarketTicker")
         try:
             id = self._sender.sendJudgeMarketTickerEvent(

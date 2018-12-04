@@ -15,7 +15,7 @@ import requests
 API_URL = "https://api.huobi.pro"
 
 # timeout in 10 seconds:
-TIMEOUT = 10
+TIMEOUT = 5
 
 
 def http_get_request(url, params, add_to_headers=None, proxies=None):

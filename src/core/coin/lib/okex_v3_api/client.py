@@ -5,7 +5,7 @@ from . import consts as c, utils, exceptions
 
 class Client(object):
 
-    TIMEOUT = 10
+    TIMEOUT = 5
 
     def __init__(self, api_key, api_seceret_key, passphrase, use_server_time=False):
 
