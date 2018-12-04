@@ -12,9 +12,7 @@ import urllib.request
 import requests
 
 # API 请求地址
-COMMON_URL = "https://api.huobi.pro"
-MARKET_URL = "https://api.huobi.pro"
-TRADE_URL = "https://api.huobi.pro"
+API_URL = "https://api.huobi.pro"
 
 # timeout in 10 seconds:
 TIMEOUT = 10
@@ -72,7 +70,7 @@ def api_key_get(params, request_path, ACCESS_KEY, SECRET_KEY, proxies=None):
         'Timestamp': timestamp
     })
 
-    host_url = TRADE_URL
+    host_url = API_URL
     host_name = urllib.parse.urlparse(host_url).hostname
     host_name = host_name.lower()
     params['Signature'] = createSign(params, method, host_name, request_path,
@@ -92,7 +90,7 @@ def api_key_post(params, request_path, ACCESS_KEY, SECRET_KEY, proxies=None):
         'Timestamp': timestamp
     }
 
-    host_url = TRADE_URL
+    host_url = API_URL
     host_name = urllib.parse.urlparse(host_url).hostname
     host_name = host_name.lower()
     params_to_sign['Signature'] = createSign(params_to_sign, method, host_name,
