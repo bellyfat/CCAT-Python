@@ -2,6 +2,15 @@
 
 from string import Template
 
+
+# get db view market ticker current pair sql
+GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SQL =  Template('''
+    SELECT V1.dis_price_size_base/V1.ask_size AS gain_ratio_base, V1.*
+    FROM VIEW_MARKET_TICKER_CURRENT_PAIR V1
+    WHERE (V1.bid_server='$server' AND V1.ask_server='server_pair') OR (V1.bid_server='server_pair' AND V1.ask_server='server')
+    ORDER BY fSymbol, tSymbol, gain_ratio_base;
+'''
+
 # get db view market ticker current tra sql
 GET_VIEW_MARKET_TICKER_CURRENT_TRA_SQL = '''
     SELECT * FROM VIEW_MARKET_TICKER_CURRENT_TRA;
@@ -367,24 +376,33 @@ CREATE_VIEWS_SQL = Template('''
         		) V3;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_DIS
     	AS
-    		SELECT V1.server as bid_server, V1.timeStamp as bid_timeStamp, V2.server as ask_server, V2.timeStamp as ask_timeStamp, V1.fSymbol, V1.tSymbol, V1.bid_one_price as bid_price, min(V1.bid_one_size, V2.ask_one_size) as bid_size,
-    			V1.bid_one_price_base as bid_price_base, min(V1.bid_one_size, V2.ask_one_size)*V1.bid_one_price_base as bid_price_size_base, V2.ask_one_price as ask_price,
-    			min(V1.bid_one_size, V2.ask_one_size) as ask_size, V2.ask_one_price_base as ask_price_base,	min(V1.bid_one_size, V2.ask_one_size)*V2.ask_one_price_base as ask_price_size_base,
-    			min(V1.bid_one_size, V2.ask_one_size)*(V1.bid_one_price_base-V2.ask_one_price_base) as dis_price_size_base
+    		SELECT V1.server as bid_server, V1.timeStamp as bid_timeStamp, V2.server as ask_server, V2.timeStamp as ask_timeStamp, V1.fSymbol, V1.tSymbol,
+                V1.bid_one_price as bid_price, min(V1.bid_one_size, V2.ask_one_size) as bid_size, V1.bid_one_price_base as bid_price_base, min(V1.bid_one_size, V2.ask_one_size)*V1.bid_one_price_base as bid_price_size_base,
+                V2.ask_one_price as ask_price, min(V1.bid_one_size, V2.ask_one_size) as ask_size, V2.ask_one_price_base as ask_price_base,	min(V1.bid_one_size, V2.ask_one_size)*V2.ask_one_price_base as ask_price_size_base,
+                min(V1.bid_one_size, V2.ask_one_size)*(V1.bid_one_price_base-V2.ask_one_price_base) as dis_price_size_base
     		FROM VIEW_MARKET_TICKER_CURRENT V1
     		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V2 ON V1.server <> V2.server AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
-    		WHERE abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout AND (V1.ask_one_price-V2.bid_one_price) > ((V1.ask_one_price-V1.bid_one_price)+(V2.ask_one_price-V2.bid_one_price))
+    		WHERE abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout AND V1.bid_one_price>V2.ask_one_price
     		ORDER BY dis_price_size_base DESC;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_TRA
     	AS
     	SELECT V1.server, V1.timeStamp, V1.fSymbol as bid_fSymbol, V1.tSymbol as bid_tSymbol, V2.fSymbol as ask_fSymbol, V2.tSymbol as ask_tSymbol,
-    		V1.bid_one_price as bid_price, min(V1.bid_one_size, V2.ask_one_size) as bid_size,
-    		V1.bid_one_price_base as bid_price_base, min(V1.bid_one_size, V2.ask_one_size)*V1.bid_one_price_base as bid_price_size_base, V2.ask_one_price as ask_price,
-    		min(V1.bid_one_size, V2.ask_one_size) as ask_size, V2.ask_one_price_base as ask_price_base,	min(V1.bid_one_size, V2.ask_one_size)*V2.ask_one_price_base as ask_price_size_base,
+    		V1.bid_one_price as bid_price, min(V1.bid_one_size, V2.ask_one_size) as bid_size, V1.bid_one_price_base as bid_price_base, min(V1.bid_one_size, V2.ask_one_size)*V1.bid_one_price_base as bid_price_size_base,
+            V2.ask_one_price as ask_price, min(V1.bid_one_size, V2.ask_one_size) as ask_size, V2.ask_one_price_base as ask_price_base,	min(V1.bid_one_size, V2.ask_one_size)*V2.ask_one_price_base as ask_price_size_base,
     		min(V1.bid_one_size, V2.ask_one_size)*(V1.bid_one_price_base-V2.ask_one_price_base) as dis_price_size_base
     	FROM VIEW_MARKET_TICKER_CURRENT V1
     	LEFT JOIN VIEW_MARKET_TICKER_CURRENT V2 ON V1.server = V2.server AND V1.fSymbol=V2.fSymbol AND V1.tSymbol <> V2.tSymbol
     	WHERE abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout AND V1.bid_one_price_base > V2.ask_one_price_base
     	ORDER BY dis_price_size_base DESC;
+    CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_PAIR
+    	AS
+    		SELECT V1.server as bid_server, V1.timeStamp as bid_timeStamp, V2.server as ask_server, V2.timeStamp as ask_timeStamp, V1.fSymbol, V1.tSymbol,
+                V1.bid_one_price as bid_price, min(V1.bid_one_size, V2.ask_one_size) as bid_size, V1.bid_one_price_base as bid_price_base, min(V1.bid_one_size, V2.ask_one_size)*V1.bid_one_price_base as bid_price_size_base,
+                V2.ask_one_price as ask_price, min(V1.bid_one_size, V2.ask_one_size) as ask_size, V2.ask_one_price_base as ask_price_base,	min(V1.bid_one_size, V2.ask_one_size)*V2.ask_one_price_base as ask_price_size_base,
+                min(V1.bid_one_size, V2.ask_one_size)*(V1.bid_one_price_base-V2.ask_one_price_base) as dis_price_size_base
+    		FROM VIEW_MARKET_TICKER_CURRENT V1
+    		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V2 ON V1.server <> V2.server AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
+    		WHERE abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout
+    		ORDER BY dis_price_size_base DESC;
     COMMIT;
 ''')
