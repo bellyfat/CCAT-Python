@@ -43,7 +43,7 @@
   exchanges = okex, binance, huobi
   excludeCoins =
   baseCoin = USDT
-  basePriceVolume = 1000
+  basePriceVolume = 100
   basePriceTimeout = 30
   marketDepthLimit = 20
   marketTickerAggStep = 1

@@ -22,6 +22,7 @@ class DB(object):
         # config init
         # exchanges
         self._exchanges = Config()._Main_exchanges
+        self._excludeCoins = Config()._Main_excludeCoins
         self._baseCoin = Config()._Main_baseCoin
         self._basePriceVolume = Config()._Main_basePriceVolume
         self._basePriceTimeout = Config()._Main_basePriceTimeout
@@ -98,9 +99,11 @@ class DB(object):
         try:
             curs = self._conn.cursor()
             TEMP_SQL = CREATE_VIEWS_SQL.substitute(
-                baseCoin=str(self._baseCoin),
-                basePriceVolume=int(self._basePriceVolume),
-                basePriceTimeout=int(self._basePriceTimeout))
+                baseCoin=self._baseCoin,
+                excludeCoins=self._excludeCoins,
+                basePriceVolume=self._basePriceVolume,
+                basePriceTimeout=self._basePriceTimeout).replace(
+                    '[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.executescript(TEMP_SQL)
             curs.close()

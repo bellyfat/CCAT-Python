@@ -305,7 +305,7 @@ CREATE_VIEWS_SQL = Template('''
             SELECT DISTINCT S1.*
             FROM INFO_SYMBOL S1
             LEFT JOIN INFO_SYMBOL S2 ON S1.server<>S2.server AND S1.fSymbol = S2.fSymbol AND S1.tSymbol = S2.tSymbol
-            WHERE S2.server is not NULL;
+            WHERE S2.server iS NOT NULL AND S1.fSymbol NOT IN $excludeCoins AND S1.tSymbol NOT IN $excludeCoins;
     CREATE VIEW IF NOT EXISTS VIEW_ACCOUNT_BALANCE_CURRENT
         AS
 			SELECT B1.*
