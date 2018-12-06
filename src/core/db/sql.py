@@ -9,7 +9,7 @@ GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SQL =  Template('''
     FROM VIEW_MARKET_TICKER_CURRENT_PAIR V1
     WHERE (V1.bid_server='$server' AND V1.ask_server='server_pair') OR (V1.bid_server='server_pair' AND V1.ask_server='server')
     ORDER BY fSymbol, tSymbol, gain_ratio_base;
-'''
+''')
 
 # get db view market ticker current tra sql
 GET_VIEW_MARKET_TICKER_CURRENT_TRA_SQL = '''
