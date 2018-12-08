@@ -383,7 +383,7 @@ CREATE_VIEWS_SQL = Template('''
         		) V3;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_DIS
     	AS
-    		SELECT V1.server as bid_server, V1.timeStamp as bid_timeStamp, V2.server as ask_server, V2.timeStamp as ask_timeStamp, V1.fSymbol, V1.tSymbol,
+    		SELECT V1.timeStamp, V1.server as bid_server, V2.server as ask_server, V1.fSymbol, V1.tSymbol,
                 V1.bid_one_price as bid_price, min(V1.bid_one_size, V2.ask_one_size) as bid_size, V1.bid_one_price_base as bid_price_base, min(V1.bid_one_size, V2.ask_one_size)*V1.bid_one_price_base as bid_price_size_base,
                 V2.ask_one_price as ask_price, min(V1.bid_one_size, V2.ask_one_size) as ask_size, V2.ask_one_price_base as ask_price_base,	min(V1.bid_one_size, V2.ask_one_size)*V2.ask_one_price_base as ask_price_size_base
     		FROM VIEW_MARKET_TICKER_CURRENT V1
@@ -391,7 +391,15 @@ CREATE_VIEWS_SQL = Template('''
     		WHERE abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_TRA
     	AS
-    		SELECT *
+    		SELECT V1.timeStamp, V1.server, V1.fSymbol as V1_fSymbol, V1.tSymbol as V1_tSymbol,
+				V1.bid_one_price as V1_bid_one_price, V1.bid_one_size as V1_bid_one_size, V1.bid_one_price_base as V1_bid_one_price_base, V1.bid_one_price_size_base as V1_bid_one_price_size_base,
+				V1.ask_one_price as V1_ask_one_price, V1.ask_one_size as V1_ask_one_size, V1.ask_one_price_base as V1_ask_one_price_base, V1.ask_one_price_size_base as V1_ask_one_price_size_base,
+				V2.fSymbol as V2_fSymbol, V2.tSymbol as V2_tSymbol,
+				V2.bid_one_price as V2_bid_one_price, V2.bid_one_size as V2_bid_one_size, V2.bid_one_price_base as V2_bid_one_price_base, V2.bid_one_price_size_base as V2_bid_one_price_size_base,
+				V2.ask_one_price as V2_ask_one_price, V2.ask_one_size as V2_ask_one_size, V2.ask_one_price_base as V2_ask_one_price_base, V2.ask_one_price_size_base as V2_ask_one_price_size_base,
+				V3.fSymbol as V3_fSymbol, V3.tSymbol as V3_tSymbol,
+				V3.bid_one_price as V3_bid_one_price, V3.bid_one_size as V3_bid_one_size, V3.bid_one_price_base as V3_bid_one_price_base, V3.bid_one_price_size_base as V3_bid_one_price_size_base,
+				V3.ask_one_price as V3_ask_one_price, V3.ask_one_size as V3_ask_one_size, V3.ask_one_price_base as V3_ask_one_price_base, V3.ask_one_price_size_base as V3_ask_one_price_size_base
     		FROM VIEW_MARKET_TICKER_CURRENT V1
     		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V2 ON V1.server = V2.server AND V1.fSymbol <> V2.fSymbol AND V1.tSymbol = V2.tSymbol
     		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V3 ON V2.server = V3.server AND ((V1.fSymbol = V3.fSymbol AND V2.fSymbol = V3.tSymbol) OR (V1.fSymbol = V3.tSymbol AND V2.fSymbol = V3.fSymbol))
