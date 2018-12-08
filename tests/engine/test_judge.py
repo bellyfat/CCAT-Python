@@ -36,9 +36,9 @@ if __name__ == '__main__':
     __eventEngine.start()
 
     # app update
-
-    util.updateDBMarketTicker(async=False)
-    util.updateDBJudgeMarketTicker(async=False)
+    util.updateDBMarketKline(async=False)
+    # util.updateDBMarketTicker(async=False)
+    # util.updateDBJudgeMarketTicker(async=False)
 
     # # stop engine
     time.sleep(2) # for engine begin handle

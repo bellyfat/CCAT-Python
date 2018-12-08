@@ -15,29 +15,29 @@ from coin.test_okex import TestOkex
 # list of test_coin
 # okex test items
 test_okex = [
-    TestOkex("test_getConfig"),
-    TestOkex("test_setProxy"),
-    TestOkex("test_getServerTime"),
-    TestOkex("test_getServerLimits"),
-    TestOkex("test_getServerSymbols"),
-    TestOkex("test_getSymbolsLimits"),
+    # TestOkex("test_getConfig"),
+    # TestOkex("test_setProxy"),
+    # TestOkex("test_getServerTime"),
+    # TestOkex("test_getServerLimits"),
+    # TestOkex("test_getServerSymbols"),
+    # TestOkex("test_getSymbolsLimits"),
     TestOkex("test_getMarketOrderbookTicker"),
-    TestOkex("test_getMarketOrderbookDepth"),
-    TestOkex("test_getMarketKline"),
-    TestOkex("test_getTradeFees"),
-    TestOkex("test_getTradeOpen"),
-    TestOkex("test_getTradeHistory"),
-    TestOkex("test_getTradeSucceed"),
-    TestOkex("test_getAccountBalances"),
-    TestOkex("test_getAccountLimits"),
-    TestOkex("test_getAccountAssetBalance"),
-    TestOkex("test_getAccountAssetDetail"),
-    # TestOkex("test_createOrder"),
-    TestOkex("test_checkOrder"),
-    TestOkex("test_cancelOrder"),
-    TestOkex("test_cancelBatchOrder"),
-    TestOkex("test_depositeAsset"),
-    TestOkex("test_withdrawAsset")
+    # TestOkex("test_getMarketOrderbookDepth"),
+    # TestOkex("test_getMarketKline"),
+    # TestOkex("test_getTradeFees"),
+    # TestOkex("test_getTradeOpen"),
+    # TestOkex("test_getTradeHistory"),
+    # TestOkex("test_getTradeSucceed"),
+    # TestOkex("test_getAccountBalances"),
+    # TestOkex("test_getAccountLimits"),
+    # TestOkex("test_getAccountAssetBalance"),
+    # TestOkex("test_getAccountAssetDetail"),
+    # # TestOkex("test_createOrder"),
+    # TestOkex("test_checkOrder"),
+    # TestOkex("test_cancelOrder"),
+    # TestOkex("test_cancelBatchOrder"),
+    # TestOkex("test_depositeAsset"),
+    # TestOkex("test_withdrawAsset")
 ]
 # binance test items
 test_binance = [
@@ -99,8 +99,8 @@ if __name__ == '__main__':
     suite = unittest.TestSuite()
     runner = unittest.TextTestRunner(verbosity=2)
     # add tests
-    # suite.addTests(test_okex)
+    suite.addTests(test_okex)
     # suite.addTests(test_binance)
-    suite.addTests(test_huobi)
+    # suite.addTests(test_huobi)
     # run test
     runner.run(suite)

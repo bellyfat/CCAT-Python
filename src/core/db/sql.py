@@ -3,17 +3,17 @@
 from string import Template
 
 
-# get db view market ticker current pair sql
-GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SQL =  Template('''
-    SELECT V1.dis_price_size_base/V1.ask_size AS gain_ratio_base, V1.*
-    FROM VIEW_MARKET_TICKER_CURRENT_PAIR V1
-    WHERE (V1.bid_server='$server' AND V1.ask_server='$server_pair') OR (V1.bid_server='$server_pair' AND V1.ask_server='$server');
-''')
-
 # get db view market ticker current tra sql
 GET_VIEW_MARKET_TICKER_CURRENT_TRA_SQL = '''
     SELECT * FROM VIEW_MARKET_TICKER_CURRENT_TRA;
 '''
+
+# get db view market ticker current dis pair sql
+GET_VIEW_MARKET_TICKER_CURRENT_DIS_PAIR_SQL =  Template('''
+    SELECT *
+    FROM VIEW_MARKET_TICKER_CURRENT_DIS
+    WHERE (bid_server='$server' AND ask_server='$server_pair') OR (bid_server='$server_pair' AND ask_server='$server');
+''')
 
 # get db view market ticker current dis sql
 GET_VIEW_MARKET_TICKER_CURRENT_DIS_SQL = '''
@@ -92,6 +92,10 @@ GET_INFO_WITHDRAW_SQL = Template('''
 GET_MARKET_DEPTH_SQL = '''
     SELECT * FROM MARKET_DEPTH;
 '''
+# delete db market depth sql
+DEL_MARKET_DEPTH_SQL = '''
+    DELETE FROM MARKET_DEPTH;
+'''
 # get db market kline sql
 GET_MARKET_KLINE_SQL = '''
     SELECT * FROM MARKET_KLINE;
@@ -101,8 +105,12 @@ DEL_MARKET_KLINE_SQL = '''
     DELETE FROM MARKET_KLINE;
 '''
 # get db market ticker sql
-GET_MARKET_TIKER_SQL = '''
-    SELECT * FROM MARKET_TIKER;
+GET_MARKET_TICKER_SQL = '''
+    SELECT * FROM MARKET_TICKER;
+'''
+# delete db market ticker sql
+DEL_MARKET_TICKER_SQL = '''
+    DELETE FROM MARKET_TICKER;
 '''
 
 # get db trade backtest history sql
@@ -150,8 +158,8 @@ INSERT_MARKET_KLINE_SQL = '''
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # insert db market tiker sql
-INSERT_MARKET_TIKER_SQL = '''
-    INSERT OR REPLACE INTO MARKET_TIKER (server, timeStamp, fSymbol, tSymbol, bid_one_price, bid_one_size, ask_one_price, ask_one_size)
+INSERT_MARKET_TICKER_SQL = '''
+    INSERT OR REPLACE INTO MARKET_TICKER (server, timeStamp, fSymbol, tSymbol, bid_one_price, bid_one_size, ask_one_price, ask_one_size)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # insert db trade backtest history sql
@@ -205,7 +213,7 @@ CREATE_TABELS_SQL = '''
     	`fee`	REAL,
         PRIMARY KEY (order_id)
     );
-    CREATE TABLE IF NOT EXISTS `MARKET_TIKER` (
+    CREATE TABLE IF NOT EXISTS `MARKET_TICKER` (
     	`server`	TEXT NOT NULL,
     	`timeStamp`	INTEGER NOT NULL,
     	`fSymbol`	TEXT NOT NULL,
@@ -355,44 +363,39 @@ CREATE_VIEWS_SQL = Template('''
         		SELECT V1.*, V1.bid_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as bid_one_price_base, V1.bid_one_size*V1.bid_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as bid_one_price_size_base, V1.ask_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as ask_one_price_base, V1.ask_one_size*V1.ask_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as ask_one_price_size_base
         		FROM(
         			SELECT M1.*
-        			FROM MARKET_TIKER M1
-        			LEFT JOIN MARKET_TIKER M2 ON M1.server = M2.server AND M1.fSymbol = M2.fSymbol AND M1.tSymbol = M2.tSymbol AND M1.timeStamp < M2.timeStamp
+        			FROM MARKET_TICKER M1
+        			LEFT JOIN MARKET_TICKER M2 ON M1.server = M2.server AND M1.fSymbol = M2.fSymbol AND M1.tSymbol = M2.tSymbol AND M1.timeStamp < M2.timeStamp
         			WHERE M2.server IS NULL
         		) V1
         		JOIN(
         			SELECT M1.*
-        			FROM MARKET_TIKER M1
-        			LEFT JOIN MARKET_TIKER M2 ON M1.server = M2.server AND M1.fSymbol = M2.fSymbol AND M1.tSymbol = M2.tSymbol AND M1.timeStamp < M2.timeStamp
+        			FROM MARKET_TICKER M1
+        			LEFT JOIN MARKET_TICKER M2 ON M1.server = M2.server AND M1.fSymbol = M2.fSymbol AND M1.tSymbol = M2.tSymbol AND M1.timeStamp < M2.timeStamp
         			WHERE M2.server IS NULL
         		) V2 ON V1.server = V2.server AND V1.tSymbol = V2.fSymbol AND V1.tSymbol<>'$baseCoin' AND V2.tSymbol ='$baseCoin'
         	UNION
         		SELECT V3.*, V3.bid_one_price as bid_one_price_base, V3.bid_one_size*V3.bid_one_price as bid_one_price_size_base, V3.ask_one_price as ask_one_price_base, V3.ask_one_size*V3.ask_one_price as ask_one_price_size_base
         		FROM(
         			SELECT M1.*
-        			FROM MARKET_TIKER M1
-        			LEFT JOIN MARKET_TIKER M2 ON M1.server = M2.server AND M1.fSymbol = M2.fSymbol AND M1.tSymbol = M2.tSymbol AND M1.timeStamp < M2.timeStamp
+        			FROM MARKET_TICKER M1
+        			LEFT JOIN MARKET_TICKER M2 ON M1.server = M2.server AND M1.fSymbol = M2.fSymbol AND M1.tSymbol = M2.tSymbol AND M1.timeStamp < M2.timeStamp
         			WHERE M2.server IS NULL AND M1.tSymbol='$baseCoin'
         		) V3;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_DIS
     	AS
     		SELECT V1.server as bid_server, V1.timeStamp as bid_timeStamp, V2.server as ask_server, V2.timeStamp as ask_timeStamp, V1.fSymbol, V1.tSymbol,
                 V1.bid_one_price as bid_price, min(V1.bid_one_size, V2.ask_one_size) as bid_size, V1.bid_one_price_base as bid_price_base, min(V1.bid_one_size, V2.ask_one_size)*V1.bid_one_price_base as bid_price_size_base,
-                V2.ask_one_price as ask_price, min(V1.bid_one_size, V2.ask_one_size) as ask_size, V2.ask_one_price_base as ask_price_base,	min(V1.bid_one_size, V2.ask_one_size)*V2.ask_one_price_base as ask_price_size_base,
-                min(V1.bid_one_size, V2.ask_one_size)*(V1.bid_one_price_base-V2.ask_one_price_base) as dis_price_size_base
+                V2.ask_one_price as ask_price, min(V1.bid_one_size, V2.ask_one_size) as ask_size, V2.ask_one_price_base as ask_price_base,	min(V1.bid_one_size, V2.ask_one_size)*V2.ask_one_price_base as ask_price_size_base
     		FROM VIEW_MARKET_TICKER_CURRENT V1
     		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V2 ON V1.server <> V2.server AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
-    		WHERE abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout AND V1.bid_one_price>V2.ask_one_price
-    		ORDER BY dis_price_size_base DESC;
+    		WHERE abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_TRA
     	AS
-    	SELECT V1.server, V1.timeStamp, V1.fSymbol as bid_fSymbol, V1.tSymbol as bid_tSymbol, V2.fSymbol as ask_fSymbol, V2.tSymbol as ask_tSymbol,
-    		V1.bid_one_price as bid_price, min(V1.bid_one_size, V2.ask_one_size) as bid_size, V1.bid_one_price_base as bid_price_base, min(V1.bid_one_size, V2.ask_one_size)*V1.bid_one_price_base as bid_price_size_base,
-            V2.ask_one_price as ask_price, min(V1.bid_one_size, V2.ask_one_size) as ask_size, V2.ask_one_price_base as ask_price_base,	min(V1.bid_one_size, V2.ask_one_size)*V2.ask_one_price_base as ask_price_size_base,
-    		min(V1.bid_one_size, V2.ask_one_size)*(V1.bid_one_price_base-V2.ask_one_price_base) as dis_price_size_base
-    	FROM VIEW_MARKET_TICKER_CURRENT V1
-    	LEFT JOIN VIEW_MARKET_TICKER_CURRENT V2 ON V1.server = V2.server AND V1.fSymbol=V2.fSymbol AND V1.tSymbol <> V2.tSymbol
-    	WHERE abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout AND V1.bid_one_price_base > V2.ask_one_price_base
-    	ORDER BY dis_price_size_base DESC;
+    		SELECT *
+    		FROM VIEW_MARKET_TICKER_CURRENT V1
+    		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V2 ON V1.server = V2.server AND V1.fSymbol <> V2.fSymbol AND V1.tSymbol = V2.tSymbol
+    		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V3 ON V2.server = V3.server AND ((V1.fSymbol = V3.fSymbol AND V2.fSymbol = V3.tSymbol) OR (V1.fSymbol = V3.tSymbol AND V2.fSymbol = V3.fSymbol))
+            WHERE V2.server IS NOT NULL AND abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout AND V3.server IS NOT NULL AND abs(V2.timeStamp - V3.timeStamp) < 1000*$basePriceTimeout;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_PAIR
     	AS
     		SELECT V1.server as bid_server, V1.timeStamp as bid_timeStamp, V2.server as ask_server, V2.timeStamp as ask_timeStamp, V1.fSymbol, V1.tSymbol,

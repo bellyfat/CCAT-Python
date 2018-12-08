@@ -333,6 +333,7 @@ class Util(object):
             aggDepth = db.getViewMarketSymbolPairsAggDepth(
                 self._exchanges, r["fSymbol"],
                 r["tSymbol"])[0]["aggDepth"] * self._marketTickerAggStep
+            aggDepth = 1.0 if aggDepth > 1 else aggDepth # make sure < 1.0
             time.sleep(epoch)
             id = self._sender.sendListenMarketTickerEvent(
                 r["server"], r["fSymbol"], r["tSymbol"], aggDepth)

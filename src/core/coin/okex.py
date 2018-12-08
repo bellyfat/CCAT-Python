@@ -3,6 +3,7 @@
 # Okex Class
 
 import json
+from decimal import ROUND_DOWN, ROUND_UP, Decimal
 
 import requests
 from requests.exceptions import ConnectionError, ReadTimeout
@@ -169,17 +170,48 @@ class Okex(Coin):
             if aggDepth != '':
                 if float(aggDepth) > 1:
                     raise Exception("aggDepth must < 1.0")
-            ticker = self._spotAPI.get_depth(fSymbol + "-" + tSymbol, '1',
-                                             aggDepth, self._proxies)
-            res = {
-                "timeStamp": date_to_milliseconds(ticker["timestamp"]),
-                "fSymbol": fSymbol,
-                "tSymbol": tSymbol,
-                "bid_one_price": float(ticker["bids"][0][0]),
-                "bid_one_size": float(ticker["bids"][0][1]),
-                "ask_one_price": float(ticker["asks"][0][0]),
-                "ask_one_size": float(ticker["asks"][0][1])
-            }
+            base = self._spotAPI.get_depth(fSymbol + "-" + tSymbol, '100', '',
+                                           self._proxies)
+            if not len(base["bids"]) > 0 or not len(base["asks"]) > 0:
+                raise Exception(base)
+            if aggDepth == '':
+                res = {
+                    "timeStamp": date_to_milliseconds(base["timestamp"]),
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "bid_one_price": float(base["bids"][0][0]),
+                    "bid_one_size": float(base["bids"][0][1]),
+                    "ask_one_price": float(base["asks"][0][0]),
+                    "ask_one_size": float(base["asks"][0][1])
+                }
+            else:
+                # calc bids
+                aggPrice = Decimal(base["bids"][0][0]).quantize(
+                    Decimal(str(aggDepth)), rounding=ROUND_DOWN)
+                bid_one_price = float(aggPrice)
+                bid_one_size = 0.0
+                for bid in base["bids"]:
+                    if float(bid[0]) < float(aggPrice):
+                        break
+                    bid_one_size = bid_one_size + float(bid[1])
+                # calc asks
+                aggPrice = Decimal(base["asks"][0][0]).quantize(
+                    Decimal(str(aggDepth)), rounding=ROUND_UP)
+                ask_one_price = float(aggPrice)
+                ask_one_size = 0.0
+                for ask in base["asks"]:
+                    if float(ask[0]) > float(aggPrice):
+                        break
+                    ask_one_size = ask_one_size + float(ask[1])
+                res = {
+                    "timeStamp": date_to_milliseconds(base["timestamp"]),
+                    "fSymbol": fSymbol,
+                    "tSymbol": tSymbol,
+                    "bid_one_price": bid_one_price,
+                    "bid_one_size": bid_one_size,
+                    "ask_one_price": ask_one_price,
+                    "ask_one_size": ask_one_size
+                }
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:

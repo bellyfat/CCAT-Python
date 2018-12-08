@@ -292,6 +292,17 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
+    def delMarketDepth(self):
+        self._logger.debug("src.core.db.db.DB.delMarketDepth")
+        self._logger.debug(DEL_MARKET_DEPTH_SQL)
+        try:
+            curs = self._conn.cursor()
+            curs.execute(DEL_MARKET_DEPTH_SQL)
+            self._conn.commit()
+            curs.close()
+        except sqlite3.Error as err:
+            raise DBException(err)
+
     def getMarketKline(self):
         self._logger.debug("src.core.db.db.DB.getMarketKline")
         self._logger.debug(GET_MARKET_KLINE_SQL)
@@ -324,6 +335,17 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
+    def delMarketTicker(self):
+        self._logger.debug("src.core.db.db.DB.delMarketTicker")
+        self._logger.debug(DEL_MARKET_TIKER_SQL)
+        try:
+            curs = self._conn.cursor()
+            curs.execute(DEL_MARKET_TIKER_SQL)
+            self._conn.commit()
+            curs.close()
         except sqlite3.Error as err:
             raise DBException(err)
 
