@@ -328,10 +328,10 @@ class DB(object):
 
     def getMarketTicker(self):
         self._logger.debug("src.core.db.db.DB.getMarketTicker")
-        self._logger.debug(GET_MARKET_TIKER_SQL)
+        self._logger.debug(GET_MARKET_TICKER_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_MARKET_TIKER_SQL)
+            curs.execute(GET_MARKET_TICKER_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -340,10 +340,10 @@ class DB(object):
 
     def delMarketTicker(self):
         self._logger.debug("src.core.db.db.DB.delMarketTicker")
-        self._logger.debug(DEL_MARKET_TIKER_SQL)
+        self._logger.debug(DEL_MARKET_TICKER_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(DEL_MARKET_TIKER_SQL)
+            curs.execute(DEL_MARKET_TICKER_SQL)
             self._conn.commit()
             curs.close()
         except sqlite3.Error as err:
@@ -848,7 +848,7 @@ class DB(object):
             "src.core.db.db.DB.insertMarketTicker: { exchange=%s, fSymbol=%s, tSymbol=%s aggDepth=%s}"
             % (exchange, fSymbol, tSymbol, aggDepth))
         try:
-            TEMP_SQL_TITLE = INSERT_MARKET_TIKER_SQL
+            TEMP_SQL_TITLE = INSERT_MARKET_TICKER_SQL
             TEMP_SQL_VALUE = []
             # OKEX
             if exchange == "all" or self._Okex_exchange in exchange:
