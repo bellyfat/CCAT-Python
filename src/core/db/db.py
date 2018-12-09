@@ -49,7 +49,7 @@ class DB(object):
         self._Huobi_acct_id = Config()._Huobi_acct_id
 
         # 数据库 init
-        self._conn = sqlite3.connect(self._dbStr, timeout=self._dbTimeout)
+        self._conn = sqlite3.connect(self._dbStr, timeout=self._dbTimeout, check_same_thread=False)
         self._conn.row_factory = dict_factory
         if self._dbSynchronous:
             self._conn.execute("PRAGMA synchronous = 0")
@@ -74,7 +74,7 @@ class DB(object):
             self._conn.close()
             os.chmod(self._dbStr, 0o664)  # 设置读写权限
             os.remove(self._dbStr)
-            self._conn = sqlite3.connect(self._dbStr)
+            self._conn = sqlite3.connect(self._dbStr, timeout=self._dbTimeout, check_same_thread=False)
             self._conn.row_factory = dict_factory
             if self._dbSynchronous:
                 self._conn.execute("PRAGMA synchronous = 0")

@@ -64,7 +64,7 @@ class EventEngine(object):
                     while utcnow_timestamp(
                     ) - event.timeStamp > HIGH_PRIORITY_EVENT_TIMEOUT:
                         if not self.__highEventQueue.empty():
-                            self.__logger.warn(
+                            self.__logger.error(
                                 "src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
                                 % (event.id, event.type, event.priority,
                                    event.timeStamp, event.args))
@@ -82,7 +82,7 @@ class EventEngine(object):
                     while utcnow_timestamp(
                     ) - event.timeStamp > MEDIUM_PRIORITY_EVENT_TIMEOUT:
                         if not self.__mediumEventQueue.empty():
-                            self.__logger.warn(
+                            self.__logger.error(
                                 "src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
                                 % (event.id, event.type, event.priority,
                                    event.timeStamp, event.args))
@@ -100,7 +100,7 @@ class EventEngine(object):
                     while utcnow_timestamp(
                     ) - event.timeStamp > LOW_PRIORITY_EVENT_TIMEOUT:
                         if not self.__lowEnventQueue.empty():
-                            self.__logger.warn(
+                            self.__logger.error(
                                 "src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
                                 % (event.id, event.type, event.priority,
                                    event.timeStamp, event.args))
