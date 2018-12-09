@@ -21,6 +21,7 @@ class Util(object):
     def __init__(self, eventEngine, sender):
         # Config init
         # Main Settings
+        self._types = Config()._Main_types
         self._exchanges = Config()._Main_exchanges
         self._excludeCoins = Config()._Main_excludeCoins
         self._baseCoin = Config()._Main_baseCoin
@@ -268,11 +269,12 @@ class Util(object):
             raise ApplicationException(err)
 
     # Market Kline 事件
-    def threadSendListenMarketKlineEvent(self, res, start, end, interval, epoch, async,
-                                         timeout):
+    def threadSendListenMarketKlineEvent(self, res, start, end, interval,
+                                         epoch, async, timeout):
         self._logger.debug(
             "src.core.util.util.Util.threadSendListenMarketKlineEvent: {thread: %s, res: %s, start: %s, interval: %s, end: %s, epoch: %s, async: %s, timeout: %s}"
-            % (current_thread().name, res, start, end, interval, epoch, async, timeout))
+            % (current_thread().name, res, start, end, interval, epoch, async,
+               timeout))
         ids = []
         for r in res:
             time.sleep(epoch)
@@ -291,8 +293,8 @@ class Util(object):
             if st != DONE_STATUS_EVENT:
                 self._logger.warn(
                     "src.core.util.util.Util.threadSendListenMarketKlineEvent: {thread: %s, res: %s, start: %s, end: %s, interval: %s, epoch: %s, async: %s, timeout: %s}, err=Timeout Error, waiting for event handler result timeout."
-                    % (current_thread().name, res, start, end, interval, epoch, async,
-                       timeout))
+                    % (current_thread().name, res, start, end, interval, epoch,
+                       async, timeout))
 
     def updateDBMarketKline(self, async=True, timeout=10):
         self._logger.debug("src.core.util.util.Util.updateDBMarketKline")
@@ -311,7 +313,8 @@ class Util(object):
                     target=self.threadSendListenMarketKlineEvent,
                     name="%s-threadSendListenMarketKlineEvent" % server,
                     args=(res, timestamp_to_isoformat(start),
-                          timestamp_to_isoformat(end), interval, epoch, async, timeout))
+                          timestamp_to_isoformat(end), interval, epoch, async,
+                          timeout))
                 tds.append(td)
                 td.start()
             for td in tds:
@@ -333,7 +336,7 @@ class Util(object):
             aggDepth = db.getViewMarketSymbolPairsAggDepth(
                 self._exchanges, r["fSymbol"],
                 r["tSymbol"])[0]["aggDepth"] * self._marketTickerAggStep
-            aggDepth = 1.0 if aggDepth > 1 else aggDepth # make sure < 1.0
+            aggDepth = 1.0 if aggDepth > 1 else aggDepth  # make sure < 1.0
             time.sleep(epoch)
             id = self._sender.sendListenMarketTickerEvent(
                 r["server"], r["fSymbol"], r["tSymbol"], aggDepth)
@@ -383,8 +386,7 @@ class Util(object):
         self._logger.debug("src.core.util.util.Util.updateDBJudgeMarketTicker")
         try:
             id = self._sender.sendJudgeMarketTickerEvent(
-                self._excludeCoins, self._baseCoin, self._symbolStartBaseCoin,
-                self._symbolEndBaseCoin, self._symbolEndTimeout)
+                self._types, self._exchanges)
             if not async:
                 st = self._engine.getEventStatus(id)
                 startTime = time.time()

@@ -27,6 +27,7 @@
   level = DEBUG
 
 # Main Settings
+# type: arbitrage types
 # exchanges: exchanges will be listened
 # excludeCoins: exclude coins
 # baseCoin: base coin for value compare
@@ -40,13 +41,14 @@
 # apiEpochSaveBound: control api requests frequency
 # apiResultEpoch: control api event async=False timeout
 [Main]
+  type = dis, tra, pair
   exchanges = okex, binance, huobi
-  excludeCoins =
+  excludeCoins = HOT
   baseCoin = USDT
   basePriceVolume = 100
   basePriceTimeout = 30
   marketDepthLimit = 20
-  marketTickerAggStep = 1
+  marketTickerAggStep = 100
   symbolStartBaseCoin = 15
   symbolEndBaseCoin = 20
   symbolEndTimeout = 300
@@ -58,7 +60,7 @@
 # maxProcess: engine handle max process
 # cacheSize: engine process result cache size
 [Engine]
-  epoch = 0.1
+  epoch = 0.05
   maxProcess = 512
   cacheSize = 1024
 
@@ -87,7 +89,7 @@
   type = Sqlite3
   url = CCAT.db
   timeout = 30
-  synchronous = False
+  synchronous = True
 
 # Proxies Settings
 # proxies: proxies switch

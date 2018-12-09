@@ -3,6 +3,11 @@
 from src.core.config import Config
 from src.core.util.helper import MyTemplate
 
+# CCAT types
+CCAT_DIS_TYPE = 'dis'
+CCAT_TRA_TYPE = 'tra'
+CCAT_PAIR_TYPE = 'pair'
+
 # event status
 QUEUE_STATUS_EVENT = "queue"
 ACTIVE_STATUS_EVENT = "active"
@@ -87,7 +92,7 @@ JUDGE_MARKET_TICKER_EVENT = MyTemplate("""
     "type": "JUDGE_MARKET_TICKER_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
-    "args": ["$excludeCoins", "$baseCoin", "$symbolStartBaseCoin", "$symbolEndBaseCoin", "$symbolEndTimeout"]
+    "args": ["$types", "$exchanges"]
 }
 """)
 

@@ -160,20 +160,15 @@ class Sender(object):
             self.__logger.error(errStr)
             raise EngineException(err)
 
-    def sendJudgeMarketTickerEvent(self, excludeCoins, baseCoin,
-                                   symbolStartBaseCoin, symbolEndBaseCoin,
-                                   symbolEndTimeout):
+    def sendJudgeMarketTickerEvent(self, types, exchanges):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
                 JUDGE_MARKET_TICKER_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
-                    excludeCoins=excludeCoins,
-                    baseCoin=baseCoin,
-                    symbolStartBaseCoin=symbolStartBaseCoin,
-                    symbolEndBaseCoin=symbolEndBaseCoin,
-                    symbolEndTimeout=symbolEndTimeout))
+                    types=types,
+                    exchanges=exchanges))
             event = Event(TEMP_EVENT)
             self._logger.debug(
                 "src.core.engine.sender.Sender.sendJudgeMarketTickerEvent: " +

@@ -7,6 +7,11 @@ import dateparser
 import pytz
 
 
+def str_to_list(str):
+    return str.replace('[', '').replace(']', '').replace("'", '').replace(
+        ' ', '').split(',')
+
+
 def dict_factory(cursor, row):
     return dict(
         (col[0], row[idx]) for idx, col in enumerate(cursor.description))
@@ -20,7 +25,8 @@ def utcnow_timestamp():
 
 def timestamp_to_isoformat(timeStamp):
     [dt, micro] = datetime.fromtimestamp(
-        timeStamp / 1000, tz=timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f').split('.')
+        timeStamp / 1000,
+        tz=timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f').split('.')
     dt = "%s.%03d" % (dt, int(micro) / 1000)
     return dt + "Z"
 

@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
 
     # # stop engine
-    time.sleep(2) # for engine begin handle
+    time.sleep(5) # for engine begin handle
     __eventEngine.stop()
 
     # unregister engine

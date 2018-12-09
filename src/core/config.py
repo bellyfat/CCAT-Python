@@ -38,6 +38,8 @@ class Config(object):
                 raise Exception(
                     "Config Debug Settings Error, debug level not suport.")
             # Main Settings
+            Config._Main_types = str(cf['Main']['types']).replace(
+                ' ', '').split(',')
             Config._Main_exchanges = str(cf['Main']['exchanges']).replace(
                 ' ', '').split(',')
             Config._Main_excludeCoins = str(
