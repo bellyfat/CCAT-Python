@@ -44,7 +44,7 @@ LISTEN_MARKET_KLINE_EVENT = MyTemplate("""
 {
     "id": "$id",
     "type": "LISTEN_MARKET_KLINE_EVENT",
-    "priority": "medium",
+    "priority": "low",
     "timeStamp": "$timeStamp",
     "args": ["$server", "$fSymbol", "$tSymbol", "$interval", "$start", "$end"]
 }

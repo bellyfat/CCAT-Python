@@ -2,7 +2,6 @@
 
 from multiprocessing import Manager, Value
 
-import pandas as pd
 from src.core.config import Config
 from src.core.util.log import Logger
 
@@ -18,29 +17,22 @@ class Status(object):
         self._logger = Logger()
 
     def getActiveStatusTable(self):
-        res = [item for item in self._activeStatus]
-        if res != []:
-            res = pd.DataFrame(res).set_index(["id"], inplace=False)
-        else:
-            res = pd.DataFrame()
+        res = [item["id"] for item in self._activeStatus]
         self._logger.debug(
-            "src.core.engine.status.Status.getActiveStatusTable:\n%s" % res)
+            "src.core.engine.status.Status.getActiveStatusTable: {res=%s }" %
+            res)
         return res
 
     def getDoneStatusTable(self):
-        res = [item for item in self._doneStatus]
-        if res != []:
-            res = pd.DataFrame(res).set_index(["id"], inplace=False)
-        else:
-            res = pd.DataFrame()
+        res = [item["id"] for item in self._doneStatus]
         self._logger.debug(
-            "src.core.engine.status.Status.getDoneStatusTable:\n%s" % res)
+            "src.core.engine.status.Status.getDoneStatusTable: {res=%s }" % res)
         return res
 
     def calcEventID(self):
         self._id.value = self._id.value + 1
         self._logger.debug(
-            "src.core.engine.status.Status.calcEventID: { id=%s}" %
+            "src.core.engine.status.Status.calcEventID: { id=%s }" %
             self._id.value)
         return self._id.value
 

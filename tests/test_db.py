@@ -62,7 +62,7 @@ class TestDB(unittest.TestCase):
 
 
     def test_getViewMarketSymbolPairs(self):
-        res = db.getViewMarketSymbolPairs(["okex", "binance"])
+        res = db.getViewMarketSymbolPairs(["okex", "binance", "huobi"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -72,7 +72,7 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getViewInfoSymbolPairs(self):
-        res = db.getViewInfoSymbolPairs(["okex", "binance"])
+        res = db.getViewInfoSymbolPairs(["okex", "binance", "huobi"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -88,7 +88,7 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getAccountBalanceHistory(self):
-        res = db.getAccountBalanceHistory(["okex", "binance"])
+        res = db.getAccountBalanceHistory(["okex", "binance", "huobi"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -133,7 +133,7 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getInfoWithdraw(self):
-        res = db.getInfoWithdraw(["okex", "binance"])
+        res = db.getInfoWithdraw(["okex", "binance", "huobi"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -176,13 +176,13 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_insertTradeBacktestHistory(self):
-        db.insertTradeBacktestHistory("all", "ETH", "USDT", "ask", 150, 0.1)
+        db.insertTradeBacktestHistory("all", "ETH", "USDT", "bid", 100, 0.1)
         res = db.getTradeBacktestHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertTradeOrderHistory(self):
-        db.insertTradeOrderHistory("binance", "ETH", "USDT", "ask", 150, 0.1)
+        db.insertTradeOrderHistory("all", "ETH", "USDT", "bid", 100, 0.1)
         res = db.getTradeOrderHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
@@ -195,7 +195,7 @@ class TestDB(unittest.TestCase):
 
     def test_insertInfoWithdraw(self):
         db.insertInfoWithdraw()
-        res = db.getInfoWithdraw(["okex", "binance"])
+        res = db.getInfoWithdraw(["okex", "binance", "huobi"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 

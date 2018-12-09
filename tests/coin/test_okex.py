@@ -10,7 +10,6 @@ from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.util.log import Logger
 
-
 # proxies
 _proxies = Config()._Proxies_url if Config()._Proxies_proxies else None
 # Okex
@@ -62,14 +61,15 @@ class TestOkex(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     def test_getMarketOrderbookDepth(self):
-        res = okex.getMarketOrderbookDepth("STC", "BTC", 5)
+        res = okex.getMarketOrderbookDepth("ETH", "USDT", 5)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_getMarketKline(self):
-        res = okex.getMarketKline("STC", "BTC", "1m",
-                                  "2018-11-11T00:00:00.000Z",
-                                  "2018-11-11T01:00:00.000Z")
+        res = okex.getMarketKline("ETH", "USDT", "1h",
+                                  "2018-12-02T00:00:00.000Z",
+                                  "2018-12-03T00:00:00.000Z")
+        logger.debug(len(res))
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -79,17 +79,18 @@ class TestOkex(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getTradeOpen(self):
+        # res = okex.getTradeOpen("", "")
         res = okex.getTradeOpen("ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getTradeHistory(self):
-        res = okex.getTradeHistory("TRX", "USDT")
+        res = okex.getTradeHistory("ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getTradeSucceed(self):
-        res = okex.getTradeSucceed("TRX", "USDT")
+        res = okex.getTradeSucceed("ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -113,24 +114,23 @@ class TestOkex(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
-    # def test_createOrder(self):
-    #     res = okex.createOrder("ETH", "USDT", "ask", 150, 0.001)
-    #     logger.debug(res)
-    #     self.assertIsInstance(res, dict)
+    def test_createOrder(self):
+        res = okex.createOrder("ETH", "USDT", "bid", 10, 0.001)
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
 
     def test_checkOrder(self):
-        res = okex.checkOrder("TRX", "USDT", "1771669234011136")
+        res = okex.checkOrder("1771669234011136", "TRX", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
-    def test_cancleOrder(self):
-        res = okex.cancleOrder("TRX", "USDT", "1771669234011136")
+    def test_cancelOrder(self):
+        res = okex.cancelOrder("1771669234011136", "TRX", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
-    def test_cancleBatchOrder(self):
-        res = okex.cancleBatchOrder("TRX", "USDT",
-                                    ["1771669234011136", "1771614029560832"])
+    def test_cancelBatchOrder(self):
+        res = okex.cancelBatchOrder(["1771669234011136", "1771614029560832"], "TRX", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 

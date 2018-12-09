@@ -40,10 +40,10 @@
 # apiEpochSaveBound: control api requests frequency
 # apiResultEpoch: control api event async=False timeout
 [Main]
-  exchanges = okex, binance
+  exchanges = okex, binance, huobi
   excludeCoins =
   baseCoin = USDT
-  basePriceVolume = 1000
+  basePriceVolume = 100
   basePriceTimeout = 30
   marketDepthLimit = 20
   marketTickerAggStep = 1
@@ -67,9 +67,9 @@
 # mediumTimeout: medium event timeout
 # highTimeout: high event timeout
 [Event]
-  lowTimeout = 60
-  mediumTimeout = 30
-  highTimeout = 15
+  lowTimeout = 120
+  mediumTimeout = 60
+  highTimeout = 20
 
 # Log Settings
 # url: log file path
@@ -118,8 +118,8 @@
   api_secret =
   acct_id =
 
-# Gate Settings
-[Gate]
-  exchange = gate
+# Other Settings
+[Other]
+  exchange = other
   api_key =
   api_secret =

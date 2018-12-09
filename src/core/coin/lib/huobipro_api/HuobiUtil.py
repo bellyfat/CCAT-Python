@@ -12,12 +12,10 @@ import urllib.request
 import requests
 
 # API 请求地址
-COMMON_URL = "https://api.huobi.pro"
-MARKET_URL = "https://api.huobi.pro"
-TRADE_URL = "https://api.huobi.pro"
+API_URL = "https://api.huobi.pro"
 
 # timeout in 10 seconds:
-TIMEOUT = 10
+TIMEOUT = 5
 
 
 def http_get_request(url, params, add_to_headers=None, proxies=None):
@@ -36,9 +34,10 @@ def http_get_request(url, params, add_to_headers=None, proxies=None):
         if response.status_code == 200:
             return response.json()
         else:
-            return
+            raise Exception(
+                "request response status failed, status=%s" % response.status_code)
     except BaseException as e:
-        raise Exception("httpGet failed, detail is:%s,%s" % (response.text, e))
+        raise Exception("httpGet failed, detail is: err=%s" % e)
 
 
 def http_post_request(url, params, add_to_headers=None, proxies=None):
@@ -55,10 +54,10 @@ def http_post_request(url, params, add_to_headers=None, proxies=None):
         if response.status_code == 200:
             return response.json()
         else:
-            return
+            raise Exception(
+                "request response status failed, status=%s" % response.status_code)
     except BaseException as e:
-        raise Exception(
-            "httpPost failed, detail is:%s,%s" % (response.text, e))
+        raise Exception("httpPost failed, detail is: err=%s" % e)
 
 
 def api_key_get(params, request_path, ACCESS_KEY, SECRET_KEY, proxies=None):
@@ -71,7 +70,7 @@ def api_key_get(params, request_path, ACCESS_KEY, SECRET_KEY, proxies=None):
         'Timestamp': timestamp
     })
 
-    host_url = TRADE_URL
+    host_url = API_URL
     host_name = urllib.parse.urlparse(host_url).hostname
     host_name = host_name.lower()
     params['Signature'] = createSign(params, method, host_name, request_path,
@@ -91,7 +90,7 @@ def api_key_post(params, request_path, ACCESS_KEY, SECRET_KEY, proxies=None):
         'Timestamp': timestamp
     }
 
-    host_url = TRADE_URL
+    host_url = API_URL
     host_name = urllib.parse.urlparse(host_url).hostname
     host_name = host_name.lower()
     params_to_sign['Signature'] = createSign(params_to_sign, method, host_name,

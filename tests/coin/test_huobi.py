@@ -61,6 +61,85 @@ class TestHuobi(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
+    def test_getMarketOrderbookDepth(self):
+        res = huobi.getMarketOrderbookDepth("ETH", "USDT", 100)
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_getMarketKline(self):
+        res = huobi.getMarketKline("ETH", "USDT", "1h",
+                                  "2018-12-02T00:00:00.000Z",
+                                  "2018-12-03T00:00:00.000Z")
+        logger.debug(len(res))
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getTradeFees(self):
+        res = huobi.getTradeFees()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getTradeOpen(self):
+        # res = huobi.getTradeOpen("", "")
+        res = huobi.getTradeOpen("ETH", "USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getTradeHistory(self):
+        res = huobi.getTradeHistory("ETH", "USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getTradeSucceed(self):
+        res = huobi.getTradeSucceed("ETH", "USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getAccountBalances(self):
+        res = huobi.getAccountBalances()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getAccountLimits(self):
+        res = huobi.getAccountLimits()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getAccountAssetBalance(self):
+        res = huobi.getAccountAssetBalance("USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_getAccountAssetDetail(self):
+        res = huobi.getAccountAssetDetail("ETH")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_createOrder(self):
+        res = huobi.createOrder("ETH", "USDT", "bid", 10, 0.05)
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_checkOrder(self):
+        res = huobi.checkOrder("18252501002", "ETH", "USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_cancelOrder(self):
+        res = huobi.cancelOrder("18252501002", "ETH", "USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
+
+    def test_cancelBatchOrder(self):
+        res = huobi.cancelBatchOrder(["18252501002", "18253191905"],"ETH", "USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_depositeAsset(self):
+        pass
+
+    def test_withdrawAsset(self):
+        pass
 
 if __name__ == "__main__":
     unittest.main()

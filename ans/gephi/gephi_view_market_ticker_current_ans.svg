@@ -1,0 +1,1546 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+    "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg contentScriptType="text/ecmascript" width="1104.3246"
+     xmlns:xlink="http://www.w3.org/1999/xlink" zoomAndPan="magnify"
+     contentStyleType="text/css"
+     viewBox="-548.074951 -578.517700 1104.324585 1141.859741"
+     height="1141.8597" preserveAspectRatio="xMidYMid meet"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <g id="edges">
+        <path fill="none" stroke-width="1.0"
+              d="M -68.329529,-70.479599 C -32.000725,88.577652 -216.093414,381.656769 -375.150665,417.985565"
+              class="id_ICX id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6382567"
+              d="M 367.007355,402.609894 C 207.076859,264.023987 175.059952,-183.750565 313.645844,-343.681061"
+              class="id_AE id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6300397"
+              d="M -375.150665,417.985565 C -509.861816,200.305603 -385.408569,-328.281067 -167.728607,-462.992218"
+              class="id_ETH id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.62815297"
+              d="M -283.890808,428.082123 C -318.736115,154.222168 39.785889,-308.835754 313.645844,-343.681061"
+              class="id_NEO id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.63883126"
+              d="M -423.093231,184.186661 C -381.318970,-68.734711 60.724472,-385.455322 313.645844,-343.681061"
+              class="id_HC id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.62815297"
+              d="M -116.761139,97.137741 C -118.843498,-77.107414 139.400696,-341.598694 313.645844,-343.681061"
+              class="id_OMG id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.63343966"
+              d="M -375.150665,417.985565 C -389.724701,127.892929 23.553223,-329.107025 313.645844,-343.681061"
+              class="id_ETH id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6405301"
+              d="M -376.713348,-80.114609 C -291.354797,-270.899719 122.860718,-429.039612 313.645844,-343.681061"
+              class="id_AST id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6249622"
+              d="M 313.645844,-343.681061 C 193.508713,-271.268402 -95.315948,-342.855072 -167.728607,-462.992218"
+              class="id_BTC id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6301993"
+              d="M -212.456451,-433.549347 C -74.688324,-230.703522 -172.304840,280.217438 -375.150665,417.985565"
+              class="id_MANA id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6633884"
+              d="M 346.870209,-11.667953 C 288.396729,218.666931 -144.815796,476.459045 -375.150665,417.985565"
+              class="id_VET id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6488589"
+              d="M 407.473114,329.848145 C 268.575836,504.000366 -200.998428,556.882813 -375.150665,417.985565"
+              class="id_XVG id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6483736"
+              d="M 367.007355,402.609894 C 221.650879,554.116638 -223.643921,563.342041 -375.150665,417.985565"
+              class="id_AE id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6362168"
+              d="M -27.459929,-374.861176 C 61.571274,-146.753677 -147.043167,328.954346 -375.150665,417.985565"
+              class="id_XMR id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.53887516"
+              d="M 346.870209,-11.667953 C 273.822723,-71.425705 253.888092,-270.633575 313.645844,-343.681061"
+              class="id_VET id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6163452"
+              d="M -350.628265,-471.158356 C -177.703964,-288.425110 -192.417404,245.061264 -375.150665,417.985565"
+              class="id_EOS id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.61940444"
+              d="M -417.023651,-196.605026 C -300.304993,-372.154114 138.096741,-460.399780 313.645844,-343.681061"
+              class="id_ZEC id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5173609"
+              d="M 447.437592,-377.001007 C 441.917236,-53.486038 -51.635696,423.505920 -375.150665,417.985565"
+              class="id_WTC id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6133239"
+              d="M 13.242708,223.849991 C -40.182884,50.263145 140.058990,-290.255463 313.645844,-343.681061"
+              class="id_THETA id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6077975"
+              d="M 363.618439,-269.399567 C 218.630493,-201.848694 -100.177734,-318.004272 -167.728607,-462.992218"
+              class="id_ETC id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6138615"
+              d="M -350.628265,-471.158356 C -312.415100,-506.105042 -202.675308,-501.205383 -167.728607,-462.992218"
+              class="id_EOS id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.59637964"
+              d="M 440.331512,240.195786 C 298.219025,148.757553 222.207611,-201.568573 313.645844,-343.681061"
+              class="id_NAS id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6077466"
+              d="M 147.068634,-261.697601 C 163.987381,-311.409729 263.933716,-360.599792 313.645844,-343.681061"
+              class="id_POWR id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6102241"
+              d="M -432.766144,374.325897 C -412.511108,371.534729 -377.941833,397.730530 -375.150665,417.985565"
+              class="id_TRX id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6040863"
+              d="M 6.737825,-85.725143 C 16.528240,-198.697937 200.673050,-353.471497 313.645844,-343.681061"
+              class="id_ELF id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6064343"
+              d="M 48.172211,134.064377 C 5.717850,-14.579437 165.002029,-301.226685 313.645844,-343.681061"
+              class="id_XEM id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6065402"
+              d="M -116.761139,97.137741 C -104.269478,212.985214 -259.303223,405.493896 -375.150665,417.985565"
+              class="id_OMG id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5607436"
+              d="M -199.142090,-11.227371 C -148.501221,109.816940 -254.106354,367.344696 -375.150665,417.985565"
+              class="id_ONT id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6065604"
+              d="M 204.952606,-2.773727 C 158.509781,-92.693848 223.725723,-297.238220 313.645844,-343.681061"
+              class="id_XLM id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5744557"
+              d="M -199.142090,-11.227371 C -283.212341,-107.863037 -264.364258,-378.921936 -167.728607,-462.992218"
+              class="id_ONT id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6089376"
+              d="M -27.459929,-374.861176 C 46.997246,-436.846313 251.660706,-418.138245 313.645844,-343.681061"
+              class="id_XMR id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6161437"
+              d="M -432.766144,374.325897 C -547.222290,153.854767 -388.199738,-348.536102 -167.728607,-462.992218"
+              class="id_TRX id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5802765"
+              d="M -46.461639,-510.660309 C 58.955711,-549.285950 275.020203,-449.098389 313.645844,-343.681061"
+              class="id_DCR id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.48464853"
+              d="M 143.963959,-329.012421 C 189.540619,-75.789894 -121.928131,372.408905 -375.150665,417.985565"
+              class="id_NANO id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.59356105"
+              d="M -283.890808,428.082123 C -438.873230,226.634811 -369.175903,-308.009796 -167.728607,-462.992218"
+              class="id_NEO id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.61278903"
+              d="M -328.622650,-465.158966 C -296.010498,-496.904419 -199.474060,-495.604370 -167.728607,-462.992218"
+              class="id_LTC id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6001007"
+              d="M 99.172211,74.410049 C 73.022736,237.989716 -211.571014,444.135040 -375.150665,417.985565"
+              class="id_ADA id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.61971617"
+              d="M -328.622650,-465.158966 C -175.873383,-569.317078 209.487732,-496.430359 313.645844,-343.681061"
+              class="id_LTC id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5778052"
+              d="M -48.059723,303.256683 C -105.106148,101.528023 111.917175,-286.634644 313.645844,-343.681061"
+              class="id_SALT id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.58108115"
+              d="M 198.528290,-75.416000 C 167.898788,-152.092529 236.969330,-313.051544 313.645844,-343.681061"
+              class="id_POLY id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.578241"
+              d="M -48.847931,-7.334426 C -43.618507,-147.102509 173.877777,-348.910492 313.645844,-343.681061"
+              class="id_BAT id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.57919484"
+              d="M -120.472717,333.218475 C -169.028900,111.014862 91.442230,-295.124878 313.645844,-343.681061"
+              class="id_KNC id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5308634"
+              d="M 346.870209,-11.667953 C 153.685577,0.986954 -155.073700,-269.807587 -167.728607,-462.992218"
+              class="id_VET id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.53167796"
+              d="M -491.902802,293.088898 C -443.573029,294.717804 -373.521759,369.655792 -375.150665,417.985565"
+              class="id_WAVES id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5734198"
+              d="M -135.771362,440.625519 C -202.749237,193.880783 66.901093,-276.703186 313.645844,-343.681061"
+              class="id_CVC id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.55719596"
+              d="M 13.413118,178.854568 C -31.047462,14.300900 149.092178,-299.220490 313.645844,-343.681061"
+              class="id_XZC id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.55450934"
+              d="M -55.133942,-172.085861 C -15.697025,-280.160858 205.570847,-383.117981 313.645844,-343.681061"
+              class="id_ZEN id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6205293"
+              d="M 351.412384,216.887650 C 111.608200,184.739868 -199.876389,-223.188034 -167.728607,-462.992218"
+              class="id_XRP id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6110333"
+              d="M -350.628265,-471.158356 C -192.277985,-578.517700 206.286469,-502.031342 313.645844,-343.681061"
+              class="id_EOS id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5234232"
+              d="M -171.753448,255.823318 C -194.574478,38.842567 96.665092,-320.860046 313.645844,-343.681061"
+              class="id_TNB id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5614679"
+              d="M -491.902802,293.088898 C -458.147095,4.625183 25.182129,-377.436798 313.645844,-343.681061"
+              class="id_WAVES id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.61706895"
+              d="M 351.412384,216.887650 C 231.745331,112.327209 209.085419,-224.014008 313.645844,-343.681061"
+              class="id_XRP id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.565839"
+              d="M 346.260162,-434.178131 C 237.699585,-337.143188 -70.693665,-354.431641 -167.728607,-462.992218"
+              class="id_QTUM id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6063255"
+              d="M -212.456451,-433.549347 C -89.262337,-520.796143 226.399048,-466.875183 313.645844,-343.681061"
+              class="id_MANA id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5887541"
+              d="M -59.541412,179.994614 C -89.639091,0.622032 134.273254,-313.583374 313.645844,-343.681061"
+              class="id_DASH id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5620747"
+              d="M 447.437592,-377.001007 C 427.343231,-343.578644 347.068207,-323.586700 313.645844,-343.681061"
+              class="id_WTC id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5983904"
+              d="M -1.018584,414.071533 C -89.636200,199.588135 99.162445,-255.063446 313.645844,-343.681061"
+              class="id_ZRX id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6157265"
+              d="M 204.952606,-2.773727 C 38.372665,-20.281189 -185.236069,-296.412292 -167.728607,-462.992218"
+              class="id_XLM id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.57440996"
+              d="M 204.952606,-2.773727 C 173.083801,197.398804 -174.978149,449.854370 -375.150665,417.985565"
+              class="id_XLM id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.55586165"
+              d="M 402.979462,-512.401367 C 418.856812,-460.790558 365.256653,-359.558380 313.645844,-343.681061"
+              class="id_CMT id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5927018"
+              d="M 99.172211,74.410049 C -61.688416,20.309753 -221.828903,-302.131592 -167.728607,-462.992218"
+              class="id_ADA id_USDT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6080014"
+              d="M 363.618439,-269.399567 C 338.767639,-274.261353 308.784058,-318.830261 313.645844,-343.681061"
+              class="id_ETC id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.56479114"
+              d="M -199.142090,-11.227371 C -163.075226,-180.275696 144.597534,-379.747925 313.645844,-343.681061"
+              class="id_ONT id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5119728"
+              d="M -185.233124,-228.006088 C -108.592323,-350.916870 190.735062,-420.321869 313.645844,-343.681061"
+              class="id_TNT id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5989522"
+              d="M -432.766144,374.325897 C -427.085144,81.442093 20.762039,-349.362061 313.645844,-343.681061"
+              class="id_TRX id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.451049"
+              d="M 143.963959,-329.012421 C 174.966599,-365.882507 276.775757,-374.683716 313.645844,-343.681061"
+              class="id_NANO id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5011749"
+              d="M 357.091949,-10.900742 C 281.846680,-68.767586 255.778992,-268.435791 313.645844,-343.681061"
+              class="id_OST id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6041884"
+              d="M 99.172211,74.410049 C 58.448715,-52.102905 187.132874,-302.957581 313.645844,-343.681061"
+              class="id_ADA id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.57476133"
+              d="M -311.007904,294.015503 C -313.616455,41.545448 61.175789,-341.072510 313.645844,-343.681061"
+              class="id_ZIL id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5611946"
+              d="M 346.260162,-434.178131 C 357.836731,-409.555847 338.268127,-355.257629 313.645844,-343.681061"
+              class="id_QTUM id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.46914724"
+              d="M 435.591461,381.555420 C 266.155029,260.897247 192.987671,-174.244629 313.645844,-343.681061"
+              class="id_IOST id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.50367415"
+              d="M 407.473114,329.848145 C 254.001846,213.907776 197.705460,-190.209778 313.645844,-343.681061"
+              class="id_XVG id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.62847096"
+              d="M 313.645844,-343.681061 C 343.743530,-164.308472 119.831169,149.896942 -59.541412,179.994614"
+              class="id_BTC id_DASH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6402484"
+              d="M 313.645844,-343.681061 C 344.275360,-267.004547 275.204834,-106.045502 198.528290,-75.416000"
+              class="id_BTC id_POLY" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.63382465"
+              d="M -375.150665,417.985565 C -423.480438,416.356659 -493.531708,341.418671 -491.902802,293.088898"
+              class="id_ETH id_WAVES" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.62761813"
+              d="M 313.645844,-343.681061 C 308.416412,-203.912994 90.920143,-2.105003 -48.847931,-7.334426"
+              class="id_BTC id_BAT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.68975586"
+              d="M -375.150665,417.985565 C -420.727325,164.763031 -109.258568,-283.435760 143.963959,-329.012421"
+              class="id_ETH id_NANO" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.65618086"
+              d="M 313.645844,-343.681061 C 333.740204,-377.103424 414.015228,-397.095367 447.437592,-377.001007"
+              class="id_BTC id_WTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6430092"
+              d="M -375.150665,417.985565 C -369.630310,94.470596 123.922607,-382.521362 447.437592,-377.001007"
+              class="id_ETH id_WTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6264163"
+              d="M 313.645844,-343.681061 C 358.106445,-179.127396 177.966797,134.393982 13.413118,178.854568"
+              class="id_BTC id_XZC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6192893"
+              d="M 313.645844,-343.681061 C 467.117126,-227.740692 523.413513,176.376862 407.473114,329.848145"
+              class="id_BTC id_XVG" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6063466"
+              d="M -167.728607,-462.992218 C -59.168030,-560.027161 249.225220,-542.738708 346.260162,-434.178131"
+              class="id_USDT id_QTUM" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5859165"
+              d="M -167.728607,-462.992218 C -53.272491,-242.521088 -212.295013,259.869781 -432.766144,374.325897"
+              class="id_USDT id_TRX" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6131948"
+              d="M -167.728607,-462.992218 C -33.017456,-245.312256 -157.470703,283.274414 -375.150665,417.985565"
+              class="id_USDT id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5887251"
+              d="M 313.645844,-343.681061 C 208.228485,-305.055420 -7.835991,-405.242981 -46.461639,-510.660309"
+              class="id_BTC id_DCR" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5853297"
+              d="M -375.150665,417.985565 C -236.253403,243.833344 233.320877,190.950867 407.473114,329.848145"
+              class="id_ETH id_XVG" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6192893"
+              d="M 313.645844,-343.681061 C 483.082275,-223.022888 556.249634,212.118988 435.591461,381.555420"
+              class="id_BTC id_IOST" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5836239"
+              d="M 313.645844,-343.681061 C 296.727112,-293.968933 196.780777,-244.778854 147.068634,-261.697601"
+              class="id_BTC id_POWR" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.59759915"
+              d="M 313.645844,-343.681061 C 356.100220,-195.037247 196.816025,91.610016 48.172211,134.064377"
+              class="id_BTC id_XEM" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.58922094"
+              d="M -375.150665,417.985565 C -464.181885,189.878052 -255.567429,-285.829956 -27.459929,-374.861176"
+              class="id_ETH id_XMR" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.589776"
+              d="M 313.645844,-343.681061 C 274.208923,-235.606079 52.941059,-132.648956 -55.133942,-172.085861"
+              class="id_BTC id_ZEN" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.599739"
+              d="M -167.728607,-462.992218 C -1.148666,-445.484741 222.460068,-169.353668 204.952606,-2.773727"
+              class="id_USDT id_XLM" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.60731673"
+              d="M 313.645844,-343.681061 C 354.369324,-217.168106 225.685165,33.686554 99.172211,74.410049"
+              class="id_BTC id_ADA" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.57034785"
+              d="M 313.645844,-343.681061 C 362.202026,-121.477448 101.730896,284.662292 -120.472717,333.218475"
+              class="id_BTC id_KNC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6164327"
+              d="M -167.728607,-462.992218 C -200.340759,-431.246765 -296.877197,-432.546814 -328.622650,-465.158966"
+              class="id_USDT id_LTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5908772"
+              d="M -167.728607,-462.992218 C -83.658340,-366.356567 -102.506424,-95.297638 -199.142090,-11.227371"
+              class="id_USDT id_ONT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6116854"
+              d="M 313.645844,-343.681061 C 155.295563,-236.321686 -243.268890,-312.808075 -350.628265,-471.158356"
+              class="id_BTC id_EOS" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5813031"
+              d="M 313.645844,-343.681061 C 277.578979,-174.632751 -30.093765,24.839493 -199.142090,-11.227371"
+              class="id_BTC id_ONT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5857217"
+              d="M -375.150665,417.985565 C -387.642334,302.138123 -232.608612,109.629410 -116.761139,97.137741"
+              class="id_ETH id_OMG" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5443748"
+              d="M 313.645844,-343.681061 C 380.623718,-96.936310 110.973389,373.647644 -135.771362,440.625519"
+              class="id_BTC id_CVC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6018299"
+              d="M 313.645844,-343.681061 C 348.491150,-69.821106 -10.030853,393.236816 -283.890808,428.082123"
+              class="id_BTC id_NEO" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6192893"
+              d="M 313.645844,-343.681061 C 279.890106,-55.217346 -203.439102,326.844635 -491.902802,293.088898"
+              class="id_BTC id_WAVES" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6005674"
+              d="M 313.645844,-343.681061 C 196.927155,-168.131973 -241.474564,-79.886337 -417.023651,-196.605026"
+              class="id_BTC id_ZEC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.592913"
+              d="M 313.645844,-343.681061 C 239.188660,-281.695923 34.525200,-300.403992 -27.459929,-374.861176"
+              class="id_BTC id_XMR" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.59011227"
+              d="M 313.645844,-343.681061 C 307.964844,-50.797256 -139.882339,380.006897 -432.766144,374.325897"
+              class="id_BTC id_TRX" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5332088"
+              d="M 313.645844,-343.681061 C 228.287292,-152.895935 -185.928223,5.243942 -376.713348,-80.114609"
+              class="id_BTC id_AST" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.57898176"
+              d="M 313.645844,-343.681061 C 473.576355,-205.095169 505.593262,242.679398 367.007355,402.609894"
+              class="id_BTC id_AE" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5815724"
+              d="M 313.645844,-343.681061 C 303.855438,-230.708267 119.710617,-75.934723 6.737825,-85.725143"
+              class="id_BTC id_ELF" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.600506"
+              d="M -167.728607,-462.992218 C 25.456024,-475.647125 334.215302,-204.852585 346.870209,-11.667953"
+              class="id_USDT id_VET" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.59195095"
+              d="M 313.645844,-343.681061 C 402.263458,-129.197662 213.464813,325.453918 -1.018584,414.071533"
+              class="id_BTC id_ZRX" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.60597456"
+              d="M -167.728607,-462.992218 C -22.740665,-530.543091 296.067566,-414.387512 363.618439,-269.399567"
+              class="id_USDT id_ETC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.48710674"
+              d="M 313.645844,-343.681061 C 282.643188,-306.810974 180.834061,-298.009766 143.963959,-329.012421"
+              class="id_BTC id_NANO" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.608218"
+              d="M 313.645844,-343.681061 C 433.312897,-239.120636 455.972809,97.220596 351.412384,216.887650"
+              class="id_BTC id_XRP" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.54976934"
+              d="M 313.645844,-343.681061 C 455.758331,-252.242828 531.769775,98.083282 440.331512,240.195786"
+              class="id_BTC id_NAS" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6080494"
+              d="M 313.645844,-343.681061 C 160.896576,-239.522964 -224.464539,-312.409668 -328.622650,-465.158966"
+              class="id_BTC id_LTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5762369"
+              d="M 313.645844,-343.681061 C 360.088684,-253.760925 294.872742,-49.216553 204.952606,-2.773727"
+              class="id_BTC id_XLM" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.61610067"
+              d="M -167.728607,-462.992218 C -47.591480,-535.404846 241.233170,-463.818207 313.645844,-343.681061"
+              class="id_USDT id_BTC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6128746"
+              d="M -167.728607,-462.992218 C -205.941757,-428.045532 -315.681580,-432.945190 -350.628265,-471.158356"
+              class="id_USDT id_EOS" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.54417187"
+              d="M -375.150665,417.985565 C -512.918823,215.139740 -415.302277,-295.781219 -212.456451,-433.549347"
+              class="id_ETH id_MANA" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.52073663"
+              d="M 313.645844,-343.681061 C 388.891113,-285.814209 414.958801,-86.146034 357.091949,-10.900742"
+              class="id_BTC id_OST" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5528393"
+              d="M 313.645844,-343.681061 C 367.071442,-170.094208 186.829559,170.424408 13.242708,223.849991"
+              class="id_BTC id_THETA" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.58233273"
+              d="M -375.150665,417.985565 C -343.281860,217.813049 4.780083,-34.642525 204.952606,-2.773727"
+              class="id_ETH id_XLM" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.594434"
+              d="M -375.150665,417.985565 C -548.074951,235.252304 -533.361511,-298.234070 -350.628265,-471.158356"
+              class="id_ETH id_EOS" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5926152"
+              d="M 313.645844,-343.681061 C 316.254395,-91.211006 -58.537849,291.406952 -311.007904,294.015503"
+              class="id_BTC id_ZIL" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5991542"
+              d="M 313.645844,-343.681061 C 338.496643,-338.819275 368.480225,-294.250366 363.618439,-269.399567"
+              class="id_BTC id_ETC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.58986133"
+              d="M -375.150665,417.985565 C -425.791534,296.941254 -320.186401,39.413502 -199.142090,-11.227371"
+              class="id_ETH id_ONT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5840289"
+              d="M -375.150665,417.985565 C -395.405701,420.776733 -429.974976,394.580933 -432.766144,374.325897"
+              class="id_ETH id_TRX" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.60873425"
+              d="M 313.645844,-343.681061 C 328.219879,-53.588440 -85.058044,403.411499 -375.150665,417.985565"
+              class="id_BTC id_ETH" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.1"
+              d="M -375.150665,417.985565 C -411.479462,258.928314 -227.386780,-34.150791 -68.329529,-70.479599"
+              class="id_ETH id_ICX" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5951851"
+              d="M 313.645844,-343.681061 C 297.768494,-395.291840 351.368652,-496.524017 402.979462,-512.401367"
+              class="id_BTC id_CMT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.6141502"
+              d="M -167.728607,-462.992218 C 72.075577,-430.844421 383.560181,-22.916534 351.412384,216.887650"
+              class="id_USDT id_XRP" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.47533387"
+              d="M 313.645844,-343.681061 C 237.005051,-220.770294 -62.322334,-151.365295 -185.233124,-228.006088"
+              class="id_BTC id_TNT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.531739"
+              d="M -375.150665,417.985565 C -229.794189,266.478821 215.500610,257.253418 367.007355,402.609894"
+              class="id_ETH id_AE" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.4926811"
+              d="M 313.645844,-343.681061 C 271.871582,-90.759689 -170.171875,225.960938 -423.093231,184.186661"
+              class="id_BTC id_HC" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5746867"
+              d="M 313.645844,-343.681061 C 302.069275,-368.303345 321.637878,-422.601563 346.260162,-434.178131"
+              class="id_BTC id_QTUM" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.57581514"
+              d="M 313.645844,-343.681061 C 190.451721,-256.434265 -125.209648,-310.355225 -212.456451,-433.549347"
+              class="id_BTC id_MANA" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.51464474"
+              d="M 313.645844,-343.681061 C 336.466858,-126.700325 45.227295,233.002289 -171.753448,255.823318"
+              class="id_BTC id_TNB" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.53008413"
+              d="M 313.645844,-343.681061 C 386.693329,-283.923309 406.627960,-84.715454 346.870209,-11.667953"
+              class="id_BTC id_VET" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5514928"
+              d="M -375.150665,417.985565 C -349.001190,254.405914 -64.407455,48.260582 99.172211,74.410049"
+              class="id_ETH id_ADA" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.57848144"
+              d="M -167.728607,-462.992218 C -12.746170,-261.544891 -82.443481,273.099701 -283.890808,428.082123"
+              class="id_USDT id_NEO" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.55965626"
+              d="M 313.645844,-343.681061 C 315.728210,-169.435913 57.484016,95.055382 -116.761139,97.137741"
+              class="id_BTC id_OMG" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5316513"
+              d="M -375.150665,417.985565 C -316.677185,187.650696 116.535332,-70.141426 346.870209,-11.667953"
+              class="id_ETH id_VET" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.48575518"
+              d="M 313.645844,-343.681061 C 370.692261,-141.952393 153.668945,246.210266 -48.059723,303.256683"
+              class="id_BTC id_SALT" stroke-opacity="0.2" stroke="#000000"/>
+        <path fill="none" stroke-width="0.5927018"
+              d="M -167.728607,-462.992218 C -6.867981,-408.891907 153.272507,-86.450577 99.172211,74.410049"
+              class="id_USDT id_ADA" stroke-opacity="0.2" stroke="#000000"/>
+    </g>
+    <g id="nodes">
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-68.32953"
+                class="id_ICX" cy="-70.4796" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-375.15067"
+                class="id_ETH" cy="417.98557" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="367.00735"
+                class="id_AE" cy="402.6099" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="313.64584"
+                class="id_BTC" cy="-343.68106" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-167.7286"
+                class="id_USDT" cy="-462.99222" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-283.8908"
+                class="id_NEO" cy="428.08212" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-423.09323"
+                class="id_HC" cy="184.18666" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-116.76114"
+                class="id_OMG" cy="97.13774" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-376.71335"
+                class="id_AST" cy="-80.11461" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-212.45645"
+                class="id_MANA" cy="-433.54935" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="346.8702"
+                class="id_VET" cy="-11.6679535" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="407.4731"
+                class="id_XVG" cy="329.84814" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-27.459929"
+                class="id_XMR" cy="-374.86118" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-350.62827"
+                class="id_EOS" cy="-471.15836" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-417.02365"
+                class="id_ZEC" cy="-196.60503" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="447.4376"
+                class="id_WTC" cy="-377.001" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="13.242708"
+                class="id_THETA" cy="223.84999" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="363.61844"
+                class="id_ETC" cy="-269.39957" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="440.3315"
+                class="id_NAS" cy="240.19579" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="147.06863"
+                class="id_POWR" cy="-261.6976" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-432.76614"
+                class="id_TRX" cy="374.3259" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="6.737825"
+                class="id_ELF" cy="-85.72514" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="48.17221"
+                class="id_XEM" cy="134.06438" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-199.14209"
+                class="id_ONT" cy="-11.227371" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="204.9526"
+                class="id_XLM" cy="-2.7737272" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-46.46164"
+                class="id_DCR" cy="-510.6603" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="143.96396"
+                class="id_NANO" cy="-329.01242" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-328.62265"
+                class="id_LTC" cy="-465.15897" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="99.17221"
+                class="id_ADA" cy="74.41005" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-48.059723"
+                class="id_SALT" cy="303.25668" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="198.52829"
+                class="id_POLY" cy="-75.416" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-48.84793"
+                class="id_BAT" cy="-7.3344264" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-120.47272"
+                class="id_KNC" cy="333.21848" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-491.9028"
+                class="id_WAVES" cy="293.0889" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-135.77136"
+                class="id_CVC" cy="440.62552" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="13.413118"
+                class="id_XZC" cy="178.85457" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-55.13394"
+                class="id_ZEN" cy="-172.08586" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="351.41238"
+                class="id_XRP" cy="216.88765" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-171.75345"
+                class="id_TNB" cy="255.82332" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="346.26016"
+                class="id_QTUM" cy="-434.17813" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-59.541412"
+                class="id_DASH" cy="179.99461" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-1.0185835"
+                class="id_ZRX" cy="414.07153" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="402.97946"
+                class="id_CMT" cy="-512.40137" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-185.23312"
+                class="id_TNT" cy="-228.00609" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="357.09195"
+                class="id_OST" cy="-10.900742" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="-311.0079"
+                class="id_ZIL" cy="294.0155" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+        <circle fill-opacity="0.1" fill="#000000" r="10.0" cx="435.59146"
+                class="id_IOST" cy="381.55542" stroke="#000000"
+                stroke-opacity="0.1" stroke-width="1.0"/>
+    </g>
+    <g id="node-labels">
+        <text font-size="24" x="-68.32953" y="-66.03624" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_ICX">
+            ICX
+        </text>
+        <text font-size="24" x="-375.15067" y="422.2805" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_ETH">
+            ETH
+        </text>
+        <text font-size="24" x="367.00735" y="406.90482" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_AE">
+            AE
+        </text>
+        <text font-size="24" x="313.64584" y="-339.2377" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_BTC">
+            BTC
+        </text>
+        <text font-size="24" x="-167.7286" y="-458.54886" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_USDT">
+            USDT
+        </text>
+        <text font-size="24" x="-283.8908" y="432.52744" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_NEO">
+            NEO
+        </text>
+        <text font-size="24" x="-423.09323" y="188.63002" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_HC">
+            HC
+        </text>
+        <text font-size="24" x="-116.76114" y="101.58305" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_OMG">
+            OMG
+        </text>
+        <text font-size="24" x="-376.71335" y="-75.67125" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_AST">
+            AST
+        </text>
+        <text font-size="24" x="-212.45645" y="-429.25443" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_MANA">
+            MANA
+        </text>
+        <text font-size="24" x="346.8702" y="-7.3730316" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_VET">
+            VET
+        </text>
+        <text font-size="24" x="407.4731" y="334.2915" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_XVG">
+            XVG
+        </text>
+        <text font-size="24" x="-27.459929" y="-370.56625" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_XMR">
+            XMR
+        </text>
+        <text font-size="24" x="-350.62827" y="-466.71304" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_EOS">
+            EOS
+        </text>
+        <text font-size="24" x="-417.02365" y="-192.16167" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_ZEC">
+            ZEC
+        </text>
+        <text font-size="24" x="447.4376" y="-372.55765" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_WTC">
+            WTC
+        </text>
+        <text font-size="24" x="13.242708" y="228.14491" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_THETA">
+            THETA
+        </text>
+        <text font-size="24" x="363.61844" y="-264.9562" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_ETC">
+            ETC
+        </text>
+        <text font-size="24" x="440.3315" y="244.63914" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_NAS">
+            NAS
+        </text>
+        <text font-size="24" x="147.06863" y="-257.2523" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_POWR">
+            POWR
+        </text>
+        <text font-size="24" x="-432.76614" y="378.62082" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_TRX">
+            TRX
+        </text>
+        <text font-size="24" x="6.737825" y="-81.43022" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_ELF">
+            ELF
+        </text>
+        <text font-size="24" x="48.17221" y="138.3593" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_XEM">
+            XEM
+        </text>
+        <text font-size="24" x="-199.14209" y="-6.7820587" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_ONT">
+            ONT
+        </text>
+        <text font-size="24" x="204.9526" y="1.5211947" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_XLM">
+            XLM
+        </text>
+        <text font-size="24" x="-46.46164" y="-506.21695" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_DCR">
+            DCR
+        </text>
+        <text font-size="24" x="143.96396" y="-324.5671" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_NANO">
+            NANO
+        </text>
+        <text font-size="24" x="-328.62265" y="-460.7156" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_LTC">
+            LTC
+        </text>
+        <text font-size="24" x="99.17221" y="78.70497" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_ADA">
+            ADA
+        </text>
+        <text font-size="24" x="-48.059723" y="307.70004" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_SALT">
+            SALT
+        </text>
+        <text font-size="24" x="198.52829" y="-70.97069" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_POLY">
+            POLY
+        </text>
+        <text font-size="24" x="-48.84793" y="-3.0395045" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_BAT">
+            BAT
+        </text>
+        <text font-size="24" x="-120.47272" y="337.66183" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_KNC">
+            KNC
+        </text>
+        <text font-size="24" x="-491.9028" y="297.53226" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_WAVES">
+            WAVES
+        </text>
+        <text font-size="24" x="-135.77136" y="445.06888" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_CVC">
+            CVC
+        </text>
+        <text font-size="24" x="13.413118" y="183.29793" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_XZC">
+            XZC
+        </text>
+        <text font-size="24" x="-55.13394" y="-167.79094" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_ZEN">
+            ZEN
+        </text>
+        <text font-size="24" x="351.41238" y="221.18257" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_XRP">
+            XRP
+        </text>
+        <text font-size="24" x="-171.75345" y="260.11823" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_TNB">
+            TNB
+        </text>
+        <text font-size="24" x="346.26016" y="-429.47305" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_QTUM">
+            QTUM
+        </text>
+        <text font-size="24" x="-59.541412" y="184.43797" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_DASH">
+            DASH
+        </text>
+        <text font-size="24" x="-1.0185835" y="418.36646" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_ZRX">
+            ZRX
+        </text>
+        <text font-size="24" x="402.97946" y="-507.958" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_CMT">
+            CMT
+        </text>
+        <text font-size="24" x="-185.23312" y="-223.71117" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_TNT">
+            TNT
+        </text>
+        <text font-size="24" x="357.09195" y="-6.455429" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_OST">
+            OST
+        </text>
+        <text font-size="24" x="-311.0079" y="298.31042" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_ZIL">
+            ZIL
+        </text>
+        <text font-size="24" x="435.59146" y="386.00073" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_IOST">
+            IOST
+        </text>
+    </g>
+    <g id="edge-labels">
+        <text font-size="10" x="-148.47034" y="219.77615" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_0">
+            0.0345608468364986
+        </text>
+        <text font-size="10" x="228.38297" y="37.468643" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_1">
+            0.00133516330574453
+        </text>
+        <text font-size="10" x="-403.5863" y="-53.61664" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_2">
+            5.80439198993927E-4
+        </text>
+        <text font-size="10" x="-100.886955" y="-47.429962" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_3">
+            4.07141838362125E-4
+        </text>
+        <text font-size="10" x="-133.90387" y="-190.25806" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_4">
+            0.00138793315389
+        </text>
+        <text font-size="10" x="32.319534" y="-187.8327" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_5">
+            4.07141838362146E-4
+        </text>
+        <text font-size="10" x="-145.00241" y="-66.16722" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_6">
+            8.9272197665499E-4
+        </text>
+        <text font-size="10" x="-71.06871" y="-315.45172" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_7">
+            0.0015439681359057
+        </text>
+        <text font-size="10" x="55.061935" y="-331.13046" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_8">
+            1.14078299196281E-4
+        </text>
+        <text font-size="10" x="-166.07333" y="16.622238" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_9">
+            5.9509793643022E-4
+        </text>
+        <text font-size="10" x="50.3078" y="311.46194" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_10">
+            0.00364347598161074
+        </text>
+        <text font-size="10" x="29.381836" y="491.31042" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_11">
+            0.00230896074729628
+        </text>
+        <text font-size="10" x="-1.7653046" y="521.62146" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_12">
+            0.00226438721763481
+        </text>
+        <text font-size="10" x="-82.37829" y="73.71579" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_13">
+            0.00114779939166038
+        </text>
+        <text font-size="10" x="280.45605" y="-172.69086" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_14">
+            -0.00779291670129637
+        </text>
+        <text font-size="10" x="-229.51788" y="-22.908035" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_15">
+            -6.77383717788906E-4
+        </text>
+        <text font-size="10" x="-73.75032" y="-379.74347" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_16">
+            -3.96398034600524E-4
+        </text>
+        <text font-size="10" x="155.39146" y="143.88052" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_17">
+            -0.00976896907771814
+        </text>
+        <text font-size="10" x="78.314606" y="-104.976006" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_18">
+            -9.54882861213626E-4
+        </text>
+        <text font-size="10" x="68.906006" y="-286.49384" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_19">
+            -0.00146247902181731
+        </text>
+        <text font-size="10" x="-257.95352" y="-494.51025" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_20">
+            -9.05510028523466E-4
+        </text>
+        <text font-size="10" x="289.40717" y="-32.73979" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_21">
+            -0.00251119871542535
+        </text>
+        <text font-size="10" x="218.05972" y="-327.6759" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_22">
+            -0.00146715725641695
+        </text>
+        <text font-size="10" x="-397.40945" y="387.5134" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_23">
+            -0.00123959859004047
+        </text>
+        <text font-size="10" x="121.49844" y="-260.73932" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_24">
+            -0.00180335374019502
+        </text>
+        <text font-size="10" x="109.24722" y="-144.6294" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_25">
+            -0.00158768795593166
+        </text>
+        <text font-size="10" x="-197.82874" y="296.32007" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_26">
+            -0.00157796412158225
+        </text>
+        <text font-size="10" x="-222.76443" y="229.7804" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_27">
+            -0.00578432563919856
+        </text>
+        <text font-size="10" x="208.16312" y="-189.53137" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_28">
+            -0.00157610653118423
+        </text>
+        <text font-size="10" x="-251.20006" y="-241.82182" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_29">
+            -0.00452488687782806
+        </text>
+        <text font-size="10" x="147.76996" y="-410.437" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_30">
+            -0.00135776343980013
+        </text>
+        <text font-size="10" x="-425.8451" y="-84.08879" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_31">
+            -6.95894224078032E-4
+        </text>
+        <text font-size="10" x="158.63898" y="-481.1868" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_32">
+            -0.00399025219169677
+        </text>
+        <text font-size="10" x="-3.5436554" y="122.353775" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_33">
+            -0.0127735648047313
+        </text>
+        <text font-size="10" x="-359.47086" y="-34.879395" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_34">
+            -0.00277008310249302
+        </text>
+        <text font-size="10" x="-247.85062" y="-488.2097" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_35">
+            -0.00100401606425695
+        </text>
+        <text font-size="10" x="-86.45291" y="317.34625" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_36">
+            -0.00216942178158093
+        </text>
+        <text font-size="10" x="10.733276" y="-500.7603" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_37">
+            -3.67766869490865E-4
+        </text>
+        <text font-size="10" x="35.7524" y="-74.46802" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_38">
+            -0.00421723632113749
+        </text>
+        <text font-size="10" x="215.8473" y="-226.81616" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_39">
+            -0.00391634640967884
+        </text>
+        <text font-size="10" x="81.94696" y="-229.8818" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_40">
+            -0.00417720860794388
+        </text>
+        <text font-size="10" x="-4.9483566" y="-70.349075" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_41">
+            -0.00408960187938786
+        </text>
+        <text font-size="10" x="21.872154" y="-160.14026" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_42">
+            -0.00852878464818766
+        </text>
+        <text font-size="10" x="-414.79224" y="338.0244" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_43">
+            -0.00845397023700328
+        </text>
+        <text font-size="10" x="-28.708748" y="-18.940369" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_44">
+            -0.00462002972866473
+        </text>
+        <text font-size="10" x="85.14914" y="-127.44816" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_45">
+            -0.00611016853192026
+        </text>
+        <text font-size="10" x="103.51666" y="-313.20044" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_46">
+            -0.00635693619976063
+        </text>
+        <text font-size="10" x="-10.140099" y="-45.181137" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_47">
+            -2.93083235638889E-4
+        </text>
+        <text font-size="10" x="0.63038635" y="-507.06082" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_48">
+            -0.00116527595355999
+        </text>
+        <text font-size="10" x="-18.979477" y="-116.73877" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_49">
+            -0.00921215760239134
+        </text>
+        <text font-size="10" x="-184.64398" y="-146.12837" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_50">
+            -0.00571779984636245
+        </text>
+        <text font-size="10" x="248.44382" y="-57.731728" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_51">
+            -6.10911562423127E-4
+        </text>
+        <text font-size="10" x="84.943665" y="-371.48685" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_52">
+            -0.00531632110579479
+        </text>
+        <text font-size="10" x="64.07494" y="-467.53055" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_53">
+            -0.00159768209317786
+        </text>
+        <text font-size="10" x="48.500866" y="-137.82132" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_54">
+            -0.0032115946640016
+        </text>
+        <text font-size="10" x="385.53973" y="-340.27228" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_55">
+            -0.00566206225772496
+        </text>
+        <text font-size="10" x="42.65075" y="-12.004425" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_56">
+            -0.00232650976792909
+        </text>
+        <text font-size="10" x="-50.42077" y="-176.9808" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_57">
+            -7.34214390601975E-4
+        </text>
+        <text font-size="10" x="-21.98513" y="294.62143" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_58">
+            -0.00452908624944235
+        </text>
+        <text font-size="10" x="383.6207" y="-414.64114" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_59">
+            -0.00623272857206942
+        </text>
+        <text font-size="10" x="-114.88855" y="-154.25595" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_60">
+            -0.00284900284900273
+        </text>
+        <text font-size="10" x="327.48993" y="-299.04443" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_61">
+            -0.00144375019094091
+        </text>
+        <text font-size="10" x="7.383835" y="-254.37242" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_62">
+            -0.00541256230264056
+        </text>
+        <text font-size="10" x="46.855125" y="-360.6754" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_63">
+            -0.0102638676745804
+        </text>
+        <text font-size="10" x="-167.26122" y="-96.63937" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_64">
+            -0.00227491484216964
+        </text>
+        <text font-size="10" x="226.60461" y="-361.799" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_65">
+            -0.0158596409557577
+        </text>
+        <text font-size="10" x="285.45184" y="-170.77399" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_66">
+            -0.0112556357219297
+        </text>
+        <text font-size="10" x="143.69534" y="-166.80655" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_67">
+            -0.00179397398526449
+        </text>
+        <text font-size="10" x="-94.33551" y="-118.53084" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_68">
+            -0.00449681473927688
+        </text>
+        <text font-size="10" x="343.5276" y="-384.03748" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_69">
+            -0.00574290206638182
+        </text>
+        <text font-size="10" x="265.8332" y="37.229034" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_70">
+            -0.0141973419840958
+        </text>
+        <text font-size="10" x="259.5301" y="7.1576385" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_71">
+            -0.0110260826397906
+        </text>
+        <text font-size="10" x="205.60358" y="-25.865128" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_72">
+            4.36352960666933E-4
+        </text>
+        <text font-size="10" x="296.32684" y="-192.2809" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_73">
+            0.00151809467975689
+        </text>
+        <text font-size="10" x="-452.26123" y="373.05005" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_74">
+            9.28079279283416E-4
+        </text>
+        <text font-size="10" x="182.85095" y="-121.13368" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_75">
+            3.5801851976872E-4
+        </text>
+        <text font-size="10" x="-227.64305" y="-33.38063" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_76">
+            0.00606529653845973
+        </text>
+        <text font-size="10" x="375.5437" y="-380.4098" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_77">
+            0.00298147478698646
+        </text>
+        <text font-size="10" x="-83.10452" y="-102.895966" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_78">
+            0.00177167282997597
+        </text>
+        <text font-size="10" x="241.90984" y="-37.37834" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_79">
+            2.47636185999157E-4
+        </text>
+        <text font-size="10" x="461.58887" y="-20.990555" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_80">
+            -4.0697614134787E-4
+        </text>
+        <text font-size="10" x="93.58788" y="-525.6835" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_81">
+            -0.00159574468085101
+        </text>
+        <text font-size="10" x="-174.64966" y="-4.57753" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_82">
+            -0.0034722222222222
+        </text>
+        <text font-size="10" x="-139.29297" y="8.609985" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_83">
+            -9.66744006187107E-4
+        </text>
+        <text font-size="10" x="108.54521" y="-373.15457" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_84">
+            -0.00321425845509334
+        </text>
+        <text font-size="10" x="2.9406128" y="256.52332" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_85">
+            -0.00352612285886131
+        </text>
+        <text font-size="10" x="483.4041" y="0.6453247" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_86">
+            -4.06976141347815E-4
+        </text>
+        <text font-size="10" x="242.65477" y="-277.70276" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_87">
+            -0.00368279597609041
+        </text>
+        <text font-size="10" x="252.57086" y="-64.98729" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_88">
+            -0.00239918944251098
+        </text>
+        <text font-size="10" x="-320.2323" y="-30.591415" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_89">
+            -0.00316871771693455
+        </text>
+        <text font-size="10" x="154.99522" y="-202.5665" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_90">
+            -0.00311773688401519
+        </text>
+        <text font-size="10" x="87.64477" y="-288.78513" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_91">
+            -0.00220264317180613
+        </text>
+        <text font-size="10" x="269.12268" y="-102.46446" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_92">
+            -0.00150663843382169
+        </text>
+        <text font-size="10" x="198.12149" y="59.88649" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_93">
+            -0.0049021873729014
+        </text>
+        <text font-size="10" x="-248.50064" y="-439.9415" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_94">
+            -6.69344042838005E-4
+        </text>
+        <text font-size="10" x="-115.67062" y="-232.39777" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_95">
+            -0.00301659125188537
+        </text>
+        <text font-size="10" x="-37.61281" y="-307.7786" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_96">
+            -0.00110538174753727
+        </text>
+        <text font-size="10" x="107.119934" y="-100.53603" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_97">
+            -0.00389595702741651
+        </text>
+        <text font-size="10" x="-294.08307" y="218.80322" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_98">
+            -0.0034901188271348
+        </text>
+        <text font-size="10" x="206.58322" y="115.88483" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_99">
+            -0.0072877791841796
+        </text>
+        <text font-size="10" x="130.642" y="131.83101" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_100">
+            -0.00201060131331351
+        </text>
+        <text font-size="10" x="6.3869934" y="95.53621" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_101">
+            -4.06976141347839E-4
+        </text>
+        <text font-size="10" x="-29.627518" y="-160.54263" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_102">
+            -0.00212655815383459
+        </text>
+        <text font-size="10" x="138.41594" y="-308.10522" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_103">
+            -0.00282960905757396
+        </text>
+        <text font-size="10" x="48.140915" y="127.28421" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_104">
+            -0.00308685019995008
+        </text>
+        <text font-size="10" x="8.001205" y="-108.343956" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_105">
+            -0.00831336164079454
+        </text>
+        <text font-size="10" x="452.27026" y="21.46019" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_106">
+            -0.0041091725260095
+        </text>
+        <text font-size="10" x="198.88522" y="-168.6669" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_107">
+            -0.00387122417614454
+        </text>
+        <text font-size="10" x="157.26944" y="-314.5199" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_108">
+            -0.00213219616204682
+        </text>
+        <text font-size="10" x="269.9765" y="82.3949" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_109">
+            -0.0029179677914952
+        </text>
+        <text font-size="10" x="126.98382" y="-445.89795" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_110">
+            -0.00162991371045066
+        </text>
+        <text font-size="10" x="231.0052" y="-310.89447" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_111">
+            -0.0125477820991452
+        </text>
+        <text font-size="10" x="416.6144" y="-69.06169" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_112">
+            -0.00142385612492729
+        </text>
+        <text font-size="10" x="464.5702" y="-70.74549" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_113">
+            -0.00679229743196636
+        </text>
+        <text font-size="10" x="-25.710083" y="-308.07974" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_114">
+            -0.00143934693800016
+        </text>
+        <text font-size="10" x="310.43533" y="-156.9234" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_115">
+            -0.0043612859277339
+        </text>
+        <text font-size="10" x="90.85529" y="-475.5428" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_116">
+            -6.99844479004619E-4
+        </text>
+        <text font-size="10" x="-260.40335" y="-439.64032" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_117">
+            -9.96151233869032E-4
+        </text>
+        <text font-size="10" x="-421.53378" y="-32.18602" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_118">
+            -0.00730641942961727
+        </text>
+        <text font-size="10" x="385.28595" y="-183.8078" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_119">
+            -0.00945891814265525
+        </text>
+        <text font-size="10" x="248.57394" y="-14.855057" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_120">
+            -0.00651032567644117
+        </text>
+        <text font-size="10" x="-148.21292" y="120.59042" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_121">
+            -0.0038013918856961
+        </text>
+        <text font-size="10" x="-496.26105" y="-30.26477" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_122">
+            -0.00268989838383499
+        </text>
+        <text font-size="10" x="96.97345" y="68.86529" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_123">
+            -0.00285695904296194
+        </text>
+        <text font-size="10" x="349.77435" y="-314.0362" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_124">
+            -0.002256361939421
+        </text>
+        <text font-size="10" x="-351.52832" y="176.97781" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_125">
+            -0.00310989377697593
+        </text>
+        <text font-size="10" x="-410.50735" y="404.79807" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_126">
+            -0.00364559863653319
+        </text>
+        <text font-size="10" x="83.49759" y="140.47173" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_127">
+            -0.00137644117493187
+        </text>
+        <text font-size="10" x="-295.00986" y="127.72982" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_128">
+            -0.048103069919834
+        </text>
+        <text font-size="10" x="333.0046" y="-441.44125" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_129">
+            -0.00262091417868686
+        </text>
+        <text font-size="10" x="193.82388" y="-200.92343" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_130">
+            -8.78992089071102E-4
+        </text>
+        <text font-size="10" x="81.55761" y="-211.01173" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_131">
+            -0.0136291060865681
+        </text>
+        <text font-size="10" x="-6.378006" y="298.974" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_132">
+            -0.00844836410431504
+        </text>
+        <text font-size="10" x="24.456467" y="30.763672" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_133">
+            -0.0120357849501737
+        </text>
+        <text font-size="10" x="316.37842" y="-393.82172" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_134">
+            -0.00450366886207996
+        </text>
+        <text font-size="10" x="37.11444" y="-309.69986" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_135">
+            -0.00440002417274053
+        </text>
+        <text font-size="10" x="160.87186" y="28.88102" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_136">
+            -0.010018447524604
+        </text>
+        <text font-size="10" x="380.06" y="-182.65817" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_137">
+            -0.00860036158281212
+        </text>
+        <text font-size="10" x="-189.52554" y="175.0494" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_138">
+            -0.00663399896828392
+        </text>
+        <text font-size="10" x="-92.148544" y="-0.030700684" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_139">
+            -0.00415512465373952
+        </text>
+        <text font-size="10" x="164.56517" y="-58.7106" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_140">
+            -0.00588419818988828
+        </text>
+        <text font-size="10" x="-78.58826" y="94.855675" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_141">
+            -0.00845641366681866
+        </text>
+        <text font-size="10" x="229.83372" y="34.043655" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_142">
+            -0.0126719212193683
+        </text>
+        <text font-size="10" x="46.332146" y="-234.3262" fill="#000000"
+              style="text-anchor: middle; dominant-baseline: central;"
+              font-family="Arial" class="id_143">
+            -0.00284900284900273
+        </text>
+    </g>
+</svg>

@@ -6,9 +6,10 @@ import unittest
 
 sys.path.append(os.getcwd())
 
-from src.core.util.log import Logger
-from src.core.config import Config
 from src.core.coin.binance import Binance
+from src.core.config import Config
+from src.core.util.log import Logger
+
 
 # proxies
 _proxies = Config()._Proxies_url if Config()._Proxies_proxies else None
@@ -17,8 +18,8 @@ _Binance_exchange = Config()._Binance_exchange
 _Binance_api_key = Config()._Binance_api_key
 _Binance_api_secret = Config()._Binance_api_secret
 
-binance = Binance(_Binance_exchange, _Binance_api_key,
-                        _Binance_api_secret, _proxies)
+binance = Binance(_Binance_exchange, _Binance_api_key, _Binance_api_secret,
+                  _proxies)
 logger = Logger()
 
 
@@ -60,13 +61,15 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     def test_getMarketOrderbookDepth(self):
-        res = binance.getMarketOrderbookDepth("IOST", "BTC", 5)
+        res = binance.getMarketOrderbookDepth("ETH", "USDT", 5)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_getMarketKline(self):
-        res = binance.getMarketKline(
-            "IOST", "BTC", "1m", "2018-11-11T00:00:00.000Z", "2018-11-11T01:00:00.000Z")
+        res = binance.getMarketKline("ETH", "USDT", "1h",
+                                     "2018-12-02T00:00:00.000Z",
+                                     "2018-12-03T00:00:00.000Z")
+        logger.debug(len(res))
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -77,17 +80,18 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getTradeOpen(self):
-        res = binance.getTradeOpen("ETH", "USDT", 0.0015)
+        # res = binance.getTradeOpen("", "")
+        res = binance.getTradeOpen("ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getTradeHistory(self):
-        res = binance.getTradeHistory("ETH", "USDT", 0.0015)
+        res = binance.getTradeHistory("ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getTradeSucceed(self):
-        res = binance.getTradeSucceed("ETH", "USDT", 0.0015)
+        res = binance.getTradeSucceed("ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -111,23 +115,24 @@ class TestBinance(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
-    # def test_createOrder(self):
-    #     res = binance.createOrder("ETH", "USDT", "ask", 150, 0.05)
-    #     logger.debug(res)
-    #     self.assertIsInstance(res, dict)
+    def test_createOrder(self):
+        res = binance.createOrder("ETH", "USDT", "bid", 10, 0.05)
+        logger.debug(res)
+        self.assertIsInstance(res, dict)
 
     def test_checkOrder(self):
-        res = binance.checkOrder("ETH", "USDT", "102624667")
+        res = binance.checkOrder("102624667", "ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
-    def test_cancleOrder(self):
-        res = binance.cancleOrder("ETH", "USDT", "135080289")
+    def test_cancelOrder(self):
+        res = binance.cancelOrder("135080289", "ETH", "USDT")
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
-    def test_cancleBatchOrder(self):
-        res = binance.cancleBatchOrder("ETH", "USDT", ["134809076", "134809137"])
+    def test_cancelBatchOrder(self):
+        res = binance.cancelBatchOrder(["134809076", "134809137"], "ETH",
+                                       "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
 

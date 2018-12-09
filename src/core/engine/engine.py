@@ -64,7 +64,7 @@ class EventEngine(object):
                     while utcnow_timestamp(
                     ) - event.timeStamp > HIGH_PRIORITY_EVENT_TIMEOUT:
                         if not self.__highEventQueue.empty():
-                            self.__logger.warn(
+                            self.__logger.error(
                                 "src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
                                 % (event.id, event.type, event.priority,
                                    event.timeStamp, event.args))
@@ -82,7 +82,7 @@ class EventEngine(object):
                     while utcnow_timestamp(
                     ) - event.timeStamp > MEDIUM_PRIORITY_EVENT_TIMEOUT:
                         if not self.__mediumEventQueue.empty():
-                            self.__logger.warn(
+                            self.__logger.error(
                                 "src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
                                 % (event.id, event.type, event.priority,
                                    event.timeStamp, event.args))
@@ -100,7 +100,7 @@ class EventEngine(object):
                     while utcnow_timestamp(
                     ) - event.timeStamp > LOW_PRIORITY_EVENT_TIMEOUT:
                         if not self.__lowEnventQueue.empty():
-                            self.__logger.warn(
+                            self.__logger.error(
                                 "src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
                                 % (event.id, event.type, event.priority,
                                    event.timeStamp, event.args))
@@ -229,12 +229,12 @@ class EventEngine(object):
     def getEventStatus(self, id):
         status = QUEUE_STATUS_EVENT
         res = self.__status.getActiveStatusTable()
-        if not res.empty:
-            if id in res.index:
+        if len(res)>0:
+            if id in res:
                 status = ACTIVE_STATUS_EVENT
         res = self.__status.getDoneStatusTable()
-        if not res.empty:
-            if id in res.index:
+        if len(res)>0:
+            if id in res:
                 status = DONE_STATUS_EVENT
         self.__logger.debug(
             "src.core.engine.engine.EventEngine.getEventStatus: { id=%s, status=%s}"
@@ -244,14 +244,14 @@ class EventEngine(object):
     def getActiveEventTable(self):
         res = self.__status.getActiveStatusTable()
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.getActiveEventTable:\n%s" %
+            "src.core.engine.engine.EventEngine.getActiveEventTable:%s" %
             res)
         return res
 
     def getDoneEventTable(self):
         res = self.__status.getDoneStatusTable()
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.getDoneEventTable:\n%s" %
+            "src.core.engine.engine.EventEngine.getDoneEventTable:%s" %
             res)
         return res
 

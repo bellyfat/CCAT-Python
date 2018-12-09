@@ -5,6 +5,8 @@ from . import consts as c, utils, exceptions
 
 class Client(object):
 
+    TIMEOUT = 5
+
     def __init__(self, api_key, api_seceret_key, passphrase, use_server_time=False):
 
         self.API_KEY = api_key
@@ -38,12 +40,12 @@ class Client(object):
         #print("body:", body)
         try:
             if method == c.GET:
-                response = requests.get(url, headers=header, proxies=proxies, timeout=10)
+                response = requests.get(url, headers=header, proxies=proxies, timeout=self.TIMEOUT)
             elif method == c.POST:
-                response = requests.post(url, data=body, headers=header, proxies=proxies, timeout=10)
+                response = requests.post(url, data=body, headers=header, proxies=proxies, timeout=self.TIMEOUT)
                 #response = requests.post(url, json=body, headers=header)
             elif method == c.DELETE:
-                response = requests.delete(url, headers=header, proxies=proxies, timeout=10)
+                response = requests.delete(url, headers=header, proxies=proxies, timeout=self.TIMEOUT)
         except requests.exceptions.ProxyError as err:
             raise exceptions.OkexRequestException('Proxy Connection timeout : %s' % err)
 
@@ -74,10 +76,10 @@ class Client(object):
     def _get_timestamp(self, proxies=None):
         url = c.API_URL + c.SERVER_TIMESTAMP_URL
         try:
-            response = requests.get(url, proxies=proxies, timeout=10)
+            response = requests.get(url, proxies=proxies, timeout=self.TIMEOUT)
         except requests.exceptions.ProxyError as err:
-            raise exceptions.OkexRequestException('Proxy Connection timeout : %s' % err)
+            raise exceptions.OkexRequestException('Proxy Connection timeout : err=%s' % err)
         if response.status_code == 200:
             return response.json()['iso']
         else:
-            return ""
+            raise exceptions.OkexRequestException('Invalid Response: response=%s' % response.text)

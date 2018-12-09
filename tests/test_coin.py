@@ -3,11 +3,13 @@
 import os
 import sys
 import unittest
+
 sys.path.append(os.getcwd())
 
-from tests.coin.test_okex import TestOkex
-from tests.coin.test_binance import TestBinance
-from tests.coin.test_huobi import TestHuobi
+from coin.test_binance import TestBinance
+from coin.test_huobi import TestHuobi
+from coin.test_okex import TestOkex
+
 
 
 # list of test_coin
@@ -32,8 +34,8 @@ test_okex = [
     TestOkex("test_getAccountAssetDetail"),
     # TestOkex("test_createOrder"),
     TestOkex("test_checkOrder"),
-    TestOkex("test_cancleOrder"),
-    TestOkex("test_cancleBatchOrder"),
+    TestOkex("test_cancelOrder"),
+    TestOkex("test_cancelBatchOrder"),
     TestOkex("test_depositeAsset"),
     TestOkex("test_withdrawAsset")
 ]
@@ -58,8 +60,8 @@ test_binance = [
     TestBinance("test_getAccountAssetDetail"),
     # TestBinance("test_createOrder"),
     TestBinance("test_checkOrder"),
-    TestBinance("test_cancleOrder"),
-    TestBinance("test_cancleBatchOrder"),
+    TestBinance("test_cancelOrder"),
+    TestBinance("test_cancelBatchOrder"),
     TestBinance("test_depositeAsset"),
     TestBinance("test_withdrawAsset")
 ]
@@ -72,11 +74,25 @@ test_huobi = [
     TestHuobi("test_getServerSymbols"),
     TestHuobi("test_getSymbolsLimits"),
     TestHuobi("test_getMarketOrderbookTicker"),
-
+    TestHuobi("test_getMarketOrderbookDepth"),
+    TestHuobi("test_getMarketKline"),
+    TestHuobi("test_getTradeFees"),
+    TestHuobi("test_getTradeOpen"),
+    TestHuobi("test_getTradeHistory"),
+    TestHuobi("test_getTradeSucceed"),
+    TestHuobi("test_getAccountBalances"),
+    TestHuobi("test_getAccountLimits"),
+    TestHuobi("test_getAccountAssetBalance"),
+    TestHuobi("test_getAccountAssetDetail"),
+    # TestHuobi("test_createOrder"),
+    TestHuobi("test_checkOrder"),
+    TestHuobi("test_cancelOrder"),
+    TestHuobi("test_cancelBatchOrder"),
+    TestHuobi("test_depositeAsset"),
+    TestHuobi("test_withdrawAsset")
 ]
-# gate test items
-test_gate = []
-
+# other test items
+# to be continue
 
 # Begin Test
 if __name__ == '__main__':
@@ -86,6 +102,5 @@ if __name__ == '__main__':
     suite.addTests(test_okex)
     suite.addTests(test_binance)
     suite.addTests(test_huobi)
-    suite.addTests(test_gate)
     # run test
     runner.run(suite)
