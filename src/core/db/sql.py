@@ -4,9 +4,11 @@ from string import Template
 
 
 # get db view market ticker current tra sql
-GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SERVER_SQL = '''
-    SELECT * FROM VIEW_MARKET_TICKER_CURRENT_PAIR;
-'''
+GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SERVER_SQL = Template('''
+    SELECT *
+    FROM VIEW_MARKET_TICKER_CURRENT_PAIR
+    WHERE (J1_server='$server' AND J2_server='$server_pair') OR (J1_server='$server_pair' AND J2_server='$server');
+''')
 
 # get db view market ticker current tra sql
 GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SQL = '''
@@ -27,8 +29,7 @@ GET_VIEW_MARKET_TICKER_CURRENT_TRA_SQL = '''
 GET_VIEW_MARKET_TICKER_CURRENT_DIS_SERVER_SQL =  Template('''
     SELECT *
     FROM VIEW_MARKET_TICKER_CURRENT_DIS
-    WHERE (bid_server='$server' AND ask_server='$server_pair') OR (bid_server='$server_pair' AND ask_server='$server')
-    ORDER BY fSymbol, tSymbol;
+    WHERE (bid_server='$server' AND ask_server='$server_pair') OR (bid_server='$server_pair' AND ask_server='$server');
 ''')
 
 # get db view market ticker current dis sql
@@ -422,7 +423,10 @@ CREATE_VIEWS_SQL = Template('''
             WHERE V2.server IS NOT NULL AND abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout AND V3.server IS NOT NULL AND abs(V2.timeStamp - V3.timeStamp) < 1000*$basePriceTimeout;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_PAIR
     	AS
-    SELECT J1.timeStamp, J1.server as J1_server, J2.server as J2_server, J1.V1_fSymbol as J1_V1_fSymbol, J1.V1_tSymbol as J1_V1_tSymbol,
+    SELECT J1.timeStamp, J1.server as J1_server, J2.server as J2_server,
+        J1.V1_fSymbol as V1_fSymbol, J1.V1_tSymbol as V1_tSymbol,
+        J1.V2_fSymbol as V2_fSymbol, J1.V2_tSymbol as V2_tSymbol,
+        J1.V3_fSymbol as V3_fSymbol, J1.V3_tSymbol as V3_tSymbol,
     	J1.V1_bid_one_price as J1_V1_bid_one_price, J1.V1_bid_one_size as J1_V1_bid_one_size, J1.V1_bid_one_price_base as J1_V1_bid_one_price_base,
     	J1.V1_ask_one_price as J1_V1_ask_one_price, J1.V1_ask_one_size as J1_V1_ask_one_size, J1.V1_ask_one_price_base as J1_V1_ask_one_price_base,
     	J1.V2_bid_one_price as J1_V2_bid_one_price, J1.V2_bid_one_size as J1_V2_bid_one_size, J1.V2_bid_one_price_base as J1_V2_bid_one_price_base,

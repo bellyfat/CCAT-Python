@@ -113,6 +113,21 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
+    def getViewMarketTickerCurrentPairServer(self, server, server_pair):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewMarketTickerCurrentPairServer")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SERVER_SQL.substitute(
+                server=server, server_pair=server_pair)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
     def getViewMarketTickerCurrentPair(self):
         self._logger.debug("src.core.db.db.DB.getViewMarketTickerCurrentPair")
         try:

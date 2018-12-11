@@ -3,6 +3,11 @@
 from src.core.config import Config
 from src.core.util.helper import MyTemplate
 
+# CCAT types Threshold
+CCAT_DIS_TYPE_THRESHOLD = 0.01
+CCAT_TRA_TYPE_THRESHOLD = 0.01
+CCAT_PAIR_TYPE_THRESHOLD = 0.01
+
 # CCAT types
 CCAT_DIS_TYPE = 'dis'
 CCAT_TRA_TYPE = 'tra'
