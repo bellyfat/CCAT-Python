@@ -27,7 +27,7 @@
   level = DEBUG
 
 # Main Settings
-# type: arbitrage types
+# types: arbitrage types
 # exchanges: exchanges will be listened
 # excludeCoins: exclude coins
 # baseCoin: base coin for value compare
@@ -41,14 +41,14 @@
 # apiEpochSaveBound: control api requests frequency
 # apiResultEpoch: control api event async=False timeout
 [Main]
-  type = dis, tra, pair
+  types = dis, tra, pair
   exchanges = okex, binance, huobi
   excludeCoins = HOT
   baseCoin = USDT
   basePriceVolume = 100
   basePriceTimeout = 30
   marketDepthLimit = 20
-  marketTickerAggStep = 100
+  marketTickerAggStep = 10
   symbolStartBaseCoin = 15
   symbolEndBaseCoin = 20
   symbolEndTimeout = 300

@@ -87,8 +87,8 @@ class Huobi(Coin):
         限制频率（每个接口，只针对交易api，行情api不限制）为10秒100次。
         '''
         res = {
-            "info_second": 8,
-            "market_second": 8,
+            "info_second": 6,
+            "market_second": 6,
             "orders_second": 10,
             "webSockets_second": ''
         }
