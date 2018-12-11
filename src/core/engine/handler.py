@@ -189,28 +189,37 @@ class Handler(object):
                         r['V1_one_price'] = r['V1_bid_one_price']
                         r['V1_one_price_base'] = r['V1_bid_one_price_base']
                         r['V1_one_size'] = r['V1_bid_one_size']
+                        r['C1_symbol_base'] = r['V1_bid_one_price_base']
                     else:  # tSymbol -> fSymbol
                         r['V1_one_price'] = r['V1_ask_one_price']
                         r['V1_one_price_base'] = r['V1_ask_one_price_base']
                         r['V1_one_size'] = r['V1_ask_one_size']
+                        r['C1_symbol_base'] = r['V1_ask_one_price_base'] / r[
+                            'V1_ask_one_price']
                     # calc V2
                     if r['C2_symbol'] == r['V2_fSymbol']:  # fSymbol -> tSymbol
                         r['V2_one_price'] = r['V2_bid_one_price']
                         r['V2_one_price_base'] = r['V2_bid_one_price_base']
                         r['V2_one_size'] = r['V2_bid_one_size']
+                        r['C2_symbol_base'] = r['V2_bid_one_price_base']
                     else:  # tSymbol -> fSymbol
                         r['V2_one_price'] = r['V2_ask_one_price']
                         r['V2_one_price_base'] = r['V2_ask_one_price_base']
                         r['V2_one_size'] = r['V2_ask_one_size']
+                        r['C2_symbol_base'] = r['V2_ask_one_price_base'] / r[
+                            'V2_ask_one_price']
                     # calc V3
                     if r['C3_symbol'] == r['V3_fSymbol']:  # fSymbol -> tSymbol
                         r['V3_one_price'] = r['V3_bid_one_price']
                         r['V3_one_price_base'] = r['V3_bid_one_price_base']
                         r['V3_one_size'] = r['V3_bid_one_size']
+                        r['C3_symbol_base'] = r['V3_bid_one_price_base']
                     else:  # tSymbol -> fSymbol
                         r['V3_one_price'] = r['V3_ask_one_price']
                         r['V3_one_price_base'] = r['V3_ask_one_price_base']
                         r['V3_one_size'] = r['V3_ask_one_size']
+                        r['C3_symbol_base'] = r['V3_ask_one_price_base'] / r[
+                            'V3_ask_one_price']
                     # calc symbol size
                     r['V1_one_size'] = min(
                         r['V1_one_price_base'] * r['V1_one_size'],
@@ -253,8 +262,7 @@ class Handler(object):
                             direct_spend + tra_spend)
                         # calc gain_base
                         r['gain_base'] = (
-                            tra_left - direct_left
-                        ) / r['V2_one_price'] * r['V2_one_price_base']
+                            tra_left - direct_left) * r['C2_symbol_base']
                         # calc gain_symbol
                         r['gain_symbol'] = r['C1_symbol']
                         # change candy
@@ -275,8 +283,7 @@ class Handler(object):
                                 direct_spend + tra_spend)
                             # calc gain_base
                             r['gain_base'] = (
-                                tra_left - direct_left
-                            ) / r['V3_one_price'] * r['V3_one_price_base']
+                                tra_left - direct_left) * r['C3_symbol_base']
                             # calc gain_symbol
                             r['gain_symbol'] = r['C2_symbol']
                         else:
@@ -287,9 +294,8 @@ class Handler(object):
                                 r['gain_ratio'] = (tra_left - direct_left) / (
                                     direct_spend + tra_spend)
                                 # calc gain_base
-                                r['gain_base'] = (
-                                    tra_left - direct_left
-                                ) / r['V3_one_price'] * r['V3_one_price_base']
+                                r['gain_base'] = (tra_left - direct_left
+                                                  ) * r['C3_symbol_base']
                                 # calc gain_symbol
                                 r['gain_symbol'] = r['C2_symbol']
                         # change candy
@@ -310,8 +316,7 @@ class Handler(object):
                                 direct_spend + tra_spend)
                             # calc gain_base
                             r['gain_base'] = (
-                                tra_left - direct_left
-                            ) / r['V1_one_price'] * r['V1_one_price_base']
+                                tra_left - direct_left) * r['C1_symbol_base']
                             # calc gain_symbol
                             r['gain_symbol'] = r['C3_symbol']
                         else:
@@ -322,9 +327,8 @@ class Handler(object):
                                 r['gain_ratio'] = (tra_left - direct_left) / (
                                     direct_spend + tra_spend)
                                 # calc gain_base
-                                r['gain_base'] = (
-                                    tra_left - direct_left
-                                ) / r['V1_one_price'] * r['V1_one_price_base']
+                                r['gain_base'] = (tra_left - direct_left
+                                                  ) * r['C1_symbol_base']
                                 # calc gain_symbol
                                 r['gain_symbol'] = r['C3_symbol']
                         # change candy
