@@ -45,6 +45,9 @@ class Config(object):
             Config._Main_excludeCoins = str(
                 cf['Main']['excludeCoins']).replace(' ', '').split(',')
             Config._Main_baseCoin = str(cf['Main']['baseCoin'])
+            Config._Main_apiEpochSaveBound = cf.getfloat(
+                'Main', 'apiEpochSaveBound')
+            Config._Main_apiResultEpoch = cf.getfloat('Main', 'apiResultEpoch')
             Config._Main_basePriceVolume = cf.getfloat('Main',
                                                        'basePriceVolume')
             Config._Main_basePriceTimeout = cf.getfloat(
@@ -59,9 +62,12 @@ class Config(object):
                 'Main', 'symbolEndBaseCoin')
             Config._Main_symbolEndTimeout = cf.getfloat(
                 'Main', 'symbolEndTimeout')
-            Config._Main_apiEpochSaveBound = cf.getfloat(
-                'Main', 'apiEpochSaveBound')
-            Config._Main_apiResultEpoch = cf.getfloat('Main', 'apiResultEpoch')
+            Config._Main_typeDisThreshold = cf.getfloat(
+                'Main', 'typeDisThreshold')
+            Config._Main_typeTraThreshold = cf.getfloat(
+                'Main', 'typeTraThreshold')
+            Config._Main_typePairThreshold = cf.getfloat(
+                'Main', 'typePairThreshold')
             # Engine Settings
             Config._Engine_epoch = cf.getfloat('Engine', 'epoch')
             Config._Engine_maxProcess = cf.getint('Engine', 'maxProcess')

@@ -4,9 +4,9 @@ from src.core.config import Config
 from src.core.util.helper import MyTemplate
 
 # CCAT types Threshold
-CCAT_DIS_TYPE_THRESHOLD = 0.01
-CCAT_TRA_TYPE_THRESHOLD = 0.01
-CCAT_PAIR_TYPE_THRESHOLD = 0.01
+CCAT_DIS_TYPE_THRESHOLD = Config()._Main_typeDisThreshold
+CCAT_TRA_TYPE_THRESHOLD = Config()._Main_typeTraThreshold
+CCAT_PAIR_TYPE_THRESHOLD = Config()._Main_typePairThreshold
 
 # CCAT types
 CCAT_DIS_TYPE = 'dis'

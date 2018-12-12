@@ -341,6 +341,56 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
+    def getAccountWithdrawHistory(self):
+        self._logger.debug("src.core.db.db.DB.getAccountWithdrawHistory")
+        self._logger.debug(GET_ACCOUNT_WITHDRAW_HISTORY_SQL)
+        try:
+            curs = self._conn.cursor()
+            curs.execute(GET_ACCOUNT_WITHDRAW_HISTORY_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
+    def getInfoServer(self):
+        self._logger.debug("src.core.db.db.DB.getInfoServer")
+        self._logger.debug(GET_INFO_SERVER_SQL)
+        try:
+            curs = self._conn.cursor()
+            curs.execute(GET_INFO_SERVER_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
+    def getInfoSymbol(self):
+        self._logger.debug("src.core.db.db.DB.getInfoSymbol")
+        self._logger.debug(GET_INFO_SYMBOL_SQL)
+        try:
+            curs = self._conn.cursor()
+            curs.execute(GET_INFO_SYMBOL_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
+    def getInfoWithdraw(self, exchange):
+        self._logger.debug("src.core.db.db.DB.getInfoWithdraw")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_INFO_WITHDRAW_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
     def getMarketDepth(self):
         self._logger.debug("src.core.db.db.DB.getMarketDepth")
         self._logger.debug(GET_MARKET_DEPTH_SQL)
@@ -410,24 +460,36 @@ class DB(object):
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getInfoServer(self):
-        self._logger.debug("src.core.db.db.DB.getInfoServer")
-        self._logger.debug(GET_INFO_SERVER_SQL)
+    def getSignalTickerDis(self):
+        self._logger.debug("src.core.db.db.DB.getSignalTickerDis")
+        self._logger.debug(GET_SIGNAL_TICKER_DIS_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_INFO_SERVER_SQL)
+            curs.execute(GET_SIGNAL_TICKER_DIS_SQL)
             res = curs.fetchall()
             curs.close()
             return res
         except sqlite3.Error as err:
             raise DBException(err)
 
-    def getInfoSymbol(self):
-        self._logger.debug("src.core.db.db.DB.getInfoSymbol")
-        self._logger.debug(GET_INFO_SYMBOL_SQL)
+    def getSignalTickerTra(self):
+        self._logger.debug("src.core.db.db.DB.getSignalTickerTra")
+        self._logger.debug(GET_SIGNAL_TICKER_TRA_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_INFO_SYMBOL_SQL)
+            curs.execute(GET_SIGNAL_TICKER_TRA_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except sqlite3.Error as err:
+            raise DBException(err)
+
+    def getSignalTickerPair(self):
+        self._logger.debug("src.core.db.db.DB.getSignalTickerPair")
+        self._logger.debug(GET_SIGNAL_TICKER_PAIR_SQL)
+        try:
+            curs = self._conn.cursor()
+            curs.execute(GET_SIGNAL_TICKER_PAIR_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -452,32 +514,6 @@ class DB(object):
         try:
             curs = self._conn.cursor()
             curs.execute(GET_TRADE_ORDER_HISTORY_SQL)
-            res = curs.fetchall()
-            curs.close()
-            return res
-        except sqlite3.Error as err:
-            raise DBException(err)
-
-    def getAccountWithdrawHistory(self):
-        self._logger.debug("src.core.db.db.DB.getAccountWithdrawHistory")
-        self._logger.debug(GET_ACCOUNT_WITHDRAW_HISTORY_SQL)
-        try:
-            curs = self._conn.cursor()
-            curs.execute(GET_ACCOUNT_WITHDRAW_HISTORY_SQL)
-            res = curs.fetchall()
-            curs.close()
-            return res
-        except sqlite3.Error as err:
-            raise DBException(err)
-
-    def getInfoWithdraw(self, exchange):
-        self._logger.debug("src.core.db.db.DB.getInfoWithdraw")
-        try:
-            curs = self._conn.cursor()
-            TEMP_SQL = GET_INFO_WITHDRAW_SQL.substitute(
-                server=exchange).replace('[', '(').replace(']', ')')
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -963,6 +999,14 @@ class DB(object):
         except (OkexException, BinanceException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
+
+    def insertSignalTickerDis(self, ):
+        self._logger.debug("src.core.db.db.DB.insertSignalTickerDis:")
+        try:
+            TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_DIS_SQL
+            TEMP_SQL_VALUE = []
+            
+
 
     def insertTradeBacktestHistory(self,
                                    exchange,

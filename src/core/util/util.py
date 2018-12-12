@@ -27,9 +27,6 @@ class Util(object):
         self._baseCoin = Config()._Main_baseCoin
         self._marketDepthLimit = Config()._Main_marketDepthLimit
         self._marketTickerAggStep = Config()._Main_marketTickerAggStep
-        self._symbolStartBaseCoin = Config()._Main_symbolStartBaseCoin
-        self._symbolEndBaseCoin = Config()._Main_symbolEndBaseCoin
-        self._symbolEndTimeout = Config()._Main_symbolEndTimeout
         self._apiEpochSaveBound = Config()._Main_apiEpochSaveBound
         self._apiResultEpoch = Config()._Main_apiResultEpoch
         # ServerLimit
@@ -359,6 +356,7 @@ class Util(object):
         self._logger.debug("src.core.util.util.Util.updateDBMarketTicker")
         try:
             db = DB()
+            db.delMarketTicker()
             tds = []
             for server in self._exchanges:
                 epoch = float(self._apiEpochSaveBound) / float(

@@ -6,7 +6,7 @@ from itertools import combinations
 import pandas as pd
 from src.core.db.db import DB
 from src.core.engine.enums import *
-from src.core.util.exceptions import DBException, EngineException
+from src.core.util.exceptions import DBException, EngineException, CalcException
 from src.core.util.helper import str_to_list
 from src.core.util.log import Logger
 
@@ -25,7 +25,7 @@ class Handler(object):
         try:
             db = DB()
             db.insertAccountBalanceHistory(exchange)
-        except DBException as err:
+        except (DBException, EngineException, CalcException, Exception)  as err:
             errStr = "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
@@ -40,7 +40,7 @@ class Handler(object):
         try:
             db = DB()
             db.insertAccountWithdrawHistory(exchange, asset)
-        except DBException as err:
+        except (DBException, EngineException, CalcException, Exception)  as err:
             errStr = "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
@@ -55,7 +55,7 @@ class Handler(object):
         try:
             db = DB()
             db.insertMarketDepth(exchange, fSymbol, tSymbol, limit)
-        except DBException as err:
+        except (DBException, EngineException, CalcException, Exception)  as err:
             errStr = "src.core.engine.handler.Handler.handleListenDepthEvent { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
@@ -71,7 +71,7 @@ class Handler(object):
             db = DB()
             db.insertMarketKline(exchange, fSymbol, tSymbol, interval, start,
                                  end)
-        except DBException as err:
+        except (DBException, EngineException, CalcException, Exception)  as err:
             errStr = "src.core.engine.handler.Handler.handleListenKlineEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
@@ -86,7 +86,7 @@ class Handler(object):
         try:
             db = DB()
             db.insertMarketTicker(exchange, fSymbol, tSymbol, aggDepth)
-        except DBException as err:
+        except (DBException, EngineException, CalcException, Exception)  as err:
             errStr = "src.core.engine.handler.Handler.handleListenTickerEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
@@ -100,7 +100,7 @@ class Handler(object):
         [args] = event.args
         try:
             pass
-        except DBException as err:
+        except (DBException, EngineException, CalcException, Exception)  as err:
             errStr = "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
@@ -249,9 +249,11 @@ class Handler(object):
                     candy = False
                     # Type I
                     if C2_symbol_price * C3_symbol_price > 1 / C1_symbol_price:  # tra C2_symbol -> C1_symbol
-                        before = r['V1_one_size']*r['C1_symbol_base']
-                        after = C1_symbol_price*C2_symbol_price * C3_symbol_price*(1 - r['V1_fee']) * (
-                            1 - r['V2_fee']) * (1 - r['V3_fee'])*r['V1_one_size']*r['C1_symbol_base']
+                        before = r['V1_one_size'] * r['C1_symbol_base']
+                        after = C1_symbol_price * C2_symbol_price * C3_symbol_price * (
+                            1 - r['V1_fee']) * (1 - r['V2_fee']) * (
+                                1 - r['V3_fee']
+                            ) * r['V1_one_size'] * r['C1_symbol_base']
                         # calc gain_symbol
                         r['gain_symbol'] = r['C1_symbol']
                         # calc gain_base
@@ -262,9 +264,11 @@ class Handler(object):
                         candy = True
                     # Type II
                     if C1_symbol_price * C3_symbol_price > 1 / C2_symbol_price:  # tra C3_symbol -> C2_symbol
-                        before = r['V2_one_size']*r['C2_symbol_base']
-                        after = C1_symbol_price*C2_symbol_price * C3_symbol_price*(1 - r['V1_fee']) * (
-                            1 - r['V2_fee']) * (1 - r['V3_fee'])*r['V2_one_size']*r['C2_symbol_base']
+                        before = r['V2_one_size'] * r['C2_symbol_base']
+                        after = C1_symbol_price * C2_symbol_price * C3_symbol_price * (
+                            1 - r['V1_fee']) * (1 - r['V2_fee']) * (
+                                1 - r['V3_fee']
+                            ) * r['V2_one_size'] * r['C2_symbol_base']
                         if not candy:
                             # calc gain_symbol
                             r['gain_symbol'] = r['C2_symbol']
@@ -284,9 +288,11 @@ class Handler(object):
                         candy = True
                     # Type III
                     if C1_symbol_price * C2_symbol_price > 1 / C3_symbol_price:  # tra C1_symbol -> C3_symbol
-                        before = r['V3_one_size']*r['C3_symbol_base']
-                        after = C1_symbol_price*C2_symbol_price * C3_symbol_price*(1 - r['V1_fee']) * (
-                            1 - r['V2_fee']) * (1 - r['V3_fee'])*r['V3_one_size']*r['C3_symbol_base']
+                        before = r['V3_one_size'] * r['C3_symbol_base']
+                        after = C1_symbol_price * C2_symbol_price * C3_symbol_price * (
+                            1 - r['V1_fee']) * (1 - r['V2_fee']) * (
+                                1 - r['V3_fee']
+                            ) * r['V3_one_size'] * r['C3_symbol_base']
                         if not candy:
                             # calc gain_symbol
                             r['gain_symbol'] = r['C3_symbol']
@@ -501,28 +507,35 @@ class Handler(object):
                                                     'J2_V3_fee']
                         r['gain_base'] = C1_symbol_gain_base + C2_symbol_gain_base + C3_symbol_gain_base
                         # calc gain_ratio
-                        C1_symbol_gain_ratio = (
-                            r['J1_V1_one_price'] - r['J2_V1_one_price'] -
-                            r['J1_V1_one_price'] * r['J1_V1_fee'] -
-                            r['J2_V1_one_price'] * r['J2_V1_fee']) / (
-                                r['J1_V1_one_price'] + r['J2_V1_one_price'])
-                        C2_symbol_gain_ratio = (
-                            r['J1_V2_one_price'] - r['J2_V2_one_price'] -
-                            r['J1_V2_one_price'] * r['J1_V2_fee'] -
-                            r['J2_V2_one_price'] * r['J2_V2_fee']) / (
-                                r['J1_V2_one_price'] + r['J2_V2_one_price'])
-                        C3_symbol_gain_ratio = (
-                            r['J1_V3_one_price'] - r['J2_V3_one_price'] -
-                            r['J1_V3_one_price'] * r['J1_V3_fee'] -
-                            r['J2_V3_one_price'] * r['J2_V3_fee']) / (
-                                r['J1_V3_one_price'] + r['J2_V3_one_price'])
-                        r['gain_ratio'] = C1_symbol_gain_ratio + C2_symbol_gain_ratio + C3_symbol_gain_ratio
+                        C1_symbol_gain_ratio_up = r['J1_V1_one_price'] - r[
+                            'J2_V1_one_price'] - r['J1_V1_one_price'] * r[
+                                'J1_V1_fee'] - r['J2_V1_one_price'] * r[
+                                    'J2_V1_fee']
+                        C1_symbol_gain_ratio_dn = r['J1_V1_one_price'] + r[
+                            'J2_V1_one_price']
+                        C2_symbol_gain_ratio_up = r['J1_V2_one_price'] - r[
+                            'J2_V2_one_price'] - r['J1_V2_one_price'] * r[
+                                'J1_V2_fee'] - r['J2_V2_one_price'] * r[
+                                    'J2_V2_fee']
+                        C2_symbol_gain_ratio_dn = r['J1_V2_one_price'] + r[
+                            'J2_V2_one_price']
+                        C3_symbol_gain_ratio_up = r['J1_V3_one_price'] - r[
+                            'J2_V3_one_price'] - r['J1_V3_one_price'] * r[
+                                'J1_V3_fee'] - r['J2_V3_one_price'] * r[
+                                    'J2_V3_fee']
+                        C3_symbol_gain_ratio_dn = r['J1_V3_one_price'] + r[
+                            'J2_V3_one_price']
+                        r['gain_ratio'] = (
+                            C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up +
+                            C3_symbol_gain_ratio_up
+                        ) / (C1_symbol_gain_ratio_dn + C2_symbol_gain_ratio_dn
+                             + C3_symbol_gain_ratio_dn)
                         # calc signal
                         if r['gain_ratio'] > CCAT_PAIR_TYPE_THRESHOLD:
                             signal.append({'type': CCAT_PAIR_TYPE, 'sig': r})
             infoStr = "src.core.engine.handler.Handler.handleJudgeMarketTickerEvent: { signal = %s }" % signal
             self._logger.info(infoStr)
-        except DBException as err:
+        except (DBException, EngineException, CalcException, Exception)  as err:
             errStr = "src.core.engine.handler.Handler.handleJudgeMarketTickerEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
