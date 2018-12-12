@@ -26,6 +26,7 @@ class DB(object):
         self._baseCoin = Config()._Main_baseCoin
         self._basePriceVolume = Config()._Main_basePriceVolume
         self._basePriceTimeout = Config()._Main_basePriceTimeout
+        self._baseJudgeTimeout = Config()._Main_baseJudgeTimeout
         # proxies
         self._proxies = Config()._Proxies_url if Config(
         )._Proxies_proxies else None
@@ -47,7 +48,6 @@ class DB(object):
         self._Huobi_api_key = Config()._Huobi_api_key
         self._Huobi_api_secret = Config()._Huobi_api_secret
         self._Huobi_acct_id = Config()._Huobi_acct_id
-
         # 数据库 init
         self._conn = sqlite3.connect(
             self._dbStr, timeout=self._dbTimeout, check_same_thread=False)
@@ -104,7 +104,8 @@ class DB(object):
                 baseCoin=self._baseCoin,
                 excludeCoins=self._excludeCoins,
                 basePriceVolume=self._basePriceVolume,
-                basePriceTimeout=self._basePriceTimeout).replace('[',
+                basePriceTimeout=self._basePriceTimeout,
+                baseJudgeTimeout=self._baseJudgeTimeout).replace('[',
                                                                  '(').replace(
                                                                      ']', ')')
             self._logger.debug(TEMP_SQL)

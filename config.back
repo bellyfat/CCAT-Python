@@ -35,6 +35,7 @@
 # apiResultEpoch: control api event async=False timeout
 # basePriceVolume: min price volume turnover
 # basePriceTimeout: price valid period
+# baseJudgeTimeout: judge valid period
 # marketDepthLimit: market depth limit param
 # marketTickerAggStep: market ticker aggregate param
 # symbolStartBaseCoin
@@ -52,6 +53,7 @@
   apiResultEpoch = 0.5
   basePriceVolume = 100
   basePriceTimeout = 30
+  baseJudgeTimeout = 300
   marketDepthLimit = 20
   marketTickerAggStep = 10
   symbolStartBaseCoin = 15

@@ -642,5 +642,20 @@ CREATE_VIEWS_SQL = Template('''
     		WHERE V2.server IS NOT NULL AND abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout AND V3.server IS NOT NULL AND abs(V2.timeStamp - V3.timeStamp) < 1000*$basePriceTimeout
     	) J2 ON J1.server<>J2.server AND J1.V1_fSymbol = J2.V1_fSymbol AND J1.V1_tSymbol = J2.V1_tSymbol AND J1.V2_fSymbol = J2.V2_fSymbol AND J1.V2_tSymbol = J2.V2_tSymbol AND J1.V3_fSymbol = J2.V3_fSymbol AND J1.V3_tSymbol = J2.V3_tSymbol
     	WHERE J2.server IS NOT NULL AND abs(J1.timeStamp - J2.timeStamp) < 1000*$basePriceTimeout;
+    CREATE VIEW IF NOT EXISTS VIEW_SIGNAL_TICKER_DIS_CURRENT
+        AS
+			SELECT *
+			FROM SIGNAL_TICKER_DIS
+			WHERE timeStamp > (strftime('%s', 'now')-$baseJudgeTimeout)*1000;
+    CREATE VIEW IF NOT EXISTS VIEW_SIGNAL_TICKER_TRA_CURRENT
+        AS
+			SELECT *
+			FROM SIGNAL_TICKER_TRA
+			WHERE timeStamp > (strftime('%s', 'now')-$baseJudgeTimeout)*1000;
+    CREATE VIEW IF NOT EXISTS VIEW_SIGNAL_TICKER_PAIR_CURRENT
+        AS
+			SELECT *
+			FROM SIGNAL_TICKER_PAIR
+			WHERE timeStamp > (strftime('%s', 'now')-$baseJudgeTimeout)*1000;
     COMMIT;
 ''')
