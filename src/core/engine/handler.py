@@ -249,88 +249,59 @@ class Handler(object):
                     candy = False
                     # Type I
                     if C2_symbol_price * C3_symbol_price > 1 / C1_symbol_price:  # tra C2_symbol -> C1_symbol
-                        direct_spend = 1 / C1_symbol_price * r['V2_one_size']
-                        direct_left = 1 / C1_symbol_price * r[
-                            'V2_one_size'] * (1 - r['V1_fee'])
-                        tra_spend = C2_symbol_price * C3_symbol_price * r[
-                            'V2_one_size']
-                        tra_left = C2_symbol_price * C3_symbol_price * r[
-                            'V2_one_size'] * (1 - r['V1_fee']) * (
-                                1 - r['V2_fee']) * (1 - r['V3_fee'])
-                        # calc gain_ratio
-                        r['gain_ratio'] = (tra_left - direct_left) / (
-                            direct_spend + tra_spend)
-                        # calc gain_base
-                        r['gain_base'] = (
-                            tra_left - direct_left) * r['C2_symbol_base']
+                        before = r['V1_one_size']*r['C1_symbol_base']
+                        after = C1_symbol_price*C2_symbol_price * C3_symbol_price*(1 - r['V1_fee']) * (
+                            1 - r['V2_fee']) * (1 - r['V3_fee'])*r['V1_one_size']*r['C1_symbol_base']
                         # calc gain_symbol
                         r['gain_symbol'] = r['C1_symbol']
+                        # calc gain_base
+                        r['gain_base'] = after - before
+                        # calc gain_ratio
+                        r['gain_ratio'] = (after - before) / before
                         # change candy
                         candy = True
                     # Type II
                     if C1_symbol_price * C3_symbol_price > 1 / C2_symbol_price:  # tra C3_symbol -> C2_symbol
-                        direct_spend = 1 / C2_symbol_price * r['V3_one_size']
-                        direct_left = 1 / C2_symbol_price * r[
-                            'V3_one_size'] * (1 - r['V2_fee'])
-                        tra_spend = C1_symbol_price * C3_symbol_price * r[
-                            'V3_one_size']
-                        tra_left = C1_symbol_price * C3_symbol_price * r[
-                            'V3_one_size'] * (1 - r['V1_fee']) * (
-                                1 - r['V2_fee']) * (1 - r['V3_fee'])
+                        before = r['V2_one_size']*r['C2_symbol_base']
+                        after = C1_symbol_price*C2_symbol_price * C3_symbol_price*(1 - r['V1_fee']) * (
+                            1 - r['V2_fee']) * (1 - r['V3_fee'])*r['V2_one_size']*r['C2_symbol_base']
                         if not candy:
-                            # calc gain_ratio
-                            r['gain_ratio'] = (tra_left - direct_left) / (
-                                direct_spend + tra_spend)
-                            # calc gain_base
-                            r['gain_base'] = (
-                                tra_left - direct_left) * r['C3_symbol_base']
                             # calc gain_symbol
                             r['gain_symbol'] = r['C2_symbol']
+                            # calc gain_base
+                            r['gain_base'] = after - before
+                            # calc gain_ratio
+                            r['gain_ratio'] = (after - before) / before
                         else:
-                            if (tra_left - direct_left) / (
-                                    direct_spend +
-                                    tra_spend) > r['gain_ratio']:
-                                # calc gain_ratio
-                                r['gain_ratio'] = (tra_left - direct_left) / (
-                                    direct_spend + tra_spend)
-                                # calc gain_base
-                                r['gain_base'] = (tra_left - direct_left
-                                                  ) * r['C3_symbol_base']
+                            if (after - before) / before > r['gain_ratio']:
                                 # calc gain_symbol
                                 r['gain_symbol'] = r['C2_symbol']
+                                # calc gain_base
+                                r['gain_base'] = after - before
+                                # calc gain_ratio
+                                r['gain_ratio'] = (after - before) / before
                         # change candy
                         candy = True
                     # Type III
                     if C1_symbol_price * C2_symbol_price > 1 / C3_symbol_price:  # tra C1_symbol -> C3_symbol
-                        direct_spend = 1 / C3_symbol_price * r['V1_one_size']
-                        direct_left = 1 / C3_symbol_price * r[
-                            'V1_one_size'] * (1 - r['V3_fee'])
-                        tra_spend = C1_symbol_price * C2_symbol_price * r[
-                            'V1_one_size']
-                        tra_left = C1_symbol_price * C2_symbol_price * r[
-                            'V1_one_size'] * (1 - r['V1_fee']) * (
-                                1 - r['V2_fee']) * (1 - r['V3_fee'])
+                        before = r['V3_one_size']*r['C3_symbol_base']
+                        after = C1_symbol_price*C2_symbol_price * C3_symbol_price*(1 - r['V1_fee']) * (
+                            1 - r['V2_fee']) * (1 - r['V3_fee'])*r['V3_one_size']*r['C3_symbol_base']
                         if not candy:
-                            # calc gain_ratio
-                            r['gain_ratio'] = (tra_left - direct_left) / (
-                                direct_spend + tra_spend)
-                            # calc gain_base
-                            r['gain_base'] = (
-                                tra_left - direct_left) * r['C1_symbol_base']
                             # calc gain_symbol
                             r['gain_symbol'] = r['C3_symbol']
+                            # calc gain_base
+                            r['gain_base'] = after - before
+                            # calc gain_ratio
+                            r['gain_ratio'] = (after - before) / before
                         else:
-                            if (tra_left - direct_left) / (
-                                    direct_spend +
-                                    tra_spend) > r['gain_ratio']:
-                                # calc gain_ratio
-                                r['gain_ratio'] = (tra_left - direct_left) / (
-                                    direct_spend + tra_spend)
-                                # calc gain_base
-                                r['gain_base'] = (tra_left - direct_left
-                                                  ) * r['C1_symbol_base']
+                            if (after - before) / before > r['gain_ratio']:
                                 # calc gain_symbol
                                 r['gain_symbol'] = r['C3_symbol']
+                                # calc gain_base
+                                r['gain_base'] = after - before
+                                # calc gain_ratio
+                                r['gain_ratio'] = (after - before) / before
                         # change candy
                         candy = True
                     # calc signal
