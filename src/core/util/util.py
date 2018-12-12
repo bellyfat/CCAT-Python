@@ -57,7 +57,7 @@ class Util(object):
             db = DB()
             db.insertInfoServer(server)
         except (DBException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadInsertInfoServer: {server=%s}, exception err=%s" % (
+            errStr = "src.core.util.util.Util.threadInsertInfoServer: {thread=%s, server=%s}, exception err=%s" % (current_thread().name,
                 server, err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
@@ -67,7 +67,7 @@ class Util(object):
             db = DB()
             db.insertInfoSymbol(server)
         except (DBException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadInsertInfoSymbol: {server=%s}, exception err=%s" % (
+            errStr = "src.core.util.util.Util.threadInsertInfoSymbol: {thread=%s, server=%s}, exception err=%s" % (current_thread().name,
                 server, err)
             self._logger.critical(errStr)
             raise ApplicationException(err)
@@ -77,7 +77,7 @@ class Util(object):
             db = DB()
             db.insertInfoWithdraw(server)
         except (DBException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadInsertInfoWithdraw: {server=%s}, exception err=%s" % (
+            errStr = "src.core.util.util.Util.threadInsertInfoWithdraw: {thread=%s, server=%s}, exception err=%s" % (current_thread().name,
                 server, err)
             self._logger.critical(errStr)
             raise ApplicationException(err)

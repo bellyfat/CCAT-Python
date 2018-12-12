@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from itertools import combinations
-from multiprocessing import Process
+from multiprocessing import Process, current_process
 
 import pandas as pd
 
@@ -111,8 +111,8 @@ class Handler(object):
 
     def processCalcSignalTickerDis(self, exchanges, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.engine.handler.Handler.processCalcSignalTickerDis: {exchanges=%s, threshold=%s, resInfoSymbol=%s}"
-            % (exchanges, threshold, resInfoSymbol))
+            "src.core.engine.handler.Handler.processCalcSignalTickerDis: {process=%s, exchanges=%s, threshold=%s, resInfoSymbol=%s}"
+            % (current_process().name, exchanges, threshold, resInfoSymbol))
         try:
             db = DB()
             calc = Calc()
@@ -127,8 +127,8 @@ class Handler(object):
 
     def processCalcSignalTickerTra(self, exchanges, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.engine.handler.Handler.processCalcSignalTickerTra: {exchanges=%s, threshold=%s, resInfoSymbol=%s}"
-            % (exchanges, threshold, resInfoSymbol))
+            "src.core.engine.handler.Handler.processCalcSignalTickerTra: {process=%s, exchanges=%s, threshold=%s, resInfoSymbol=%s}"
+            % (current_process().name, exchanges, threshold, resInfoSymbol))
         try:
             db = DB()
             calc = Calc()
@@ -143,8 +143,8 @@ class Handler(object):
 
     def processCalcSignalTickerPair(self, exchanges, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.engine.handler.Handler.processCalcSignalTickerPair: {exchanges=%s, threshold=%s, resInfoSymbol=%s}"
-            % (exchanges, threshold, resInfoSymbol))
+            "src.core.engine.handler.Handler.processCalcSignalTickerPair: {process=%s, exchanges=%s, threshold=%s, resInfoSymbol=%s}"
+            % (current_process().name, exchanges, threshold, resInfoSymbol))
         try:
             db = DB()
             calc = Calc()
@@ -177,12 +177,12 @@ class Handler(object):
                 p.start()
             # calc tra type
             if TYPE_TRA in types:
-                p = Process(target=self.processCalcSignalTickerDis, name="%s-processCalcSignalTickerDis" % TYPE_DIS, args=(exchanges, TYPE_TRA_THRESHOLD, resInfoSymbol))
+                p = Process(target=self.processCalcSignalTickerTra, name="%s-processCalcSignalTickerTra" % TYPE_TRA, args=(exchanges, TYPE_TRA_THRESHOLD, resInfoSymbol))
                 prs.append(p)
                 p.start()
             # calc pair type
             if TYPE_PAIR in types:
-                p = Process(target=self.processCalcSignalTickerDis, name="%s-processCalcSignalTickerDis" % TYPE_DIS, args=(exchanges, TYPE_PAIR_THRESHOLD, resInfoSymbol))
+                p = Process(target=self.processCalcSignalTickerPair, name="%s-processCalcSignalTickerPair" % TYPE_PAIR, args=(exchanges, TYPE_PAIR_THRESHOLD, resInfoSymbol))
                 prs.append(p)
                 p.start()
             for p in prs:
