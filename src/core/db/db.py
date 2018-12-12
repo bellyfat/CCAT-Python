@@ -11,7 +11,7 @@ from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.db.sql import *
 from src.core.util.exceptions import (BinanceException, DBException,
-                                      OkexException, HuobiException)
+                                      HuobiException, OkexException)
 from src.core.util.helper import dict_factory, sqlite_escape, utcnow_timestamp
 from src.core.util.log import Logger
 
@@ -1006,8 +1006,30 @@ class DB(object):
         try:
             TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_DIS_SQL
             TEMP_SQL_VALUE = []
-            for s in signal:
-                pass
+            if not signal == []:
+                for s in signal:
+                    TEMP_SQL_VALUE.append((int(s['timeStamp']),
+                                           str(s['bid_server']),
+                                           str(s['ask_server']),
+                                           str(s['fSymbol']),
+                                           str(s['tSymbol']),
+                                           float(s['bid_price']),
+                                           float(s['bid_size']),
+                                           float(s['bid_price_base']),
+                                           float(s['ask_price']),
+                                           float(s['ask_size']),
+                                           float(s['ask_price_base']),
+                                           float(s['bid_fee']),
+                                           float(s['ask_fee']),
+                                           float(s['gain_base']),
+                                           float(s['gain_ratio'])))
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
@@ -1018,8 +1040,62 @@ class DB(object):
         try:
             TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_TRA_SQL
             TEMP_SQL_VALUE = []
-            for s in signal:
-                pass
+            if not signal == []:
+                for s in signal:
+                    TEMP_SQL_VALUE.append((int(s['timeStamp']),
+                                           str(s['server']),
+                                           str(s['V1_fSymbol']),
+                                           str(s['V1_tSymbol']),
+                                           str(s['V2_fSymbol']),
+                                           str(s['V2_tSymbol']),
+                                           str(s['V3_fSymbol']),
+                                           str(s['V3_tSymbol']),
+                                           float(s['V1_bid_one_price']),
+                                           float(s['V1_bid_one_size']),
+                                           float(s['V1_bid_one_price_base']),
+                                           float(s['V1_ask_one_price']),
+                                           float(s['V1_ask_one_size']),
+                                           float(s['V1_ask_one_price_base']),
+                                           float(s['V2_bid_one_price']),
+                                           float(s['V2_bid_one_size']),
+                                           float(s['V2_bid_one_price_base']),
+                                           float(s['V2_ask_one_price']),
+                                           float(s['V2_ask_one_size']),
+                                           float(s['V2_ask_one_price_base']),
+                                           float(s['V3_bid_one_price']),
+                                           float(s['V3_bid_one_size']),
+                                           float(s['V3_bid_one_price_base']),
+                                           float(s['V3_ask_one_price']),
+                                           float(s['V3_ask_one_size']),
+                                           float(s['V3_ask_one_price_base']),
+                                           float(s['V1_fee']),
+                                           float(s['V2_fee']),
+                                           float(s['V3_fee']),
+                                           str(s['C1_symbol']),
+                                           str(s['C2_symbol']),
+                                           str(s['C3_symbol']),
+                                           float(s['V1_one_price']),
+                                           float(s['V1_one_price_base']),
+                                           float(s['V1_one_size']),
+                                           float(s['C1_symbol_base']),
+                                           float(s['V2_one_price']),
+                                           float(s['V2_one_price_base']),
+                                           float(s['V2_one_size']),
+                                           float(s['C2_symbol_base']),
+                                           float(s['V3_one_price']),
+                                           float(s['V3_one_price_base']),
+                                           float(s['V3_one_size']),
+                                           float(s['C3_symbol_base']),
+                                           str(s['gain_symbol']),
+                                           float(s['gain_base']),
+                                           float(s['gain_ratio'])))
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
@@ -1030,8 +1106,89 @@ class DB(object):
         try:
             TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_PAIR_SQL
             TEMP_SQL_VALUE = []
-            for s in signal:
-                pass
+            if not signal == []:
+                for s in signal:
+                    TEMP_SQL_VALUE.append((int(s['timeStamp']),
+                                            str(s['J1_server']),
+                                            str(s['J2_server']),
+                                            str(s['V1_fSymbol']),
+                                            str(s['V1_tSymbol']),
+                                            str(s['V2_fSymbol']),
+                                            str(s['V2_tSymbol']),
+                                            str(s['V3_fSymbol']),
+                                            str(s['V3_tSymbol']),
+                                            float(s['J1_V1_bid_one_price']),
+                                            float(s['J1_V1_bid_one_size']),
+                                            float(s['J1_V1_bid_one_price_base']),
+                                            float(s['J1_V1_ask_one_price']),
+                                            float(s['J1_V1_ask_one_size']),
+                                            float(s['J1_V1_ask_one_price_base']),
+                                            float(s['J1_V2_bid_one_price']),
+                                            float(s['J1_V2_bid_one_size']),
+                                            float(s['J1_V2_bid_one_price_base']),
+                                            float(s['J1_V2_ask_one_price']),
+                                            float(s['J1_V2_ask_one_size']),
+                                            float(s['J1_V2_ask_one_price_base']),
+                                            float(s['J1_V3_bid_one_price']),
+                                            float(s['J1_V3_bid_one_size']),
+                                            float(s['J1_V3_bid_one_price_base']),
+                                            float(s['J1_V3_ask_one_price']),
+                                            float(s['J1_V3_ask_one_size']),
+                                            float(s['J1_V3_ask_one_price_base']),
+                                            float(s['J2_V1_bid_one_price']),
+                                            float(s['J2_V1_bid_one_size']),
+                                            float(s['J2_V1_bid_one_price_base']),
+                                            float(s['J2_V1_ask_one_price']),
+                                            float(s['J2_V1_ask_one_size']),
+                                            float(s['J2_V1_ask_one_price_base']),
+                                            float(s['J2_V2_bid_one_price']),
+                                            float(s['J2_V2_bid_one_size']),
+                                            float(s['J2_V2_bid_one_price_base']),
+                                            float(s['J2_V2_ask_one_price']),
+                                            float(s['J2_V2_ask_one_size']),
+                                            float(s['J2_V2_ask_one_price_base']),
+                                            float(s['J2_V3_bid_one_price']),
+                                            float(s['J2_V3_bid_one_size']),
+                                            float(s['J2_V3_bid_one_price_base']),
+                                            float(s['J2_V3_ask_one_price']),
+                                            float(s['J2_V3_ask_one_size']),
+                                            float(s['J2_V3_ask_one_price_base']),
+                                            float(s['J1_V1_fee']),
+                                            float(s['J1_V2_fee']),
+                                            float(s['J1_V3_fee']),
+                                            float(s['J2_V1_fee']),
+                                            float(s['J2_V2_fee']),
+                                            float(s['J2_V3_fee']),
+                                            str(s['C1_symbol']),
+                                            str(s['C2_symbol']),
+                                            str(s['C3_symbol']),
+                                            float(s['J1_V1_one_price']),
+                                            float(s['J1_V1_one_price_base']),
+                                            float(s['J1_V1_one_size']),
+                                            float(s['J2_V1_one_price']),
+                                            float(s['J2_V1_one_price_base']),
+                                            float(s['J2_V1_one_size']),
+                                            float(s['J1_V2_one_price']),
+                                            float(s['J1_V2_one_price_base']),
+                                            float(s['J1_V2_one_size']),
+                                            float(s['J2_V2_one_price']),
+                                            float(s['J2_V2_one_price_base']),
+                                            float(s['J2_V2_one_size']),
+                                            float(s['J1_V3_one_price']),
+                                            float(s['J1_V3_one_price_base']),
+                                            float(s['J1_V3_one_size']),
+                                            float(s['J2_V3_one_price']),
+                                            float(s['J2_V3_one_price_base']),
+                                            float(s['J2_V3_one_size']),
+                                            float(s['gain_base']),
+                                            float(s['gain_ratio'])))
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
+                self._conn.commit()
+                curs.close()
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)

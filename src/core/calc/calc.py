@@ -169,7 +169,7 @@ class Calc(object):
                     # calc gain_base
                     r['gain_base'] = after - before
                     # calc gain_ratio
-                    r['gain_ratio'] = (after - before) / before
+                    r['gain_ratio'] = (after - before) / (before + after)
                     # change candy
                     candy = True
                 # Type II
@@ -185,15 +185,15 @@ class Calc(object):
                         # calc gain_base
                         r['gain_base'] = after - before
                         # calc gain_ratio
-                        r['gain_ratio'] = (after - before) / before
+                        r['gain_ratio'] = (after - before) / (before + after)
                     else:
-                        if (after - before) / before > r['gain_ratio']:
+                        if (after - before) / (before + after) > r['gain_ratio']:
                             # calc gain_symbol
                             r['gain_symbol'] = r['C2_symbol']
                             # calc gain_base
                             r['gain_base'] = after - before
                             # calc gain_ratio
-                            r['gain_ratio'] = (after - before) / before
+                            r['gain_ratio'] = (after - before) / (before + after)
                     # change candy
                     candy = True
                 # Type III
@@ -209,15 +209,15 @@ class Calc(object):
                         # calc gain_base
                         r['gain_base'] = after - before
                         # calc gain_ratio
-                        r['gain_ratio'] = (after - before) / before
+                        r['gain_ratio'] = (after - before) / (before + after)
                     else:
-                        if (after - before) / before > r['gain_ratio']:
+                        if (after - before) / (before + after) > r['gain_ratio']:
                             # calc gain_symbol
                             r['gain_symbol'] = r['C3_symbol']
                             # calc gain_base
                             r['gain_base'] = after - before
                             # calc gain_ratio
-                            r['gain_ratio'] = (after - before) / before
+                            r['gain_ratio'] = (after - before) / (before + after)
                     # change candy
                     candy = True
                 # calc signal

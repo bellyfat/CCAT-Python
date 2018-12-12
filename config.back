@@ -57,9 +57,9 @@
   symbolStartBaseCoin = 15
   symbolEndBaseCoin = 20
   symbolEndTimeout = 300
-  typeDisThreshold = 0.01
-  typeTraThreshold = 0.01
-  typePairThreshold = 0.01
+  typeDisThreshold = 0.005
+  typeTraThreshold = 0.005
+  typePairThreshold = 0.005
 
 # Engine Settings
 # epoch: engine loop epoch
