@@ -248,14 +248,14 @@ class Handler(object):
                     # calc tra result
                     candy = False
                     # Type I
-                    if C2_symbol_price * C3_symbol_price > 1 / C1_symbol_price:  # tra C1_symbol
-                        direct_spend = 1 / C1_symbol_price * r['V1_one_size']
+                    if C2_symbol_price * C3_symbol_price > 1 / C1_symbol_price:  # tra C2_symbol -> C1_symbol
+                        direct_spend = 1 / C1_symbol_price * r['V2_one_size']
                         direct_left = 1 / C1_symbol_price * r[
-                            'V1_one_size'] * (1 - r['V1_fee'])
+                            'V2_one_size'] * (1 - r['V1_fee'])
                         tra_spend = C2_symbol_price * C3_symbol_price * r[
-                            'V1_one_size']
+                            'V2_one_size']
                         tra_left = C2_symbol_price * C3_symbol_price * r[
-                            'V1_one_size'] * (1 - r['V1_fee']) * (
+                            'V2_one_size'] * (1 - r['V1_fee']) * (
                                 1 - r['V2_fee']) * (1 - r['V3_fee'])
                         # calc gain_ratio
                         r['gain_ratio'] = (tra_left - direct_left) / (
@@ -268,14 +268,14 @@ class Handler(object):
                         # change candy
                         candy = True
                     # Type II
-                    if C1_symbol_price * C3_symbol_price > 1 / C2_symbol_price:  # tra C2_symbol
-                        direct_spend = 1 / C2_symbol_price * r['V2_one_size']
+                    if C1_symbol_price * C3_symbol_price > 1 / C2_symbol_price:  # tra C3_symbol -> C2_symbol
+                        direct_spend = 1 / C2_symbol_price * r['V3_one_size']
                         direct_left = 1 / C2_symbol_price * r[
-                            'V2_one_size'] * (1 - r['V2_fee'])
+                            'V3_one_size'] * (1 - r['V2_fee'])
                         tra_spend = C1_symbol_price * C3_symbol_price * r[
-                            'V2_one_size']
+                            'V3_one_size']
                         tra_left = C1_symbol_price * C3_symbol_price * r[
-                            'V2_one_size'] * (1 - r['V1_fee']) * (
+                            'V3_one_size'] * (1 - r['V1_fee']) * (
                                 1 - r['V2_fee']) * (1 - r['V3_fee'])
                         if not candy:
                             # calc gain_ratio
@@ -301,14 +301,14 @@ class Handler(object):
                         # change candy
                         candy = True
                     # Type III
-                    if C1_symbol_price * C2_symbol_price > 1 / C3_symbol_price:  # tra C3_symbol
-                        direct_spend = 1 / C3_symbol_price * r['V3_one_size']
+                    if C1_symbol_price * C2_symbol_price > 1 / C3_symbol_price:  # tra C1_symbol -> C3_symbol
+                        direct_spend = 1 / C3_symbol_price * r['V1_one_size']
                         direct_left = 1 / C3_symbol_price * r[
-                            'V3_one_size'] * (1 - r['V3_fee'])
+                            'V1_one_size'] * (1 - r['V3_fee'])
                         tra_spend = C1_symbol_price * C2_symbol_price * r[
-                            'V3_one_size']
+                            'V1_one_size']
                         tra_left = C1_symbol_price * C2_symbol_price * r[
-                            'V3_one_size'] * (1 - r['V1_fee']) * (
+                            'V1_one_size'] * (1 - r['V1_fee']) * (
                                 1 - r['V2_fee']) * (1 - r['V3_fee'])
                         if not candy:
                             # calc gain_ratio
