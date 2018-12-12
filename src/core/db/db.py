@@ -11,7 +11,7 @@ from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.db.sql import *
 from src.core.util.exceptions import (BinanceException, DBException,
-                                      OkexException)
+                                      OkexException, HuobiException)
 from src.core.util.helper import dict_factory, sqlite_escape, utcnow_timestamp
 from src.core.util.log import Logger
 
@@ -81,7 +81,7 @@ class DB(object):
             if self._dbSynchronous:
                 self._conn.execute("PRAGMA synchronous = 0")
             os.chmod(self._dbStr, 0o664)  # 设置读写权限
-        except IOError as err:
+        except (IOError, Exception) as err:
             raise DBException(err)
 
     def getViews(self):
@@ -93,7 +93,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def creatViews(self):
@@ -110,7 +110,7 @@ class DB(object):
             self._logger.debug(TEMP_SQL)
             curs.executescript(TEMP_SQL)
             curs.close()
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewMarketTickerCurrentPairServer(self, server, server_pair):
@@ -125,7 +125,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewMarketTickerCurrentPair(self):
@@ -138,7 +138,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewMarketTickerCurrentTraServer(self, exchange):
@@ -153,7 +153,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewMarketTickerCurrentTra(self):
@@ -166,7 +166,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewMarketTickerCurrentDisServer(self, server, server_pair):
@@ -181,7 +181,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewMarketTickerCurrentDis(self):
@@ -194,7 +194,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewMarketTickerCurrent(self):
@@ -207,7 +207,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewMarketKlineCurrent(self):
@@ -220,7 +220,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewMarketTickerSymbol(self):
@@ -233,7 +233,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewMarketSymbolPairsAggDepth(self, exchange, fSymbol, tSymbol):
@@ -248,7 +248,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewMarketSymbolPairs(self, exchange):
@@ -262,7 +262,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewInfoSymbolPairs(self, exchange):
@@ -276,7 +276,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewAccountBalanceCurrent(self):
@@ -289,7 +289,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getViewAccountWithdrawCurrent(self):
@@ -302,7 +302,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getTables(self):
@@ -314,7 +314,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def creatTables(self):
@@ -324,7 +324,7 @@ class DB(object):
             curs = self._conn.cursor()
             curs.executescript(CREATE_TABELS_SQL)
             curs.close()
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getAccountBalanceHistory(self, exchange):
@@ -338,7 +338,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getAccountWithdrawHistory(self):
@@ -350,7 +350,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getInfoServer(self):
@@ -362,7 +362,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getInfoSymbol(self):
@@ -374,7 +374,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getInfoWithdraw(self, exchange):
@@ -388,7 +388,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getMarketDepth(self):
@@ -400,7 +400,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def delMarketDepth(self):
@@ -411,7 +411,7 @@ class DB(object):
             curs.execute(DEL_MARKET_DEPTH_SQL)
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getMarketKline(self):
@@ -423,7 +423,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def delMarketKline(self):
@@ -434,7 +434,7 @@ class DB(object):
             curs.execute(DEL_MARKET_KLINE_SQL)
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getMarketTicker(self):
@@ -446,7 +446,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def delMarketTicker(self):
@@ -457,7 +457,7 @@ class DB(object):
             curs.execute(DEL_MARKET_TICKER_SQL)
             self._conn.commit()
             curs.close()
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getSignalTickerDis(self):
@@ -469,7 +469,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getSignalTickerTra(self):
@@ -481,7 +481,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getSignalTickerPair(self):
@@ -493,7 +493,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getTradeBacktestHistory(self):
@@ -505,7 +505,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def getTradeOrderHistory(self):
@@ -517,7 +517,7 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
-        except sqlite3.Error as err:
+        except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
     def insertAccountBalanceHistory(self, exchange="all"):
@@ -568,7 +568,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error,
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
@@ -622,7 +622,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error,
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
@@ -677,7 +677,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error,
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
@@ -790,7 +790,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error,
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
@@ -842,7 +842,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error,
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
@@ -889,7 +889,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error,
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
@@ -940,7 +940,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error,
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
@@ -996,17 +996,45 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error,
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
-    def insertSignalTickerDis(self, ):
-        self._logger.debug("src.core.db.db.DB.insertSignalTickerDis:")
+    def insertSignalTickerDis(self, signal):
+        self._logger.debug(
+            "src.core.db.db.DB.insertSignalTickerDis: {signal=%s}" % signal)
         try:
             TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_DIS_SQL
             TEMP_SQL_VALUE = []
-            
+            for s in signal:
+                pass
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
 
+    def insertSignalTickerTra(self, signal):
+        self._logger.debug(
+            "src.core.db.db.DB.insertSignalTickerTra: {signal=%s}" % signal)
+        try:
+            TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_TRA_SQL
+            TEMP_SQL_VALUE = []
+            for s in signal:
+                pass
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
+
+    def insertSignalTickerPair(self, signal):
+        self._logger.debug(
+            "src.core.db.db.DB.insertSignalTickerPair: {signal=%s}" % signal)
+        try:
+            TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_PAIR_SQL
+            TEMP_SQL_VALUE = []
+            for s in signal:
+                pass
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
 
     def insertTradeBacktestHistory(self,
                                    exchange,
@@ -1073,7 +1101,7 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error,
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
@@ -1149,6 +1177,6 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
-        except (OkexException, BinanceException, sqlite3.Error,
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)

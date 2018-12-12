@@ -4,14 +4,14 @@ from src.core.config import Config
 from src.core.util.helper import MyTemplate
 
 # CCAT types Threshold
-CCAT_DIS_TYPE_THRESHOLD = Config()._Main_typeDisThreshold
-CCAT_TRA_TYPE_THRESHOLD = Config()._Main_typeTraThreshold
-CCAT_PAIR_TYPE_THRESHOLD = Config()._Main_typePairThreshold
+TYPE_DIS_THRESHOLD = Config()._Main_typeDisThreshold
+TYPE_TRA_THRESHOLD = Config()._Main_typeTraThreshold
+TYPE_PAIR_THRESHOLD = Config()._Main_typePairThreshold
 
 # CCAT types
-CCAT_DIS_TYPE = 'dis'
-CCAT_TRA_TYPE = 'tra'
-CCAT_PAIR_TYPE = 'pair'
+TYPE_DIS = 'dis'
+TYPE_TRA = 'tra'
+TYPE_PAIR = 'pair'
 
 # event status
 QUEUE_STATUS_EVENT = "queue"
