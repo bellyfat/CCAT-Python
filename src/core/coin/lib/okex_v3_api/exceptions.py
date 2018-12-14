@@ -3,7 +3,7 @@
 class OkexAPIException(Exception):
 
     def __init__(self, response):
-        print(response.text + ', ' + str(response.status_code))
+        # print(response.text + ', ' + str(response.status_code))
         self.code = 0
         try:
             json_res = response.json()
@@ -40,7 +40,3 @@ class OkexParamsException(Exception):
 
     def __str__(self):
         return 'OkexParamsException: %s' % self.message
-
-
-
-

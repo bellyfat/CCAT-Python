@@ -2,6 +2,19 @@
 
 from string import Template
 
+# get db signal ticker dis sql
+GET_VIEW_SIGNAL_TICKER_DIS_CURRENT_SQL = '''
+    SELECT * FROM VIEW_SIGNAL_TICKER_DIS_CURRENT;
+'''
+# get db signal ticker dis sql
+GET_VIEW_SIGNAL_TICKER_TRA_CURRENT_SQL = '''
+    SELECT * FROM VIEW_SIGNAL_TICKER_TRA_CURRENT;
+'''
+# get db signal ticker dis sql
+GET_VIEW_SIGNAL_TICKER_PAIR_CURRENT_SQL = '''
+    SELECT * FROM VIEW_SIGNAL_TICKER_PAIR_CURRENT;
+'''
+
 # get db view market ticker current tra sql
 GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SERVER_SQL = Template('''
     SELECT *

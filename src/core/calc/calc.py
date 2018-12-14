@@ -9,7 +9,6 @@ from src.core.util.log import Logger
 
 
 class Calc(object):
-
     def __init__(self):
         # logger
         self._logger = Logger()
@@ -187,13 +186,15 @@ class Calc(object):
                         # calc gain_ratio
                         r['gain_ratio'] = (after - before) / (before + after)
                     else:
-                        if (after - before) / (before + after) > r['gain_ratio']:
+                        if (after - before) / (
+                                before + after) > r['gain_ratio']:
                             # calc gain_symbol
                             r['gain_symbol'] = r['C2_symbol']
                             # calc gain_base
                             r['gain_base'] = after - before
                             # calc gain_ratio
-                            r['gain_ratio'] = (after - before) / (before + after)
+                            r['gain_ratio'] = (after - before) / (
+                                before + after)
                     # change candy
                     candy = True
                 # Type III
@@ -211,13 +212,15 @@ class Calc(object):
                         # calc gain_ratio
                         r['gain_ratio'] = (after - before) / (before + after)
                     else:
-                        if (after - before) / (before + after) > r['gain_ratio']:
+                        if (after - before) / (
+                                before + after) > r['gain_ratio']:
                             # calc gain_symbol
                             r['gain_symbol'] = r['C3_symbol']
                             # calc gain_base
                             r['gain_base'] = after - before
                             # calc gain_ratio
-                            r['gain_ratio'] = (after - before) / (before + after)
+                            r['gain_ratio'] = (after - before) / (
+                                before + after)
                     # change candy
                     candy = True
                 # calc signal
@@ -357,45 +360,51 @@ class Calc(object):
                     r['J1_V1_one_size'] = min(
                         r['J1_V1_one_price_base'] * r['J1_V1_one_size'],
                         r['J1_V2_one_price_base'] * r['J1_V2_one_size'],
-                        r['J1_V3_one_price_base'] *
-                        r['J1_V3_one_size']) / r['J1_V1_one_price_base']
+                        r['J1_V3_one_price_base'] * r['J1_V3_one_size'],
+                        r['J2_V1_one_price_base'] * r['J2_V1_one_size'],
+                        r['J2_V2_one_price_base'] * r['J2_V2_one_size'],
+                        r['J2_V3_one_price_base'] *
+                        r['J2_V3_one_size']) / r['J1_V1_one_price_base']
                     r['J1_V2_one_size'] = min(
                         r['J1_V1_one_price_base'] * r['J1_V1_one_size'],
                         r['J1_V2_one_price_base'] * r['J1_V2_one_size'],
-                        r['J1_V3_one_price_base'] *
-                        r['J1_V3_one_size']) / r['J1_V2_one_price_base']
+                        r['J1_V3_one_price_base'] * r['J1_V3_one_size'],
+                        r['J2_V1_one_price_base'] * r['J2_V1_one_size'],
+                        r['J2_V2_one_price_base'] * r['J2_V2_one_size'],
+                        r['J2_V3_one_price_base'] *
+                        r['J2_V3_one_size']) / r['J1_V2_one_price_base']
                     r['J1_V3_one_size'] = min(
                         r['J1_V1_one_price_base'] * r['J1_V1_one_size'],
                         r['J1_V2_one_price_base'] * r['J1_V2_one_size'],
-                        r['J1_V3_one_price_base'] *
-                        r['J1_V3_one_size']) / r['J1_V3_one_price_base']
+                        r['J1_V3_one_price_base'] * r['J1_V3_one_size'],
+                        r['J2_V1_one_price_base'] * r['J2_V1_one_size'],
+                        r['J2_V2_one_price_base'] * r['J2_V2_one_size'],
+                        r['J2_V3_one_price_base'] *
+                        r['J2_V3_one_size']) / r['J1_V3_one_price_base']
                     r['J2_V1_one_size'] = min(
+                        r['J1_V1_one_price_base'] * r['J1_V1_one_size'],
+                        r['J1_V2_one_price_base'] * r['J1_V2_one_size'],
+                        r['J1_V3_one_price_base'] * r['J1_V3_one_size'],
                         r['J2_V1_one_price_base'] * r['J2_V1_one_size'],
                         r['J2_V2_one_price_base'] * r['J2_V2_one_size'],
                         r['J2_V3_one_price_base'] *
                         r['J2_V3_one_size']) / r['J2_V1_one_price_base']
                     r['J2_V2_one_size'] = min(
+                        r['J1_V1_one_price_base'] * r['J1_V1_one_size'],
+                        r['J1_V2_one_price_base'] * r['J1_V2_one_size'],
+                        r['J1_V3_one_price_base'] * r['J1_V3_one_size'],
                         r['J2_V1_one_price_base'] * r['J2_V1_one_size'],
                         r['J2_V2_one_price_base'] * r['J2_V2_one_size'],
                         r['J2_V3_one_price_base'] *
                         r['J2_V3_one_size']) / r['J2_V2_one_price_base']
                     r['J2_V3_one_size'] = min(
+                        r['J1_V1_one_price_base'] * r['J1_V1_one_size'],
+                        r['J1_V2_one_price_base'] * r['J1_V2_one_size'],
+                        r['J1_V3_one_price_base'] * r['J1_V3_one_size'],
                         r['J2_V1_one_price_base'] * r['J2_V1_one_size'],
                         r['J2_V2_one_price_base'] * r['J2_V2_one_size'],
                         r['J2_V3_one_price_base'] *
                         r['J2_V3_one_size']) / r['J2_V3_one_price_base']
-                    r['J1_V1_one_size'] = min(r['J1_V1_one_size'],
-                                              r['J2_V1_one_size'])
-                    r['J1_V2_one_size'] = min(r['J1_V2_one_size'],
-                                              r['J2_V2_one_size'])
-                    r['J1_V3_one_size'] = min(r['J1_V3_one_size'],
-                                              r['J2_V3_one_size'])
-                    r['J2_V1_one_size'] = min(r['J1_V1_one_size'],
-                                              r['J2_V1_one_size'])
-                    r['J2_V2_one_size'] = min(r['J1_V2_one_size'],
-                                              r['J2_V2_one_size'])
-                    r['J2_V3_one_size'] = min(r['J1_V3_one_size'],
-                                              r['J2_V3_one_size'])
                     # calc gain_base
                     C1_symbol_gain_base = r['J1_V1_one_price_base'] * r[
                         'J1_V1_one_size'] - r['J2_V1_one_price_base'] * r[

@@ -24,7 +24,7 @@
 # level: should be one in [DEBUG INFO WARNING ERROR CRITICAL]
 [Debug]
   debug = True
-  level = DEBUG
+  level = INFO
 
 # Main Settings
 # types: arbitrage types
@@ -59,18 +59,18 @@
   symbolStartBaseCoin = 15
   symbolEndBaseCoin = 20
   symbolEndTimeout = 300
-  typeDisThreshold = 0.005
-  typeTraThreshold = 0.005
-  typePairThreshold = 0.005
+  typeDisThreshold = 0.001
+  typeTraThreshold = 0.001
+  typePairThreshold = 0.001
 
 # Engine Settings
 # epoch: engine loop epoch
 # maxProcess: engine handle max process
 # cacheSize: engine process result cache size
 [Engine]
-  epoch = 0.05
-  maxProcess = 512
-  cacheSize = 1024
+  epoch = 0.01
+  maxProcess = 1024
+  cacheSize = 2048
 
 # Event Settings
 # lowTimeout: low event timeout
@@ -87,7 +87,7 @@
 [Log]
   type = Default
   url = log/CCAT_Python_Spam.log
-  level = INFO
+  level = DEBUG
 
 # DB Settings
 # url: db file path, ":memory:" for break through speed limit only

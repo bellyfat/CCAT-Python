@@ -122,7 +122,7 @@ class Handler(object):
                 db.insertSignalTickerDis(signalDis)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.processCalcSignalTickerDis:  {exchanges=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
-                exchanges, threshold, resInfoSymbol, EngineException(err))
+                exchanges, threshold, resInfoSymbol, Exception(err))
             self._logger.error(errStr)
 
     def processCalcSignalTickerTra(self, exchanges, threshold, resInfoSymbol):
@@ -138,7 +138,7 @@ class Handler(object):
                 db.insertSignalTickerTra(signalTra)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.processCalcSignalTickerTra:  {exchanges=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
-                exchanges, threshold, resInfoSymbol, EngineException(err))
+                exchanges, threshold, resInfoSymbol, Exception(err))
             self._logger.error(errStr)
 
     def processCalcSignalTickerPair(self, exchanges, threshold, resInfoSymbol):
@@ -154,7 +154,7 @@ class Handler(object):
                 db.insertSignalTickerPair(signalPair)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.processCalcSignalTickerPair:  {exchanges=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
-                exchanges, threshold, resInfoSymbol, EngineException(err))
+                exchanges, threshold, resInfoSymbol, Exception(err))
             self._logger.error(errStr)
 
     def handleJudgeMarketTickerEvent(self, event, callback):
