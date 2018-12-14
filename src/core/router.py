@@ -17,6 +17,7 @@ class Router(object):
     def __init__(self):
         # config
         self._marketKlineCycle = Config()._Main_marketKlineCycle
+        self._marketKlineUpdated = False
         self._marketKlineUpdateTime = time.time()
         # class instance
         self._eventEngine = EventEngine()
@@ -50,27 +51,66 @@ class Router(object):
             self._logger.critical(errStr)
             raise RouterException(err)
 
+    def updateAPP(self):
+        self._logger.debug("src.core.router.Router.updateAPP")
+        try:
+            # init server limit first
+            self._util.initServerLimits()
+            # run listen
+            self.runListen()
+            # run backtest
+            self.runBacktest()
+            # run again
+            self.updateAPP()
+        except (UtilException, Exception) as err:
+            errStr = "src.core.router.Router.updateAPP: %s" % RouterException(err)
+            self._logger.critical(errStr)
+            raise RouterException(err)
+
+
+
     def runListen(self):
         self._logger.debug("src.core.router.Router.runListen")
         try:
-            if time.time() - self._marketKlineUpdateTime > self._marketKlineCycle:
+            if time.time() - self._marketKlineUpdateTime > self._marketKlineCycle or not self._marketKlineUpdated:
+                self._marketKlineUpdated = True
                 self._marketKlineUpdateTime = time.time()
                 self._util.updateDBMarketKline(async=False, timeout=30)
             self._util.updateDBMarketTicker(async=False, timeout=30)
             self._util.updateDBJudgeMarketTicker(async=False, timeout=10)
-            self.runListenAPP()
         except (UtilException, Exception) as err:
             errStr = "src.core.router.Router.runListen: %s" % RouterException(err)
-            self._logger.critical(errStr)
             raise RouterException(err)
 
     def runBacktest(self):
-        self._logger.debug("src.core.router.Router.runListenLong")
+        self._logger.debug("src.core.router.Router.runBacktest")
         try:
-            self._util.updateDBMarketTicker(async=False, timeout=30)
-            self._util.updateDBJudgeMarketTicker(async=False, timeout=10)
-            self.runListenLong()
+            pass
         except (UtilException, Exception) as err:
-            errStr = "src.core.router.Router.runListenLong: %s" % RouterException(err)
+            errStr = "src.core.router.Router.runBacktest: %s" % RouterException(err)
             self._logger.critical(errStr)
+            raise RouterException(err)
+
+    def runBacktestStatistic(self):
+        self._logger.debug("src.core.router.Router.runBacktestStatistic")
+        try:
+            pass
+        except (UtilException, Exception) as err:
+            errStr = "src.core.router.Router.runBacktestStatistic: %s" % RouterException(err)
+            raise RouterException(err)
+
+    def runOrder(self):
+        self._logger.debug("src.core.router.Router.runOrder")
+        try:
+            pass
+        except (UtilException, Exception) as err:
+            errStr = "src.core.router.Router.runOrder: %s" % RouterException(err)
+            raise RouterException(err)
+
+    def runOrderStatistic(self):
+        self._logger.debug("src.core.router.Router.runOrder")
+        try:
+            pass
+        except (UtilException, Exception) as err:
+            errStr = "src.core.router.Router.runOrder: %s" % RouterException(err)
             raise RouterException(err)

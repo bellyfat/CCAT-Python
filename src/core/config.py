@@ -60,6 +60,8 @@ class Config(object):
                 'Main', 'marketDepthLimit')
             Config._Main_marketTickerAggStep = cf.getint(
                 'Main', 'marketTickerAggStep')
+            Config._Main_signalTickerTimeout = cf.getint(
+                'Main', 'signalTickerTimeout')
             Config._Main_symbolStartBaseCoin = cf.getfloat(
                 'Main', 'symbolStartBaseCoin')
             Config._Main_symbolEndBaseCoin = cf.getfloat(

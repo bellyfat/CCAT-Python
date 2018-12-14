@@ -39,6 +39,7 @@
 # marketKlineCycle: market kline cycle param
 # marketDepthLimit: market depth limit param
 # marketTickerAggStep: market ticker aggregate param
+# signalTickerTimeout: signal ticker valid period
 # symbolStartBaseCoin
 # symbolEndBaseCoin
 # symbolEndTimeout
@@ -54,10 +55,11 @@
   apiResultEpoch = 0.5
   basePriceVolume = 100
   basePriceTimeout = 30
-  baseJudgeTimeout = 300
+  baseJudgeTimeout = 1800
   marketKlineCycle = 86400
   marketDepthLimit = 20
   marketTickerAggStep = 10
+  signalTickerTimeout = 604800
   symbolStartBaseCoin = 15
   symbolEndBaseCoin = 20
   symbolEndTimeout = 300

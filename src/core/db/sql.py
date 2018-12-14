@@ -145,14 +145,26 @@ DEL_MARKET_TICKER_SQL = '''
 GET_SIGNAL_TICKER_DIS_SQL = '''
     SELECT * FROM SIGNAL_TICKER_DIS;
 '''
+# delete db signal ticker dis sql
+DEL_SIGNAL_TICKER_DIS_SQL = Template('''
+    DELETE FROM SIGNAL_TICKER_DIS WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
 # get db signal ticker dis sql
 GET_SIGNAL_TICKER_TRA_SQL = '''
     SELECT * FROM SIGNAL_TICKER_TRA;
 '''
+# delete db signal ticker dis sql
+DEL_SIGNAL_TICKER_TRA_SQL = Template('''
+    DELETE FROM SIGNAL_TICKER_TRA WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
 # get db signal ticker dis sql
 GET_SIGNAL_TICKER_PAIR_SQL = '''
     SELECT * FROM SIGNAL_TICKER_PAIR;
 '''
+# delete db signal ticker dis sql
+DEL_SIGNAL_TICKER_PAIR_SQL = Template('''
+    DELETE FROM SIGNAL_TICKER_PAIR WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
 
 # get db trade backtest history sql
 GET_TRADE_BACKTEST_HISTORY_SQL = '''

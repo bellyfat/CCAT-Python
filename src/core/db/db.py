@@ -27,6 +27,7 @@ class DB(object):
         self._basePriceVolume = Config()._Main_basePriceVolume
         self._basePriceTimeout = Config()._Main_basePriceTimeout
         self._baseJudgeTimeout = Config()._Main_baseJudgeTimeout
+        self._signalTickerTimeout = Config()._Main_signalTickerTimeout
         # proxies
         self._proxies = Config()._Proxies_url if Config(
         )._Proxies_proxies else None
@@ -473,15 +474,43 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
+    def delSignalTickerDis(self):
+        self._logger.debug("src.core.db.db.DB.delSignalTickerDis")
+        try:
+            TEMP_SQL = DEL_SIGNAL_TICKER_DIS_SQL.substitute(
+                period=self._signalTickerTimeout)
+            curs = self._conn.cursor()
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
     def getSignalTickerTra(self):
         self._logger.debug("src.core.db.db.DB.getSignalTickerTra")
         self._logger.debug(GET_SIGNAL_TICKER_TRA_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_SIGNAL_TICKER_TRA_SQL)
-            res = curs.fetchall()
+            TEMP_SQL = GET_ACCOUNT_BALANCE_HISTORY_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             curs.close()
             return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def delSignalTickerTra(self):
+        self._logger.debug("src.core.db.db.DB.delSignalTickerTra")
+        try:
+            TEMP_SQL = DEL_SIGNAL_TICKER_TRA_SQL.substitute(
+                period=self._signalTickerTimeout)
+            curs = self._conn.cursor()
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
@@ -494,6 +523,19 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def delSignalTickerPair(self):
+        self._logger.debug("src.core.db.db.DB.delSignalTickerPair")
+        try:
+            TEMP_SQL = DEL_SIGNAL_TICKER_PAIR_SQL.substitute(
+                period=self._signalTickerTimeout)
+            curs = self._conn.cursor()
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
@@ -1109,80 +1151,70 @@ class DB(object):
             TEMP_SQL_VALUE = []
             if not signal == []:
                 for s in signal:
-                    TEMP_SQL_VALUE.append((int(s['timeStamp']),
-                                            str(s['J1_server']),
-                                            str(s['J2_server']),
-                                            str(s['V1_fSymbol']),
-                                            str(s['V1_tSymbol']),
-                                            str(s['V2_fSymbol']),
-                                            str(s['V2_tSymbol']),
-                                            str(s['V3_fSymbol']),
-                                            str(s['V3_tSymbol']),
-                                            float(s['J1_V1_bid_one_price']),
-                                            float(s['J1_V1_bid_one_size']),
-                                            float(s['J1_V1_bid_one_price_base']),
-                                            float(s['J1_V1_ask_one_price']),
-                                            float(s['J1_V1_ask_one_size']),
-                                            float(s['J1_V1_ask_one_price_base']),
-                                            float(s['J1_V2_bid_one_price']),
-                                            float(s['J1_V2_bid_one_size']),
-                                            float(s['J1_V2_bid_one_price_base']),
-                                            float(s['J1_V2_ask_one_price']),
-                                            float(s['J1_V2_ask_one_size']),
-                                            float(s['J1_V2_ask_one_price_base']),
-                                            float(s['J1_V3_bid_one_price']),
-                                            float(s['J1_V3_bid_one_size']),
-                                            float(s['J1_V3_bid_one_price_base']),
-                                            float(s['J1_V3_ask_one_price']),
-                                            float(s['J1_V3_ask_one_size']),
-                                            float(s['J1_V3_ask_one_price_base']),
-                                            float(s['J2_V1_bid_one_price']),
-                                            float(s['J2_V1_bid_one_size']),
-                                            float(s['J2_V1_bid_one_price_base']),
-                                            float(s['J2_V1_ask_one_price']),
-                                            float(s['J2_V1_ask_one_size']),
-                                            float(s['J2_V1_ask_one_price_base']),
-                                            float(s['J2_V2_bid_one_price']),
-                                            float(s['J2_V2_bid_one_size']),
-                                            float(s['J2_V2_bid_one_price_base']),
-                                            float(s['J2_V2_ask_one_price']),
-                                            float(s['J2_V2_ask_one_size']),
-                                            float(s['J2_V2_ask_one_price_base']),
-                                            float(s['J2_V3_bid_one_price']),
-                                            float(s['J2_V3_bid_one_size']),
-                                            float(s['J2_V3_bid_one_price_base']),
-                                            float(s['J2_V3_ask_one_price']),
-                                            float(s['J2_V3_ask_one_size']),
-                                            float(s['J2_V3_ask_one_price_base']),
-                                            float(s['J1_V1_fee']),
-                                            float(s['J1_V2_fee']),
-                                            float(s['J1_V3_fee']),
-                                            float(s['J2_V1_fee']),
-                                            float(s['J2_V2_fee']),
-                                            float(s['J2_V3_fee']),
-                                            str(s['C1_symbol']),
-                                            str(s['C2_symbol']),
-                                            str(s['C3_symbol']),
-                                            float(s['J1_V1_one_price']),
-                                            float(s['J1_V1_one_price_base']),
-                                            float(s['J1_V1_one_size']),
-                                            float(s['J2_V1_one_price']),
-                                            float(s['J2_V1_one_price_base']),
-                                            float(s['J2_V1_one_size']),
-                                            float(s['J1_V2_one_price']),
-                                            float(s['J1_V2_one_price_base']),
-                                            float(s['J1_V2_one_size']),
-                                            float(s['J2_V2_one_price']),
-                                            float(s['J2_V2_one_price_base']),
-                                            float(s['J2_V2_one_size']),
-                                            float(s['J1_V3_one_price']),
-                                            float(s['J1_V3_one_price_base']),
-                                            float(s['J1_V3_one_size']),
-                                            float(s['J2_V3_one_price']),
-                                            float(s['J2_V3_one_price_base']),
-                                            float(s['J2_V3_one_size']),
-                                            float(s['gain_base']),
-                                            float(s['gain_ratio'])))
+                    TEMP_SQL_VALUE.append(
+                        (int(s['timeStamp']), str(s['J1_server']),
+                         str(s['J2_server']), str(s['V1_fSymbol']),
+                         str(s['V1_tSymbol']), str(s['V2_fSymbol']),
+                         str(s['V2_tSymbol']), str(s['V3_fSymbol']),
+                         str(s['V3_tSymbol']), float(s['J1_V1_bid_one_price']),
+                         float(s['J1_V1_bid_one_size']),
+                         float(s['J1_V1_bid_one_price_base']),
+                         float(s['J1_V1_ask_one_price']),
+                         float(s['J1_V1_ask_one_size']),
+                         float(s['J1_V1_ask_one_price_base']),
+                         float(s['J1_V2_bid_one_price']),
+                         float(s['J1_V2_bid_one_size']),
+                         float(s['J1_V2_bid_one_price_base']),
+                         float(s['J1_V2_ask_one_price']),
+                         float(s['J1_V2_ask_one_size']),
+                         float(s['J1_V2_ask_one_price_base']),
+                         float(s['J1_V3_bid_one_price']),
+                         float(s['J1_V3_bid_one_size']),
+                         float(s['J1_V3_bid_one_price_base']),
+                         float(s['J1_V3_ask_one_price']),
+                         float(s['J1_V3_ask_one_size']),
+                         float(s['J1_V3_ask_one_price_base']),
+                         float(s['J2_V1_bid_one_price']),
+                         float(s['J2_V1_bid_one_size']),
+                         float(s['J2_V1_bid_one_price_base']),
+                         float(s['J2_V1_ask_one_price']),
+                         float(s['J2_V1_ask_one_size']),
+                         float(s['J2_V1_ask_one_price_base']),
+                         float(s['J2_V2_bid_one_price']),
+                         float(s['J2_V2_bid_one_size']),
+                         float(s['J2_V2_bid_one_price_base']),
+                         float(s['J2_V2_ask_one_price']),
+                         float(s['J2_V2_ask_one_size']),
+                         float(s['J2_V2_ask_one_price_base']),
+                         float(s['J2_V3_bid_one_price']),
+                         float(s['J2_V3_bid_one_size']),
+                         float(s['J2_V3_bid_one_price_base']),
+                         float(s['J2_V3_ask_one_price']),
+                         float(s['J2_V3_ask_one_size']),
+                         float(s['J2_V3_ask_one_price_base']),
+                         float(s['J1_V1_fee']), float(s['J1_V2_fee']),
+                         float(s['J1_V3_fee']), float(s['J2_V1_fee']),
+                         float(s['J2_V2_fee']), float(s['J2_V3_fee']),
+                         str(s['C1_symbol']), str(s['C2_symbol']),
+                         str(s['C3_symbol']), float(s['J1_V1_one_price']),
+                         float(s['J1_V1_one_price_base']),
+                         float(s['J1_V1_one_size']),
+                         float(s['J2_V1_one_price']),
+                         float(s['J2_V1_one_price_base']),
+                         float(s['J2_V1_one_size']), float(
+                             s['J1_V2_one_price']),
+                         float(s['J1_V2_one_price_base']),
+                         float(s['J1_V2_one_size']), float(
+                             s['J2_V2_one_price']),
+                         float(s['J2_V2_one_price_base']),
+                         float(s['J2_V2_one_size']), float(
+                             s['J1_V3_one_price']),
+                         float(s['J1_V3_one_price_base']),
+                         float(s['J1_V3_one_size']), float(
+                             s['J2_V3_one_price']),
+                         float(s['J2_V3_one_price_base']),
+                         float(s['J2_V3_one_size']), float(s['gain_base']),
+                         float(s['gain_ratio'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)

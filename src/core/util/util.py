@@ -288,6 +288,9 @@ class Util(object):
         try:
             db = DB()
             db.delMarketKline()
+            db.delSignalTickerDis()
+            db.delSignalTickerTra()
+            db.delSignalTickerPair()
             interval = '1h'
             end = utcnow_timestamp() - 12 * 60 * 60 * 1000
             start = end - 24 * 60 * 60 * 1000
