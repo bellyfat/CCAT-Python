@@ -152,18 +152,20 @@ class EventEngine(object):
     # 开启事件引擎
     def start(self):
         self.__logger.info("src.core.engine.engine.EventEngine.start")
-        self.__active.value = True
-        # 开启事件引擎主进程
-        self.__mainProcess = Process(target=self.__run)
-        self.__mainProcess.start()
+        if not self.__active.value:
+            self.__active.value = True
+            # 开启事件引擎主进程
+            self.__mainProcess = Process(target=self.__run)
+            self.__mainProcess.start()
 
     # 暂停事件引擎
     def stop(self):
         self.__logger.info("src.core.engine.engine.EventEngine.stop")
-        # 将事件管理器设为停止
-        self.__active.value = False
-        # 等待事件引擎主进程退出
-        self.__mainProcess.join()
+        if self.__active.value:
+            # 将事件管理器设为停止
+            self.__active.value = False
+            # 等待事件引擎主进程退出
+            self.__mainProcess.join()
 
     # 终止事件引擎
     def terminate(self):
@@ -175,7 +177,7 @@ class EventEngine(object):
 
     # 注册事件
     def register(self, type, handler):
-        self.__logger.info(
+        self.__logger.debug(
             "src.core.engine.engine.EventEngine.register: {type:%s, handler:%s}"
             % (type, handler))
         # 尝试获取该事件类型对应的处理函数列表，若无则创建
@@ -189,7 +191,7 @@ class EventEngine(object):
         self.__handlers[type] = handlerList
 
     def unregister(self, type, handler):
-        self.__logger.info(
+        self.__logger.debug(
             "src.core.engine.engine.EventEngine.unregister: {type:%s, handler:%s}"
             % (type, handler))
         # 尝试获取该事件类型对应的处理函数列表，若无则忽略该次注销请求

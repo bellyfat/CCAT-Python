@@ -71,7 +71,7 @@ class Register(object):
         self.STATISTIC_ORDER_EVENT_HANDLER = self._handler.handleStatisticOrderEvent
 
     def register(self):
-        self._logger.debug("src.core.engine.register.Register.register")
+        self._logger.info("src.core.engine.register.Register.register")
         try:
             # 注册事件
             self._eventEngine.register(
@@ -115,7 +115,7 @@ class Register(object):
             raise EngineException(err)
 
     def unregister(self):
-        self._logger.debug("src.core.engine.register.Register.unregister")
+        self._logger.info("src.core.engine.register.Register.unregister")
         try:
             # 注销事件
             self._eventEngine.unregister(

@@ -36,6 +36,7 @@
 # basePriceVolume: min price volume turnover
 # basePriceTimeout: price valid period
 # baseJudgeTimeout: judge valid period
+# marketKlineCycle: market kline cycle param
 # marketDepthLimit: market depth limit param
 # marketTickerAggStep: market ticker aggregate param
 # symbolStartBaseCoin
@@ -54,6 +55,7 @@
   basePriceVolume = 100
   basePriceTimeout = 30
   baseJudgeTimeout = 300
+  marketKlineCycle = 86400
   marketDepthLimit = 20
   marketTickerAggStep = 10
   symbolStartBaseCoin = 15
@@ -68,9 +70,9 @@
 # maxProcess: engine handle max process
 # cacheSize: engine process result cache size
 [Engine]
-  epoch = 0.01
-  maxProcess = 1024
-  cacheSize = 2048
+  epoch = 0.05
+  maxProcess = 512
+  cacheSize = 1024
 
 # Event Settings
 # lowTimeout: low event timeout

@@ -10,8 +10,8 @@ from src.core.config import Config
 from src.core.db.db import DB
 from src.core.engine.enums import (ACTIVE_STATUS_EVENT, DONE_STATUS_EVENT,
                                    QUEUE_STATUS_EVENT)
-from src.core.util.exceptions import (UtilException, DBException,
-                                      EngineException)
+from src.core.util.exceptions import (DBException, EngineException,
+                                      UtilException)
 from src.core.util.helper import timestamp_to_isoformat, utcnow_timestamp
 from src.core.util.log import Logger
 
@@ -46,9 +46,7 @@ class Util(object):
             db.creatTables()
             db.creatViews()
         except (DBException, EngineException, Exception) as err:
-            errStr = "src.core.util.util.Util.initDB: %s" % UtilException(
-                err)
-            self._logger.critical(errStr)
+            errStr = "src.core.util.util.Util.initDB: %s" % UtilException(err)
             raise UtilException(err)
 
     # Info数据
@@ -57,8 +55,8 @@ class Util(object):
             db = DB()
             db.insertInfoServer(server)
         except (DBException, EngineException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadInsertInfoServer: {thread=%s, server=%s}, exception err=%s" % (current_thread().name,
-                server, Exception(err))
+            errStr = "src.core.util.util.Util.threadInsertInfoServer: {thread=%s, server=%s}, exception err=%s" % (
+                current_thread().name, server, UtilException(err))
             self._logger.critical(errStr)
 
     def threadInsertInfoSymbol(self, server):
@@ -66,8 +64,8 @@ class Util(object):
             db = DB()
             db.insertInfoSymbol(server)
         except (DBException, EngineException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadInsertInfoSymbol: {thread=%s, server=%s}, exception err=%s" % (current_thread().name,
-                server, Exception(err))
+            errStr = "src.core.util.util.Util.threadInsertInfoSymbol: {thread=%s, server=%s}, exception err=%s" % (
+                current_thread().name, server, UtilException(err))
             self._logger.critical(errStr)
 
     def threadInsertInfoWithdraw(self, server):
@@ -75,10 +73,9 @@ class Util(object):
             db = DB()
             db.insertInfoWithdraw(server)
         except (DBException, EngineException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadInsertInfoWithdraw: {thread=%s, server=%s}, exception err=%s" % (current_thread().name,
-                server, Exception(err))
+            errStr = "src.core.util.util.Util.threadInsertInfoWithdraw: {thread=%s, server=%s}, exception err=%s" % (
+                current_thread().name, server, UtilException(err))
             self._logger.critical(errStr)
-            raise Exception(errStr)
 
     def initDBInfo(self):
         self._logger.debug("src.core.util.util.Util.initDBInfo")
@@ -108,7 +105,6 @@ class Util(object):
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.initDBInfo: %s" % UtilException(
                 err)
-            self._logger.critical(errStr)
             raise UtilException(err)
 
     # ServerLimit数据
@@ -122,11 +118,10 @@ class Util(object):
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.initServerLimits: %s" % UtilException(
                 err)
-            self._logger.critical(errStr)
             raise UtilException(err)
 
     # Account Balance 事件
-    def updateDBAccountBalance(self, async=True, timeout=10):
+    def updateDBAccountBalance(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBAccountBalance")
         try:
             id = self._sender.sendListenAccountBalanceEvent(self._exchanges)
@@ -144,7 +139,6 @@ class Util(object):
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBAccountBalance: %s" % UtilException(
                 err)
-            self._logger.critical(errStr)
             raise UtilException(err)
 
     # Account Withdraw 事件
@@ -172,7 +166,7 @@ class Util(object):
                     "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, err=Timeout Error, waiting for event handler result timeout."
                     % (current_thread().name, res, epoch, async, timeout))
 
-    def updateDBAccountWithdraw(self, async=True, timeout=10):
+    def updateDBAccountWithdraw(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBAccountWithdraw")
         try:
             db = DB()
@@ -211,7 +205,6 @@ class Util(object):
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBAccountWithdraw: %s" % UtilException(
                 err)
-            self._logger.critical(errStr)
             raise UtilException(err)
 
     # Market Depth 事件
@@ -240,7 +233,7 @@ class Util(object):
                     "src.core.util.util.Util.threadSendListenMarketDepthEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, err=Timeout Error, waiting for event handler result timeout."
                     % (current_thread().name, res, epoch, async, timeout))
 
-    def updateDBMarketDepth(self, async=True, timeout=10):
+    def updateDBMarketDepth(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBMarketDepth")
         try:
             db = DB()
@@ -260,7 +253,6 @@ class Util(object):
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBMarketDepth: %s" % UtilException(
                 err)
-            self._logger.critical(errStr)
             raise UtilException(err)
 
     # Market Kline 事件
@@ -291,7 +283,7 @@ class Util(object):
                     % (current_thread().name, res, start, end, interval, epoch,
                        async, timeout))
 
-    def updateDBMarketKline(self, async=True, timeout=10):
+    def updateDBMarketKline(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBMarketKline")
         try:
             db = DB()
@@ -317,7 +309,6 @@ class Util(object):
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBMarketKline: %s" % UtilException(
                 err)
-            self._logger.critical(errStr)
             raise UtilException(err)
 
     # Market ticker 事件
@@ -350,7 +341,7 @@ class Util(object):
                     "src.core.util.util.Util.threadSendListenMarketTickerEvent: err=Timeout Error, waiting for event handler result timeout."
                 )
 
-    def updateDBMarketTicker(self, async=True, timeout=10):
+    def updateDBMarketTicker(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBMarketTicker")
         try:
             db = DB()
@@ -371,14 +362,13 @@ class Util(object):
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBMarketTicker: %s" % UtilException(
                 err)
-            self._logger.critical(errStr)
             raise UtilException(err)
 
     # Judge 事件
     def updateDBJudgeMarketKline(self):
         pass
 
-    def updateDBJudgeMarketTicker(self, async=True, timeout=10):
+    def updateDBJudgeMarketTicker(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBJudgeMarketTicker")
         try:
             id = self._sender.sendJudgeMarketTickerEvent(
@@ -397,18 +387,16 @@ class Util(object):
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBJudgeMarketTicker: %s" % UtilException(
                 err)
-            self._logger.critical(errStr)
             raise UtilException(err)
 
     # Backtest 事件
-    def updateDBBacktest(self, async=True, timeout=10):
+    def updateDBBacktest(self, async=True, timeout=30):
         self._logger.debug("src.core.util.util.Util.updateDBBacktest")
         try:
             pass
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBBacktest: %s" % UtilException(
                 err)
-            self._logger.critical(errStr)
             raise UtilException(err)
 
     # Order 事件

@@ -54,6 +54,8 @@ class Config(object):
                 'Main', 'basePriceTimeout')
             Config._Main_baseJudgeTimeout = cf.getfloat(
                 'Main', 'baseJudgeTimeout')
+            Config._Main_marketKlineCycle = cf.getint(
+                'Main', 'marketKlineCycle')
             Config._Main_marketDepthLimit = cf.getint(
                 'Main', 'marketDepthLimit')
             Config._Main_marketTickerAggStep = cf.getint(

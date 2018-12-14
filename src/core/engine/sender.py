@@ -34,7 +34,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenAccountBalanceEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
 
@@ -58,7 +57,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenAccountWithdrawEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendListenMarketDepthEvent(self, exchange, fSymbol, tSymbol,
@@ -84,7 +82,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenMarketDepthEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendListenMarketKlineEvent(self, exchange, fSymbol, tSymbol, interval,
@@ -112,7 +109,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenMarketKlineEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendListenMarketTickerEvent(self, exchange, fSymbol, tSymbol, aggDepth):
@@ -137,7 +133,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenMarketTickerEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendJudgeMarketKlineEvent(self, args):
@@ -157,7 +152,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendJudgeMarketKlineEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendJudgeMarketTickerEvent(self, types, exchanges):
@@ -180,7 +174,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendJudgeMarketTickerEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendBacktestMarketKlineEvent(self, args):
@@ -200,7 +193,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendBacktestMarketKlineEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendBacktestMarketTickerEvent(self, args):
@@ -222,7 +214,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendBacktestMarketTickerEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendOrderMarketKlineEvent(self, args):
@@ -242,7 +233,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendOrderMarketKlineEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendOrderMarketTickerEvent(self, args):
@@ -264,7 +254,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendOrderMarketTickerEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendOrderConfirmEvent(self, args):
@@ -286,7 +275,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendOrderConfirmEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendOrderCancleEvent(self, args):
@@ -308,7 +296,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendOrderCancleEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendStatiscBacktestEvent(self, args):
@@ -330,7 +317,6 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendStatiscBacktestEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
 
     def sendStatiscOrderEvent(self, args):
@@ -352,5 +338,4 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendStatiscOrderEvent: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
             raise EngineException(err)
