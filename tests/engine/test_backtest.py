@@ -47,4 +47,4 @@ if __name__ == '__main__':
 
     # exec time
     end = time.time()
-    __logger.debug("tests.engine.test_listen finished in %0.3fs" % float(end-start))
+    __logger.info("tests.engine.test_listen finished in %0.3fs" % float(end-start))

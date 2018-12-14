@@ -25,4 +25,4 @@ if __name__ == '__main__':
 
     # exec time
     end = time.time()
-    __logger.debug("tests.test_router finished in %0.3fs" % float(end-start))
+    __logger.info("tests.test_router finished in %0.3fs" % float(end-start))

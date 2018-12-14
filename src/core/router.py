@@ -19,6 +19,9 @@ class Router(object):
         self._marketKlineCycle = Config()._Main_marketKlineCycle
         self._marketKlineUpdated = False
         self._marketKlineUpdateTime = time.time()
+        self._syncAccountTimeout = Config()._Main_syncAccountTimeout
+        self._syncMarketTimeout = Config()._Main_syncMarketTimeout
+        self._syncJudgeTimeout = Config()._Main_syncJudgeTimeout
         # class instance
         self._eventEngine = EventEngine()
         self._sender = Sender(self._eventEngine)
@@ -44,7 +47,7 @@ class Router(object):
             self._util.initDB()
             self._util.initDBInfo()
             self._util.initServerLimits()
-            self._util.updateDBAccountBalance(async=False, timeout=10)
+            self._util.updateDBAccountBalance(async=False, timeout=self._syncAccountTimeout)
             self._util.updateDBAccountWithdraw()
         except (UtilException, Exception) as err:
             errStr = "src.core.router.Router.initAPP: %s" % RouterException(err)
@@ -75,9 +78,9 @@ class Router(object):
             if time.time() - self._marketKlineUpdateTime > self._marketKlineCycle or not self._marketKlineUpdated:
                 self._marketKlineUpdated = True
                 self._marketKlineUpdateTime = time.time()
-                self._util.updateDBMarketKline(async=False, timeout=30)
-            self._util.updateDBMarketTicker(async=False, timeout=30)
-            self._util.updateDBJudgeMarketTicker(async=False, timeout=10)
+                self._util.updateDBMarketKline(async=False, timeout=self._syncMarketTimeout)
+            self._util.updateDBMarketTicker(async=False, timeout=self._syncMarketTimeout)
+            self._util.updateDBJudgeMarketTicker(async=False, timeout=self._syncJudgeTimeout)
         except (UtilException, Exception) as err:
             errStr = "src.core.router.Router.runListen: %s" % RouterException(err)
             raise RouterException(err)

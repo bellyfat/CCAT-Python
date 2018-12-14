@@ -60,6 +60,16 @@ class Config(object):
                 'Main', 'marketDepthLimit')
             Config._Main_marketTickerAggStep = cf.getint(
                 'Main', 'marketTickerAggStep')
+            Config._Main_syncAccountTimeout = cf.getint(
+                'Main', 'syncAccountTimeout')
+            Config._Main_syncMarketTimeout = cf.getint(
+                'Main', 'syncMarketTimeout')
+            Config._Main_syncJudgeTimeout = cf.getint(
+                'Main', 'syncJudgeTimeout')
+            Config._Main_syncBacktestTimeout = cf.getint(
+                'Main', 'syncBacktestTimeout')
+            Config._Main_syncOrderTimeout = cf.getint(
+                'Main', 'syncOrderTimeout')
             Config._Main_signalTickerTimeout = cf.getint(
                 'Main', 'signalTickerTimeout')
             Config._Main_symbolStartBaseCoin = cf.getfloat(

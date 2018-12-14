@@ -39,6 +39,11 @@
 # marketKlineCycle: market kline cycle param
 # marketDepthLimit: market depth limit param
 # marketTickerAggStep: market ticker aggregate param
+# syncAccountTimeout: sync account timeout
+# syncMarketTimeout: sync market timeout
+# syncJudgeTimeout: sync judge timeout
+# syncBacktestTimeout: sync backtest timeout
+# syncOrderTimeout: sync order timeout
 # signalTickerTimeout: signal ticker valid period
 # symbolStartBaseCoin
 # symbolEndBaseCoin
@@ -59,6 +64,11 @@
   marketKlineCycle = 86400
   marketDepthLimit = 20
   marketTickerAggStep = 10
+  syncAccountTimeout = 30
+  syncMarketTimeout = 60
+  syncJudgeTimeout = 10
+  syncBacktestTimeout = 10
+  syncOrderTimeout = 10
   signalTickerTimeout = 604800
   symbolStartBaseCoin = 15
   symbolEndBaseCoin = 20
