@@ -158,10 +158,11 @@ class Util(object):
             % (current_thread().name, res, epoch, async, timeout))
         ids = []
         for r in res:
-            time.sleep(epoch)
-            id = self._sender.sendListenAccountWithdrawEvent(
-                r["server"], r["asset"])
-            ids.append(id)
+            if r['can_deposit'] == 'True' and r['can_withdraw'] == 'True':
+                time.sleep(epoch)
+                id = self._sender.sendListenAccountWithdrawEvent(
+                    r["server"], r["asset"])
+                ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
             startTime = time.time()
@@ -182,33 +183,14 @@ class Util(object):
             % (async, timeout))
         try:
             db = DB()
-            ####################################################################
-            # fully update: bugs remain {okex res: invlid asset}
-            ###################################################################
-            # tds = []
-            # for server in self._exchanges:
-            #     epoch = float(self._apiEpochSaveBound) / float(
-            #         self._serverLimits.at[server, "info_second"])
-            #     res = db.getInfoWithdraw([server])
-            #     td = Thread(
-            #         target=self.threadSendListenAccountWithdrawEvent,
-            #         name="%s-thread" % server,
-            #         args=(res, epoch, async, timeout))
-            #     tds.append(td)
-            #     td.start()
-            # for td in tds:
-            #     td.join()
-            ####################################################################
-            # fast update
-            ####################################################################
             tds = []
             for server in self._exchanges:
                 epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "info_second"])
-                res = db.getAccountBalanceHistory([server])
+                res = db.getInfoWithdraw([server])
                 td = Thread(
                     target=self.threadSendListenAccountWithdrawEvent,
-                    name="%s-threadSendListenAccountWithdrawEvent" % server,
+                    name="%s-thread" % server,
                     args=(res, epoch, async, timeout))
                 tds.append(td)
                 td.start()

@@ -46,7 +46,7 @@ class AccountAPI(Client):
     #    return self._request_with_params(GET, LEDGER_RECORD, params, cursor=True)
 
     # query ledger record v3
-    def get_ledger_record(self, froms=0, to=1, limit=100, currency='', ctype='', proxies=None):
+    def get_ledger_record(self, froms=0, to=10, limit=100, currency='', ctype='', proxies=None):
         params = {}
         if currency:
             params['currency'] = currency

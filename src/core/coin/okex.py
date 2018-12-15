@@ -513,16 +513,19 @@ class Okex(Coin):
     # get account asset deposit and withdraw history detail
     def getAccountAssetDetail(self, asset):
         try:
-            base = self._accountAPI.get_ledger_record(0, 1, 100, asset, '',
+            asset = asset.lower()
+            base = self._accountAPI.get_ledger_record(0, 10, 100, asset, '',
                                                       self._proxies)
             deposit = []
             withdraw = []
             for b in base[0]:
-                if float(b["amount"]) >= 0:
+                if b['typename'] == 'deposit':
                     deposit.append(b)
-                else:
+                if b['typename'] == 'withdrawal':
                     withdraw.append(b)
-            res = {"deposit": deposit, "withdraw": withdraw}
+            res = {}
+            if deposit != [] or withdraw != []:
+                res = {"deposit": deposit, "withdraw": withdraw}
             return res
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:

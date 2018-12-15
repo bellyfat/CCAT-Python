@@ -529,10 +529,13 @@ class Binance(Coin):
         try:
             deposit = self._client.get_deposit_history(asset=asset)
             withdraw = self._client.get_withdraw_history(asset=asset)
-            res = {
-                "deposit": deposit["depositList"],
-                "withdraw": withdraw["withdrawList"]
-            }
+
+            res = {}
+            if deposit["depositList"] != [] or withdraw["withdrawList"] != []:
+                res = {
+                    "deposit": deposit["depositList"],
+                    "withdraw": withdraw["withdrawList"]
+                }
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,

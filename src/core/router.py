@@ -50,7 +50,7 @@ class Router(object):
             self._util.initDBInfo()
             self._util.initServerLimits()
             self._util.updateDBAccountBalance(async=False, timeout=self._syncAccountTimeout)
-            self._util.updateDBAccountWithdraw()
+            # self._util.updateDBAccountWithdraw() # 暂时不考虑充提币
         except (UtilException, Exception) as err:
             errStr = "src.core.router.Router.initAPP: %s" % RouterException(err)
             self._logger.critical(errStr)

@@ -675,7 +675,9 @@ class Huobi(Coin):
             withdraw = []
             for wi in wiRes['data']:
                 withdraw.appen(wi)
-            res = {"deposit": deposit, "withdraw": withdraw}
+            res = {}
+            if deposit != [] or withdraw != []:
+                res = {"deposit": deposit, "withdraw": withdraw}
             return res
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
             errStr = "src.core.coin.huobi.Huobi.getAccountAssetDetail: {asset=%s}, exception err=%s" % (

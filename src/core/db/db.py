@@ -626,36 +626,40 @@ class DB(object):
             # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 base = self._Okex.getAccountAssetDetail(asset)
-                TEMP_SQL_VALUE.append(
-                    (str(self._Okex_exchange), int(timeStamp), str(asset),
-                     str(
-                         sqlite_escape(','.join(
-                             json.dumps(b) for b in base["deposit"]))),
-                     str(
-                         sqlite_escape(','.join(
-                             json.dumps(b) for b in base["withdraw"])))))
+                if not base == {}:
+                    TEMP_SQL_VALUE.append(
+                        (str(self._Okex_exchange), int(timeStamp), str(asset),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["deposit"]))),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["withdraw"])))))
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 base = self._Binance.getAccountAssetDetail(asset)
-                TEMP_SQL_VALUE.append(
-                    (str(self._Binance_exchange), int(timeStamp), str(asset),
-                     str(
-                         sqlite_escape(','.join(
-                             json.dumps(b) for b in base["deposit"]))),
-                     str(
-                         sqlite_escape(','.join(
-                             json.dumps(b) for b in base["withdraw"])))))
+                if not base == {}:
+                    TEMP_SQL_VALUE.append(
+                        (str(self._Binance_exchange), int(timeStamp),
+                         str(asset),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["deposit"]))),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["withdraw"])))))
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
                 base = self._Huobi.getAccountAssetDetail(asset)
-                TEMP_SQL_VALUE.append(
-                    (str(self._Huobi_exchange), int(timeStamp), str(asset),
-                     str(
-                         sqlite_escape(','.join(
-                             json.dumps(b) for b in base["deposit"]))),
-                     str(
-                         sqlite_escape(','.join(
-                             json.dumps(b) for b in base["withdraw"])))))
+                if not base == {}:
+                    TEMP_SQL_VALUE.append(
+                        (str(self._Huobi_exchange), int(timeStamp), str(asset),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["deposit"]))),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["withdraw"])))))
             # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
@@ -1550,7 +1554,8 @@ class DB(object):
                                     status=base['status']))
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
-                res = self._Binance.cancelBatchOrder(orderIDs, fSymbol, tSymbol)
+                res = self._Binance.cancelBatchOrder(orderIDs, fSymbol,
+                                                     tSymbol)
                 if not res == []:
                     for base in res:
                         if base['status'] == CCAT_ORDER_STATUS_CANCELED:
