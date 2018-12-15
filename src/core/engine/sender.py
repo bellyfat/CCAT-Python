@@ -25,8 +25,8 @@ class Sender(object):
                     server=exchange))
             event = Event(TEMP_EVENT)
             self._logger.debug(
-                "src.core.engine.sender.Sender.sendListenAccountBalanceEvent: " +
-                json.dumps(TEMP_EVENT))
+                "src.core.engine.sender.Sender.sendListenAccountBalanceEvent: "
+                + json.dumps(TEMP_EVENT))
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
@@ -35,7 +35,6 @@ class Sender(object):
             errStr = "src.core.engine.sender.Sender.sendListenAccountBalanceEvent: %s" % EngineException(
                 err)
             raise EngineException(err)
-
 
     def sendListenAccountWithdrawEvent(self, exchange, asset):
         try:
@@ -48,8 +47,8 @@ class Sender(object):
                     asset=asset))
             event = Event(TEMP_EVENT)
             self._logger.debug(
-                "src.core.engine.sender.Sender.sendListenAccountWithdrawEvent: " +
-                json.dumps(TEMP_EVENT))
+                "src.core.engine.sender.Sender.sendListenAccountWithdrawEvent: "
+                + json.dumps(TEMP_EVENT))
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
@@ -111,7 +110,8 @@ class Sender(object):
                 err)
             raise EngineException(err)
 
-    def sendListenMarketTickerEvent(self, exchange, fSymbol, tSymbol, aggDepth):
+    def sendListenMarketTickerEvent(self, exchange, fSymbol, tSymbol,
+                                    aggDepth):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
@@ -132,6 +132,25 @@ class Sender(object):
             return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenMarketTickerEvent: %s" % EngineException(
+                err)
+            raise EngineException(err)
+
+    def sendJudgeMarketDepthEvent(self, types, exchanges):
+        try:
+            # 构造事件对象
+            TEMP_EVENT = json.loads(
+                JUDGE_MARKET_DEPTH_EVENT.substitute(
+                    id=self._engine.getEventID(),
+                    timeStamp=utcnow_timestamp(),
+                    args=""))
+            event = Event(TEMP_EVENT)
+            self._logger.debug(
+                "src.core.engine.sender.Sender.sendJudgeMarketDepthEvent: " +
+                json.dumps(TEMP_EVENT))
+            # 发送事件
+            pass
+        except Exception as err:
+            errStr = "src.core.engine.sender.Sender.sendJudgeMarketDepthEvent: %s" % EngineException(
                 err)
             raise EngineException(err)
 
@@ -176,125 +195,111 @@ class Sender(object):
                 err)
             raise EngineException(err)
 
-    def sendBacktestMarketKlineEvent(self, args):
+    def sendBacktestHistoryCreatEvent(self, args):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
-                BACKTEST_MARKET_KLINE_EVENT.substitute(
+                BACKTEST_HISTORY_CREAT_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
                     args=""))
             event = Event(TEMP_EVENT)
             self._logger.debug(
-                "src.core.engine.sender.Sender.sendBacktestMarketKlineEvent: " +
+                "src.core.engine.sender.Sender.sendBacktestHistoryCreatEvent: "
+                + json.dumps(TEMP_EVENT))
+            # 发送事件
+            self._engine.sendEvent(event)
+            # 返回参数
+            return event.id
+        except Exception as err:
+            errStr = "src.core.engine.sender.Sender.sendBacktestHistoryCreatEvent: %s" % EngineException(
+                err)
+            raise EngineException(err)
+
+    def sendOrderHistoryInsertEvent(self, exchange, fSymbol, tSymbol, limit,
+                                    ratio):
+        try:
+            # 构造事件对象
+            TEMP_EVENT = json.loads(
+                ORDER_HISTORY_INSERT_EVENT.substitute(
+                    id=self._engine.getEventID(),
+                    timeStamp=utcnow_timestamp(),
+                    server=exchange,
+                    fSymbol=fSymbol,
+                    tSymbol=tSymbol,
+                    limit=limit,
+                    ratio=ratio))
+            event = Event(TEMP_EVENT)
+            self._logger.debug(
+                "src.core.engine.sender.Sender.sendOrderHistoryInsertEvent: " +
                 json.dumps(TEMP_EVENT))
             # 发送事件
             pass
         except Exception as err:
-            errStr = "src.core.engine.sender.Sender.sendBacktestMarketKlineEvent: %s" % EngineException(
+            errStr = "src.core.engine.sender.Sender.sendOrderHistoryInsertEvent: %s" % EngineException(
                 err)
             raise EngineException(err)
 
-    def sendBacktestMarketTickerEvent(self, args):
+    def sendOrderHistoryCreatEvent(self, args):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
-                BACKTEST_MARKET_TICKER_EVENT.substitute(
+                ORDER_HISTORY_CREAT_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
                     args=""))
             event = Event(TEMP_EVENT)
             self._logger.debug(
-                "src.core.engine.sender.Sender.sendBacktestMarketTickerEvent: " +
+                "src.core.engine.sender.Sender.sendOrderHistoryCreatEvent: " +
                 json.dumps(TEMP_EVENT))
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
             return event.id
         except Exception as err:
-            errStr = "src.core.engine.sender.Sender.sendBacktestMarketTickerEvent: %s" % EngineException(
+            errStr = "src.core.engine.sender.Sender.sendOrderHistoryCreatEvent: %s" % EngineException(
                 err)
             raise EngineException(err)
 
-    def sendOrderMarketKlineEvent(self, args):
+    def sendOrderHistoryCheckEvent(self, args):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
-                ORDER_MARKET_KLINE_EVENT.substitute(
+                ORDER_HISTORY_CHECK_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
                     args=""))
             event = Event(TEMP_EVENT)
             self._logger.debug(
-                "src.core.engine.sender.Sender.sendOrderMarketKlineEvent: " +
-                json.dumps(TEMP_EVENT))
-            # 发送事件
-            pass
-        except Exception as err:
-            errStr = "src.core.engine.sender.Sender.sendOrderMarketKlineEvent: %s" % EngineException(
-                err)
-            raise EngineException(err)
-
-    def sendOrderMarketTickerEvent(self, args):
-        try:
-            # 构造事件对象
-            TEMP_EVENT = json.loads(
-                ORDER_MARKET_TICKER_EVENT.substitute(
-                    id=self._engine.getEventID(),
-                    timeStamp=utcnow_timestamp(),
-                    args=""))
-            event = Event(TEMP_EVENT)
-            self._logger.debug(
-                "src.core.engine.sender.Sender.sendOrderMarketTickerEvent: " +
+                "src.core.engine.sender.Sender.sendOrderHistoryCheckEvent: " +
                 json.dumps(TEMP_EVENT))
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
             return event.id
         except Exception as err:
-            errStr = "src.core.engine.sender.Sender.sendOrderMarketTickerEvent: %s" % EngineException(
+            errStr = "src.core.engine.sender.Sender.sendOrderHistoryCheckEvent: %s" % EngineException(
                 err)
             raise EngineException(err)
 
-    def sendOrderConfirmEvent(self, args):
+    def sendOrderHistoryCancleEvent(self, args):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
-                ORDER_CONFIRM_EVENT.substitute(
+                ORDER_HISTORY_CANCEL_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
                     args=""))
             event = Event(TEMP_EVENT)
             self._logger.debug(
-                "src.core.engine.sender.Sender.sendOrderConfirmEvent: " +
+                "src.core.engine.sender.Sender.sendOrderHistoryCancleEvent: " +
                 json.dumps(TEMP_EVENT))
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
             return event.id
         except Exception as err:
-            errStr = "src.core.engine.sender.Sender.sendOrderConfirmEvent: %s" % EngineException(
-                err)
-            raise EngineException(err)
-
-    def sendOrderCancleEvent(self, args):
-        try:
-            # 构造事件对象
-            TEMP_EVENT = json.loads(
-                ORDER_CANCEL_EVENT.substitute(
-                    id=self._engine.getEventID(),
-                    timeStamp=utcnow_timestamp(),
-                    args=""))
-            event = Event(TEMP_EVENT)
-            self._logger.debug(
-                "src.core.engine.sender.Sender.sendOrderCancleEvent: " +
-                json.dumps(TEMP_EVENT))
-            # 发送事件
-            self._engine.sendEvent(event)
-            # 返回参数
-            return event.id
-        except Exception as err:
-            errStr = "src.core.engine.sender.Sender.sendOrderCancleEvent: %s" % EngineException(
+            errStr = "src.core.engine.sender.Sender.sendOrderHistoryCancleEvent: %s" % EngineException(
                 err)
             raise EngineException(err)
 

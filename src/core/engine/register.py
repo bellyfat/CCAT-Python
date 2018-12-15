@@ -25,24 +25,24 @@ class Register(object):
         self.LISTEN_MARKET_DEPTH_EVENT_TYPE = json.loads(
             LISTEN_MARKET_DEPTH_EVENT.substitute())["type"]
         # judge event
+        self.JUDGE_MARKET_DEPTH_EVENT_TYPE = json.loads(
+            JUDGE_MARKET_DEPTH_EVENT.substitute())["type"]
         self.JUDGE_MARKET_KLINE_EVENT_TYPE = json.loads(
             JUDGE_MARKET_KLINE_EVENT.substitute())["type"]
         self.JUDGE_MARKET_TICKER_EVENT_TYPE = json.loads(
             JUDGE_MARKET_TICKER_EVENT.substitute())["type"]
         # backtest event
-        self.BACKTEST_MARKET_KLINE_EVENT_TYPE = json.loads(
-            BACKTEST_MARKET_KLINE_EVENT.substitute())["type"]
-        self.BACKTEST_MARKET_TICKER_EVENT_TYPE = json.loads(
-            BACKTEST_MARKET_TICKER_EVENT.substitute())["type"]
+        self.BACKTEST_HISTORY_CREAT_EVENT_TYPE = json.loads(
+            BACKTEST_HISTORY_CREAT_EVENT.substitute())["type"]
         # order event
-        self.ORDER_MARKET_KLINE_EVENT_TYPE = json.loads(
-            ORDER_MARKET_KLINE_EVENT.substitute())["type"]
-        self.ORDER_MARKET_TICKER_EVENT_TYPE = json.loads(
-            ORDER_MARKET_TICKER_EVENT.substitute())["type"]
-        self.ORDER_CONFIRM_EVENT_TYPE = json.loads(
-            ORDER_CONFIRM_EVENT.substitute())["type"]
-        self.ORDER_CANCEL_EVENT_TYPE = json.loads(
-            ORDER_CANCEL_EVENT.substitute())["type"]
+        self.ORDER_HISTORY_INSERT_EVENT_TYPE = json.loads(
+            ORDER_HISTORY_INSERT_EVENT.substitute())["type"]
+        self.ORDER_HISTORY_CREAT_EVENT_TYPE = json.loads(
+            ORDER_HISTORY_CREAT_EVENT.substitute())["type"]
+        self.ORDER_HISTORY_CHECK_EVENT_TYPE = json.loads(
+            ORDER_HISTORY_CHECK_EVENT.substitute())["type"]
+        self.ORDER_HISTORY_CANCEL_EVENT_TYPE = json.loads(
+            ORDER_HISTORY_CANCEL_EVENT.substitute())["type"]
         # statistic event
         self.STATISTIC_BACKTEST_EVENT_TYPE = json.loads(
             STATISTIC_BACKTEST_EVENT.substitute())["type"]
@@ -56,16 +56,16 @@ class Register(object):
         self.LISTEN_MARKET_TICKER_EVENT_HANDLER = self._handler.handleListenMarketTickerEvent
         self.LISTEN_MARKET_DEPTH_EVENT_HANDLER = self._handler.handleListenMarketDepthEvent
         # judge handler
+        self.JUDGE_MARKET_DEPTH_EVENT_HANDLER = self._handler.handleJudgeMarketDepthEvent
         self.JUDGE_MARKET_KLINE_EVENT_HANDLER = self._handler.handleJudgeMarketKlineEvent
         self.JUDGE_MARKET_TICKER_EVENT_HANDLER = self._handler.handleJudgeMarketTickerEvent
         # backtest handler
-        self.BACKTEST_MARKET_KLINE_EVENT_HANDLER = self._handler.handleBacktestMarketKlineEvent
-        self.BACKTEST_MARKET_TICKER_EVENT_HANDLER = self._handler.handleBacktestMarketTickerEvent
+        self.BACKTEST_HISTORY_CREAT_EVENT_HANDLER = self._handler.handleBacktestHistoryCreatEvent
         # order handler
-        self.ORDER_MARKET_KLINE_EVENT_HANDLER = self._handler.handleOrderMarketKlineEvent
-        self.ORDER_MARKET_TICKER_EVENT_HANDLER = self._handler.handleOrderMarketTickerEvent
-        self.ORDER_CONFIRM_EVENT_HANDLER = self._handler.handleOrderConfirmEvent
-        self.ORDER_CANCEL_EVENT_HANDLER = self._handler.handleOrderCancelEvent
+        self.ORDER_HISTORY_INSERT_EVENT_HANDLER = self._handler.handleOrderHistoryInsertEvent
+        self.ORDER_HISTORY_CREAT_EVENT_HANDLER = self._handler.handleOrderHistoryCreatEvent
+        self.ORDER_HISTORY_CHECK_EVENT_HANDLER = self._handler.handleOrderHistoryCheckEvent
+        self.ORDER_HISTORY_CANCEL_EVENT_HANDLER = self._handler.handleOrderHistoryCancelEvent
         # statistic handler
         self.STATISTIC_BACKTEST_EVENT_HANDLER = self._handler.handleStatisticBacktestEvent
         self.STATISTIC_ORDER_EVENT_HANDLER = self._handler.handleStatisticOrderEvent
@@ -86,24 +86,23 @@ class Register(object):
                                        self.LISTEN_MARKET_TICKER_EVENT_HANDLER)
             self._eventEngine.register(self.LISTEN_MARKET_DEPTH_EVENT_TYPE,
                                        self.LISTEN_MARKET_DEPTH_EVENT_HANDLER)
+            self._eventEngine.register(self.JUDGE_MARKET_DEPTH_EVENT_TYPE,
+                                       self.JUDGE_MARKET_DEPTH_EVENT_HANDLER)
             self._eventEngine.register(self.JUDGE_MARKET_KLINE_EVENT_TYPE,
                                        self.JUDGE_MARKET_KLINE_EVENT_HANDLER)
             self._eventEngine.register(self.JUDGE_MARKET_TICKER_EVENT_TYPE,
                                        self.JUDGE_MARKET_TICKER_EVENT_HANDLER)
             self._eventEngine.register(
-                self.BACKTEST_MARKET_KLINE_EVENT_TYPE,
-                self.BACKTEST_MARKET_KLINE_EVENT_HANDLER)
-            self._eventEngine.register(
-                self.BACKTEST_MARKET_TICKER_EVENT_TYPE,
-                self.BACKTEST_MARKET_TICKER_EVENT_HANDLER)
-            self._eventEngine.register(self.ORDER_MARKET_KLINE_EVENT_TYPE,
-                                       self.ORDER_MARKET_KLINE_EVENT_HANDLER)
-            self._eventEngine.register(self.ORDER_MARKET_TICKER_EVENT_TYPE,
-                                       self.ORDER_MARKET_TICKER_EVENT_HANDLER)
-            self._eventEngine.register(self.ORDER_CONFIRM_EVENT_TYPE,
-                                       self.ORDER_CONFIRM_EVENT_HANDLER)
-            self._eventEngine.register(self.ORDER_CANCEL_EVENT_TYPE,
-                                       self.ORDER_CANCEL_EVENT_HANDLER)
+                self.BACKTEST_HISTORY_CREAT_EVENT_TYPE,
+                self.BACKTEST_HISTORY_CREAT_EVENT_HANDLER)
+            self._eventEngine.register(self.ORDER_HISTORY_INSERT_EVENT_TYPE,
+                                       self.ORDER_HISTORY_INSERT_EVENT_HANDLER)
+            self._eventEngine.register(self.ORDER_HISTORY_CREAT_EVENT_TYPE,
+                                       self.ORDER_HISTORY_CREAT_EVENT_HANDLER)
+            self._eventEngine.register(self.ORDER_HISTORY_CHECK_EVENT_TYPE,
+                                       self.ORDER_HISTORY_CHECK_EVENT_HANDLER)
+            self._eventEngine.register(self.ORDER_HISTORY_CANCEL_EVENT_TYPE,
+                                       self.ORDER_HISTORY_CANCEL_EVENT_HANDLER)
             self._eventEngine.register(self.STATISTIC_BACKTEST_EVENT_TYPE,
                                        self.STATISTIC_BACKTEST_EVENT_HANDLER)
             self._eventEngine.register(self.STATISTIC_ORDER_EVENT_TYPE,
@@ -111,7 +110,7 @@ class Register(object):
         except Exception as err:
             errStr = "src.core.engine.register.Register.register: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
+            self._logger.error(errStr)
             raise EngineException(err)
 
     def unregister(self):
@@ -136,29 +135,27 @@ class Register(object):
             self._eventEngine.unregister(self.JUDGE_MARKET_KLINE_EVENT_TYPE,
                                          self.JUDGE_MARKET_KLINE_EVENT_HANDLER)
             self._eventEngine.unregister(
-                self.JUDGE_MARKET_TICKER_EVENT_TYPE,
-                self.JUDGE_MARKET_TICKER_EVENT_HANDLER)
+                self.BACKTEST_HISTORY_CREAT_EVENT_TYPE,
+                self.BACKTEST_HISTORY_CREAT_EVENT_HANDLER)
             self._eventEngine.unregister(
-                self.BACKTEST_MARKET_KLINE_EVENT_TYPE,
-                self.BACKTEST_MARKET_KLINE_EVENT_HANDLER)
+                self.ORDER_HISTORY_INSERT_EVENT_TYPE,
+                self.ORDER_HISTORY_INSERT_EVENT_HANDLER)
             self._eventEngine.unregister(
-                self.BACKTEST_MARKET_TICKER_EVENT_TYPE,
-                self.BACKTEST_MARKET_TICKER_EVENT_HANDLER)
-            self._eventEngine.unregister(self.ORDER_MARKET_KLINE_EVENT_TYPE,
-                                         self.ORDER_MARKET_KLINE_EVENT_HANDLER)
+                self.ORDER_HISTORY_CREAT_EVENT_TYPE,
+                self.ORDER_HISTORY_CREAT_EVENT_HANDLER)
             self._eventEngine.unregister(
-                self.ORDER_MARKET_TICKER_EVENT_TYPE,
-                self.ORDER_MARKET_TICKER_EVENT_HANDLER)
-            self._eventEngine.unregister(self.ORDER_CONFIRM_EVENT_TYPE,
-                                         self.ORDER_CONFIRM_EVENT_HANDLER)
-            self._eventEngine.unregister(self.ORDER_CANCEL_EVENT_TYPE,
-                                         self.ORDER_CANCEL_EVENT_HANDLER)
+                self.ORDER_HISTORY_CHECK_EVENT_TYPE,
+                self.ORDER_HISTORY_CHECK_EVENT_HANDLER)
+            self._eventEngine.unregister(
+                self.ORDER_HISTORY_CANCEL_EVENT_TYPE,
+                self.ORDER_HISTORY_CANCEL_EVENT_HANDLER)
             self._eventEngine.unregister(self.STATISTIC_BACKTEST_EVENT_TYPE,
                                          self.STATISTIC_BACKTEST_EVENT_HANDLER)
             self._eventEngine.unregister(self.STATISTIC_ORDER_EVENT_TYPE,
                                          self.STATISTIC_ORDER_EVENT_HANDLER)
+
         except Exception as err:
             errStr = "src.core.engine.register.Register.unregister: %s" % EngineException(
                 err)
-            self.__logger.error(errStr)
+            self._logger.error(errStr)
             raise EngineException(err)

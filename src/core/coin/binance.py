@@ -324,19 +324,30 @@ class Binance(Coin):
     # get current trade
     def getTradeOpen(self, fSymbol='', tSymbol='', limit='100', ratio=''):
         try:
-            if fSymbol and tSymbol:
+            symbol = ''
+            if fSymbol != '' and tSymbol != '':
                 symbol = fSymbol + tSymbol
                 orders = self._client.get_open_orders(symbol=symbol)
             else:
                 orders = self._client.get_open_orders()
-            if ratio == '':
+            if ratio == '' and symbol != '':
                 ratio = self._client.get_trade_fee(
                     symbol=symbol)["tradeFee"][0]["taker"]
+            else:
+                ratio = 0
             res = []
             for item in orders:
                 filled_price = 0.0 if float(
                     item["executedQty"]) == 0 else float(
-                        item["cummulativeQuoteQty"]) / float(item["executedQty"])
+                        item["cummulativeQuoteQty"]) / float(
+                            item["executedQty"])
+                if symbol=='':
+                    if item['symbol'][-4:] != 'USDT':
+                        fSymbol = item['symbol'][:-3]
+                        tSymbol = item['symbol'][-3:]
+                    else:
+                        fSymbol = item['symbol'][:-4]
+                        tSymbol = item['symbol'][-4:]
                 res.append({
                     "timeStamp":
                     item["time"],
@@ -557,12 +568,18 @@ class Binance(Coin):
         try:
             symbol = fSymbol + tSymbol
             params = {
-                "symbol": symbol,
-                "side": SIDE_BUY if ask_or_bid == CCAT_ORDER_SIDE_BUY else SIDE_SELL,
-                "type": type,
-                "timeInForce": TIME_IN_FORCE_GTC,
-                "quantity": quantity,
-                "price": price
+                "symbol":
+                symbol,
+                "side":
+                SIDE_BUY if ask_or_bid == CCAT_ORDER_SIDE_BUY else SIDE_SELL,
+                "type":
+                type,
+                "timeInForce":
+                TIME_IN_FORCE_GTC,
+                "quantity":
+                quantity,
+                "price":
+                price
             }
             base = self._client.create_order(**params)
             if ratio == '':
@@ -634,7 +651,10 @@ class Binance(Coin):
             info = self._client.get_order(**params)
             if info["status"] == "NEW" or info["status"] == "PARTIALLY_FILLED":
                 base = self._client.cancel_order(**params)
-                res = {"order_id": orderID, "status": CCAT_ORDER_STATUS_CANCELED}
+                res = {
+                    "order_id": orderID,
+                    "status": CCAT_ORDER_STATUS_CANCELED
+                }
             else:
                 res = {
                     "order_id": orderID,
@@ -674,6 +694,20 @@ class Binance(Coin):
                 BinanceWithdrawException, Exception) as err:
             errStr = "src.core.coin.binance.Binance.cancelBatchOrder: { orderIDs=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
                 orderIDs, fSymbol, tSymbol, err)
+            raise BinanceException(errStr)
+
+    def oneClickCancleOrders(self):
+        try:
+            res = self.getTradeOpen()
+            for r in res:
+                b = self.cancelOrder(r['order_id'], r['fSymbol'], r['tSymbol'])
+                if b['status'] != CCAT_ORDER_STATUS_CANCELED:
+                    return False
+            return True
+        except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
+                BinanceRequestException, BinanceOrderException,
+                BinanceWithdrawException, Exception) as err:
+            errStr = "src.core.coin.binance.Binance.cancelBatchOrder: exception err=%s" % err
             raise BinanceException(errStr)
 
     # deposit asset balance

@@ -108,9 +108,9 @@ GET_INFO_SERVER_SQL = '''
     SELECT * FROM INFO_SERVER;
 '''
 # get db symbol info sql
-GET_INFO_SYMBOL_SQL = '''
-    SELECT * FROM INFO_SYMBOL;
-'''
+GET_INFO_SYMBOL_SQL = Template('''
+    SELECT * FROM INFO_SYMBOL WHERE server IN $server;
+''')
 # get db withdraw info sql
 GET_INFO_WITHDRAW_SQL = Template('''
     SELECT * FROM INFO_WITHDRAW WHERE server IN $server;

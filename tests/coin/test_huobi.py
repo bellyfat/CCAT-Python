@@ -135,6 +135,12 @@ class TestHuobi(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_oneClickCancleOrders(self):
+        res = huobi.oneClickCancleOrders()
+        logger.debug(res)
+        res = huobi.getTradeOpen("", "")
+        self.assertIsInstance(res, list)
+
     def test_depositeAsset(self):
         pass
 

@@ -43,6 +43,8 @@ if __name__ == '__main__':
 
     # util.updateDBAccountWithdraw()
 
+    # util.updateDBOrderHistoryInsert()
+
     util.updateDBMarketKline(async=False)
 
     util.updateDBMarketDepth()
@@ -51,7 +53,7 @@ if __name__ == '__main__':
 
 
     # # stop engine
-    time.sleep(5) # for engine begin handle
+    time.sleep(2) # for engine begin handle
     __eventEngine.stop()
 
     # unregister engine

@@ -134,6 +134,12 @@ class TestOkex(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_oneClickCancleOrders(self):
+        res = okex.oneClickCancleOrders()
+        logger.debug(res)
+        res = okex.getTradeOpen("", "")
+        self.assertIsInstance(res, list)
+
     def test_depositeAsset(self):
         pass
 

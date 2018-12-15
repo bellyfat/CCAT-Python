@@ -310,9 +310,9 @@ class Huobi:
         return api_key_get(params, url, self.__access_key, self.__secret_key, self.__proxies)
 
     # 批量取消符合条件的订单
-    def cancel_open_orders(self, account_id, symbol, side='', size=10):
+    def cancel_open_orders(self, account_id='', symbol='', side='', size=100):
         """
-        :param symbol:
+        :param account_id:
         :return:
         """
         params = {}

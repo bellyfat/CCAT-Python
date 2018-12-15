@@ -51,6 +51,7 @@ class Router(object):
             self._util.initServerLimits()
             self._util.updateDBAccountBalance(async=False, timeout=self._syncAccountTimeout)
             # self._util.updateDBAccountWithdraw() # 暂时不考虑充提币
+            # util.updateDBOrderHistoryInsert() # 暂时不同步历史交易
         except (UtilException, Exception) as err:
             errStr = "src.core.router.Router.initAPP: %s" % RouterException(err)
             self._logger.critical(errStr)
@@ -69,7 +70,7 @@ class Router(object):
             self.updateAPP()
         except (UtilException, Exception) as err:
             errStr = "src.core.router.Router.updateAPP: %s" % RouterException(err)
-            self._logger.critical(errStr)
+            self._logger.critical(errStr)util.updateDBOrderHistoryInsert()
             raise RouterException(err)
 
 

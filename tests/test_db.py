@@ -139,7 +139,7 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getInfoSymbol(self):
-        res = db.getInfoSymbol()
+        res = db.getInfoSymbol(["okex", "binance", "huobi"])
         logger.debug(res)
         self.assertIsInstance(res, list)
 

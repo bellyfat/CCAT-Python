@@ -305,7 +305,7 @@ class Okex(Coin):
     def getTradeOpen(self, fSymbol='', tSymbol='', limit='100', ratio=''):
         try:
             instrument_id = ''
-            if fSymbol and tSymbol:
+            if fSymbol != '' and tSymbol != '':
                 instrument_id = fSymbol + "-" + tSymbol
             orders = self._spotAPI.get_orders_pending(instrument_id, '', '',
                                                       limit, self._proxies)
@@ -316,6 +316,9 @@ class Okex(Coin):
                 filled_price = float(item["filled_size"]) if float(
                     item["filled_size"]) == 0 else float(
                         item["filled_notional"]) / float(item["filled_size"])
+                if not instrument_id:
+                    fSymbol = item["instrument_id"].split('-')[0].upper()
+                    tSymbol = item["instrument_id"].split('-')[1].upper()
                 res.append({
                     "timeStamp":
                     date_to_milliseconds(item["timestamp"]),
@@ -663,6 +666,19 @@ class Okex(Coin):
                 OkexRequestException, OkexParamsException, Exception) as err:
             errStr = "src.core.coin.okex.Okex.cancelBatchOrder: { orderIDs=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
                 orderIDs, fSymbol, tSymbol, err)
+            raise OkexException(errStr)
+
+    def oneClickCancleOrders(self):
+        try:
+            res = self.getTradeOpen()
+            for r in res:
+                b = self.cancelOrder(r['order_id'], r['fSymbol'], r['tSymbol'])
+                if b['status'] != CCAT_ORDER_STATUS_CANCELED:
+                    return False
+            return True
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException, Exception) as err:
+            errStr = "src.core.coin.okex.Okex.oneClickCancleOrders: exception err=%s" % err
             raise OkexException(errStr)
 
     # deposit asset balance

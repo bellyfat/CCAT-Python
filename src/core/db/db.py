@@ -367,12 +367,14 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getInfoSymbol(self):
+    def getInfoSymbol(self, exchange):
         self._logger.debug("src.core.db.db.DB.getInfoSymbol")
-        self._logger.debug(GET_INFO_SYMBOL_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_INFO_SYMBOL_SQL)
+            TEMP_SQL = GET_INFO_SYMBOL_SQL.substitute(server=exchange).replace(
+                '[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -1584,6 +1586,26 @@ class DB(object):
                     curs.execute(TEMP)
                 self._conn.commit()
                 curs.close()
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
+
+    def oneClickCancleOrders(self, exchange):
+        self._logger.debug("src.core.db.db.DB.oneClickCancleOrders")
+        try:
+            done = True
+            # Okex
+            if exchange == "all" or self._Okex_exchange in exchange:
+                done = done and self._Okex.oneClickCancleOrders()
+            # Binance
+            if exchange == "all" or self._Binance_exchange in exchange:
+                done = done and self._Binance.oneClickCancleOrders()
+            # Huobi
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                done = done and self._Huobi.oneClickCancleOrders()
+            # Others
+            # to_be_continue
+            return done
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)

@@ -45,7 +45,8 @@ class Util(object):
             db.creatTables()
             db.creatViews()
         except (DBException, EngineException, Exception) as err:
-            errStr = "src.core.util.util.Util.initDB: exception err=%s" % UtilException(err)
+            errStr = "src.core.util.util.Util.initDB: exception err=%s" % UtilException(
+                err)
             raise UtilException(err)
 
     # Info数据
@@ -339,8 +340,8 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.warn(
-                    "src.core.util.util.Util.threadSendListenMarketTickerEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=Timeout Error, waiting for event handler result timeout." % (current_thread().name, res, epoch, async, timeout)
-                )
+                    "src.core.util.util.Util.threadSendListenMarketTickerEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=Timeout Error, waiting for event handler result timeout."
+                    % (current_thread().name, res, epoch, async, timeout))
 
     def updateDBMarketTicker(self, async=True, timeout=30):
         self._logger.debug(
@@ -407,16 +408,61 @@ class Util(object):
             raise UtilException(err)
 
     # Order 事件
-    def updateDBOrderHistory(self):
+    def threadSendInsertDBOrderHistory(self, res, epoch, async, timeout):
+        self._logger.debug(
+            "src.core.util.util.Util.threadSendInsertDBOrderHistory: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}"
+            % (current_thread().name, res, epoch, async, timeout))
+        ids = []
+        for r in res:
+            time.sleep(epoch)
+            id = self._sender.sendOrderHistoryInsertEvent(
+                r["server"], r["fSymbol"], r["tSymbol"], '100', r["fee_taker"])
+            ids.append(id)
+        if not async:
+            st = QUEUE_STATUS_EVENT
+            startTime = time.time()
+            for id in ids:
+                st = self._engine.getEventStatus(id)
+                while st != DONE_STATUS_EVENT and time.time(
+                ) - startTime < timeout:
+                    st = self._engine.getEventStatus(id)
+                    time.sleep(self._apiResultEpoch)
+            if st != DONE_STATUS_EVENT:
+                self._logger.warn(
+                    "src.core.util.util.Util.threadSendInsertDBOrderHistory: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=Timeout Error, waiting for event handler result timeout."
+                    % (current_thread().name, res, epoch, async, timeout))
+
+    def updateDBOrderHistoryInsert(self, async=True, timeout=30):
+        self._logger.debug(
+            "src.core.util.util.Util.updateDBOrderHistoryInsert: {async: %s, timeout: %s}"
+            % (async, timeout))
+        try:
+            db = DB()
+            tds = []
+            for server in self._exchanges:
+                epoch = float(self._apiEpochSaveBound) / float(
+                    self._serverLimits.at[server, "info_second"])
+                res = db.getInfoSymbol([server])
+                td = Thread(
+                    target=self.threadSendInsertDBOrderHistory,
+                    name="%s-thread" % server,
+                    args=(res, epoch, async, timeout))
+                tds.append(td)
+                td.start()
+            for td in tds:
+                td.join()
+        except (DBException, EngineException, Exception) as err:
+            errStr = "src.core.util.util.Util.updateDBOrderHistoryInsert: {async: %s, timeout: %s}, exception err=%s" % (
+                async, timeout, UtilException(err))
+            raise UtilException(err)
+
+    def updateDBOrderHistoryCreat(self):
         pass
 
-    def updateDBOrderConfirm(self):
+    def updateDBOrderHistoryCheck(self):
         pass
 
-    def updateDBOrderTracker(self):
-        pass
-
-    def updateDBOrderCancle(self):
+    def updateDBOrderHistoryCancle(self):
         pass
 
     # Statistic 事件
@@ -428,14 +474,45 @@ class Util(object):
 
     # Util 紧急功能
     # 一键 cancle 撤销所有订单
-    def threadCanceOrders(self):
-        self._logger.debug("src.core.util.util.Util.threadCanceOrders")
-        pass
+    def threadoneClickCancleOrders(self, server, epoch, timeout):
+        self._logger.debug(
+            "src.core.util.util.Util.threadoneClickCancleOrders: {thread: %s, server: %s, epoch: %s, timeout: %s}"
+            % (current_thread().name, server, epoch, timeout))
+        try:
+            db = DB()
+            res = False
+            start = time.time()
+            while (res == False and (time.time() - start) < timeout):
+                time.sleep(epoch)
+                res = db.oneClickCancleOrders(server)
+            if not res:
+                errStr = "src.core.util.util.Util.threadoneClickCancleOrders: {thread: %s, server: %s, epoch: %s, timeout: %s}，exception err=TIMEOUT ERROR" % (
+                    current_thread().name, server, epoch, timeout)
+                self._logger.error(errStr)
+        except (DBException, EngineException, Exception) as err:
+            errStr = "src.core.util.util.Util.threadoneClickCancleOrders: {thread: %s, server: %s, epoch: %s, timeout: %s}，exception err=%s" % (
+                current_thread().name, server, epoch, timeout, Exception(err))
+            self._logger.error(errStr)
 
-    def oneClickCancleOrders(self, async=True, timeout=30):
+    def oneClickCancleOrders(self, timeout=30):
         self._logger.debug("src.core.util.util.Util.oneClickCancleOrders")
-
-        pass
+        try:
+            tds = []
+            for server in self._exchanges:
+                epoch = float(self._apiEpochSaveBound) / float(
+                    self._serverLimits.at[server, "orders_second"])
+                td = Thread(
+                    target=self.threadoneClickCancleOrders,
+                    name="%s-thread" % server,
+                    args=(server, epoch, timeout))
+                tds.append(td)
+                td.start()
+            for td in tds:
+                td.join()
+        except (DBException, EngineException, Exception) as err:
+            errStr = "src.core.util.util.Util.oneClickCancleOrders: {async: %s, timeout: %s}, exception err=%s" % (
+                async, timeout, UtilException(err))
+            raise UtilException(err)
 
     # 一键 order 交易所有币到baseCoin
     def oneClickOrderBaseCoin(self):

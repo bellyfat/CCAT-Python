@@ -301,9 +301,9 @@ class Huobi(Coin):
                     fSymbol, tSymbol, interval, start, end, base)
                 raise Exception(err)
             res = []
-            timeStamp =  date_to_milliseconds(start)
+            timeStamp = date_to_milliseconds(start)
             for b in base['data']:
-                timeStamp =  timeStamp + granularity
+                timeStamp = timeStamp + granularity
                 res.append({
                     "timeStamp": timeStamp,
                     "fSymbol": fSymbol,
@@ -353,12 +353,9 @@ class Huobi(Coin):
         }
         '''
         try:
-            symbol = ''
-            account_id = ''
-            if fSymbol and tSymbol:
-                symbol = (fSymbol + tSymbol).lower()
-                account_id = self._acct_id if self._acct_id else self._huobiAPI.get_accounts(
-                )['data'][0]['id']
+            symbol = (fSymbol + tSymbol).lower()
+            account_id = self._acct_id if self._acct_id else self._huobiAPI.get_accounts(
+            )['data'][0]['id']
             side = ''
             size = limit
             base = self._huobiAPI.open_orders(account_id, symbol, side, size)
@@ -772,8 +769,8 @@ class Huobi(Coin):
             if not ba['status'] == 'ok':
                 err = "{ ba=%s }" % ba
                 raise Exception(err)
-            if self.__STATUS[
-                    ba['data']["state"]] == CCAT_ORDER_STATUS_OPEN or self.__STATUS[
+            if self.__STATUS[ba['data'][
+                    "state"]] == CCAT_ORDER_STATUS_OPEN or self.__STATUS[
                         ba['data']["state"]] == CCAT_ORDER_STATUS_PART_FILLED:
                 base = self._huobiAPI.cancel_order(orderID)
                 rebase = self._huobiAPI.order_info(orderID)
@@ -804,9 +801,10 @@ class Huobi(Coin):
                 if not ba['status'] == 'ok':
                     err = "{ ba=%s }" % ba
                     raise Exception(err)
-                if self.__STATUS[ba['data'][
-                        "state"]] == CCAT_ORDER_STATUS_OPEN or self.__STATUS[
-                            ba['data']["state"]] == CCAT_ORDER_STATUS_PART_FILLED:
+                if self.__STATUS[
+                        ba['data']
+                    ["state"]] == CCAT_ORDER_STATUS_OPEN or self.__STATUS[
+                        ba['data']["state"]] == CCAT_ORDER_STATUS_PART_FILLED:
                     base = self._huobiAPI.cancel_order(orderID)
                     rebase = self._huobiAPI.order_info(orderID)
                     if not base['status'] == 'ok' or not base[
@@ -827,6 +825,19 @@ class Huobi(Coin):
         except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
             errStr = "src.core.coin.huobi.Huobi.cancelBatchOrder: {orderIDs=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
                 orderIDs, fSymbol, tSymbol, err)
+            raise HuobiException(errStr)
+
+    def oneClickCancleOrders(self):
+        try:
+            res = self._huobiAPI.cancel_open_orders()
+            if not res['status'] == 'ok':
+                err = "{ res=%s }" % res
+                raise Exception(err)
+            if res['data']['failed-count'] > 0:
+                return False
+            return True
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            errStr = "src.core.coin.huobi.Huobi.oneClickCancleOrders: exception err=%s" % err
             raise HuobiException(errStr)
 
     # deposit asset balance

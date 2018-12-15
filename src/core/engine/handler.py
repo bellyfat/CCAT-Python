@@ -4,7 +4,6 @@ from itertools import combinations
 from multiprocessing import Process, current_process
 
 import pandas as pd
-
 from src.core.calc.calc import Calc
 from src.core.db.db import DB
 from src.core.engine.enums import *
@@ -95,6 +94,20 @@ class Handler(object):
             self._logger.error(errStr)
         callback(event)
 
+    def handleJudgeMarketDepthEvent(self, event, callback):
+        self._logger.debug(
+            "src.core.engine.handler.Handler.handleJudgeMarketDepthEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
+        # 接收事件
+        [args] = event.args
+        try:
+            pass
+        except (DBException, CalcException, EngineException, Exception) as err:
+            errStr = "src.core.engine.handler.Handler.handleJudgeMarketDepthEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
+                event.type, event.priority, event.args, EngineException(err))
+            self._logger.error(errStr)
+        callback(event)
+
     def handleJudgeMarketKlineEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: { type=%s, priority=%s, args=%s }"
@@ -132,8 +145,8 @@ class Handler(object):
         try:
             db = DB()
             calc = Calc()
-            signalTra = calc.calcSignalTickerTra(
-                exchanges, threshold, resInfoSymbol)
+            signalTra = calc.calcSignalTickerTra(exchanges, threshold,
+                                                 resInfoSymbol)
             if not signalTra == []:
                 db.insertSignalTickerTra(signalTra)
         except (DBException, CalcException, EngineException, Exception) as err:
@@ -169,20 +182,29 @@ class Handler(object):
             db = DB()
             calc = Calc()
             resInfoSymbol = pd.DataFrame(db.getInfoSymbol())
-            prs=[]
+            prs = []
             # calc dis type
             if TYPE_DIS in types:
-                p = Process(target=self.processCalcSignalTickerDis, name="%s-processCalcSignalTickerDis" % TYPE_DIS, args=(exchanges, TYPE_DIS_THRESHOLD, resInfoSymbol))
+                p = Process(
+                    target=self.processCalcSignalTickerDis,
+                    name="%s-processCalcSignalTickerDis" % TYPE_DIS,
+                    args=(exchanges, TYPE_DIS_THRESHOLD, resInfoSymbol))
                 prs.append(p)
                 p.start()
             # calc tra type
             if TYPE_TRA in types:
-                p = Process(target=self.processCalcSignalTickerTra, name="%s-processCalcSignalTickerTra" % TYPE_TRA, args=(exchanges, TYPE_TRA_THRESHOLD, resInfoSymbol))
+                p = Process(
+                    target=self.processCalcSignalTickerTra,
+                    name="%s-processCalcSignalTickerTra" % TYPE_TRA,
+                    args=(exchanges, TYPE_TRA_THRESHOLD, resInfoSymbol))
                 prs.append(p)
                 p.start()
             # calc pair type
             if TYPE_PAIR in types:
-                p = Process(target=self.processCalcSignalTickerPair, name="%s-processCalcSignalTickerPair" % TYPE_PAIR, args=(exchanges, TYPE_PAIR_THRESHOLD, resInfoSymbol))
+                p = Process(
+                    target=self.processCalcSignalTickerPair,
+                    name="%s-processCalcSignalTickerPair" % TYPE_PAIR,
+                    args=(exchanges, TYPE_PAIR_THRESHOLD, resInfoSymbol))
                 prs.append(p)
                 p.start()
             for p in prs:
@@ -193,44 +215,46 @@ class Handler(object):
             self._logger.error(errStr)
         callback(event)
 
-    def handleBacktestMarketKlineEvent(self, event, callback):
+    def handleBacktestHistoryCreatEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleBacktestMarketKlineEvent: { type=%s, priority=%s, args=%s }"
+            "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
-    def handleBacktestMarketTickerEvent(self, event, callback):
+    def handleOrderHistoryInsertEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleBacktestMarketTickerEvent: { type=%s, priority=%s, args=%s }"
+            "src.core.engine.handler.Handler.handleOrderHistoryInsertEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
+        # 接收事件
+        [exchange, fSymbol, tSymbol, limit, ratio] = event.args
+        try:
+            db = DB()
+            db.insertTradeOrderHistory(exchange, fSymbol, tSymbol, limit,
+                                       ratio)
+        except (DBException, CalcException, EngineException, Exception) as err:
+            errStr = "src.core.engine.handler.Handler.handleListenKlineEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
+                event.type, event.priority, event.args, EngineException(err))
+            self._logger.error(errStr)
+        callback(event)
+
+    def handleOrderHistoryCreatEvent(self, event, callback):
+        self._logger.debug(
+            "src.core.engine.handler.Handler.handleOrderHistoryCreatEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
-    def handleOrderMarketKlineEvent(self, event, callback):
+    def handleOrderHistoryCheckEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderMarketKlineEvent: { type=%s, priority=%s, args=%s }"
+            "src.core.engine.handler.Handler.handleOrderHistoryCheckEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         # 接收事件
         pass
 
-    def handleOrderMarketTickerEvent(self, event, callback):
+    def handleOrderHistoryCancelEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderMarketTickerEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
-        # 接收事件
-        pass
-
-    def handleOrderConfirmEvent(self, event, callback):
-        self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderConfirmEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
-        # 接收事件
-        pass
-
-    def handleOrderCancelEvent(self, event, callback):
-        self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderCancelEvent: { type=%s, priority=%s, args=%s }"
+            "src.core.engine.handler.Handler.handleOrderHistoryCancelEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         # 接收事件
         pass
