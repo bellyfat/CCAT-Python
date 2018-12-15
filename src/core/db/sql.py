@@ -252,7 +252,7 @@ UPDATE_CHECK_TRADE_ORDER_HISTORY_SQL = '''
 
 # update db cancle trade order history sql
 UPDATE_CANCLE_TRADE_ORDER_HISTORY_SQL = Template('''
-    UPDATE TRADE_ORDER_HISTORY SET status = $status WHERE order_id=$order_id;
+    UPDATE TRADE_ORDER_HISTORY SET status = '$status' WHERE order_id='$order_id';
 ''')
 
 

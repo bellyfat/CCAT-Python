@@ -1295,62 +1295,73 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertTradeOrderHistory(self, exchange, fSymbol, tSymbol, limit='100', ratio=''):
+    def insertTradeOrderHistory(self,
+                                exchange,
+                                fSymbol,
+                                tSymbol,
+                                limit='100',
+                                ratio=''):
         self._logger.debug("src.core.db.db.DB.insertTradeOrderHistory")
         try:
             TEMP_SQL_TITLE = INSERT_TRADE_ORDER_HISTORY_SQL
             TEMP_SQL_VALUE = []
             # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
-                res = self._Okex.getTradeHistory(fSymbol, tSymbol, limit, ratio)
-                if not res==[]:
+                res = self._Okex.getTradeHistory(fSymbol, tSymbol, limit,
+                                                 ratio)
+                if not res == []:
                     for base in res:
                         TEMP_SQL_VALUE.append((str(self._Okex_exchange),
-                             int(base["timeStamp"]),
-                             str(base["order_id"]),
-                             str(base["status"]), str(base["type"]),
-                             str(base["fSymbol"]),
-                             str(base["tSymbol"]),
-                             str(base["ask_or_bid"]),
-                             float(base["ask_bid_price"]),
-                             float(base["ask_bid_size"]),
-                             float(base["filled_price"]),
-                             float(base["filled_size"]),
-                             float(base["fee"])))
+                                               int(base["timeStamp"]),
+                                               str(base["order_id"]),
+                                               str(base["status"]),
+                                               str(base["type"]),
+                                               str(base["fSymbol"]),
+                                               str(base["tSymbol"]),
+                                               str(base["ask_or_bid"]),
+                                               float(base["ask_bid_price"]),
+                                               float(base["ask_bid_size"]),
+                                               float(base["filled_price"]),
+                                               float(base["filled_size"]),
+                                               float(base["fee"])))
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
-                res = self._Binance.getTradeHistory(fSymbol, tSymbol, limit, ratio)
-                if not res==[]:
+                res = self._Binance.getTradeHistory(fSymbol, tSymbol, limit,
+                                                    ratio)
+                if not res == []:
                     for base in res:
                         TEMP_SQL_VALUE.append((str(self._Binance_exchange),
-                             int(base["timeStamp"]),
-                             str(base["order_id"]),
-                             str(base["status"]), str(base["type"]),
-                             str(base["fSymbol"]),
-                             str(base["tSymbol"]),
-                             str(base["ask_or_bid"]),
-                             float(base["ask_bid_price"]),
-                             float(base["ask_bid_size"]),
-                             float(base["filled_price"]),
-                             float(base["filled_size"]),
-                             float(base["fee"])))
+                                               int(base["timeStamp"]),
+                                               str(base["order_id"]),
+                                               str(base["status"]),
+                                               str(base["type"]),
+                                               str(base["fSymbol"]),
+                                               str(base["tSymbol"]),
+                                               str(base["ask_or_bid"]),
+                                               float(base["ask_bid_price"]),
+                                               float(base["ask_bid_size"]),
+                                               float(base["filled_price"]),
+                                               float(base["filled_size"]),
+                                               float(base["fee"])))
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
-                res = self._Huobi.getTradeHistory(fSymbol, tSymbol, limit, ratio)
-                if not res==[]:
+                res = self._Huobi.getTradeHistory(fSymbol, tSymbol, limit,
+                                                  ratio)
+                if not res == []:
                     for base in res:
                         TEMP_SQL_VALUE.append((str(self._Huobi_exchange),
-                             int(base["timeStamp"]),
-                             str(base["order_id"]),
-                             str(base["status"]), str(base["type"]),
-                             str(base["fSymbol"]),
-                             str(base["tSymbol"]),
-                             str(base["ask_or_bid"]),
-                             float(base["ask_bid_price"]),
-                             float(base["ask_bid_size"]),
-                             float(base["filled_price"]),
-                             float(base["filled_size"]),
-                             float(base["fee"])))
+                                               int(base["timeStamp"]),
+                                               str(base["order_id"]),
+                                               str(base["status"]),
+                                               str(base["type"]),
+                                               str(base["fSymbol"]),
+                                               str(base["tSymbol"]),
+                                               str(base["ask_or_bid"]),
+                                               float(base["ask_bid_price"]),
+                                               float(base["ask_bid_size"]),
+                                               float(base["filled_price"]),
+                                               float(base["filled_size"]),
+                                               float(base["fee"])))
             # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
@@ -1365,14 +1376,14 @@ class DB(object):
             raise DBException(err)
 
     def updateCreatTradeOrderHistory(self,
-                                exchange,
-                                fSymbol,
-                                tSymbol,
-                                ask_or_bid,
-                                price,
-                                quantity,
-                                ratio='',
-                                type=CCAT_ORDER_TYPE_LIMIT):
+                                     exchange,
+                                     fSymbol,
+                                     tSymbol,
+                                     ask_or_bid,
+                                     price,
+                                     quantity,
+                                     ratio='',
+                                     type=CCAT_ORDER_TYPE_LIMIT):
         self._logger.debug(
             "src.core.db.db.DB.updateCreatTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }"
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
@@ -1440,8 +1451,134 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def updateCheckTradeOrderHistory(self):
-        pass
+    def updateCheckTradeOrderHistory(self,
+                                     exchange,
+                                     orderIDs,
+                                     fSymbol,
+                                     tSymbol,
+                                     ratio=''):
+        self._logger.debug("src.core.db.db.DB.updateCheckTradeOrderHistory")
+        try:
+            TEMP_SQL_TITLE = UPDATE_CHECK_TRADE_ORDER_HISTORY_SQL
+            TEMP_SQL_VALUE = []
+            # Okex
+            if exchange == "all" or self._Okex_exchange in exchange:
+                for orderID in orderIDs:
+                    base = self._Okex.checkOrder(orderID, fSymbol, tSymbol,
+                                                 ratio)
+                    TEMP_SQL_VALUE.append((str(self._Okex_exchange),
+                                           int(base["timeStamp"]),
+                                           str(base["order_id"]),
+                                           str(base["status"]),
+                                           str(base["type"]),
+                                           str(base["fSymbol"]),
+                                           str(base["tSymbol"]),
+                                           str(base["ask_or_bid"]),
+                                           float(base["ask_bid_price"]),
+                                           float(base["ask_bid_size"]),
+                                           float(base["filled_price"]),
+                                           float(base["filled_size"]),
+                                           float(base["fee"])))
+            # Binance
+            if exchange == "all" or self._Binance_exchange in exchange:
+                for orderID in orderIDs:
+                    base = self._Binance.checkOrder(orderID, fSymbol, tSymbol,
+                                                    ratio)
+                    TEMP_SQL_VALUE.append((str(self._Binance_exchange),
+                                           int(base["timeStamp"]),
+                                           str(base["order_id"]),
+                                           str(base["status"]),
+                                           str(base["type"]),
+                                           str(base["fSymbol"]),
+                                           str(base["tSymbol"]),
+                                           str(base["ask_or_bid"]),
+                                           float(base["ask_bid_price"]),
+                                           float(base["ask_bid_size"]),
+                                           float(base["filled_price"]),
+                                           float(base["filled_size"]),
+                                           float(base["fee"])))
+            # Huobi
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                for orderID in orderIDs:
+                    base = self._Huobi.checkOrder(orderID, fSymbol, tSymbol,
+                                                  ratio)
+                    TEMP_SQL_VALUE.append((str(self._Huobi_exchange),
+                                           int(base["timeStamp"]),
+                                           str(base["order_id"]),
+                                           str(base["status"]),
+                                           str(base["type"]),
+                                           str(base["fSymbol"]),
+                                           str(base["tSymbol"]),
+                                           str(base["ask_or_bid"]),
+                                           float(base["ask_bid_price"]),
+                                           float(base["ask_bid_size"]),
+                                           float(base["filled_price"]),
+                                           float(base["filled_size"]),
+                                           float(base["fee"])))
+            # Others
+            # to_be_continue
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
+                self._conn.commit()
+                curs.close()
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
 
-    def updateCancleTradeOrderHistory(self):
-        pass
+    def updateCancleTradeOrderHistory(self,
+                                      exchange,
+                                      orderIDs,
+                                      fSymbol,
+                                      tSymbol,
+                                      ratio=''):
+        self._logger.debug("src.core.db.db.DB.updateCheckTradeOrderHistory")
+        try:
+            TEMP_SQL = []
+            # Okex
+            if exchange == "all" or self._Okex_exchange in exchange:
+                res = self._Okex.cancelBatchOrder(orderIDs, fSymbol, tSymbol)
+                if not res == []:
+                    for base in res:
+                        if base['status'] == CCAT_ORDER_STATUS_CANCELED:
+                            TEMP_SQL.append(
+                                UPDATE_CANCLE_TRADE_ORDER_HISTORY_SQL.
+                                substitute(
+                                    order_id=base['order_id'],
+                                    status=base['status']))
+            # Binance
+            if exchange == "all" or self._Binance_exchange in exchange:
+                res = self._Binance.cancelBatchOrder(orderIDs, fSymbol, tSymbol)
+                if not res == []:
+                    for base in res:
+                        if base['status'] == CCAT_ORDER_STATUS_CANCELED:
+                            TEMP_SQL.append(
+                                UPDATE_CANCLE_TRADE_ORDER_HISTORY_SQL.
+                                substitute(
+                                    order_id=base['order_id'],
+                                    status=base['status']))
+            # Huobi
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                res = self._Huobi.cancelBatchOrder(orderIDs, fSymbol, tSymbol)
+                if not res == []:
+                    for base in res:
+                        if base['status'] == CCAT_ORDER_STATUS_CANCELED:
+                            TEMP_SQL.append(
+                                UPDATE_CANCLE_TRADE_ORDER_HISTORY_SQL.
+                                substitute(
+                                    order_id=base['order_id'],
+                                    status=base['status']))
+            # Others
+            # to_be_continue
+            if not TEMP_SQL == []:
+                for TEMP in TEMP_SQL:
+                    self._logger.debug(TEMP)
+                    curs = self._conn.cursor()
+                    curs.execute(TEMP)
+                self._conn.commit()
+                curs.close()
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
