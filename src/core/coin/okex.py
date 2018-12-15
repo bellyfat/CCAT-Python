@@ -23,17 +23,17 @@ from src.core.util.helper import date_to_milliseconds, interval_to_milliseconds
 class Okex(Coin):
 
     __STATUS = {
-        "ordering": ORDER_STATUS_ORDERING,
-        "canceling": ORDER_STATUS_CANCELING,
-        "open": ORDER_STATUS_OPEN,
-        "part_filled": ORDER_STATUS_PART_FILLED,
-        "filled": ORDER_STATUS_FILLED,
-        "cancelled": ORDER_STATUS_CANCELED
+        "ordering": CCAT_ORDER_STATUS_ORDERING,
+        "canceling": CCAT_ORDER_STATUS_CANCELING,
+        "open": CCAT_ORDER_STATUS_OPEN,
+        "part_filled": CCAT_ORDER_STATUS_PART_FILLED,
+        "filled": CCAT_ORDER_STATUS_FILLED,
+        "cancelled": CCAT_ORDER_STATUS_CANCELED
     }
 
-    __TYPE = {"limit": ORDER_TYPE_LIMIT, "market": ORDER_TYPE_MARKET}
+    __TYPE = {"limit": CCAT_ORDER_TYPE_LIMIT, "market": CCAT_ORDER_TYPE_MARKET}
 
-    __SIDE = {"buy": ORDER_SIDE_BUY, "sell": ORDER_SIDE_SELL}
+    __SIDE = {"buy": CCAT_ORDER_SIDE_BUY, "sell": CCAT_ORDER_SIDE_SELL}
 
     def __init__(self, exchange, api_key, api_secret, passphrase,
                  proxies=None):
@@ -322,7 +322,7 @@ class Okex(Coin):
                     "order_id":
                     item["order_id"],
                     "status":
-                    ORDER_STATUS_OPEN,
+                    CCAT_ORDER_STATUS_OPEN,
                     "type":
                     self.__TYPE[item["type"]],
                     "fSymbol":
@@ -542,7 +542,7 @@ class Okex(Coin):
         #  for speed up, lib not check, check from local db.data
         try:
             instrument_id = fSymbol + "-" + tSymbol
-            side = 'buy' if ask_or_bid == ORDER_SIDE_BUY else 'sell'
+            side = 'buy' if ask_or_bid == CCAT_ORDER_SIDE_BUY else 'sell'
             base = self._spotAPI.take_order(type, side, instrument_id,
                                             quantity, 1, '', price, '',
                                             self._proxies)
@@ -620,7 +620,7 @@ class Okex(Coin):
                 if base["result"] == True:
                     res = {
                         "order_id": orderID,
-                        "status": ORDER_STATUS_CANCELED
+                        "status": CCAT_ORDER_STATUS_CANCELED
                     }
             else:
                 res = {
@@ -648,7 +648,7 @@ class Okex(Coin):
                     if base["result"] == True:
                         res.append({
                             "order_id": orderID,
-                            "status": ORDER_STATUS_CANCELED
+                            "status": CCAT_ORDER_STATUS_CANCELED
                         })
                 else:
                     res.append({

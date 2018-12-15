@@ -19,26 +19,26 @@ from src.core.util.helper import (date_to_milliseconds,
 class Huobi(Coin):
 
     __STATUS = {
-        "submitting": ORDER_STATUS_ORDERING,
-        "submitted": ORDER_STATUS_OPEN,
-        "partial-filled": ORDER_STATUS_PART_FILLED,
-        "partial-canceled": ORDER_STATUS_CANCELING,
-        "filled": ORDER_STATUS_FILLED,
-        "canceled": ORDER_STATUS_CANCELED
+        "submitting": CCAT_ORDER_STATUS_ORDERING,
+        "submitted": CCAT_ORDER_STATUS_OPEN,
+        "partial-filled": CCAT_ORDER_STATUS_PART_FILLED,
+        "partial-canceled": CCAT_ORDER_STATUS_CANCELING,
+        "filled": CCAT_ORDER_STATUS_FILLED,
+        "canceled": CCAT_ORDER_STATUS_CANCELED
     }
 
     __TYPE = {
-        "buy-market": ORDER_TYPE_MARKET,
-        "sell-market": ORDER_TYPE_MARKET,
-        "buy-limit": ORDER_TYPE_LIMIT,
-        "sell-limit": ORDER_TYPE_LIMIT
+        "buy-market": CCAT_ORDER_TYPE_MARKET,
+        "sell-market": CCAT_ORDER_TYPE_MARKET,
+        "buy-limit": CCAT_ORDER_TYPE_LIMIT,
+        "sell-limit": CCAT_ORDER_TYPE_LIMIT
     }
 
     __SIDE = {
-        "buy-market": ORDER_SIDE_BUY,
-        "sell-market": ORDER_SIDE_SELL,
-        "buy-limit": ORDER_SIDE_BUY,
-        "sell-limit": ORDER_SIDE_SELL
+        "buy-market": CCAT_ORDER_SIDE_BUY,
+        "sell-market": CCAT_ORDER_SIDE_SELL,
+        "buy-limit": CCAT_ORDER_SIDE_BUY,
+        "sell-limit": CCAT_ORDER_SIDE_SELL
     }
 
     def __init__(self,
@@ -374,7 +374,7 @@ class Huobi(Coin):
                 res.append({
                     "timeStamp": b["created-at"],
                     "order_id": b["id"],
-                    "status": ORDER_STATUS_OPEN,
+                    "status": CCAT_ORDER_STATUS_OPEN,
                     "type": self.__TYPE[b["type"]],
                     "fSymbol": fSymbol,
                     "tSymbol": tSymbol,
@@ -695,13 +695,13 @@ class Huobi(Coin):
         try:
             symbol = (fSymbol + tSymbol).lower()
             source = 'api'
-            if ask_or_bid == ORDER_SIDE_BUY and type == ORDER_TYPE_LIMIT:
+            if ask_or_bid == CCAT_ORDER_SIDE_BUY and type == CCAT_ORDER_TYPE_LIMIT:
                 _type = 'buy-limit'
-            if ask_or_bid == ORDER_SIDE_BUY and type == ORDER_TYPE_MARKET:
+            if ask_or_bid == CCAT_ORDER_SIDE_BUY and type == CCAT_ORDER_TYPE_MARKET:
                 _type = 'buy-market'
-            if ask_or_bid == ORDER_SIDE_SELL and type == ORDER_TYPE_LIMIT:
+            if ask_or_bid == CCAT_ORDER_SIDE_SELL and type == CCAT_ORDER_TYPE_LIMIT:
                 _type = 'sell-limit'
-            if ask_or_bid == ORDER_SIDE_SELL and type == ORDER_TYPE_MARKET:
+            if ask_or_bid == CCAT_ORDER_SIDE_SELL and type == CCAT_ORDER_TYPE_MARKET:
                 _type = 'sell-market'
             timeStamp = utcnow_timestamp()
             base = self._huobiAPI.send_order(quantity, source, symbol, _type,
@@ -713,7 +713,7 @@ class Huobi(Coin):
             res = {
                 "timeStamp": timeStamp,
                 "order_id": base["data"],
-                "status": ORDER_STATUS_ORDERING,
+                "status": CCAT_ORDER_STATUS_ORDERING,
                 "type": self.__TYPE[_type],
                 "fSymbol": fSymbol,
                 "tSymbol": tSymbol,
@@ -771,8 +771,8 @@ class Huobi(Coin):
                 err = "{ ba=%s }" % ba
                 raise Exception(err)
             if self.__STATUS[
-                    ba['data']["state"]] == ORDER_STATUS_OPEN or self.__STATUS[
-                        ba['data']["state"]] == ORDER_STATUS_PART_FILLED:
+                    ba['data']["state"]] == CCAT_ORDER_STATUS_OPEN or self.__STATUS[
+                        ba['data']["state"]] == CCAT_ORDER_STATUS_PART_FILLED:
                 base = self._huobiAPI.cancel_order(orderID)
                 rebase = self._huobiAPI.order_info(orderID)
                 if not base['status'] == 'ok' or not rebase['status'] == 'ok':
@@ -803,8 +803,8 @@ class Huobi(Coin):
                     err = "{ ba=%s }" % ba
                     raise Exception(err)
                 if self.__STATUS[ba['data'][
-                        "state"]] == ORDER_STATUS_OPEN or self.__STATUS[
-                            ba['data']["state"]] == ORDER_STATUS_PART_FILLED:
+                        "state"]] == CCAT_ORDER_STATUS_OPEN or self.__STATUS[
+                            ba['data']["state"]] == CCAT_ORDER_STATUS_PART_FILLED:
                     base = self._huobiAPI.cancel_order(orderID)
                     rebase = self._huobiAPI.order_info(orderID)
                     if not base['status'] == 'ok' or not base[

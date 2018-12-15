@@ -28,16 +28,16 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 class Binance(Coin):
 
     __STATUS = {
-        "PENDING_CANCEL": ORDER_STATUS_CANCELING,
-        "NEW": ORDER_STATUS_OPEN,
-        "PARTIALLY_FILLED": ORDER_STATUS_PART_FILLED,
-        "FILLED": ORDER_STATUS_FILLED,
-        "CANCELED": ORDER_STATUS_CANCELED
+        "PENDING_CANCEL": CCAT_ORDER_STATUS_CANCELING,
+        "NEW": CCAT_ORDER_STATUS_OPEN,
+        "PARTIALLY_FILLED": CCAT_ORDER_STATUS_PART_FILLED,
+        "FILLED": CCAT_ORDER_STATUS_FILLED,
+        "CANCELED": CCAT_ORDER_STATUS_CANCELED
     }
 
-    __TYPE = {"LIMIT": ORDER_TYPE_LIMIT, "MARKET": ORDER_TYPE_MARKET}
+    __TYPE = {"LIMIT": CCAT_ORDER_TYPE_LIMIT, "MARKET": CCAT_ORDER_TYPE_MARKET}
 
-    __SIDE = {"BUY": ORDER_SIDE_BUY, "SELL": ORDER_SIDE_SELL}
+    __SIDE = {"BUY": CCAT_ORDER_SIDE_BUY, "SELL": CCAT_ORDER_SIDE_SELL}
 
     def __init__(self, exchange, api_key, api_secret, proxies=None):
         super(Binance, self).__init__(exchange, api_key, api_secret, proxies)
@@ -343,7 +343,7 @@ class Binance(Coin):
                     "order_id":
                     item["orderId"],
                     "status":
-                    ORDER_STATUS_OPEN,
+                    CCAT_ORDER_STATUS_OPEN,
                     "type":
                     self.__TYPE[item["type"]],
                     "fSymbol":
@@ -549,13 +549,13 @@ class Binance(Coin):
                     price,
                     quantity,
                     ratio='',
-                    type=ORDER_TYPE_LIMIT):
+                    type=CCAT_ORDER_TYPE_LIMIT):
         # for speed up, lib not check, check from local db.data
         try:
             symbol = fSymbol + tSymbol
             params = {
                 "symbol": symbol,
-                "side": SIDE_BUY if ask_or_bid == ORDER_SIDE_BUY else SIDE_SELL,
+                "side": SIDE_BUY if ask_or_bid == CCAT_ORDER_SIDE_BUY else SIDE_SELL,
                 "type": type,
                 "timeInForce": TIME_IN_FORCE_GTC,
                 "quantity": quantity,
@@ -631,7 +631,7 @@ class Binance(Coin):
             info = self._client.get_order(**params)
             if info["status"] == "NEW" or info["status"] == "PARTIALLY_FILLED":
                 base = self._client.cancel_order(**params)
-                res = {"order_id": orderID, "status": ORDER_STATUS_CANCELED}
+                res = {"order_id": orderID, "status": CCAT_ORDER_STATUS_CANCELED}
             else:
                 res = {
                     "order_id": orderID,
@@ -658,7 +658,7 @@ class Binance(Coin):
                     base = self._client.cancel_order(**params)
                     res.append({
                         "order_id": orderID,
-                        "status": ORDER_STATUS_CANCELED
+                        "status": CCAT_ORDER_STATUS_CANCELED
                     })
                 else:
                     res.append({

@@ -571,7 +571,7 @@ class DB(object):
             timeStamp = utcnow_timestamp()
             TEMP_SQL_TITLE = INSERT_ACCOUNT_BALANCE_HISTORY_SQL
             TEMP_SQL_VALUE = []
-            # OKEX
+            # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 base = self._Okex.getAccountBalances()
                 for b in base:
@@ -623,7 +623,7 @@ class DB(object):
             timeStamp = utcnow_timestamp()
             TEMP_SQL_TITLE = INSERT_ACCOUNT_WITHDRAW_HISTORY_SQL
             TEMP_SQL_VALUE = []
-            # OKEX
+            # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 base = self._Okex.getAccountAssetDetail(asset)
                 TEMP_SQL_VALUE.append(
@@ -675,7 +675,7 @@ class DB(object):
         try:
             TEMP_SQL_TITLE = INSERT_INFO_SERVER_SQL
             TEMP_SQL_VALUE = []
-            # OKEX
+            # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 res = self._Okex.getServerLimits()
                 TEMP_SQL_VALUE.append(
@@ -730,7 +730,7 @@ class DB(object):
         try:
             TEMP_SQL_TITLE = INSERT_INFO_SYMBOL_SQL
             TEMP_SQL_VALUE = []
-            # OKEX
+            # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 base = self._Okex.getSymbolsLimits()
                 fees = self._Okex.getTradeFees()
@@ -843,7 +843,7 @@ class DB(object):
         try:
             TEMP_SQL_TITLE = INSERT_INFO_WITHDRAW_SQL
             TEMP_SQL_VALUE = []
-            # OKEX
+            # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 base = self._Okex.getAccountLimits()
                 for b in base:
@@ -896,7 +896,7 @@ class DB(object):
         try:
             TEMP_SQL_TITLE = INSERT_MARKET_DEPTH_SQL
             TEMP_SQL_VALUE = []
-            # OKEX
+            # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 base = self._Okex.getMarketOrderbookDepth(
                     fSymbol, tSymbol, limit)
@@ -944,7 +944,7 @@ class DB(object):
         try:
             TEMP_SQL_TITLE = INSERT_MARKET_KLINE_SQL
             TEMP_SQL_VALUE = []
-            # OKEX
+            # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 base = self._Okex.getMarketKline(fSymbol, tSymbol, interval,
                                                  start, end)
@@ -994,7 +994,7 @@ class DB(object):
         try:
             TEMP_SQL_TITLE = INSERT_MARKET_TICKER_SQL
             TEMP_SQL_VALUE = []
-            # OKEX
+            # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 base = self._Okex.getMarketOrderbookTicker(
                     fSymbol, tSymbol, aggDepth)
@@ -1234,17 +1234,17 @@ class DB(object):
                                    price,
                                    quantity,
                                    ratio='',
-                                   type=ORDER_TYPE_LIMIT):
+                                   type=CCAT_ORDER_TYPE_LIMIT):
         self._logger.debug(
             "src.core.db.db.DB.insertTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }"
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
         try:
             TEMP_SQL_TITLE = INSERT_TRADE_BACKTEST_HISTORY_SQL
             TEMP_SQL_VALUE = []
-            # OKEX
+            # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 timeStamp = utcnow_timestamp()
-                order_id = '0x' + str(timeStamp)
+                order_id = '0x01' + str(timeStamp)
                 status = 'filled'
                 if ratio == '':
                     ratio = self._Okex.getTradeFees()[0]["taker"]
@@ -1257,7 +1257,7 @@ class DB(object):
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 timeStamp = utcnow_timestamp()
-                order_id = '0x' + str(timeStamp)
+                order_id = '0x02' + str(timeStamp)
                 status = 'filled'
                 if ratio == '':
                     ratio = self._Binance.getTradeFees()[0]["taker"]
@@ -1272,7 +1272,7 @@ class DB(object):
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
                 timeStamp = utcnow_timestamp()
-                order_id = '0x' + str(timeStamp)
+                order_id = '0x03' + str(timeStamp)
                 status = 'filled'
                 if ratio == '':
                     ratio = self._Huobi.getTradeFees()[0]["taker"]
@@ -1295,7 +1295,76 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertTradeOrderHistory(self,
+    def insertTradeOrderHistory(self, exchange, fSymbol, tSymbol, limit='100', ratio=''):
+        self._logger.debug("src.core.db.db.DB.insertTradeOrderHistory")
+        try:
+            TEMP_SQL_TITLE = INSERT_TRADE_ORDER_HISTORY_SQL
+            TEMP_SQL_VALUE = []
+            # Okex
+            if exchange == "all" or self._Okex_exchange in exchange:
+                res = self._Okex.getTradeHistory(fSymbol, tSymbol, limit, ratio)
+                if not res==[]:
+                    for base in res:
+                        TEMP_SQL_VALUE.append((str(self._Okex_exchange),
+                             int(base["timeStamp"]),
+                             str(base["order_id"]),
+                             str(base["status"]), str(base["type"]),
+                             str(base["fSymbol"]),
+                             str(base["tSymbol"]),
+                             str(base["ask_or_bid"]),
+                             float(base["ask_bid_price"]),
+                             float(base["ask_bid_size"]),
+                             float(base["filled_price"]),
+                             float(base["filled_size"]),
+                             float(base["fee"])))
+            # Binance
+            if exchange == "all" or self._Binance_exchange in exchange:
+                res = self._Binance.getTradeHistory(fSymbol, tSymbol, limit, ratio)
+                if not res==[]:
+                    for base in res:
+                        TEMP_SQL_VALUE.append((str(self._Binance_exchange),
+                             int(base["timeStamp"]),
+                             str(base["order_id"]),
+                             str(base["status"]), str(base["type"]),
+                             str(base["fSymbol"]),
+                             str(base["tSymbol"]),
+                             str(base["ask_or_bid"]),
+                             float(base["ask_bid_price"]),
+                             float(base["ask_bid_size"]),
+                             float(base["filled_price"]),
+                             float(base["filled_size"]),
+                             float(base["fee"])))
+            # Huobi
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                res = self._Huobi.getTradeHistory(fSymbol, tSymbol, limit, ratio)
+                if not res==[]:
+                    for base in res:
+                        TEMP_SQL_VALUE.append((str(self._Huobi_exchange),
+                             int(base["timeStamp"]),
+                             str(base["order_id"]),
+                             str(base["status"]), str(base["type"]),
+                             str(base["fSymbol"]),
+                             str(base["tSymbol"]),
+                             str(base["ask_or_bid"]),
+                             float(base["ask_bid_price"]),
+                             float(base["ask_bid_size"]),
+                             float(base["filled_price"]),
+                             float(base["filled_size"]),
+                             float(base["fee"])))
+            # Others
+            # to_be_continue
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
+                self._conn.commit()
+                curs.close()
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
+
+    def updateCreatTradeOrderHistory(self,
                                 exchange,
                                 fSymbol,
                                 tSymbol,
@@ -1303,14 +1372,14 @@ class DB(object):
                                 price,
                                 quantity,
                                 ratio='',
-                                type=ORDER_TYPE_LIMIT):
+                                type=CCAT_ORDER_TYPE_LIMIT):
         self._logger.debug(
-            "src.core.db.db.DB.insertTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }"
+            "src.core.db.db.DB.updateCreatTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }"
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
         try:
-            TEMP_SQL_TITLE = INSERT_TRADE_ORDER_HISTORY_SQL
+            TEMP_SQL_TITLE = UPDATE_CREAT_TRADE_ORDER_HISTORY_SQL
             TEMP_SQL_VALUE = []
-            # OKEX
+            # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 base = self._Okex.createOrder(fSymbol, tSymbol, ask_or_bid,
                                               price, quantity, ratio, type)
@@ -1370,3 +1439,9 @@ class DB(object):
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
+
+    def updateCheckTradeOrderHistory(self):
+        pass
+
+    def updateCancleTradeOrderHistory(self):
+        pass

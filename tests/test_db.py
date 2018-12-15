@@ -3,13 +3,19 @@
 import os
 import sys
 import unittest
+import pandas as pd
+
 sys.path.append(os.getcwd())
 
+from src.core.calc.calc import Calc
 from src.core.db.db import DB
 from src.core.util.log import Logger
 
+
 db = DB()
+calc = Calc()
 logger = Logger()
+resInfoSymbol = pd.DataFrame(db.getInfoSymbol())
 
 
 class TestDB(unittest.TestCase):
@@ -30,13 +36,34 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewMarketTickerTraCurrent(self):
-        res = db.getViewAccountWithdrawCurrent()
+    def test_getViewMarketTickerCurrentPairServer(self):
+        res = db.getViewMarketTickerCurrentPairServer('huobi', 'binance')
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewMarketTickerDisCurrent(self):
-        res = db.getViewAccountWithdrawCurrent()
+    def test_getViewMarketTickerCurrentPair(self):
+        res = db.getViewMarketTickerCurrentPair()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getViewMarketTickerCurrentTraServer(self):
+        res = db.getViewMarketTickerCurrentTraServer(
+            ['okex', 'huobi', 'binance'])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getViewMarketTickerCurrentTra(self):
+        res = db.getViewMarketTickerCurrentTra()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getViewMarketTickerCurrentDisServer(self):
+        res = db.getViewMarketTickerCurrentDisServer('huobi', 'binance')
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getViewMarketTickerCurrentDis(self):
+        res = db.getViewMarketTickerCurrentDis()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -59,7 +86,6 @@ class TestDB(unittest.TestCase):
         res = db.getViewAccountWithdrawCurrent()
         logger.debug(res)
         self.assertIsInstance(res, list)
-
 
     def test_getViewMarketSymbolPairs(self):
         res = db.getViewMarketSymbolPairs(["okex", "binance", "huobi"])
@@ -176,16 +202,26 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_insertTradeBacktestHistory(self):
-        db.insertTradeBacktestHistory("all", "ETH", "USDT", "bid", 100, 0.1)
+        db.insertTradeBacktestHistory("all", "ETH", "USDT", "bid", 70, 0.1)
         res = db.getTradeBacktestHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertTradeOrderHistory(self):
-        db.insertTradeOrderHistory("all", "ETH", "USDT", "bid", 100, 0.1)
+        db.insertTradeOrderHistory("all", "ETH", "USDT")
+        pass
+
+    def test_updateCreatTradeOrderHistory(self):
+        db.updateCreatTradeOrderHistory("all", "ETH", "USDT", "bid", 70, 0.15)
         res = db.getTradeOrderHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
+
+    def test_updateCheckTradeOrderHistory(self):
+        pass
+
+    def test_updateCancleTradeOrderHistory(self):
+        pass
 
     def test_insertAccountWithdrawHistory(self):
         db.insertAccountWithdrawHistory("all", "USDT")
@@ -199,45 +235,73 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_insertSignalTickerDis(self):
+        res = calc.calcSignalTickerDis(["okex", "binance", "huobi"], 0.001,
+                                       resInfoSymbol)
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertSignalTickerTra(self):
+        res = calc.calcSignalTickerTra(["okex", "binance", "huobi"], 0.001,
+                                       resInfoSymbol)
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertSignalTickerPair(self):
+        res = calc.calcSignalTickerPair(["okex", "binance", "huobi"], 0.001,
+                                       resInfoSymbol)
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
 
 # list of test_db
 # db test items
 test_db = [
-    TestDB("test_initDB"),
-    TestDB("test_creatTables"),
-    TestDB("test_getTables"),
-    TestDB("test_getAccountBalanceHistory"),
-    TestDB("test_getAccountWithdrawHistory"),
-    TestDB("test_getMarketDepth"),
-    TestDB("test_getMarketKline"),
-    TestDB("test_getMarketTicker"),
-    TestDB("test_getInfoServer"),
-    TestDB("test_getInfoSymbol"),
-    TestDB("test_getInfoWithdraw"),
-    TestDB("test_getTradeBacktestHistory"),
-    TestDB("test_getTradeOrderHistory"),
-    TestDB("test_insertAccountBalanceHistory"),
-    TestDB("test_insertAccountWithdrawHistory"),
-    TestDB("test_insertMarketDepth"),
-    TestDB("test_insertMarketKline"),
-    TestDB("test_insertMarketTicker"),
-    TestDB("test_insertInfoServer"),
-    TestDB("test_insertInfoSymbol"),
-    TestDB("test_insertInfoWithdraw"),
-    TestDB("test_insertTradeBacktestHistory"),
-    # TestDB("test_insertTradeOrderHistory"),
-    TestDB("test_creatViews"),
-    TestDB("test_getViews"),
-    TestDB("test_getViewMarketTickerTraCurrent"),
-    TestDB("test_getViewMarketTickerDisCurrent"),
-    TestDB("test_getViewMarketTickerCurrent"),
-    TestDB("test_getViewMarketKlineCurrent"),
-    TestDB("test_getViewAccountBalanceCurrent"),
-    TestDB("test_getViewMarketTickerSymbol"),
-    TestDB("test_getViewAccountWithdrawCurrent"),
-    TestDB("test_getViewMarketSymbolPairs"),
-    TestDB("test_getViewAccountBalanceCurrent"),
-    TestDB("test_getViewInfoSymbolPairs"),
+    # TestDB("test_initDB"),
+    # TestDB("test_creatTables"),
+    # TestDB("test_getTables"),
+    # TestDB("test_getAccountBalanceHistory"),
+    # TestDB("test_getAccountWithdrawHistory"),
+    # TestDB("test_getMarketDepth"),
+    # TestDB("test_getMarketKline"),
+    # TestDB("test_getMarketTicker"),
+    # TestDB("test_getInfoServer"),
+    # TestDB("test_getInfoSymbol"),
+    # TestDB("test_getInfoWithdraw"),
+    # TestDB("test_getTradeBacktestHistory"),
+    # TestDB("test_getTradeOrderHistory"),
+    # TestDB("test_insertAccountBalanceHistory"),
+    # TestDB("test_insertAccountWithdrawHistory"),
+    # TestDB("test_insertMarketDepth"),
+    # TestDB("test_insertMarketKline"),
+    # TestDB("test_insertMarketTicker"),
+    # TestDB("test_insertInfoServer"),
+    # TestDB("test_insertInfoSymbol"),
+    # TestDB("test_insertInfoWithdraw"),
+    # TestDB("test_insertTradeBacktestHistory"),
+    TestDB("test_insertTradeOrderHistory"),
+    # TestDB("test_updateCreatTradeOrderHistory"),
+    # TestDB("test_updateCheckTradeOrderHistory"),
+    # TestDB("test_updateCancleTradeOrderHistory"),
+    # TestDB("test_insertSignalTickerDis"),
+    # TestDB("test_insertSignalTickerTra"),
+    # TestDB("test_insertSignalTickerPair"),
+    # TestDB("test_creatViews"),
+    # TestDB("test_getViews"),
+    # TestDB("test_getViewMarketTickerCurrentPairServer"),
+    # TestDB("test_getViewMarketTickerCurrentPair"),
+    # TestDB("test_getViewMarketTickerCurrentTraServer"),
+    # TestDB("test_getViewMarketTickerCurrentTra"),
+    # TestDB("test_getViewMarketTickerCurrentDisServer"),
+    # TestDB("test_getViewMarketTickerCurrentDis"),
+    # TestDB("test_getViewMarketTickerCurrent"),
+    # TestDB("test_getViewMarketKlineCurrent"),
+    # TestDB("test_getViewAccountBalanceCurrent"),
+    # TestDB("test_getViewMarketTickerSymbol"),
+    # TestDB("test_getViewAccountWithdrawCurrent"),
+    # TestDB("test_getViewMarketSymbolPairs"),
+    # TestDB("test_getViewAccountBalanceCurrent"),
+    # TestDB("test_getViewInfoSymbolPairs"),
 ]
 
 if __name__ == "__main__":

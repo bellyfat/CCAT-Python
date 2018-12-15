@@ -240,6 +240,22 @@ INSERT_TRADE_ORDER_HISTORY_SQL = '''
     INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
+# update db creat trade order history sql
+UPDATE_CREAT_TRADE_ORDER_HISTORY_SQL = '''
+    INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
+# update db check trade order history sql
+UPDATE_CHECK_TRADE_ORDER_HISTORY_SQL = '''
+    INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
+# update db cancle trade order history sql
+UPDATE_CANCLE_TRADE_ORDER_HISTORY_SQL = Template('''
+    UPDATE TRADE_ORDER_HISTORY SET status = $status WHERE order_id=$order_id;
+''')
+
+
 # get db talbes sql
 GET_TABLES_SQL = '''
     SELECT name FROM sqlite_master
