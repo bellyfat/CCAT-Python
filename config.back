@@ -59,16 +59,16 @@
   apiEpochSaveBound = 1.25
   apiResultEpoch = 0.5
   basePriceVolume = 100
-  basePriceTimeout = 30
+  basePriceTimeout = 60
   baseJudgeTimeout = 1800
   marketKlineCycle = 86400
   marketDepthLimit = 20
   marketTickerAggStep = 10
-  syncAccountTimeout = 30
+  syncAccountTimeout = 60
   syncMarketTimeout = 60
-  syncJudgeTimeout = 10
-  syncBacktestTimeout = 10
-  syncOrderTimeout = 10
+  syncJudgeTimeout = 15
+  syncBacktestTimeout = 30
+  syncOrderTimeout = 30
   signalTickerTimeout = 604800
   symbolStartBaseCoin = 15
   symbolEndBaseCoin = 20
@@ -91,9 +91,9 @@
 # mediumTimeout: medium event timeout
 # highTimeout: high event timeout
 [Event]
-  lowTimeout = 120
-  mediumTimeout = 60
-  highTimeout = 20
+  lowTimeout = 180
+  mediumTimeout = 90
+  highTimeout = 30
 
 # Log Settings
 # url: log file path
@@ -110,7 +110,7 @@
 [DB]
   type = Sqlite3
   url = CCAT.db
-  timeout = 30
+  timeout = 60
   synchronous = True
 
 # Proxies Settings

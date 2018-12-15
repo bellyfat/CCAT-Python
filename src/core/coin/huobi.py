@@ -84,11 +84,11 @@ class Huobi(Coin):
     def getServerLimits(self):
         '''
         REST API
-        限制频率（每个接口，只针对交易api，行情api不限制）为10秒100次。
+        限制频率每个API,为10秒100次。
         '''
         res = {
-            "info_second": 6,
-            "market_second": 6,
+            "info_second": 5,
+            "market_second": 5,
             "orders_second": 10,
             "webSockets_second": ''
         }
