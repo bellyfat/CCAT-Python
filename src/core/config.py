@@ -62,8 +62,12 @@ class Config(object):
                 'Main', 'marketTickerAggStep')
             Config._Main_syncAccountTimeout = cf.getint(
                 'Main', 'syncAccountTimeout')
-            Config._Main_syncMarketTimeout = cf.getint(
-                'Main', 'syncMarketTimeout')
+            Config._Main_syncMarketKlineTimeout = cf.getint(
+                'Main', 'syncMarketKlineTimeout')
+            Config._Main_syncMarketDepthTimeout = cf.getint(
+                'Main', 'syncMarketDepthTimeout')
+            Config._Main_syncMarketTickerTimeout = cf.getint(
+                'Main', 'syncMarketTickerTimeout')
             Config._Main_syncJudgeTimeout = cf.getint(
                 'Main', 'syncJudgeTimeout')
             Config._Main_syncBacktestTimeout = cf.getint(

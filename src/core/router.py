@@ -20,7 +20,9 @@ class Router(object):
         self._marketKlineUpdated = False
         self._marketKlineUpdateTime = time.time()
         self._syncAccountTimeout = Config()._Main_syncAccountTimeout
-        self._syncMarketTimeout = Config()._Main_syncMarketTimeout
+        self._syncMarketKlineTimeout = Config()._Main_syncMarketKlineTimeout
+        self._syncMarketDepthTimeout = Config()._Main_syncMarketDepthTimeout
+        self._syncMarketTickerTimeout = Config()._Main_syncMarketTickerTimeout
         self._syncJudgeTimeout = Config()._Main_syncJudgeTimeout
         # class instance
         self._eventEngine = EventEngine()
@@ -78,8 +80,8 @@ class Router(object):
             if time.time() - self._marketKlineUpdateTime > self._marketKlineCycle or not self._marketKlineUpdated:
                 self._marketKlineUpdated = True
                 self._marketKlineUpdateTime = time.time()
-                self._util.updateDBMarketKline(async=False, timeout=self._syncMarketTimeout)
-            self._util.updateDBMarketTicker(async=False, timeout=self._syncMarketTimeout)
+                self._util.updateDBMarketKline(async=False, timeout=self._syncMarketKlineTimeout)
+            self._util.updateDBMarketTicker(async=False, timeout=self._syncMarketTickerTimeout)
             self._util.updateDBJudgeMarketTicker(async=False, timeout=self._syncJudgeTimeout)
         except (UtilException, Exception) as err:
             errStr = "src.core.router.Router.runListen: %s" % RouterException(err)
