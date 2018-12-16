@@ -3,7 +3,7 @@
 # Okex Class
 
 import json
-from decimal import ROUND_DOWN, ROUND_UP, Decimal
+from decimal import ROUND_DOWN, ROUND_HALF_UP, ROUND_UP, Decimal
 
 import requests
 from requests.exceptions import ConnectionError, ReadTimeout
@@ -17,7 +17,7 @@ from src.core.coin.lib.okex_v3_api.exceptions import (OkexAPIException,
                                                       OkexRequestException)
 from src.core.coin.lib.okex_v3_api.spot_api import SpotAPI
 from src.core.util.exceptions import OkexException
-from src.core.util.helper import date_to_milliseconds, interval_to_milliseconds
+from src.core.util.helper import date_to_milliseconds, interval_to_milliseconds, num_to_precision
 
 
 class Okex(Coin):
@@ -140,7 +140,7 @@ class Okex(Coin):
                 fSymbol_size_max = ''
                 fSymbol_size_min = float(b["min_size"])
                 fSymbol_size_step = float(b["size_increment"])
-                min_notional = fSymbol_size_min * tSymbol_price_min
+                min_notional = tSymbol_price_min * fSymbol_size_min
                 res.append({
                     "fSymbol": fSymbol,
                     "tSymbol": tSymbol,
@@ -679,6 +679,377 @@ class Okex(Coin):
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
             errStr = "src.core.coin.okex.Okex.oneClickCancleOrders: exception err=%s" % err
+            raise OkexException(errStr)
+
+    def oneClickTransToBaseCoin(self, baseCoin='USDT'):
+        try:
+            exceptionStr = []
+            balance = self.getAccountBalances()
+            symbol = self.getSymbolsLimits()
+            deSet = []
+            trSet = []
+            # trSet -> deSet
+            for b in balance:
+                isIn = False
+                if b['asset'] != baseCoin and b['free'] > 0:
+                    for s in symbol:
+                        if (baseCoin.upper(), b['asset']) == (
+                                s['fSymbol'], s['tSymbol']) and isIn == False:
+                            isIn = True
+                        if (b['asset'], baseCoin.upper()) == (
+                                s['fSymbol'], s['tSymbol']) and isIn == False:
+                            isIn = True
+                    if isIn == False:
+                        for s in symbol:
+                            if b['asset'] == s['fSymbol'] and isIn == False:
+                                for sy in symbol:
+                                    if (baseCoin.upper(), s['tSymbol']) == (
+                                            sy['fSymbol'],
+                                            sy['tSymbol']) and isIn == False:
+                                        isIn = True
+                                        trSet.append({
+                                            'fSymbol':
+                                            s['fSymbol'],
+                                            'tSymbol':
+                                            s['tSymbol'],
+                                            'balance':
+                                            float(b['free']),
+                                            'ask_or_bid':
+                                            CCAT_ORDER_SIDE_SELL,
+                                            'limit_price_precision':
+                                            "NULL"
+                                            if s["tSymbol_price"]["precision"]
+                                            == '' else float(s["tSymbol_price"]
+                                                             ["precision"]),
+                                            'limit_size_precision':
+                                            "NULL"
+                                            if s["fSymbol_size"]["precision"]
+                                            == '' else float(s["fSymbol_size"]
+                                                             ["precision"]),
+                                            'limit_size_min':
+                                            "NULL" if
+                                            s["fSymbol_size"]["min"] == '' else
+                                            float(s["fSymbol_size"]["min"]),
+                                            'limit_min_notional':
+                                            "NULL" if s["min_notional"] == ''
+                                            else float(s["min_notional"])
+                                        })
+                                    if (s['tSymbol'], baseCoin.upper()) == (
+                                            sy['fSymbol'],
+                                            sy['tSymbol']) and isIn == False:
+                                        isIn = True
+                                        trSet.append({
+                                            'fSymbol':
+                                            s['fSymbol'],
+                                            'tSymbol':
+                                            s['tSymbol'],
+                                            'balance':
+                                            float(b['free']),
+                                            'ask_or_bid':
+                                            CCAT_ORDER_SIDE_SELL,
+                                            'limit_price_precision':
+                                            "NULL"
+                                            if s["tSymbol_price"]["precision"]
+                                            == '' else float(s["tSymbol_price"]
+                                                             ["precision"]),
+                                            'limit_size_precision':
+                                            "NULL"
+                                            if s["fSymbol_size"]["precision"]
+                                            == '' else float(s["fSymbol_size"]
+                                                             ["precision"]),
+                                            'limit_size_min':
+                                            "NULL" if
+                                            s["fSymbol_size"]["min"] == '' else
+                                            float(s["fSymbol_size"]["min"]),
+                                            'limit_min_notional':
+                                            "NULL" if s["min_notional"] == ''
+                                            else float(s["min_notional"])
+                                        })
+                            if b['asset'] == s['tSymbol'] and isIn == False:
+                                for sy in symbol:
+                                    if (baseCoin.upper(), s['tSymbol']) == (
+                                            sy['fSymbol'],
+                                            sy['tSymbol']) and isIn == False:
+                                        isIn = True
+                                        trSet.append({
+                                            'fSymbol':
+                                            s['fSymbol'],
+                                            'tSymbol':
+                                            s['tSymbol'],
+                                            'balance':
+                                            float(b['free']),
+                                            'ask_or_bid':
+                                            CCAT_ORDER_SIDE_BUY,
+                                            'limit_price_precision':
+                                            "NULL"
+                                            if s["tSymbol_price"]["precision"]
+                                            == '' else float(s["tSymbol_price"]
+                                                             ["precision"]),
+                                            'limit_size_precision':
+                                            "NULL"
+                                            if s["fSymbol_size"]["precision"]
+                                            == '' else float(s["fSymbol_size"]
+                                                             ["precision"]),
+                                            'limit_size_min':
+                                            "NULL" if
+                                            s["fSymbol_size"]["min"] == '' else
+                                            float(s["fSymbol_size"]["min"]),
+                                            'limit_min_notional':
+                                            "NULL" if s["min_notional"] == ''
+                                            else float(s["min_notional"])
+                                        })
+                                    if (s['tSymbol'], baseCoin.upper()) == (
+                                            sy['fSymbol'],
+                                            sy['tSymbol']) and isIn == False:
+                                        isIn = True
+                                        trSet.append({
+                                            'fSymbol':
+                                            s['fSymbol'],
+                                            'tSymbol':
+                                            s['tSymbol'],
+                                            'balance':
+                                            float(b['free']),
+                                            'ask_or_bid':
+                                            CCAT_ORDER_SIDE_BUY,
+                                            'limit_price_precision':
+                                            "NULL"
+                                            if s["tSymbol_price"]["precision"]
+                                            == '' else float(s["tSymbol_price"]
+                                                             ["precision"]),
+                                            'limit_size_precision':
+                                            "NULL"
+                                            if s["fSymbol_size"]["precision"]
+                                            == '' else float(s["fSymbol_size"]
+                                                             ["precision"]),
+                                            'limit_size_min':
+                                            "NULL" if
+                                            s["fSymbol_size"]["min"] == '' else
+                                            float(s["fSymbol_size"]["min"]),
+                                            'limit_min_notional':
+                                            "NULL" if s["min_notional"] == ''
+                                            else float(s["min_notional"])
+                                        })
+            for tr in trSet:
+                res = self.getMarketOrderbookDepth(tr['fSymbol'],
+                                                   tr['tSymbol'], 100)
+                sum = 0
+                trTrade = []
+                if tr['ask_or_bid'] == CCAT_ORDER_SIDE_BUY:
+                    for r in res['ask_price_size']:
+                        rprice = float(r[0])
+                        rSize = float(r[1])
+                        trBalanceSize = tr['balance'] / rprice
+                        if sum < trBalanceSize:
+                            trSize = min(trBalanceSize - sum, rSize)
+                            if not trSize > 0:
+                                continue
+                            if not tr['limit_size_min'] == 'NULL':
+                                if trSize < tr['limit_size_min']:
+                                    continue
+                            if not tr['limit_min_notional'] == 'NULL':
+                                if rprice * trSize < tr['limit_min_notional']:
+                                    continue
+                            sum = sum + trSize
+                            trTrade.append({'price': rprice, 'size': trSize})
+                if tr['ask_or_bid'] == CCAT_ORDER_SIDE_SELL:
+                    for r in res['bid_price_size']:
+                        rprice = float(r[0])
+                        rSize = float(r[1])
+                        trBalanceSize = tr['balance']
+                        if sum < trBalanceSize:
+                            trSize = min(trBalanceSize - sum, rSize)
+                            if not trSize > 0:
+                                continue
+                            if not tr['limit_size_min'] == 'NULL':
+                                if trSize < tr['limit_size_min']:
+                                    continue
+                            if not tr['limit_min_notional'] == 'NULL':
+                                if rprice * trSize < tr['limit_min_notional']:
+                                    continue
+                            sum = sum + trSize
+                            trTrade.append({'price': rprice, 'size': trSize})
+                for trade in trTrade:
+                    price = num_to_precision(
+                        trade['price'],
+                        tr['limit_price_precision'],
+                        rounding=ROUND_HALF_UP)
+                    size = num_to_precision(
+                        trade['size'],
+                        tr['limit_size_precision'],
+                        rounding=ROUND_DOWN)
+                    if not float(size) > 0:
+                        continue
+                    if not tr['limit_size_min'] == 'NULL':
+                        if float(size) < tr['limit_size_min']:
+                            continue
+                    if not tr['limit_min_notional'] == 'NULL':
+                        if float(price) * float(
+                                size) < tr['limit_min_notional']:
+                            continue
+                    try:
+                        base = self.createOrder(
+                            tr['fSymbol'], tr['tSymbol'], tr['ask_or_bid'],
+                            str(price), str(size), 0, CCAT_ORDER_TYPE_LIMIT)
+                    except Exception as err:
+                        exceptionStr.append(err)
+            # deSet -> baseCoin
+            balance = self.getAccountBalances()
+            for b in balance:
+                isIn = False
+                if b['asset'] != baseCoin and b['free'] > 0:
+                    for s in symbol:
+                        if (baseCoin.upper(), b['asset']) == (
+                                s['fSymbol'], s['tSymbol']) and isIn == False:
+                            isIn = True
+                            deSet.append({
+                                'fSymbol':
+                                s['fSymbol'],
+                                'tSymbol':
+                                s['tSymbol'],
+                                'balance':
+                                float(b['free']),
+                                'ask_or_bid':
+                                CCAT_ORDER_SIDE_BUY,
+                                'limit_price_precision':
+                                "NULL" if s["tSymbol_price"]["precision"] == ''
+                                else float(s["tSymbol_price"]["precision"]),
+                                'limit_size_precision':
+                                "NULL" if s["fSymbol_size"]["precision"] == ''
+                                else float(s["fSymbol_size"]["precision"]),
+                                'limit_size_min':
+                                "NULL" if s["fSymbol_size"]["min"] == '' else
+                                float(s["fSymbol_size"]["min"]),
+                                'limit_min_notional':
+                                "NULL" if s["min_notional"] == '' else float(
+                                    s["min_notional"])
+                            })
+                        if (b['asset'], baseCoin.upper()) == (
+                                s['fSymbol'], s['tSymbol']) and isIn == False:
+                            isIn = True
+                            deSet.append({
+                                'fSymbol':
+                                s['fSymbol'],
+                                'tSymbol':
+                                s['tSymbol'],
+                                'balance':
+                                float(b['free']),
+                                'ask_or_bid':
+                                CCAT_ORDER_SIDE_SELL,
+                                'limit_price_precision':
+                                "NULL" if s["tSymbol_price"]["precision"] == ''
+                                else float(s["tSymbol_price"]["precision"]),
+                                'limit_size_precision':
+                                "NULL" if s["fSymbol_size"]["precision"] == ''
+                                else float(s["fSymbol_size"]["precision"]),
+                                'limit_size_min':
+                                "NULL" if s["fSymbol_size"]["min"] == '' else
+                                float(s["fSymbol_size"]["min"]),
+                                'limit_min_notional':
+                                "NULL" if s["min_notional"] == '' else float(
+                                    s["min_notional"])
+                            })
+            for de in deSet:
+                res = self.getMarketOrderbookDepth(de['fSymbol'],
+                                                   de['tSymbol'], 100)
+                sum = 0
+                deTrade = []
+                if de['ask_or_bid'] == CCAT_ORDER_SIDE_BUY:
+                    for r in res['ask_price_size']:
+                        rprice = float(r[0])
+                        rSize = float(r[1])
+                        deBalanceSize = de['balance'] / rprice
+                        if sum < deBalanceSize:
+                            deSize = min(deBalanceSize - sum, rSize)
+                            if not deSize > 0:
+                                continue
+                            if not de['limit_size_min'] == 'NULL':
+                                if deSize < de['limit_size_min']:
+                                    continue
+                            if not de['limit_min_notional'] == 'NULL':
+                                if rprice * deSize < de['limit_min_notional']:
+                                    continue
+                            sum = sum + deSize
+                            deTrade.append({'price': rprice, 'size': deSize})
+                if de['ask_or_bid'] == CCAT_ORDER_SIDE_SELL:
+                    for r in res['bid_price_size']:
+                        rprice = float(r[0])
+                        rSize = float(r[1])
+                        deBalanceSize = de['balance']
+                        if sum < deBalanceSize:
+                            deSize = min(deBalanceSize - sum, rSize)
+                            if not deSize > 0:
+                                continue
+                            if not de['limit_size_min'] == 'NULL':
+                                if deSize < de['limit_size_min']:
+                                    continue
+                            if not de['limit_min_notional'] == 'NULL':
+                                if rprice * deSize < de['limit_min_notional']:
+                                    continue
+                            sum = sum + deSize
+                            deTrade.append({'price': rprice, 'size': deSize})
+                for trade in deTrade:
+                    price = num_to_precision(
+                        trade['price'],
+                        de['limit_price_precision'],
+                        rounding=ROUND_HALF_UP)
+                    size = num_to_precision(
+                        trade['size'],
+                        de['limit_size_precision'],
+                        rounding=ROUND_DOWN)
+                    if not float(size) > 0:
+                        continue
+                    if not de['limit_size_min'] == 'NULL':
+                        if float(size) < de['limit_size_min']:
+                            continue
+                    if not de['limit_min_notional'] == 'NULL':
+                        if float(price) * float(
+                                size) < de['limit_min_notional']:
+                            continue
+                    try:
+                        base = self.createOrder(
+                            de['fSymbol'], de['tSymbol'], de['ask_or_bid'],
+                            str(price), str(size), 0, CCAT_ORDER_TYPE_LIMIT)
+                    except Exception as err:
+                        exceptionStr.append(err)
+            # check trans result
+            if not exceptionStr == []:
+                raise Exception(exceptionStr)
+            balance = self.getAccountBalances()
+            for b in balance:
+                isIn = False
+                if b['asset'] != baseCoin and b['free'] > 0:
+                    for s in symbol:
+                        if (b['asset'],
+                                'USDT') == (s['fSymbol'],
+                                            s['tSymbol']) and isIn == False:
+                            isIn = True
+                            res = self.getMarketOrderbookDepth(
+                                s['fSymbol'], s['tSymbol'], 10)
+                            if float(b['free']) * float(res['bid_price_size'][
+                                    0][0]) > CCAT_BALANCE_SMALL_AMOUNT_USDT:
+                                return False
+                    if isIn == False:
+                        for s in symbol:
+                            if b['asset'] == s['fSymbol'] and isIn == False:
+                                for sy in symbol:
+                                    if (s['tSymbol'], 'USDT') == (
+                                            sy['fSymbol'],
+                                            sy['tSymbol']) and isIn == False:
+                                        isIn = True
+                                        res = self.getMarketOrderbookDepth(
+                                            s['fSymbol'], s['tSymbol'], 10)
+                                        resy = self.getMarketOrderbookDepth(
+                                            sy['fSymbol'], sy['tSymbol'], 10)
+                                        if float(b['free']) * float(
+                                                res['bid_price_size'][0]
+                                            [0]) * float(
+                                                resy['bid_price_size'][0][0]
+                                            ) > CCAT_BALANCE_SMALL_AMOUNT_USDT:
+                                            return False
+            return True
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException, Exception) as err:
+            errStr = "src.core.coin.okex.Okex.oneClickTransToBaseCoin: exception err=%s" % err
             raise OkexException(errStr)
 
     # deposit asset balance

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+# Balance small amount
+CCAT_BALANCE_SMALL_AMOUNT_BTC = 0.001
+CCAT_BALANCE_SMALL_AMOUNT_USDT = 1
+
 # Order status
 CCAT_ORDER_STATUS_ORDERING = 'ordering'
 CCAT_ORDER_STATUS_CANCELING = 'canceling'

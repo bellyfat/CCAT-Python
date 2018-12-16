@@ -139,8 +139,12 @@ class TestBinance(unittest.TestCase):
     def test_oneClickCancleOrders(self):
         res = binance.oneClickCancleOrders()
         logger.debug(res)
-        res = binance.getTradeOpen("", "")
-        self.assertIsInstance(res, list)
+        self.assertIsInstance(res, bool)
+
+    def test_oneClickTransToBaseCoin(self):
+        res = binance.oneClickTransToBaseCoin("USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, bool)
 
     def test_depositeAsset(self):
         pass

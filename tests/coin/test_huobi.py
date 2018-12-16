@@ -138,8 +138,12 @@ class TestHuobi(unittest.TestCase):
     def test_oneClickCancleOrders(self):
         res = huobi.oneClickCancleOrders()
         logger.debug(res)
-        res = huobi.getTradeOpen("", "")
-        self.assertIsInstance(res, list)
+        self.assertIsInstance(res, bool)
+
+    def test_oneClickTransToBaseCoin(self):
+        res = huobi.oneClickTransToBaseCoin("USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, bool)
 
     def test_depositeAsset(self):
         pass

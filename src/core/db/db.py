@@ -1590,6 +1590,7 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
+    # db 紧急功能 不更新数据库
     def oneClickCancleOrders(self, exchange):
         self._logger.debug("src.core.db.db.DB.oneClickCancleOrders")
         try:
@@ -1609,3 +1610,7 @@ class DB(object):
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
+
+    # db 紧急功能 不更新数据库
+    def oneClickTransToBaseCoin(self, exchange):
+        self._logger.debug("src.core.db.db.DB.oneClickTransToBaseCoin")

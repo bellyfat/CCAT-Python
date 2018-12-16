@@ -1,10 +1,39 @@
 # -*- coding: utf-8 -*-
 
+import decimal
 from datetime import datetime, timezone
+from decimal import ROUND_HALF_UP, Context, Decimal
 from string import Template
 
-import dateparser
 import pytz
+
+import dateparser
+
+
+def float_to_str(f):
+    ctx = Context()
+    ctx.prec = 50
+    d1 = ctx.create_decimal(repr(f))
+    f1 = format(d1, 'f')
+    if f1[::-1][:2][::-1] == '.0':
+        f1 = f1[::-1][2:][::-1]
+    return f1
+
+
+def num_to_precision(num, precision, rounding=ROUND_HALF_UP):
+    if '.' in float_to_str(precision):
+        numStr = Decimal(float_to_str(num)).quantize(
+            Decimal(float_to_str(precision)), rounding=rounding)
+    else:
+        idx = '1'
+        for s in float_to_str(precision)[::-1]:
+            if s == '0':
+                idx = idx + '0'
+        numStr = Decimal(float_to_str(num/float(idx))).quantize(
+            Decimal('1'), rounding=rounding)
+        if not str(numStr) == '0':
+            numStr = str(numStr) + idx[1:]
+    return str(numStr)
 
 
 def str_to_list(str):

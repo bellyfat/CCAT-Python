@@ -515,7 +515,8 @@ class Util(object):
             raise UtilException(err)
 
     # 一键 order 交易所有币到baseCoin
-    def oneClickOrderBaseCoin(self):
+    def oneClickTransToBaseCoin(self):
+
         pass
 
     # 一键 withdraw baseCoin 提币到冷钱包
