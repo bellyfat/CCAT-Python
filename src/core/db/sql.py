@@ -556,11 +556,11 @@ CREATE_VIEWS_SQL = Template('''
             WHERE (B1.deposit<>'' OR B1.withdraw <>'') and B2.server IS NULL;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_KLINE_CURRENT
     	AS
-    			SELECT M1.*, M2.close as tSymbol_base, M1.close*M1.volume*M2.close as price_volume_base
+    			SELECT M1.*, M1.close*M2.close as price_base, M1.close*M1.volume*M2.close as price_volume_base
     			FROM MARKET_KLINE M1
     			JOIN MARKET_KLINE M2 ON M1.server = M2.server AND M1.timeStamp = M2.timeStamp AND M1.tSymbol = M2.fSymbol AND M1.tSymbol<>'$baseCoin' AND M2.tSymbol ='$baseCoin'
     		UNION
-    			SELECT M1.*, M1.close as tSymbol_base, M1.close*M1.volume as price_volume_base
+    			SELECT M1.*, M1.close as price_base, M1.close*M1.volume as price_volume_base
     			FROM MARKET_KLINE M1
     			WHERE M1.tSymbol = '$baseCoin';
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_SYMBOL
