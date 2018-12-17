@@ -22,6 +22,10 @@ if __name__ == '__main__':
     logger.debug("3. intergration testing... python3 tests/test_engine.py")
     os.system("python3 tests/test_engine.py")
 
-    # # 4. system test for test_main
-    logger.debug("4. system testing... python3 tests/test_main.py")
+    # # 4. system test for test_router
+    logger.debug("4. system testing... python3 tests/test_router.py")
+    os.system("python3 tests/test_router.py")
+
+    # # 5. system test for test_main
+    logger.debug("5. system testing... python3 tests/test_main.py")
     os.system("python3 tests/test_main.py")

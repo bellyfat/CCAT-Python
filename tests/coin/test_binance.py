@@ -116,7 +116,7 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, dict)
 
     def test_createOrder(self):
-        res = binance.createOrder("ETH", "USDT", "bid", 10, 0.05)
+        res = binance.createOrder("ETH", "USDT", "bid", 10, 1)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
@@ -135,6 +135,16 @@ class TestBinance(unittest.TestCase):
                                        "USDT")
         logger.debug(res)
         self.assertIsInstance(res, list)
+
+    def test_oneClickCancleOrders(self):
+        res = binance.oneClickCancleOrders()
+        logger.debug(res)
+        self.assertIsInstance(res, bool)
+
+    def test_oneClickTransToBaseCoin(self):
+        res = binance.oneClickTransToBaseCoin("USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, bool)
 
     def test_depositeAsset(self):
         pass

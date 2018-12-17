@@ -36,6 +36,8 @@ test_okex = [
     TestOkex("test_checkOrder"),
     TestOkex("test_cancelOrder"),
     TestOkex("test_cancelBatchOrder"),
+    TestOkex("test_oneClickCancleOrders"),
+    # TestOkex("test_oneClickTransToBaseCoin"),
     TestOkex("test_depositeAsset"),
     TestOkex("test_withdrawAsset")
 ]
@@ -62,6 +64,8 @@ test_binance = [
     TestBinance("test_checkOrder"),
     TestBinance("test_cancelOrder"),
     TestBinance("test_cancelBatchOrder"),
+    TestBinance("test_oneClickCancleOrders"),
+    # TestBinance("test_oneClickTransToBaseCoin"),
     TestBinance("test_depositeAsset"),
     TestBinance("test_withdrawAsset")
 ]
@@ -88,6 +92,8 @@ test_huobi = [
     TestHuobi("test_checkOrder"),
     TestHuobi("test_cancelOrder"),
     TestHuobi("test_cancelBatchOrder"),
+    TestHuobi("test_oneClickCancleOrders"),
+    # TestHuobi("test_oneClickTransToBaseCoin"),
     TestHuobi("test_depositeAsset"),
     TestHuobi("test_withdrawAsset")
 ]

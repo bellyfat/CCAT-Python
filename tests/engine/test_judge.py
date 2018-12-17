@@ -36,9 +36,11 @@ if __name__ == '__main__':
     __eventEngine.start()
 
     # app update
+    util.updateDBMarketDepth(async=False)
+
     # util.updateDBMarketKline(async=False)
 
-    util.updateDBMarketTicker(async=False)
+    # util.updateDBMarketTicker(async=False)
 
     # util.updateDBJudgeMarketTicker(async=False)
 
@@ -51,4 +53,4 @@ if __name__ == '__main__':
 
     # exec time
     end = time.time()
-    __logger.debug("tests.engine.test_judge finished in %0.3fs" % float(end-start))
+    __logger.info("tests.engine.test_judge finished in %0.3fs" % float(end-start))

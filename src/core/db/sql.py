@@ -2,6 +2,35 @@
 
 from string import Template
 
+# get db signal ticker dis sql
+GET_VIEW_SIGNAL_TICKER_DIS_CURRENT_SQL = '''
+    SELECT * FROM VIEW_SIGNAL_TICKER_DIS_CURRENT;
+'''
+# get db signal ticker dis sql
+GET_VIEW_SIGNAL_TICKER_TRA_CURRENT_SQL = '''
+    SELECT * FROM VIEW_SIGNAL_TICKER_TRA_CURRENT;
+'''
+# get db signal ticker dis sql
+GET_VIEW_SIGNAL_TICKER_PAIR_CURRENT_SQL = '''
+    SELECT * FROM VIEW_SIGNAL_TICKER_PAIR_CURRENT;
+'''
+
+# get db view market ticker current tra sql
+GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SERVER_SQL = Template('''
+    SELECT *
+    FROM VIEW_MARKET_TICKER_CURRENT_PAIR
+    WHERE (J1_server='$server' AND J2_server='$server_pair') OR (J1_server='$server_pair' AND J2_server='$server');
+''')
+
+# get db view market ticker current tra sql
+GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SQL = '''
+    SELECT * FROM VIEW_MARKET_TICKER_CURRENT_PAIR;
+'''
+
+# get db view market ticker current tra sql
+GET_VIEW_MARKET_TICKER_CURRENT_TRA_SERVER_SQL = Template('''
+    SELECT * FROM VIEW_MARKET_TICKER_CURRENT_TRA WHERE server IN $server;
+''')
 
 # get db view market ticker current tra sql
 GET_VIEW_MARKET_TICKER_CURRENT_TRA_SQL = '''
@@ -9,7 +38,7 @@ GET_VIEW_MARKET_TICKER_CURRENT_TRA_SQL = '''
 '''
 
 # get db view market ticker current dis pair sql
-GET_VIEW_MARKET_TICKER_CURRENT_DIS_PAIR_SQL =  Template('''
+GET_VIEW_MARKET_TICKER_CURRENT_DIS_SERVER_SQL = Template('''
     SELECT *
     FROM VIEW_MARKET_TICKER_CURRENT_DIS
     WHERE (bid_server='$server' AND ask_server='$server_pair') OR (bid_server='$server_pair' AND ask_server='$server');
@@ -45,7 +74,6 @@ GET_VIEW_MARKET_SYMBOL_PAIRS_AGGDEPTH_SQL = Template('''
     WHERE server IN $server and fSymbol='$fSymbol' and tSymbol='$tSymbol';
 ''')
 
-
 # get db view market symbol sql
 GET_VIEW_MARKET_SYMBOL_PAIRS_SQL = Template('''
     SELECT * FROM VIEW_MARKET_SYMBOL WHERE server IN $server;
@@ -80,9 +108,9 @@ GET_INFO_SERVER_SQL = '''
     SELECT * FROM INFO_SERVER;
 '''
 # get db symbol info sql
-GET_INFO_SYMBOL_SQL = '''
-    SELECT * FROM INFO_SYMBOL;
-'''
+GET_INFO_SYMBOL_SQL = Template('''
+    SELECT * FROM INFO_SYMBOL WHERE server IN $server;
+''')
 # get db withdraw info sql
 GET_INFO_WITHDRAW_SQL = Template('''
     SELECT * FROM INFO_WITHDRAW WHERE server IN $server;
@@ -112,6 +140,31 @@ GET_MARKET_TICKER_SQL = '''
 DEL_MARKET_TICKER_SQL = '''
     DELETE FROM MARKET_TICKER;
 '''
+
+# get db signal ticker dis sql
+GET_SIGNAL_TICKER_DIS_SQL = '''
+    SELECT * FROM SIGNAL_TICKER_DIS;
+'''
+# delete db signal ticker dis sql
+DEL_SIGNAL_TICKER_DIS_SQL = Template('''
+    DELETE FROM SIGNAL_TICKER_DIS WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
+# get db signal ticker dis sql
+GET_SIGNAL_TICKER_TRA_SQL = '''
+    SELECT * FROM SIGNAL_TICKER_TRA;
+'''
+# delete db signal ticker dis sql
+DEL_SIGNAL_TICKER_TRA_SQL = Template('''
+    DELETE FROM SIGNAL_TICKER_TRA WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
+# get db signal ticker dis sql
+GET_SIGNAL_TICKER_PAIR_SQL = '''
+    SELECT * FROM SIGNAL_TICKER_PAIR;
+'''
+# delete db signal ticker dis sql
+DEL_SIGNAL_TICKER_PAIR_SQL = Template('''
+    DELETE FROM SIGNAL_TICKER_PAIR WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
 
 # get db trade backtest history sql
 GET_TRADE_BACKTEST_HISTORY_SQL = '''
@@ -162,6 +215,21 @@ INSERT_MARKET_TICKER_SQL = '''
     INSERT OR REPLACE INTO MARKET_TICKER (server, timeStamp, fSymbol, tSymbol, bid_one_price, bid_one_size, ask_one_price, ask_one_size)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
 
+# insert db signal ticker dis sql
+INSERT_SIGNAL_TICKER_DIS_SQL = '''
+    INSERT OR REPLACE INTO SIGNAL_TICKER_DIS (timeStamp, bid_server, ask_server, fSymbol, tSymbol, bid_price, bid_size, bid_price_base, ask_price, ask_size, ask_price_base, bid_fee, ask_fee, gain_base, gain_ratio)
+    VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?)'''
+
+# insert db signal ticker dis sql
+INSERT_SIGNAL_TICKER_TRA_SQL = '''
+    INSERT OR REPLACE INTO SIGNAL_TICKER_TRA (timeStamp, server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, V1_bid_one_price, V1_bid_one_size, V1_bid_one_price_base, V1_ask_one_price, V1_ask_one_size, V1_ask_one_price_base, V2_bid_one_price, V2_bid_one_size, V2_bid_one_price_base, V2_ask_one_price, V2_ask_one_size, V2_ask_one_price_base, V3_bid_one_price, V3_bid_one_size, V3_bid_one_price_base, V3_ask_one_price, V3_ask_one_size, V3_ask_one_price_base, V1_fee, V2_fee, V3_fee, C1_symbol, C2_symbol, C3_symbol, V1_one_price, V1_one_price_base, V1_one_size, C1_symbol_base, V2_one_price, V2_one_price_base, V2_one_size, C2_symbol_base, V3_one_price, V3_one_price_base, V3_one_size, C3_symbol_base, gain_symbol, gain_base, gain_ratio)
+    VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?)'''
+
+# insert db signal ticker dis sql
+INSERT_SIGNAL_TICKER_PAIR_SQL = '''
+    INSERT OR REPLACE INTO SIGNAL_TICKER_PAIR (timeStamp, J1_server, J2_server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, J1_V1_bid_one_price, J1_V1_bid_one_size, J1_V1_bid_one_price_base, J1_V1_ask_one_price, J1_V1_ask_one_size, J1_V1_ask_one_price_base, J1_V2_bid_one_price, J1_V2_bid_one_size, J1_V2_bid_one_price_base, J1_V2_ask_one_price, J1_V2_ask_one_size, J1_V2_ask_one_price_base, J1_V3_bid_one_price, J1_V3_bid_one_size, J1_V3_bid_one_price_base, J1_V3_ask_one_price, J1_V3_ask_one_size, J1_V3_ask_one_price_base, J2_V1_bid_one_price, J2_V1_bid_one_size, J2_V1_bid_one_price_base, J2_V1_ask_one_price, J2_V1_ask_one_size, J2_V1_ask_one_price_base, J2_V2_bid_one_price, J2_V2_bid_one_size, J2_V2_bid_one_price_base, J2_V2_ask_one_price, J2_V2_ask_one_size, J2_V2_ask_one_price_base, J2_V3_bid_one_price, J2_V3_bid_one_size, J2_V3_bid_one_price_base, J2_V3_ask_one_price, J2_V3_ask_one_size, J2_V3_ask_one_price_base, J1_V1_fee, J1_V2_fee, J1_V3_fee, J2_V1_fee, J2_V2_fee, J2_V3_fee, C1_symbol, C2_symbol, C3_symbol, J1_V1_one_price, J1_V1_one_price_base, J1_V1_one_size, J2_V1_one_price, J2_V1_one_price_base, J2_V1_one_size, J1_V2_one_price, J1_V2_one_price_base, J1_V2_one_size, J2_V2_one_price, J2_V2_one_price_base, J2_V2_one_size, J1_V3_one_price, J1_V3_one_price_base, J1_V3_one_size, J2_V3_one_price, J2_V3_one_price_base, J2_V3_one_size, gain_base, gain_ratio)
+    VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?)'''
+
 # insert db trade backtest history sql
 INSERT_TRADE_BACKTEST_HISTORY_SQL = '''
     INSERT OR REPLACE INTO TRADE_BACKTEST_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
@@ -171,6 +239,22 @@ INSERT_TRADE_BACKTEST_HISTORY_SQL = '''
 INSERT_TRADE_ORDER_HISTORY_SQL = '''
     INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
+# update db creat trade order history sql
+UPDATE_CREAT_TRADE_ORDER_HISTORY_SQL = '''
+    INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
+# update db check trade order history sql
+UPDATE_CHECK_TRADE_ORDER_HISTORY_SQL = '''
+    INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
+# update db cancle trade order history sql
+UPDATE_CANCLE_TRADE_ORDER_HISTORY_SQL = Template('''
+    UPDATE TRADE_ORDER_HISTORY SET status = '$status' WHERE order_id='$order_id';
+''')
+
 
 # get db talbes sql
 GET_TABLES_SQL = '''
@@ -212,6 +296,151 @@ CREATE_TABELS_SQL = '''
     	`filled_size`	REAL,
     	`fee`	REAL,
         PRIMARY KEY (order_id)
+    );
+    CREATE TABLE IF NOT EXISTS `SIGNAL_TICKER_PAIR` (
+    	`timeStamp`	INTEGER NOT NULL,
+        `J1_server`	TEXT NOT NULL,
+        `J2_server`	TEXT NOT NULL,
+        `V1_fSymbol`	TEXT NOT NULL,
+        `V1_tSymbol`	TEXT NOT NULL,
+        `V2_fSymbol`	TEXT NOT NULL,
+        `V2_tSymbol`	TEXT NOT NULL,
+        `V3_fSymbol`	TEXT NOT NULL,
+        `V3_tSymbol`	TEXT NOT NULL,
+        `J1_V1_bid_one_price`	REAL,
+        `J1_V1_bid_one_size`	REAL,
+        `J1_V1_bid_one_price_base`	REAL,
+        `J1_V1_ask_one_price`	REAL,
+        `J1_V1_ask_one_size`	REAL,
+        `J1_V1_ask_one_price_base`	REAL,
+        `J1_V2_bid_one_price`	REAL,
+        `J1_V2_bid_one_size`	REAL,
+        `J1_V2_bid_one_price_base`	REAL,
+        `J1_V2_ask_one_price`	REAL,
+        `J1_V2_ask_one_size`	REAL,
+        `J1_V2_ask_one_price_base`	REAL,
+        `J1_V3_bid_one_price`	REAL,
+        `J1_V3_bid_one_size`	REAL,
+        `J1_V3_bid_one_price_base`	REAL,
+        `J1_V3_ask_one_price`	REAL,
+        `J1_V3_ask_one_size`	REAL,
+        `J1_V3_ask_one_price_base`	REAL,
+        `J2_V1_bid_one_price`	REAL,
+        `J2_V1_bid_one_size`	REAL,
+        `J2_V1_bid_one_price_base`	REAL,
+        `J2_V1_ask_one_price`	REAL,
+        `J2_V1_ask_one_size`	REAL,
+        `J2_V1_ask_one_price_base`	REAL,
+        `J2_V2_bid_one_price`	REAL,
+        `J2_V2_bid_one_size`	REAL,
+        `J2_V2_bid_one_price_base`	REAL,
+        `J2_V2_ask_one_price`	REAL,
+        `J2_V2_ask_one_size`	REAL,
+        `J2_V2_ask_one_price_base`	REAL,
+        `J2_V3_bid_one_price`	REAL,
+        `J2_V3_bid_one_size`	REAL,
+        `J2_V3_bid_one_price_base`	REAL,
+        `J2_V3_ask_one_price`	REAL,
+        `J2_V3_ask_one_size`	REAL,
+        `J2_V3_ask_one_price_base`	REAL,
+        `J1_V1_fee`	REAL,
+        `J1_V2_fee`	REAL,
+        `J1_V3_fee`	REAL,
+        `J2_V1_fee`	REAL,
+        `J2_V2_fee`	REAL,
+        `J2_V3_fee`	REAL,
+        `C1_symbol`	TEXT NOT NULL,
+        `C2_symbol`	TEXT NOT NULL,
+        `C3_symbol`	TEXT NOT NULL,
+        `J1_V1_one_price`	REAL,
+        `J1_V1_one_price_base`	REAL,
+        `J1_V1_one_size`	REAL,
+        `J2_V1_one_price`	REAL,
+        `J2_V1_one_price_base`	REAL,
+        `J2_V1_one_size`	REAL,
+        `J1_V2_one_price`	REAL,
+        `J1_V2_one_price_base`	REAL,
+        `J1_V2_one_size`	REAL,
+        `J2_V2_one_price`	REAL,
+        `J2_V2_one_price_base`	REAL,
+        `J2_V2_one_size`	REAL,
+        `J1_V3_one_price`	REAL,
+        `J1_V3_one_price_base`	REAL,
+        `J1_V3_one_size`	REAL,
+        `J2_V3_one_price`	REAL,
+        `J2_V3_one_price_base`	REAL,
+        `J2_V3_one_size`	REAL,
+        `gain_base`	REAL,
+        `gain_ratio`	REAL,
+        PRIMARY KEY (timeStamp, J1_server, J2_server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol)
+    );
+    CREATE TABLE IF NOT EXISTS `SIGNAL_TICKER_TRA` (
+    	`timeStamp`	INTEGER NOT NULL,
+        `server`	TEXT NOT NULL,
+    	`V1_fSymbol`	TEXT NOT NULL,
+    	`V1_tSymbol`	TEXT NOT NULL,
+    	`V2_fSymbol`	TEXT NOT NULL,
+    	`V2_tSymbol`	TEXT NOT NULL,
+    	`V3_fSymbol`	TEXT NOT NULL,
+    	`V3_tSymbol`	TEXT NOT NULL,
+    	`V1_bid_one_price`	REAL,
+    	`V1_bid_one_size`	REAL,
+    	`V1_bid_one_price_base`	REAL,
+    	`V1_ask_one_price`	REAL,
+    	`V1_ask_one_size`	REAL,
+    	`V1_ask_one_price_base`	REAL,
+    	`V2_bid_one_price`	REAL,
+    	`V2_bid_one_size`	REAL,
+    	`V2_bid_one_price_base`	REAL,
+    	`V2_ask_one_price`	REAL,
+    	`V2_ask_one_size`	REAL,
+    	`V2_ask_one_price_base`	REAL,
+    	`V3_bid_one_price`	REAL,
+    	`V3_bid_one_size`	REAL,
+    	`V3_bid_one_price_base`	REAL,
+    	`V3_ask_one_price`	REAL,
+    	`V3_ask_one_size`	REAL,
+    	`V3_ask_one_price_base`	REAL,
+    	`V1_fee`	REAL,
+    	`V2_fee`	REAL,
+    	`V3_fee`	REAL,
+    	`C1_symbol`	TEXT,
+    	`C2_symbol`	TEXT,
+    	`C3_symbol`	TEXT,
+    	`V1_one_price`	REAL,
+    	`V1_one_price_base`	REAL,
+    	`V1_one_size`	REAL,
+    	`C1_symbol_base`	REAL,
+    	`V2_one_price`	REAL,
+    	`V2_one_price_base`	REAL,
+    	`V2_one_size`	REAL,
+    	`C2_symbol_base`	REAL,
+    	`V3_one_price`	REAL,
+    	`V3_one_price_base`	REAL,
+    	`V3_one_size`	REAL,
+    	`C3_symbol_base`	REAL,
+    	`gain_symbol`	REAL,
+    	`gain_base`	REAL,
+    	`gain_ratio`	REAL,
+        PRIMARY KEY (timeStamp, server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol)
+    );
+    CREATE TABLE IF NOT EXISTS `SIGNAL_TICKER_DIS` (
+    	`timeStamp`	INTEGER NOT NULL,
+        `bid_server`	TEXT NOT NULL,
+        `ask_server`	TEXT NOT NULL,
+    	`fSymbol`	TEXT NOT NULL,
+    	`tSymbol`	TEXT NOT NULL,
+    	`bid_price`	REAL,
+    	`bid_size`	REAL,
+    	`bid_price_base`	REAL,
+    	`ask_price`	REAL,
+    	`ask_size`	REAL,
+    	`ask_price_base`	REAL,
+    	`bid_fee`	REAL,
+    	`ask_fee`	REAL,
+    	`gain_base`	REAL,
+    	`gain_ratio`	REAL,
+        PRIMARY KEY (timeStamp, bid_server, ask_server, fSymbol, tSymbol)
     );
     CREATE TABLE IF NOT EXISTS `MARKET_TICKER` (
     	`server`	TEXT NOT NULL,
@@ -360,7 +589,7 @@ CREATE_VIEWS_SQL = Template('''
             JOIN VIEW_INFO_SYMBOL J2 ON J1.server = J2.server AND J1.fSymbol = J2.fSymbol AND J1.tSymbol = J2.tSymbol;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT
     	AS
-        		SELECT V1.*, V1.bid_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as bid_one_price_base, V1.bid_one_size*V1.bid_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as bid_one_price_size_base, V1.ask_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as ask_one_price_base, V1.ask_one_size*V1.ask_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as ask_one_price_size_base
+        		SELECT V1.*, V1.bid_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as bid_one_price_base, V1.ask_one_price*(V2.bid_one_price+V2.ask_one_price)/2 as ask_one_price_base
         		FROM(
         			SELECT M1.*
         			FROM MARKET_TICKER M1
@@ -374,7 +603,7 @@ CREATE_VIEWS_SQL = Template('''
         			WHERE M2.server IS NULL
         		) V2 ON V1.server = V2.server AND V1.tSymbol = V2.fSymbol AND V1.tSymbol<>'$baseCoin' AND V2.tSymbol ='$baseCoin'
         	UNION
-        		SELECT V3.*, V3.bid_one_price as bid_one_price_base, V3.bid_one_size*V3.bid_one_price as bid_one_price_size_base, V3.ask_one_price as ask_one_price_base, V3.ask_one_size*V3.ask_one_price as ask_one_price_size_base
+        		SELECT V3.*, V3.bid_one_price as bid_one_price_base, V3.ask_one_price as ask_one_price_base
         		FROM(
         			SELECT M1.*
         			FROM MARKET_TICKER M1
@@ -384,51 +613,55 @@ CREATE_VIEWS_SQL = Template('''
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_DIS
     	AS
     		SELECT V1.timeStamp, V1.server as bid_server, V2.server as ask_server, V1.fSymbol, V1.tSymbol,
-                V1.bid_one_price as bid_price, min(V1.bid_one_size, V2.ask_one_size) as bid_size, V1.bid_one_price_base as bid_price_base, min(V1.bid_one_size, V2.ask_one_size)*V1.bid_one_price_base as bid_price_size_base,
-                V2.ask_one_price as ask_price, min(V1.bid_one_size, V2.ask_one_size) as ask_size, V2.ask_one_price_base as ask_price_base,	min(V1.bid_one_size, V2.ask_one_size)*V2.ask_one_price_base as ask_price_size_base
+                V1.bid_one_price as bid_price, min(V1.bid_one_size, V2.ask_one_size) as bid_size, V1.bid_one_price_base as bid_price_base,
+                V2.ask_one_price as ask_price, min(V1.bid_one_size, V2.ask_one_size) as ask_size, V2.ask_one_price_base as ask_price_base
     		FROM VIEW_MARKET_TICKER_CURRENT V1
     		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V2 ON V1.server <> V2.server AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
     		WHERE abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_TRA
     	AS
-    		SELECT V1.timeStamp, V1.server, V1.fSymbol as V1_fSymbol, V1.tSymbol as V1_tSymbol,
-				V1.bid_one_price as V1_bid_one_price, V1.bid_one_size as V1_bid_one_size, V1.bid_one_price_base as V1_bid_one_price_base, V1.bid_one_price_size_base as V1_bid_one_price_size_base,
-				V1.ask_one_price as V1_ask_one_price, V1.ask_one_size as V1_ask_one_size, V1.ask_one_price_base as V1_ask_one_price_base, V1.ask_one_price_size_base as V1_ask_one_price_size_base,
-				V2.fSymbol as V2_fSymbol, V2.tSymbol as V2_tSymbol,
-				V2.bid_one_price as V2_bid_one_price, V2.bid_one_size as V2_bid_one_size, V2.bid_one_price_base as V2_bid_one_price_base, V2.bid_one_price_size_base as V2_bid_one_price_size_base,
-				V2.ask_one_price as V2_ask_one_price, V2.ask_one_size as V2_ask_one_size, V2.ask_one_price_base as V2_ask_one_price_base, V2.ask_one_price_size_base as V2_ask_one_price_size_base,
-				V3.fSymbol as V3_fSymbol, V3.tSymbol as V3_tSymbol,
-				V3.bid_one_price as V3_bid_one_price, V3.bid_one_size as V3_bid_one_size, V3.bid_one_price_base as V3_bid_one_price_base, V3.bid_one_price_size_base as V3_bid_one_price_size_base,
-				V3.ask_one_price as V3_ask_one_price, V3.ask_one_size as V3_ask_one_size, V3.ask_one_price_base as V3_ask_one_price_base, V3.ask_one_price_size_base as V3_ask_one_price_size_base
+    		SELECT V1.timeStamp, V1.server,
+                V1.fSymbol as V1_fSymbol, V1.tSymbol as V1_tSymbol,
+                V2.fSymbol as V2_fSymbol, V2.tSymbol as V2_tSymbol,
+                V3.fSymbol as V3_fSymbol, V3.tSymbol as V3_tSymbol,
+				V1.bid_one_price as V1_bid_one_price, V1.bid_one_size as V1_bid_one_size, V1.bid_one_price_base as V1_bid_one_price_base,
+				V1.ask_one_price as V1_ask_one_price, V1.ask_one_size as V1_ask_one_size, V1.ask_one_price_base as V1_ask_one_price_base,
+				V2.bid_one_price as V2_bid_one_price, V2.bid_one_size as V2_bid_one_size, V2.bid_one_price_base as V2_bid_one_price_base,
+				V2.ask_one_price as V2_ask_one_price, V2.ask_one_size as V2_ask_one_size, V2.ask_one_price_base as V2_ask_one_price_base,
+				V3.bid_one_price as V3_bid_one_price, V3.bid_one_size as V3_bid_one_size, V3.bid_one_price_base as V3_bid_one_price_base,
+				V3.ask_one_price as V3_ask_one_price, V3.ask_one_size as V3_ask_one_size, V3.ask_one_price_base as V3_ask_one_price_base
     		FROM VIEW_MARKET_TICKER_CURRENT V1
     		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V2 ON V1.server = V2.server AND V1.fSymbol <> V2.fSymbol AND V1.tSymbol = V2.tSymbol
     		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V3 ON V2.server = V3.server AND ((V1.fSymbol = V3.fSymbol AND V2.fSymbol = V3.tSymbol) OR (V1.fSymbol = V3.tSymbol AND V2.fSymbol = V3.fSymbol))
             WHERE V2.server IS NOT NULL AND abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout AND V3.server IS NOT NULL AND abs(V2.timeStamp - V3.timeStamp) < 1000*$basePriceTimeout;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_PAIR
     	AS
-    SELECT J1.timeStamp, J1.server as J1_server, J2.server as J2_server, J1.V1_fSymbol as J1_V1_fSymbol, J1.V1_tSymbol as J1_V1_tSymbol,
-    	J1.V1_bid_one_price as J1_V1_bid_one_price, J1.V1_bid_one_size as J1_V1_bid_one_size, J1.V1_bid_one_price_base as J1_V1_bid_one_price_base, J1.V1_bid_one_price_size_base as J1_V1_bid_one_price_size_base,
-    	J1.V1_ask_one_price as J1_V1_ask_one_price, J1.V1_ask_one_size as J1_V1_ask_one_size, J1.V1_ask_one_price_base as J1_V1_ask_one_price_base, J1.V1_ask_one_price_size_base as J1_V1_ask_one_price_size_base,
-    	J1.V2_bid_one_price as J1_V2_bid_one_price, J1.V2_bid_one_size as J1_V2_bid_one_size, J1.V2_bid_one_price_base as J1_V2_bid_one_price_base, J1.V2_bid_one_price_size_base as J1_V2_bid_one_price_size_base,
-    	J1.V2_ask_one_price as J1_V2_ask_one_price, J1.V2_ask_one_size as J1_V2_ask_one_size, J1.V2_ask_one_price_base as J1_V2_ask_one_price_base, J1.V2_ask_one_price_size_base as J1_V2_ask_one_price_size_base,
-    	J1.V3_bid_one_price as J1_V3_bid_one_price, J1.V3_bid_one_size as J1_V3_bid_one_size, J1.V3_bid_one_price_base as J1_V3_bid_one_price_base, J1.V3_bid_one_price_size_base as J1_V3_bid_one_price_size_base,
-    	J1.V3_ask_one_price as J1_V3_ask_one_price, J1.V3_ask_one_size as J1_V3_ask_one_size, J1.V3_ask_one_price_base as J1_V3_ask_one_price_base, J1.V3_ask_one_price_size_base as J1_V3_ask_one_price_size_base,
-    	J2.V1_bid_one_price as J2_V1_bid_one_price, J2.V1_bid_one_size as J2_V1_bid_one_size, J2.V1_bid_one_price_base as J2_V1_bid_one_price_base, J2.V1_bid_one_price_size_base as J2_V1_bid_one_price_size_base,
-    	J2.V1_ask_one_price as J2_V1_ask_one_price, J2.V1_ask_one_size as J2_V1_ask_one_size, J2.V1_ask_one_price_base as J2_V1_ask_one_price_base, J2.V1_ask_one_price_size_base as J2_V1_ask_one_price_size_base,
-    	J2.V2_bid_one_price as J2_V2_bid_one_price, J2.V2_bid_one_size as J2_V2_bid_one_size, J2.V2_bid_one_price_base as J2_V2_bid_one_price_base, J2.V2_bid_one_price_size_base as J2_V2_bid_one_price_size_base,
-    	J2.V2_ask_one_price as J2_V2_ask_one_price, J2.V2_ask_one_size as J2_V2_ask_one_size, J2.V2_ask_one_price_base as J2_V2_ask_one_price_base, J2.V2_ask_one_price_size_base as J2_V2_ask_one_price_size_base,
-    	J2.V3_bid_one_price as J2_V3_bid_one_price, J2.V3_bid_one_size as J2_V3_bid_one_size, J2.V3_bid_one_price_base as J2_V3_bid_one_price_base, J2.V3_bid_one_price_size_base as J2_V3_bid_one_price_size_base,
-    	J2.V3_ask_one_price as J2_V3_ask_one_price, J2.V3_ask_one_size as J2_V3_ask_one_size, J2.V3_ask_one_price_base as J2_V3_ask_one_price_base, J2.V3_ask_one_price_size_base as J2_V3_ask_one_price_size_base
+    SELECT J1.timeStamp, J1.server as J1_server, J2.server as J2_server,
+        J1.V1_fSymbol as V1_fSymbol, J1.V1_tSymbol as V1_tSymbol,
+        J1.V2_fSymbol as V2_fSymbol, J1.V2_tSymbol as V2_tSymbol,
+        J1.V3_fSymbol as V3_fSymbol, J1.V3_tSymbol as V3_tSymbol,
+    	J1.V1_bid_one_price as J1_V1_bid_one_price, J1.V1_bid_one_size as J1_V1_bid_one_size, J1.V1_bid_one_price_base as J1_V1_bid_one_price_base,
+    	J1.V1_ask_one_price as J1_V1_ask_one_price, J1.V1_ask_one_size as J1_V1_ask_one_size, J1.V1_ask_one_price_base as J1_V1_ask_one_price_base,
+    	J1.V2_bid_one_price as J1_V2_bid_one_price, J1.V2_bid_one_size as J1_V2_bid_one_size, J1.V2_bid_one_price_base as J1_V2_bid_one_price_base,
+    	J1.V2_ask_one_price as J1_V2_ask_one_price, J1.V2_ask_one_size as J1_V2_ask_one_size, J1.V2_ask_one_price_base as J1_V2_ask_one_price_base,
+    	J1.V3_bid_one_price as J1_V3_bid_one_price, J1.V3_bid_one_size as J1_V3_bid_one_size, J1.V3_bid_one_price_base as J1_V3_bid_one_price_base,
+    	J1.V3_ask_one_price as J1_V3_ask_one_price, J1.V3_ask_one_size as J1_V3_ask_one_size, J1.V3_ask_one_price_base as J1_V3_ask_one_price_base,
+    	J2.V1_bid_one_price as J2_V1_bid_one_price, J2.V1_bid_one_size as J2_V1_bid_one_size, J2.V1_bid_one_price_base as J2_V1_bid_one_price_base,
+    	J2.V1_ask_one_price as J2_V1_ask_one_price, J2.V1_ask_one_size as J2_V1_ask_one_size, J2.V1_ask_one_price_base as J2_V1_ask_one_price_base,
+    	J2.V2_bid_one_price as J2_V2_bid_one_price, J2.V2_bid_one_size as J2_V2_bid_one_size, J2.V2_bid_one_price_base as J2_V2_bid_one_price_base,
+    	J2.V2_ask_one_price as J2_V2_ask_one_price, J2.V2_ask_one_size as J2_V2_ask_one_size, J2.V2_ask_one_price_base as J2_V2_ask_one_price_base,
+    	J2.V3_bid_one_price as J2_V3_bid_one_price, J2.V3_bid_one_size as J2_V3_bid_one_size, J2.V3_bid_one_price_base as J2_V3_bid_one_price_base,
+    	J2.V3_ask_one_price as J2_V3_ask_one_price, J2.V3_ask_one_size as J2_V3_ask_one_size, J2.V3_ask_one_price_base as J2_V3_ask_one_price_base
     FROM (
     		SELECT V1.timeStamp, V1.server, V1.fSymbol as V1_fSymbol, V1.tSymbol as V1_tSymbol,
-    			V1.bid_one_price as V1_bid_one_price, V1.bid_one_size as V1_bid_one_size, V1.bid_one_price_base as V1_bid_one_price_base, V1.bid_one_price_size_base as V1_bid_one_price_size_base,
-    			V1.ask_one_price as V1_ask_one_price, V1.ask_one_size as V1_ask_one_size, V1.ask_one_price_base as V1_ask_one_price_base, V1.ask_one_price_size_base as V1_ask_one_price_size_base,
+    			V1.bid_one_price as V1_bid_one_price, V1.bid_one_size as V1_bid_one_size, V1.bid_one_price_base as V1_bid_one_price_base,
+    			V1.ask_one_price as V1_ask_one_price, V1.ask_one_size as V1_ask_one_size, V1.ask_one_price_base as V1_ask_one_price_base,
     			V2.fSymbol as V2_fSymbol, V2.tSymbol as V2_tSymbol,
-    			V2.bid_one_price as V2_bid_one_price, V2.bid_one_size as V2_bid_one_size, V2.bid_one_price_base as V2_bid_one_price_base, V2.bid_one_price_size_base as V2_bid_one_price_size_base,
-    			V2.ask_one_price as V2_ask_one_price, V2.ask_one_size as V2_ask_one_size, V2.ask_one_price_base as V2_ask_one_price_base, V2.ask_one_price_size_base as V2_ask_one_price_size_base,
+    			V2.bid_one_price as V2_bid_one_price, V2.bid_one_size as V2_bid_one_size, V2.bid_one_price_base as V2_bid_one_price_base,
+    			V2.ask_one_price as V2_ask_one_price, V2.ask_one_size as V2_ask_one_size, V2.ask_one_price_base as V2_ask_one_price_base,
     			V3.fSymbol as V3_fSymbol, V3.tSymbol as V3_tSymbol,
-    			V3.bid_one_price as V3_bid_one_price, V3.bid_one_size as V3_bid_one_size, V3.bid_one_price_base as V3_bid_one_price_base, V3.bid_one_price_size_base as V3_bid_one_price_size_base,
-    			V3.ask_one_price as V3_ask_one_price, V3.ask_one_size as V3_ask_one_size, V3.ask_one_price_base as V3_ask_one_price_base, V3.ask_one_price_size_base as V3_ask_one_price_size_base
+    			V3.bid_one_price as V3_bid_one_price, V3.bid_one_size as V3_bid_one_size, V3.bid_one_price_base as V3_bid_one_price_base,
+    			V3.ask_one_price as V3_ask_one_price, V3.ask_one_size as V3_ask_one_size, V3.ask_one_price_base as V3_ask_one_price_base
     		FROM VIEW_MARKET_TICKER_CURRENT V1
     		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V2 ON V1.server = V2.server AND V1.fSymbol <> V2.fSymbol AND V1.tSymbol = V2.tSymbol
     		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V3 ON V2.server = V3.server AND ((V1.fSymbol = V3.fSymbol AND V2.fSymbol = V3.tSymbol) OR (V1.fSymbol = V3.tSymbol AND V2.fSymbol = V3.fSymbol))
@@ -436,19 +669,34 @@ CREATE_VIEWS_SQL = Template('''
     	) J1
     	LEFT JOIN (
     		SELECT V1.timeStamp, V1.server, V1.fSymbol as V1_fSymbol, V1.tSymbol as V1_tSymbol,
-    			V1.bid_one_price as V1_bid_one_price, V1.bid_one_size as V1_bid_one_size, V1.bid_one_price_base as V1_bid_one_price_base, V1.bid_one_price_size_base as V1_bid_one_price_size_base,
-    			V1.ask_one_price as V1_ask_one_price, V1.ask_one_size as V1_ask_one_size, V1.ask_one_price_base as V1_ask_one_price_base, V1.ask_one_price_size_base as V1_ask_one_price_size_base,
+    			V1.bid_one_price as V1_bid_one_price, V1.bid_one_size as V1_bid_one_size, V1.bid_one_price_base as V1_bid_one_price_base,
+    			V1.ask_one_price as V1_ask_one_price, V1.ask_one_size as V1_ask_one_size, V1.ask_one_price_base as V1_ask_one_price_base,
     			V2.fSymbol as V2_fSymbol, V2.tSymbol as V2_tSymbol,
-    			V2.bid_one_price as V2_bid_one_price, V2.bid_one_size as V2_bid_one_size, V2.bid_one_price_base as V2_bid_one_price_base, V2.bid_one_price_size_base as V2_bid_one_price_size_base,
-    			V2.ask_one_price as V2_ask_one_price, V2.ask_one_size as V2_ask_one_size, V2.ask_one_price_base as V2_ask_one_price_base, V2.ask_one_price_size_base as V2_ask_one_price_size_base,
+    			V2.bid_one_price as V2_bid_one_price, V2.bid_one_size as V2_bid_one_size, V2.bid_one_price_base as V2_bid_one_price_base,
+    			V2.ask_one_price as V2_ask_one_price, V2.ask_one_size as V2_ask_one_size, V2.ask_one_price_base as V2_ask_one_price_base,
     			V3.fSymbol as V3_fSymbol, V3.tSymbol as V3_tSymbol,
-    			V3.bid_one_price as V3_bid_one_price, V3.bid_one_size as V3_bid_one_size, V3.bid_one_price_base as V3_bid_one_price_base, V3.bid_one_price_size_base as V3_bid_one_price_size_base,
-    			V3.ask_one_price as V3_ask_one_price, V3.ask_one_size as V3_ask_one_size, V3.ask_one_price_base as V3_ask_one_price_base, V3.ask_one_price_size_base as V3_ask_one_price_size_base
+    			V3.bid_one_price as V3_bid_one_price, V3.bid_one_size as V3_bid_one_size, V3.bid_one_price_base as V3_bid_one_price_base,
+    			V3.ask_one_price as V3_ask_one_price, V3.ask_one_size as V3_ask_one_size, V3.ask_one_price_base as V3_ask_one_price_base
     		FROM VIEW_MARKET_TICKER_CURRENT V1
     		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V2 ON V1.server = V2.server AND V1.fSymbol <> V2.fSymbol AND V1.tSymbol = V2.tSymbol
     		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V3 ON V2.server = V3.server AND ((V1.fSymbol = V3.fSymbol AND V2.fSymbol = V3.tSymbol) OR (V1.fSymbol = V3.tSymbol AND V2.fSymbol = V3.fSymbol))
     		WHERE V2.server IS NOT NULL AND abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout AND V3.server IS NOT NULL AND abs(V2.timeStamp - V3.timeStamp) < 1000*$basePriceTimeout
     	) J2 ON J1.server<>J2.server AND J1.V1_fSymbol = J2.V1_fSymbol AND J1.V1_tSymbol = J2.V1_tSymbol AND J1.V2_fSymbol = J2.V2_fSymbol AND J1.V2_tSymbol = J2.V2_tSymbol AND J1.V3_fSymbol = J2.V3_fSymbol AND J1.V3_tSymbol = J2.V3_tSymbol
     	WHERE J2.server IS NOT NULL AND abs(J1.timeStamp - J2.timeStamp) < 1000*$basePriceTimeout;
+    CREATE VIEW IF NOT EXISTS VIEW_SIGNAL_TICKER_DIS_CURRENT
+        AS
+			SELECT *
+			FROM SIGNAL_TICKER_DIS
+			WHERE timeStamp > (strftime('%s', 'now')-$baseJudgeTimeout)*1000;
+    CREATE VIEW IF NOT EXISTS VIEW_SIGNAL_TICKER_TRA_CURRENT
+        AS
+			SELECT *
+			FROM SIGNAL_TICKER_TRA
+			WHERE timeStamp > (strftime('%s', 'now')-$baseJudgeTimeout)*1000;
+    CREATE VIEW IF NOT EXISTS VIEW_SIGNAL_TICKER_PAIR_CURRENT
+        AS
+			SELECT *
+			FROM SIGNAL_TICKER_PAIR
+			WHERE timeStamp > (strftime('%s', 'now')-$baseJudgeTimeout)*1000;
     COMMIT;
 ''')

@@ -3,6 +3,16 @@
 from src.core.config import Config
 from src.core.util.helper import MyTemplate
 
+# CCAT types Threshold
+TYPE_DIS_THRESHOLD = Config()._Main_typeDisThreshold
+TYPE_TRA_THRESHOLD = Config()._Main_typeTraThreshold
+TYPE_PAIR_THRESHOLD = Config()._Main_typePairThreshold
+
+# CCAT types
+TYPE_DIS = 'dis'
+TYPE_TRA = 'tra'
+TYPE_PAIR = 'pair'
+
 # event status
 QUEUE_STATUS_EVENT = "queue"
 ACTIVE_STATUS_EVENT = "active"
@@ -71,6 +81,16 @@ LISTEN_MARKET_DEPTH_EVENT = MyTemplate("""
 """)
 
 # judge event list
+JUDGE_MARKET_DEPTH_EVENT = MyTemplate("""
+{
+    "id": "$id",
+    "type": "JUDGE_MARKET_DEPTH_EVENT",
+    "priority": "high",
+    "timeStamp": "$timeStamp",
+    "args": []
+}
+""")
+
 JUDGE_MARKET_KLINE_EVENT = MyTemplate("""
 {
     "id": "$id",
@@ -87,25 +107,15 @@ JUDGE_MARKET_TICKER_EVENT = MyTemplate("""
     "type": "JUDGE_MARKET_TICKER_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
-    "args": ["$excludeCoins", "$baseCoin", "$symbolStartBaseCoin", "$symbolEndBaseCoin", "$symbolEndTimeout"]
+    "args": ["$types", "$exchanges"]
 }
 """)
 
 # backtest event list
-BACKTEST_MARKET_KLINE_EVENT = MyTemplate("""
+BACKTEST_HISTORY_CREAT_EVENT = MyTemplate("""
 {
     "id": "$id",
-    "type": "BACKTEST_MARKET_KLINE_EVENT",
-    "priority": "low",
-    "timeStamp": "$timeStamp",
-    "args": []
-}
-""")
-
-BACKTEST_MARKET_TICKER_EVENT = MyTemplate("""
-{
-    "id": "$id",
-    "type": "BACKTEST_MARKET_TICKER_EVENT",
+    "type": "BACKTEST_HISTORY_CREAT_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
     "args": []
@@ -113,40 +123,40 @@ BACKTEST_MARKET_TICKER_EVENT = MyTemplate("""
 """)
 
 # order event list
-ORDER_MARKET_KLINE_EVENT = MyTemplate("""
+ORDER_HISTORY_INSERT_EVENT = MyTemplate("""
 {
     "id": "$id",
-    "type": "BACKTEST_MARKET_KLINE_EVENT",
+    "type": "ORDER_HISTORY_INSERT_EVENT",
+    "priority": "low",
+    "timeStamp": "$timeStamp",
+    "args": ["$server", "$fSymbol", "$tSymbol", "$limit", "$ratio"]
+}
+""")
+
+ORDER_HISTORY_CREAT_EVENT = MyTemplate("""
+{
+    "id": "$id",
+    "type": "ORDER_HISTORY_CREAT_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
     "args": []
 }
 """)
 
-ORDER_MARKET_TICKER_EVENT = MyTemplate("""
+ORDER_HISTORY_CHECK_EVENT = MyTemplate("""
 {
     "id": "$id",
-    "type": "BACKTEST_MARKET_TICKER_EVENT",
+    "type": "ORDER_HISTORY_CHECK_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
     "args": []
 }
 """)
 
-ORDER_CONFIRM_EVENT = MyTemplate("""
+ORDER_HISTORY_CANCEL_EVENT = MyTemplate("""
 {
     "id": "$id",
-    "type": "ORDER_CONFIRM_EVENT",
-    "priority": "high",
-    "timeStamp": "$timeStamp",
-    "args": []
-}
-""")
-
-ORDER_CANCEL_EVENT = MyTemplate("""
-{
-    "id": "$id",
-    "type": "ORDER_CANCEL_EVENT",
+    "type": "ORDER_HISTORY_CANCEL_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
     "args": []

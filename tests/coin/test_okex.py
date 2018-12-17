@@ -134,6 +134,16 @@ class TestOkex(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_oneClickCancleOrders(self):
+        res = okex.oneClickCancleOrders()
+        logger.debug(res)
+        self.assertIsInstance(res, bool)
+
+    def test_oneClickTransToBaseCoin(self):
+        res = okex.oneClickTransToBaseCoin("USDT")
+        logger.debug(res)
+        self.assertIsInstance(res, bool)
+
     def test_depositeAsset(self):
         pass
 

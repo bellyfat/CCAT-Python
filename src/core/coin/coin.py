@@ -125,6 +125,11 @@ class Coin(object):
         pass
 
     @abstractmethod
+    # one click cancel all the open orders
+    def oneClickCancleOrders(self):
+        pass
+
+    @abstractmethod
     # deposite asset balance
     def depositeAsset(self, asset):
         pass

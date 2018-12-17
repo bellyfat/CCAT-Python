@@ -5,7 +5,7 @@
 
 import json
 import math
-from decimal import ROUND_DOWN, ROUND_UP, Decimal
+from decimal import ROUND_DOWN, ROUND_HALF_UP, ROUND_UP, Decimal
 
 import requests
 import urllib3
@@ -21,6 +21,7 @@ from src.core.coin.lib.binance_api.exceptions import (BinanceAPIException,
                                                       BinanceWithdrawException)
 from src.core.coin.lib.binance_api.helpers import date_to_milliseconds
 from src.core.util.exceptions import BinanceException
+from src.core.util.helper import num_to_precision
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -28,16 +29,16 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 class Binance(Coin):
 
     __STATUS = {
-        "PENDING_CANCEL": ORDER_STATUS_CANCELING,
-        "NEW": ORDER_STATUS_OPEN,
-        "PARTIALLY_FILLED": ORDER_STATUS_PART_FILLED,
-        "FILLED": ORDER_STATUS_FILLED,
-        "CANCELED": ORDER_STATUS_CANCELED
+        "PENDING_CANCEL": CCAT_ORDER_STATUS_CANCELING,
+        "NEW": CCAT_ORDER_STATUS_OPEN,
+        "PARTIALLY_FILLED": CCAT_ORDER_STATUS_PART_FILLED,
+        "FILLED": CCAT_ORDER_STATUS_FILLED,
+        "CANCELED": CCAT_ORDER_STATUS_CANCELED
     }
 
-    __TYPE = {"LIMIT": ORDER_TYPE_LIMIT, "MARKET": ORDER_TYPE_MARKET}
+    __TYPE = {"LIMIT": CCAT_ORDER_TYPE_LIMIT, "MARKET": CCAT_ORDER_TYPE_MARKET}
 
-    __SIDE = {"BUY": ORDER_SIDE_BUY, "SELL": ORDER_SIDE_SELL}
+    __SIDE = {"BUY": CCAT_ORDER_SIDE_BUY, "SELL": CCAT_ORDER_SIDE_SELL}
 
     def __init__(self, exchange, api_key, api_secret, proxies=None):
         super(Binance, self).__init__(exchange, api_key, api_secret, proxies)
@@ -144,16 +145,16 @@ class Binance(Coin):
             for base in info:
                 fSymbol = base["baseAsset"]
                 tSymbol = base["quoteAsset"]
-                tSymbol_price_precision = math.pow(
-                    10, -int(base["baseAssetPrecision"]))
-                fSymbol_size_precision = math.pow(10,
-                                                  -int(base["quotePrecision"]))
+                # tSymbol_price_precision = math.pow(10, -int(base["baseAssetPrecision"]))
+                # fSymbol_size_precision = math.pow(10, -int(base["quotePrecision"]))
                 for b in base["filters"]:
                     if b["filterType"] == "PRICE_FILTER":
+                        tSymbol_price_precision = float(b["tickSize"])
                         tSymbol_price_max = float(b["maxPrice"])
                         tSymbol_price_min = float(b["minPrice"])
                         tSymbol_price_step = float(b["tickSize"])
                     if b["filterType"] == "LOT_SIZE":
+                        fSymbol_size_precision = float(b["stepSize"])
                         fSymbol_size_max = float(b["maxQty"])
                         fSymbol_size_min = float(b["minQty"])
                         fSymbol_size_step = float(b["stepSize"])
@@ -324,26 +325,37 @@ class Binance(Coin):
     # get current trade
     def getTradeOpen(self, fSymbol='', tSymbol='', limit='100', ratio=''):
         try:
-            if fSymbol and tSymbol:
+            symbol = ''
+            if fSymbol != '' and tSymbol != '':
                 symbol = fSymbol + tSymbol
                 orders = self._client.get_open_orders(symbol=symbol)
             else:
                 orders = self._client.get_open_orders()
-            if ratio == '':
+            if ratio == '' and symbol != '':
                 ratio = self._client.get_trade_fee(
                     symbol=symbol)["tradeFee"][0]["taker"]
+            else:
+                ratio = 0
             res = []
             for item in orders:
                 filled_price = 0.0 if float(
                     item["executedQty"]) == 0 else float(
-                        item["cummulativeQuoteQty"]) / float(item["executedQty"])
+                        item["cummulativeQuoteQty"]) / float(
+                            item["executedQty"])
+                if symbol == '':
+                    if item['symbol'][-4:] != 'USDT':
+                        fSymbol = item['symbol'][:-3]
+                        tSymbol = item['symbol'][-3:]
+                    else:
+                        fSymbol = item['symbol'][:-4]
+                        tSymbol = item['symbol'][-4:]
                 res.append({
                     "timeStamp":
                     item["time"],
                     "order_id":
                     item["orderId"],
                     "status":
-                    ORDER_STATUS_OPEN,
+                    CCAT_ORDER_STATUS_OPEN,
                     "type":
                     self.__TYPE[item["type"]],
                     "fSymbol":
@@ -529,10 +541,13 @@ class Binance(Coin):
         try:
             deposit = self._client.get_deposit_history(asset=asset)
             withdraw = self._client.get_withdraw_history(asset=asset)
-            res = {
-                "deposit": deposit["depositList"],
-                "withdraw": withdraw["withdrawList"]
-            }
+
+            res = {}
+            if deposit["depositList"] != [] or withdraw["withdrawList"] != []:
+                res = {
+                    "deposit": deposit["depositList"],
+                    "withdraw": withdraw["withdrawList"]
+                }
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
@@ -549,17 +564,23 @@ class Binance(Coin):
                     price,
                     quantity,
                     ratio='',
-                    type=ORDER_TYPE_LIMIT):
+                    type=CCAT_ORDER_TYPE_LIMIT):
         # for speed up, lib not check, check from local db.data
         try:
             symbol = fSymbol + tSymbol
             params = {
-                "symbol": symbol,
-                "side": SIDE_BUY if ask_or_bid == ORDER_SIDE_BUY else SIDE_SELL,
-                "type": type,
-                "timeInForce": TIME_IN_FORCE_GTC,
-                "quantity": quantity,
-                "price": price
+                "symbol":
+                symbol,
+                "side":
+                SIDE_BUY if ask_or_bid == CCAT_ORDER_SIDE_BUY else SIDE_SELL,
+                "type":
+                type,
+                "timeInForce":
+                TIME_IN_FORCE_GTC,
+                "quantity":
+                quantity,
+                "price":
+                price
             }
             base = self._client.create_order(**params)
             if ratio == '':
@@ -631,7 +652,10 @@ class Binance(Coin):
             info = self._client.get_order(**params)
             if info["status"] == "NEW" or info["status"] == "PARTIALLY_FILLED":
                 base = self._client.cancel_order(**params)
-                res = {"order_id": orderID, "status": ORDER_STATUS_CANCELED}
+                res = {
+                    "order_id": orderID,
+                    "status": CCAT_ORDER_STATUS_CANCELED
+                }
             else:
                 res = {
                     "order_id": orderID,
@@ -658,7 +682,7 @@ class Binance(Coin):
                     base = self._client.cancel_order(**params)
                     res.append({
                         "order_id": orderID,
-                        "status": ORDER_STATUS_CANCELED
+                        "status": CCAT_ORDER_STATUS_CANCELED
                     })
                 else:
                     res.append({
@@ -671,6 +695,392 @@ class Binance(Coin):
                 BinanceWithdrawException, Exception) as err:
             errStr = "src.core.coin.binance.Binance.cancelBatchOrder: { orderIDs=%s, fSymbol=%s, tSymbol=%s }, exception err=%s" % (
                 orderIDs, fSymbol, tSymbol, err)
+            raise BinanceException(errStr)
+
+    def oneClickCancleOrders(self):
+        try:
+            res = self.getTradeOpen()
+            for r in res:
+                b = self.cancelOrder(r['order_id'], r['fSymbol'], r['tSymbol'])
+                if b['status'] != CCAT_ORDER_STATUS_CANCELED:
+                    return False
+            return True
+        except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
+                BinanceRequestException, BinanceOrderException,
+                BinanceWithdrawException, Exception) as err:
+            errStr = "src.core.coin.binance.Binance.oneClickCancleOrders: exception err=%s" % err
+            raise BinanceException(errStr)
+
+    def oneClickTransToBaseCoin(self, baseCoin='USDT'):
+        try:
+            exceptionStr = []
+            balance = self.getAccountBalances()
+            symbol = self.getSymbolsLimits()
+            deSet = []
+            trSet = []
+            # trSet -> deSet
+            for b in balance:
+                isIn = False
+                if b['asset'] != baseCoin and b['free'] > 0:
+                    for s in symbol:
+                        if (baseCoin.upper(), b['asset']) == (
+                                s['fSymbol'], s['tSymbol']) and isIn == False:
+                            isIn = True
+                        if (b['asset'], baseCoin.upper()) == (
+                                s['fSymbol'], s['tSymbol']) and isIn == False:
+                            isIn = True
+                    if isIn == False:
+                        for s in symbol:
+                            if b['asset'] == s['fSymbol'] and isIn == False:
+                                for sy in symbol:
+                                    if (baseCoin.upper(), s['tSymbol']) == (
+                                            sy['fSymbol'],
+                                            sy['tSymbol']) and isIn == False:
+                                        isIn = True
+                                        trSet.append({
+                                            'fSymbol':
+                                            s['fSymbol'],
+                                            'tSymbol':
+                                            s['tSymbol'],
+                                            'balance':
+                                            float(b['free']),
+                                            'ask_or_bid':
+                                            CCAT_ORDER_SIDE_SELL,
+                                            'limit_price_precision':
+                                            "NULL"
+                                            if s["tSymbol_price"]["precision"]
+                                            == '' else float(s["tSymbol_price"]
+                                                             ["precision"]),
+                                            'limit_size_precision':
+                                            "NULL"
+                                            if s["fSymbol_size"]["precision"]
+                                            == '' else float(s["fSymbol_size"]
+                                                             ["precision"]),
+                                            'limit_size_min':
+                                            "NULL" if
+                                            s["fSymbol_size"]["min"] == '' else
+                                            float(s["fSymbol_size"]["min"]),
+                                            'limit_min_notional':
+                                            "NULL" if s["min_notional"] == ''
+                                            else float(s["min_notional"])
+                                        })
+                                    if (s['tSymbol'], baseCoin.upper()) == (
+                                            sy['fSymbol'],
+                                            sy['tSymbol']) and isIn == False:
+                                        isIn = True
+                                        trSet.append({
+                                            'fSymbol':
+                                            s['fSymbol'],
+                                            'tSymbol':
+                                            s['tSymbol'],
+                                            'balance':
+                                            float(b['free']),
+                                            'ask_or_bid':
+                                            CCAT_ORDER_SIDE_SELL,
+                                            'limit_price_precision':
+                                            "NULL"
+                                            if s["tSymbol_price"]["precision"]
+                                            == '' else float(s["tSymbol_price"]
+                                                             ["precision"]),
+                                            'limit_size_precision':
+                                            "NULL"
+                                            if s["fSymbol_size"]["precision"]
+                                            == '' else float(s["fSymbol_size"]
+                                                             ["precision"]),
+                                            'limit_size_min':
+                                            "NULL" if
+                                            s["fSymbol_size"]["min"] == '' else
+                                            float(s["fSymbol_size"]["min"]),
+                                            'limit_min_notional':
+                                            "NULL" if s["min_notional"] == ''
+                                            else float(s["min_notional"])
+                                        })
+                            if b['asset'] == s['tSymbol'] and isIn == False:
+                                for sy in symbol:
+                                    if (baseCoin.upper(), s['tSymbol']) == (
+                                            sy['fSymbol'],
+                                            sy['tSymbol']) and isIn == False:
+                                        isIn = True
+                                        trSet.append({
+                                            'fSymbol':
+                                            s['fSymbol'],
+                                            'tSymbol':
+                                            s['tSymbol'],
+                                            'balance':
+                                            float(b['free']),
+                                            'ask_or_bid':
+                                            CCAT_ORDER_SIDE_BUY,
+                                            'limit_price_precision':
+                                            "NULL"
+                                            if s["tSymbol_price"]["precision"]
+                                            == '' else float(s["tSymbol_price"]
+                                                             ["precision"]),
+                                            'limit_size_precision':
+                                            "NULL"
+                                            if s["fSymbol_size"]["precision"]
+                                            == '' else float(s["fSymbol_size"]
+                                                             ["precision"]),
+                                            'limit_size_min':
+                                            "NULL" if
+                                            s["fSymbol_size"]["min"] == '' else
+                                            float(s["fSymbol_size"]["min"]),
+                                            'limit_min_notional':
+                                            "NULL" if s["min_notional"] == ''
+                                            else float(s["min_notional"])
+                                        })
+                                    if (s['tSymbol'], baseCoin.upper()) == (
+                                            sy['fSymbol'],
+                                            sy['tSymbol']) and isIn == False:
+                                        isIn = True
+                                        trSet.append({
+                                            'fSymbol':
+                                            s['fSymbol'],
+                                            'tSymbol':
+                                            s['tSymbol'],
+                                            'balance':
+                                            float(b['free']),
+                                            'ask_or_bid':
+                                            CCAT_ORDER_SIDE_BUY,
+                                            'limit_price_precision':
+                                            "NULL"
+                                            if s["tSymbol_price"]["precision"]
+                                            == '' else float(s["tSymbol_price"]
+                                                             ["precision"]),
+                                            'limit_size_precision':
+                                            "NULL"
+                                            if s["fSymbol_size"]["precision"]
+                                            == '' else float(s["fSymbol_size"]
+                                                             ["precision"]),
+                                            'limit_size_min':
+                                            "NULL" if
+                                            s["fSymbol_size"]["min"] == '' else
+                                            float(s["fSymbol_size"]["min"]),
+                                            'limit_min_notional':
+                                            "NULL" if s["min_notional"] == ''
+                                            else float(s["min_notional"])
+                                        })
+            for tr in trSet:
+                res = self.getMarketOrderbookDepth(tr['fSymbol'],
+                                                   tr['tSymbol'], 100)
+                sum = 0
+                trTrade = []
+                if tr['ask_or_bid'] == CCAT_ORDER_SIDE_BUY:
+                    for r in res['ask_price_size']:
+                        rprice = float(r[0])
+                        rSize = float(r[1])
+                        trBalanceSize = tr['balance'] / rprice
+                        if sum < trBalanceSize:
+                            trSize = min(trBalanceSize - sum, rSize)
+                            if not trSize > 0:
+                                continue
+                            if not tr['limit_size_min'] == 'NULL':
+                                if trSize < tr['limit_size_min']:
+                                    continue
+                            if not tr['limit_min_notional'] == 'NULL':
+                                if rprice * trSize < tr['limit_min_notional']:
+                                    continue
+                            sum = sum + trSize
+                            trTrade.append({'price': rprice, 'size': trSize})
+                if tr['ask_or_bid'] == CCAT_ORDER_SIDE_SELL:
+                    for r in res['bid_price_size']:
+                        rprice = float(r[0])
+                        rSize = float(r[1])
+                        trBalanceSize = tr['balance']
+                        if sum < trBalanceSize:
+                            trSize = min(trBalanceSize - sum, rSize)
+                            if not trSize > 0:
+                                continue
+                            if not tr['limit_size_min'] == 'NULL':
+                                if trSize < tr['limit_size_min']:
+                                    continue
+                            if not tr['limit_min_notional'] == 'NULL':
+                                if rprice * trSize < tr['limit_min_notional']:
+                                    continue
+                            sum = sum + trSize
+                            trTrade.append({'price': rprice, 'size': trSize})
+                for trade in trTrade:
+                    price = num_to_precision(
+                        trade['price'],
+                        tr['limit_price_precision'],
+                        rounding=ROUND_HALF_UP)
+                    size = num_to_precision(
+                        trade['size'],
+                        tr['limit_size_precision'],
+                        rounding=ROUND_DOWN)
+                    if not float(size) > 0:
+                        continue
+                    if not tr['limit_size_min'] == 'NULL':
+                        if float(size) < tr['limit_size_min']:
+                            continue
+                    if not tr['limit_min_notional'] == 'NULL':
+                        if float(price) * float(
+                                size) < tr['limit_min_notional']:
+                            continue
+                    try:
+                        base = self.createOrder(
+                            tr['fSymbol'], tr['tSymbol'], tr['ask_or_bid'],
+                            str(price), str(size), 0, CCAT_ORDER_TYPE_LIMIT)
+                    except Exception as err:
+                        exceptionStr.append(err)
+            # deSet -> baseCoin
+            balance = self.getAccountBalances()
+            for b in balance:
+                isIn = False
+                if b['asset'] != baseCoin and b['free'] > 0:
+                    for s in symbol:
+                        if (baseCoin.upper(), b['asset']) == (
+                                s['fSymbol'], s['tSymbol']) and isIn == False:
+                            isIn = True
+                            deSet.append({
+                                'fSymbol':
+                                s['fSymbol'],
+                                'tSymbol':
+                                s['tSymbol'],
+                                'balance':
+                                float(b['free']),
+                                'ask_or_bid':
+                                CCAT_ORDER_SIDE_BUY,
+                                'limit_price_precision':
+                                "NULL" if s["tSymbol_price"]["precision"] == ''
+                                else float(s["tSymbol_price"]["precision"]),
+                                'limit_size_precision':
+                                "NULL" if s["fSymbol_size"]["precision"] == ''
+                                else float(s["fSymbol_size"]["precision"]),
+                                'limit_size_min':
+                                "NULL" if s["fSymbol_size"]["min"] == '' else
+                                float(s["fSymbol_size"]["min"]),
+                                'limit_min_notional':
+                                "NULL" if s["min_notional"] == '' else float(
+                                    s["min_notional"])
+                            })
+                        if (b['asset'], baseCoin.upper()) == (
+                                s['fSymbol'], s['tSymbol']) and isIn == False:
+                            isIn = True
+                            deSet.append({
+                                'fSymbol':
+                                s['fSymbol'],
+                                'tSymbol':
+                                s['tSymbol'],
+                                'balance':
+                                float(b['free']),
+                                'ask_or_bid':
+                                CCAT_ORDER_SIDE_SELL,
+                                'limit_price_precision':
+                                "NULL" if s["tSymbol_price"]["precision"] == ''
+                                else float(s["tSymbol_price"]["precision"]),
+                                'limit_size_precision':
+                                "NULL" if s["fSymbol_size"]["precision"] == ''
+                                else float(s["fSymbol_size"]["precision"]),
+                                'limit_size_min':
+                                "NULL" if s["fSymbol_size"]["min"] == '' else
+                                float(s["fSymbol_size"]["min"]),
+                                'limit_min_notional':
+                                "NULL" if s["min_notional"] == '' else float(
+                                    s["min_notional"])
+                            })
+            for de in deSet:
+                res = self.getMarketOrderbookDepth(de['fSymbol'],
+                                                   de['tSymbol'], 100)
+                sum = 0
+                deTrade = []
+                if de['ask_or_bid'] == CCAT_ORDER_SIDE_BUY:
+                    for r in res['ask_price_size']:
+                        rprice = float(r[0])
+                        rSize = float(r[1])
+                        deBalanceSize = de['balance'] / rprice
+                        if sum < deBalanceSize:
+                            deSize = min(deBalanceSize - sum, rSize)
+                            if not deSize > 0:
+                                continue
+                            if not de['limit_size_min'] == 'NULL':
+                                if deSize < de['limit_size_min']:
+                                    continue
+                            if not de['limit_min_notional'] == 'NULL':
+                                if rprice * deSize < de['limit_min_notional']:
+                                    continue
+                            sum = sum + deSize
+                            deTrade.append({'price': rprice, 'size': deSize})
+                if de['ask_or_bid'] == CCAT_ORDER_SIDE_SELL:
+                    for r in res['bid_price_size']:
+                        rprice = float(r[0])
+                        rSize = float(r[1])
+                        deBalanceSize = de['balance']
+                        if sum < deBalanceSize:
+                            deSize = min(deBalanceSize - sum, rSize)
+                            if not deSize > 0:
+                                continue
+                            if not de['limit_size_min'] == 'NULL':
+                                if deSize < de['limit_size_min']:
+                                    continue
+                            if not de['limit_min_notional'] == 'NULL':
+                                if rprice * deSize < de['limit_min_notional']:
+                                    continue
+                            sum = sum + deSize
+                            deTrade.append({'price': rprice, 'size': deSize})
+                for trade in deTrade:
+                    price = num_to_precision(
+                        trade['price'],
+                        de['limit_price_precision'],
+                        rounding=ROUND_HALF_UP)
+                    size = num_to_precision(
+                        trade['size'],
+                        de['limit_size_precision'],
+                        rounding=ROUND_DOWN)
+                    if not float(size) > 0:
+                        continue
+                    if not de['limit_size_min'] == 'NULL':
+                        if float(size) < de['limit_size_min']:
+                            continue
+                    if not de['limit_min_notional'] == 'NULL':
+                        if float(price) * float(
+                                size) < de['limit_min_notional']:
+                            continue
+                    try:
+                        base = self.createOrder(
+                            de['fSymbol'], de['tSymbol'], de['ask_or_bid'],
+                            str(price), str(size), 0, CCAT_ORDER_TYPE_LIMIT)
+                    except Exception as err:
+                        exceptionStr.append(err)
+            # check trans result
+            if not exceptionStr == []:
+                raise Exception(exceptionStr)
+            balance = self.getAccountBalances()
+            for b in balance:
+                isIn = False
+                if b['asset'] != baseCoin and b['free'] > 0:
+                    for s in symbol:
+                        if (b['asset'],
+                                'USDT') == (s['fSymbol'],
+                                            s['tSymbol']) and isIn == False:
+                            isIn = True
+                            res = self.getMarketOrderbookDepth(
+                                s['fSymbol'], s['tSymbol'], 10)
+                            if float(b['free']) * float(res['bid_price_size'][
+                                    0][0]) > CCAT_BALANCE_SMALL_AMOUNT_USDT:
+                                return False
+                    if isIn == False:
+                        for s in symbol:
+                            if b['asset'] == s['fSymbol'] and isIn == False:
+                                for sy in symbol:
+                                    if (s['tSymbol'], 'USDT') == (
+                                            sy['fSymbol'],
+                                            sy['tSymbol']) and isIn == False:
+                                        isIn = True
+                                        res = self.getMarketOrderbookDepth(
+                                            s['fSymbol'], s['tSymbol'], 10)
+                                        resy = self.getMarketOrderbookDepth(
+                                            sy['fSymbol'], sy['tSymbol'], 10)
+                                        if float(b['free']) * float(
+                                                res['bid_price_size'][0]
+                                            [0]) * float(
+                                                resy['bid_price_size'][0][0]
+                                            ) > CCAT_BALANCE_SMALL_AMOUNT_USDT:
+                                            return False
+            return True
+        except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
+                BinanceRequestException, BinanceOrderException,
+                BinanceWithdrawException, Exception) as err:
+            errStr = "src.core.coin.binance.Binance.oneClickTransToBaseCoin: exception err=%s" % err
             raise BinanceException(errStr)
 
     # deposit asset balance

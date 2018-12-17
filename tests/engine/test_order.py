@@ -21,10 +21,10 @@ if __name__ == '__main__':
     # exec time
     start = time.time()
     # clase instanse
-    util = Util()
     sender = Sender(__eventEngine)
-    handler = Handler(sender)
+    handler = Handler(__eventEngine)
     register = Register(__eventEngine, handler)
+    util = Util(__eventEngine, sender)
 
     # app init
     util.initServerLimits()
@@ -36,9 +36,18 @@ if __name__ == '__main__':
     __eventEngine.start()
 
     # app update
-    util.updateDBOrderConfirm(sender)
-    util.updateDBOrderTracker(sender)
-    util.updateDBOrderCancle(sender)
+    # util.oneClickCancleOrders()
+
+    util.oneClickTransToBaseCoin()
+
+    # util.updateDBOrderHistoryInsert()
+
+    # util.updateDBOrderHistoryCreat()
+
+    # util.updateDBOrderHistoryCheck()
+
+    # util.updateDBOrderHistoryCancle()
+
 
     # # stop engine
     time.sleep(2) # for engine begin handle
@@ -49,4 +58,4 @@ if __name__ == '__main__':
 
     # exec time
     end = time.time()
-    __logger.debug("tests.engine.test_order finished in %0.3fs" % float(end-start))
+    __logger.info("tests.engine.test_order finished in %0.3fs" % float(end-start))
