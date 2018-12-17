@@ -474,9 +474,9 @@ class Util(object):
 
     # Util 紧急功能
     # 一键 cancle 撤销所有订单
-    def threadoneClickCancleOrders(self, server, epoch, timeout):
+    def threadOneClickCancleOrders(self, server, epoch, timeout):
         self._logger.debug(
-            "src.core.util.util.Util.threadoneClickCancleOrders: {thread: %s, server: %s, epoch: %s, timeout: %s}"
+            "src.core.util.util.Util.threadOneClickCancleOrders: {thread: %s, server: %s, epoch: %s, timeout: %s}"
             % (current_thread().name, server, epoch, timeout))
         try:
             db = DB()
@@ -486,11 +486,11 @@ class Util(object):
                 time.sleep(epoch)
                 res = db.oneClickCancleOrders(server)
             if not res:
-                errStr = "src.core.util.util.Util.threadoneClickCancleOrders: {thread: %s, server: %s, epoch: %s, timeout: %s}，exception err=TIMEOUT ERROR" % (
+                errStr = "src.core.util.util.Util.threadOneClickCancleOrders: {thread: %s, server: %s, epoch: %s, timeout: %s}，exception err=TIMEOUT ERROR" % (
                     current_thread().name, server, epoch, timeout)
                 self._logger.error(errStr)
         except (DBException, EngineException, Exception) as err:
-            errStr = "src.core.util.util.Util.threadoneClickCancleOrders: {thread: %s, server: %s, epoch: %s, timeout: %s}，exception err=%s" % (
+            errStr = "src.core.util.util.Util.threadOneClickCancleOrders: {thread: %s, server: %s, epoch: %s, timeout: %s}，exception err=%s" % (
                 current_thread().name, server, epoch, timeout, Exception(err))
             self._logger.error(errStr)
 
@@ -502,9 +502,9 @@ class Util(object):
                 epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "orders_second"])
                 td = Thread(
-                    target=self.threadoneClickCancleOrders,
+                    target=self.threadOneClickCancleOrders,
                     name="%s-thread" % server,
-                    args=(server, epoch, timeout))
+                    args=([server], epoch, timeout))
                 tds.append(td)
                 td.start()
             for td in tds:
@@ -515,9 +515,48 @@ class Util(object):
             raise UtilException(err)
 
     # 一键 order 交易所有币到baseCoin
-    def oneClickTransToBaseCoin(self):
+    def threadOneClickTransToBaseCoin(self, server, baseCoin, epoch, timeout):
+        self._logger.debug(
+            "src.core.util.util.Util.threadOneClickTransToBaseCoin: {thread: %s, server: %s, baseCoin: %s, epoch: %s, timeout: %s}"
+            % (current_thread().name, server, baseCoin, epoch, timeout))
+        try:
+            db = DB()
+            res = False
+            start = time.time()
+            while (res == False and (time.time() - start) < timeout):
+                time.sleep(epoch)
+                res = db.oneClickTransToBaseCoin(server, baseCoin)
+            if not res:
+                errStr = "src.core.util.util.Util.threadOneClickTransToBaseCoin: {thread: %s, server: %s, baseCoin %s, epoch: %s, timeout: %s}，exception err=TIMEOUT ERROR" % (
+                    current_thread().name, server, baseCoin, epoch, timeout)
+                self._logger.error(errStr)
+        except (DBException, EngineException, Exception) as err:
+            errStr = "src.core.util.util.Util.threadOneClickTransToBaseCoin: {thread: %s, server: %s, baseCoin %s, epoch: %s, timeout: %s}，exception err=%s" % (
+                current_thread().name, server, baseCoin, epoch, timeout, Exception(err))
+            self._logger.error(errStr)
 
-        pass
+
+    def oneClickTransToBaseCoin(self, baseCoin='', timeout=30):
+        self._logger.debug("src.core.util.util.Util.oneClickTransToBaseCoin")
+        try:
+            if not baseCoin:
+                baseCoin = self._baseCoin
+            tds = []
+            for server in self._exchanges:
+                epoch = float(self._apiEpochSaveBound) / float(
+                    self._serverLimits.at[server, "orders_second"])
+                td = Thread(
+                    target=self.threadOneClickTransToBaseCoin,
+                    name="%s-thread" % server,
+                    args=([server], baseCoin, epoch, timeout))
+                tds.append(td)
+                td.start()
+            for td in tds:
+                td.join()
+        except (DBException, EngineException, Exception) as err:
+            errStr = "src.core.util.util.Util.oneClickTransToBaseCoin: {async: %s, timeout: %s}, exception err=%s" % (
+                async, timeout, UtilException(err))
+            raise UtilException(err)
 
     # 一键 withdraw baseCoin 提币到冷钱包
     def oneClickWithdrawBaseCoin(self):

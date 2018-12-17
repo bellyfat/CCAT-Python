@@ -15,7 +15,7 @@ from src.core.util.log import Logger
 db = DB()
 calc = Calc()
 logger = Logger()
-resInfoSymbol = pd.DataFrame(db.getInfoSymbol())
+resInfoSymbol = pd.DataFrame(db.getInfoSymbol(['okex','binance','huobi']))
 
 
 class TestDB(unittest.TestCase):
@@ -263,55 +263,66 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_oneClickCancleOrders(self):
+        res = db.oneClickCancleOrders(["okex", "binance", "huobi"])
+        logger.debug(res)
+        self.assertIsInstance(res, bool)
+
+    def test_oneClickTransToBaseCoin(self):
+        res = db.oneClickTransToBaseCoin(["okex", "binance", "huobi"], 'USDT')
+        logger.debug(res)
+        self.assertIsInstance(res, bool)
 
 # list of test_db
 # db test items
 test_db = [
-    TestDB("test_initDB"),
-    TestDB("test_creatTables"),
-    TestDB("test_getTables"),
-    TestDB("test_getAccountBalanceHistory"),
-    TestDB("test_getAccountWithdrawHistory"),
-    TestDB("test_getMarketDepth"),
-    TestDB("test_getMarketKline"),
-    TestDB("test_getMarketTicker"),
-    TestDB("test_getInfoServer"),
-    TestDB("test_getInfoSymbol"),
-    TestDB("test_getInfoWithdraw"),
-    TestDB("test_getTradeBacktestHistory"),
-    TestDB("test_getTradeOrderHistory"),
-    TestDB("test_insertAccountBalanceHistory"),
-    TestDB("test_insertAccountWithdrawHistory"),
-    TestDB("test_insertMarketDepth"),
-    TestDB("test_insertMarketKline"),
-    TestDB("test_insertMarketTicker"),
-    TestDB("test_insertInfoServer"),
-    TestDB("test_insertInfoSymbol"),
-    TestDB("test_insertInfoWithdraw"),
-    TestDB("test_insertTradeBacktestHistory"),
-    TestDB("test_insertTradeOrderHistory"),
-    # TestDB("test_updateCreatTradeOrderHistory"),
-    TestDB("test_updateCheckTradeOrderHistory"),
-    TestDB("test_updateCancleTradeOrderHistory"),
-    TestDB("test_insertSignalTickerDis"),
-    TestDB("test_insertSignalTickerTra"),
-    TestDB("test_insertSignalTickerPair"),
-    TestDB("test_creatViews"),
-    TestDB("test_getViews"),
-    TestDB("test_getViewMarketTickerCurrentPairServer"),
-    TestDB("test_getViewMarketTickerCurrentPair"),
-    TestDB("test_getViewMarketTickerCurrentTraServer"),
-    TestDB("test_getViewMarketTickerCurrentTra"),
-    TestDB("test_getViewMarketTickerCurrentDisServer"),
-    TestDB("test_getViewMarketTickerCurrentDis"),
-    TestDB("test_getViewMarketTickerCurrent"),
-    TestDB("test_getViewMarketKlineCurrent"),
-    TestDB("test_getViewAccountBalanceCurrent"),
-    TestDB("test_getViewMarketTickerSymbol"),
-    TestDB("test_getViewAccountWithdrawCurrent"),
-    TestDB("test_getViewMarketSymbolPairs"),
-    TestDB("test_getViewAccountBalanceCurrent"),
-    TestDB("test_getViewInfoSymbolPairs"),
+    # TestDB("test_initDB"),
+    # TestDB("test_creatTables"),
+    # TestDB("test_getTables"),
+    # TestDB("test_getAccountBalanceHistory"),
+    # TestDB("test_getAccountWithdrawHistory"),
+    # TestDB("test_getMarketDepth"),
+    # TestDB("test_getMarketKline"),
+    # TestDB("test_getMarketTicker"),
+    # TestDB("test_getInfoServer"),
+    # TestDB("test_getInfoSymbol"),
+    # TestDB("test_getInfoWithdraw"),
+    # TestDB("test_getTradeBacktestHistory"),
+    # TestDB("test_getTradeOrderHistory"),
+    # TestDB("test_insertAccountBalanceHistory"),
+    # TestDB("test_insertAccountWithdrawHistory"),
+    # TestDB("test_insertMarketDepth"),
+    # TestDB("test_insertMarketKline"),
+    # TestDB("test_insertMarketTicker"),
+    # TestDB("test_insertInfoServer"),
+    # TestDB("test_insertInfoSymbol"),
+    # TestDB("test_insertInfoWithdraw"),
+    # TestDB("test_insertSignalTickerDis"),
+    # TestDB("test_insertSignalTickerTra"),
+    # TestDB("test_insertSignalTickerPair"),
+    # TestDB("test_insertTradeBacktestHistory"),
+    # TestDB("test_insertTradeOrderHistory"),
+    # # TestDB("test_updateCreatTradeOrderHistory"),
+    # TestDB("test_updateCheckTradeOrderHistory"),
+    # TestDB("test_updateCancleTradeOrderHistory"),
+    TestDB("test_oneClickCancleOrders"),
+    # TestDB("test_oneClickTransToBaseCoin"),
+    # TestDB("test_creatViews"),
+    # TestDB("test_getViews"),
+    # TestDB("test_getViewMarketTickerCurrentPairServer"),
+    # TestDB("test_getViewMarketTickerCurrentPair"),
+    # TestDB("test_getViewMarketTickerCurrentTraServer"),
+    # TestDB("test_getViewMarketTickerCurrentTra"),
+    # TestDB("test_getViewMarketTickerCurrentDisServer"),
+    # TestDB("test_getViewMarketTickerCurrentDis"),
+    # TestDB("test_getViewMarketTickerCurrent"),
+    # TestDB("test_getViewMarketKlineCurrent"),
+    # TestDB("test_getViewAccountBalanceCurrent"),
+    # TestDB("test_getViewMarketTickerSymbol"),
+    # TestDB("test_getViewAccountWithdrawCurrent"),
+    # TestDB("test_getViewMarketSymbolPairs"),
+    # TestDB("test_getViewAccountBalanceCurrent"),
+    # TestDB("test_getViewInfoSymbolPairs"),
 ]
 
 if __name__ == "__main__":

@@ -1612,5 +1612,22 @@ class DB(object):
             raise DBException(err)
 
     # db 紧急功能 不更新数据库
-    def oneClickTransToBaseCoin(self, exchange):
+    def oneClickTransToBaseCoin(self, exchange, baseCoin):
         self._logger.debug("src.core.db.db.DB.oneClickTransToBaseCoin")
+        try:
+            done = True
+            # Okex
+            if exchange == "all" or self._Okex_exchange in exchange:
+                done = done and self._Okex.oneClickTransToBaseCoin(baseCoin)
+            # Binance
+            if exchange == "all" or self._Binance_exchange in exchange:
+                done = done and self._Binance.oneClickTransToBaseCoin(baseCoin)
+            # Huobi
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                done = done and self._Huobi.oneClickTransToBaseCoin(baseCoin)
+            # Others
+            # to_be_continue
+            return done
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)

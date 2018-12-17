@@ -36,7 +36,9 @@ if __name__ == '__main__':
     __eventEngine.start()
 
     # app update
-    util.oneClickCancleOrders()
+    # util.oneClickCancleOrders()
+
+    util.oneClickTransToBaseCoin()
 
     # util.updateDBOrderHistoryInsert()
 
