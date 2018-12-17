@@ -15,6 +15,9 @@ from src.core.util.util import Util
 
 class Router(object):
     def __init__(self):
+        # router varriable
+        self._start = False
+        self._startTime = time.time()
         # config
         self._marketKlineCycle = Config()._Main_marketKlineCycle
         self._marketKlineUpdated = False
@@ -50,33 +53,31 @@ class Router(object):
             self._util.initDBInfo()
             self._util.initServerLimits()
             self._util.updateDBAccountBalance(async=False, timeout=self._syncAccountTimeout)
-            # self._util.updateDBAccountWithdraw() # 暂时不考虑充提币
-            # util.updateDBOrderHistoryInsert() # 暂时不同步历史交易
+            # self._util.updateDBAccountWithdraw() # 暂时不考虑充提币 耗时约 1min
+            # util.updateDBOrderHistoryInsert() # 暂时不同步历史交易 耗时约 2min
         except (UtilException, Exception) as err:
             errStr = "src.core.router.Router.initAPP: %s" % RouterException(err)
             self._logger.critical(errStr)
             raise RouterException(err)
 
-    def updateAPP(self):
+    def updateAPP(self, timeout = 300):
         self._logger.debug("src.core.router.Router.updateAPP")
         try:
-            # init server limit first
-            self._util.initServerLimits()
-            # run listen
-            self.runListen()
-            # run backtest
-            self.runBacktest()
-            # run again
-            self.updateAPP()
+            # init first
+            if not self._start:
+                self._start = True
+                self._startTime = time.time()
+                self._util.initServerLimits()
+            # run monitor
+            while time.time() - self._startTime < timeout:
+                self.runMonitor()
         except (UtilException, Exception) as err:
             errStr = "src.core.router.Router.updateAPP: %s" % RouterException(err)
-            self._logger.critical(errStr)util.updateDBOrderHistoryInsert()
+            self._logger.critical(errStr)
             raise RouterException(err)
 
-
-
-    def runListen(self):
-        self._logger.debug("src.core.router.Router.runListen")
+    def runMonitor(self):
+        self._logger.debug("src.core.router.Router.runMonitor")
         try:
             if time.time() - self._marketKlineUpdateTime > self._marketKlineCycle or not self._marketKlineUpdated:
                 self._marketKlineUpdated = True
@@ -85,7 +86,7 @@ class Router(object):
             self._util.updateDBMarketTicker(async=False, timeout=self._syncMarketTickerTimeout)
             self._util.updateDBJudgeMarketTicker(async=False, timeout=self._syncJudgeTimeout)
         except (UtilException, Exception) as err:
-            errStr = "src.core.router.Router.runListen: %s" % RouterException(err)
+            errStr = "src.core.router.Router.runMonitor: %s" % RouterException(err)
             raise RouterException(err)
 
     def runBacktest(self):
