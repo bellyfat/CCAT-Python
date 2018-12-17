@@ -24,6 +24,7 @@ class Handler(object):
             "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         [exchange] = event.args
+        exchange = str_to_list(exchange)
         try:
             db = DB()
             db.insertAccountBalanceHistory(exchange)
@@ -39,6 +40,7 @@ class Handler(object):
             "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         [exchange, asset] = event.args
+        exchange = str_to_list(exchange)
         try:
             db = DB()
             db.insertAccountWithdrawHistoryAsset(exchange, asset)
@@ -54,6 +56,7 @@ class Handler(object):
             "src.core.engine.handler.Handler.handleListenMarketDepthEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         [exchange, fSymbol, tSymbol, limit] = event.args
+        exchange = str_to_list(exchange)
         try:
             db = DB()
             db.insertMarketDepth(exchange, fSymbol, tSymbol, limit)
@@ -69,6 +72,7 @@ class Handler(object):
             "src.core.engine.handler.Handler.handleListenMarketKlineEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         [exchange, fSymbol, tSymbol, interval, start, end] = event.args
+        exchange = str_to_list(exchange)
         try:
             db = DB()
             db.insertMarketKline(exchange, fSymbol, tSymbol, interval, start,
@@ -85,6 +89,7 @@ class Handler(object):
             % (event.type, event.priority, event.args))
         # 接收事件
         [exchange, fSymbol, tSymbol, aggDepth] = event.args
+        exchange = str_to_list(exchange)
         try:
             db = DB()
             db.insertMarketTicker(exchange, fSymbol, tSymbol, aggDepth)
@@ -122,52 +127,52 @@ class Handler(object):
             self._logger.error(errStr)
         callback(event)
 
-    def processCalcSignalTickerDis(self, exchanges, threshold, resInfoSymbol):
+    def processCalcSignalTickerDis(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.engine.handler.Handler.processCalcSignalTickerDis: {process=%s, exchanges=%s, threshold=%s, resInfoSymbol=%s}"
-            % (current_process().name, exchanges, threshold, resInfoSymbol))
+            "src.core.engine.handler.Handler.processCalcSignalTickerDis: {process=%s, exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            % (current_process().name, exchange, threshold, resInfoSymbol))
         try:
             db = DB()
             calc = Calc()
-            signalDis = calc.calcSignalTickerDis(exchanges, threshold,
+            signalDis = calc.calcSignalTickerDis(exchange, threshold,
                                                  resInfoSymbol)
             if not signalDis == []:
                 db.insertSignalTickerDis(signalDis)
         except (DBException, CalcException, EngineException, Exception) as err:
-            errStr = "src.core.engine.handler.Handler.processCalcSignalTickerDis:  {exchanges=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
-                exchanges, threshold, resInfoSymbol, EngineException(err))
+            errStr = "src.core.engine.handler.Handler.processCalcSignalTickerDis:  {exchange=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
+                exchange, threshold, resInfoSymbol, EngineException(err))
             self._logger.error(errStr)
 
-    def processCalcSignalTickerTra(self, exchanges, threshold, resInfoSymbol):
+    def processCalcSignalTickerTra(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.engine.handler.Handler.processCalcSignalTickerTra: {process=%s, exchanges=%s, threshold=%s, resInfoSymbol=%s}"
-            % (current_process().name, exchanges, threshold, resInfoSymbol))
+            "src.core.engine.handler.Handler.processCalcSignalTickerTra: {process=%s, exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            % (current_process().name, exchange, threshold, resInfoSymbol))
         try:
             db = DB()
             calc = Calc()
-            signalTra = calc.calcSignalTickerTra(exchanges, threshold,
+            signalTra = calc.calcSignalTickerTra(exchange, threshold,
                                                  resInfoSymbol)
             if not signalTra == []:
                 db.insertSignalTickerTra(signalTra)
         except (DBException, CalcException, EngineException, Exception) as err:
-            errStr = "src.core.engine.handler.Handler.processCalcSignalTickerTra:  {exchanges=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
-                exchanges, threshold, resInfoSymbol, EngineException(err))
+            errStr = "src.core.engine.handler.Handler.processCalcSignalTickerTra:  {exchange=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
+                exchange, threshold, resInfoSymbol, EngineException(err))
             self._logger.error(errStr)
 
-    def processCalcSignalTickerPair(self, exchanges, threshold, resInfoSymbol):
+    def processCalcSignalTickerPair(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.engine.handler.Handler.processCalcSignalTickerPair: {process=%s, exchanges=%s, threshold=%s, resInfoSymbol=%s}"
-            % (current_process().name, exchanges, threshold, resInfoSymbol))
+            "src.core.engine.handler.Handler.processCalcSignalTickerPair: {process=%s, exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            % (current_process().name, exchange, threshold, resInfoSymbol))
         try:
             db = DB()
             calc = Calc()
             signalPair = calc.calcSignalTickerPair(
-                exchanges, TYPE_PAIR_THRESHOLD, resInfoSymbol)
+                exchange, TYPE_PAIR_THRESHOLD, resInfoSymbol)
             if not signalPair == []:
                 db.insertSignalTickerPair(signalPair)
         except (DBException, CalcException, EngineException, Exception) as err:
-            errStr = "src.core.engine.handler.Handler.processCalcSignalTickerPair:  {exchanges=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
-                exchanges, threshold, resInfoSymbol, EngineException(err))
+            errStr = "src.core.engine.handler.Handler.processCalcSignalTickerPair:  {exchange=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
+                exchange, threshold, resInfoSymbol, EngineException(err))
             self._logger.error(errStr)
 
     def handleJudgeMarketTickerEvent(self, event, callback):
@@ -175,20 +180,20 @@ class Handler(object):
             "src.core.engine.handler.Handler.handleJudgeMarketTickerEvent: " +
             event.type)
         # 接收事件
-        [types, exchanges] = event.args
+        [exchange, types] = event.args
+        exchange = str_to_list(exchange)
         types = str_to_list(types)
-        exchanges = str_to_list(exchanges)
         try:
             db = DB()
             calc = Calc()
-            resInfoSymbol = pd.DataFrame(db.getInfoSymbol(exchanges))
+            resInfoSymbol = pd.DataFrame(db.getInfoSymbol(exchange))
             prs = []
             # calc dis type
             if TYPE_DIS in types:
                 p = Process(
                     target=self.processCalcSignalTickerDis,
                     name="%s-processCalcSignalTickerDis" % TYPE_DIS,
-                    args=(exchanges, TYPE_DIS_THRESHOLD, resInfoSymbol))
+                    args=(exchange, TYPE_DIS_THRESHOLD, resInfoSymbol))
                 prs.append(p)
                 p.start()
             # calc tra type
@@ -196,7 +201,7 @@ class Handler(object):
                 p = Process(
                     target=self.processCalcSignalTickerTra,
                     name="%s-processCalcSignalTickerTra" % TYPE_TRA,
-                    args=(exchanges, TYPE_TRA_THRESHOLD, resInfoSymbol))
+                    args=(exchange, TYPE_TRA_THRESHOLD, resInfoSymbol))
                 prs.append(p)
                 p.start()
             # calc pair type
@@ -204,7 +209,7 @@ class Handler(object):
                 p = Process(
                     target=self.processCalcSignalTickerPair,
                     name="%s-processCalcSignalTickerPair" % TYPE_PAIR,
-                    args=(exchanges, TYPE_PAIR_THRESHOLD, resInfoSymbol))
+                    args=(exchange, TYPE_PAIR_THRESHOLD, resInfoSymbol))
                 prs.append(p)
                 p.start()
             for p in prs:

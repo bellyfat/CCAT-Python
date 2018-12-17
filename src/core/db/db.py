@@ -617,7 +617,7 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertAccountWithdrawHistory(self, exchange):
+    def insertAccountWithdrawHistory(self, exchange="all"):
         self._logger.debug(
             "src.core.db.db.DB.insertAccountWithdrawHistory: { exchange=%s }"
             % exchange)

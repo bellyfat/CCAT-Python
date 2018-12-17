@@ -166,16 +166,13 @@ class Okex(Coin):
             raise OkexException(errStr)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
-    def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth=''):
+    def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth=0):
         try:
-            if aggDepth != '':
-                if float(aggDepth) > 1:
-                    raise Exception("aggDepth must < 1.0")
-            base = self._spotAPI.get_depth(fSymbol + "-" + tSymbol, '100', '',
+            base = self._spotAPI.get_depth(fSymbol + "-" + tSymbol, '200', '',
                                            self._proxies)
             if not len(base["bids"]) > 0 or not len(base["asks"]) > 0:
                 raise Exception(base)
-            if aggDepth == '':
+            if aggDepth == 0:
                 res = {
                     "timeStamp": date_to_milliseconds(base["timestamp"]),
                     "fSymbol": fSymbol,
@@ -187,8 +184,10 @@ class Okex(Coin):
                 }
             else:
                 # calc bids
-                aggPrice = Decimal(base["bids"][0][0]).quantize(
-                    Decimal(str(aggDepth)), rounding=ROUND_DOWN)
+                aggPrice = num_to_precision(
+                    float(base["bids"][0][0]),
+                    float(aggDepth),
+                    rounding=ROUND_DOWN)
                 bid_one_price = float(aggPrice)
                 bid_one_size = 0.0
                 for bid in base["bids"]:
@@ -196,8 +195,10 @@ class Okex(Coin):
                         break
                     bid_one_size = bid_one_size + float(bid[1])
                 # calc asks
-                aggPrice = Decimal(base["asks"][0][0]).quantize(
-                    Decimal(str(aggDepth)), rounding=ROUND_UP)
+                aggPrice = num_to_precision(
+                    float(base["asks"][0][0]),
+                    float(aggDepth),
+                    rounding=ROUND_UP)
                 ask_one_price = float(aggPrice)
                 ask_one_size = 0.0
                 for ask in base["asks"]:

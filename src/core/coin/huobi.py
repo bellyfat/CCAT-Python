@@ -135,8 +135,6 @@ class Huobi(Coin):
             for b in base['data']:
                 # if not b["symbol-partition"]="main":
                 #     continue
-                if b['symbol'] in ['ethbtc', 'etcbtc', 'bchbtc', 'ltcbtc']:
-                    b["price-precision"] = 4
                 fSymbol = b["base-currency"].upper()
                 tSymbol = b["quote-currency"].upper()
                 tSymbol_price_precision = math.pow(10,
@@ -174,18 +172,15 @@ class Huobi(Coin):
             raise HuobiException(errStr)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
-    def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth=''):
+    def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth=0):
         try:
-            if aggDepth != '':
-                if float(aggDepth) > 1:
-                    raise Exception("aggDepth must < 1.0")
             symbol = (fSymbol + tSymbol).lower()
             base = self._huobiAPI.get_depth(symbol, 'step0')
             if not base['status'] == 'ok' or not len(
                     base['tick']["bids"]) > 0 or not len(
                         base['tick']["asks"]) > 0:
                 raise Exception(base)
-            if aggDepth == '':
+            if aggDepth == 0:
                 res = {
                     "timeStamp": base["ts"],
                     "fSymbol": fSymbol,
@@ -197,8 +192,7 @@ class Huobi(Coin):
                 }
             else:
                 # calc bids
-                aggPrice = Decimal(base['tick']["bids"][0][0]).quantize(
-                    Decimal(str(aggDepth)), rounding=ROUND_DOWN)
+                aggPrice =  num_to_precision(float(base['tick']["bids"][0][0]), float(aggDepth), rounding=ROUND_DOWN)
                 bid_one_price = float(aggPrice)
                 bid_one_size = 0.0
                 for bid in base['tick']["bids"]:
@@ -206,8 +200,7 @@ class Huobi(Coin):
                         break
                     bid_one_size = bid_one_size + float(bid[1])
                 # calc asks
-                aggPrice = Decimal(base['tick']["asks"][0][0]).quantize(
-                    Decimal(str(aggDepth)), rounding=ROUND_UP)
+                aggPrice =  num_to_precision(float(base['tick']["asks"][0][0]), float(aggDepth), rounding=ROUND_UP)
                 ask_one_price = float(aggPrice)
                 ask_one_size = 0.0
                 for ask in base['tick']["asks"]:

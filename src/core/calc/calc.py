@@ -13,15 +13,15 @@ class Calc(object):
         # logger
         self._logger = Logger()
 
-    def calcSignalTickerDis(self, exchanges, threshold, resInfoSymbol):
+    def calcSignalTickerDis(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcSignalTickerDis: {exchanges=%s, threshold=%s, resInfoSymbol=%s}"
-            % (exchanges, threshold, resInfoSymbol))
+            "src.core.calc.calc.Calc.calcSignalTickerDis: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            % (exchange, threshold, resInfoSymbol))
         try:
             db = DB()
             signal = []
             # calc dis type
-            for item in combinations(exchanges, 2):
+            for item in combinations(exchange, 2):
                 res = db.getViewMarketTickerCurrentDisServer(item[0], item[1])
                 # calc gains with fee
                 for r in res:
@@ -54,15 +54,15 @@ class Calc(object):
         except (DBException, Exception) as err:
             raise CalcException(err)
 
-    def calcSignalTickerTra(self, exchanges, threshold, resInfoSymbol):
+    def calcSignalTickerTra(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcSignalTickerTra: {exchanges=%s, threshold=%s, resInfoSymbol=%s}"
-            % (exchanges, threshold, resInfoSymbol))
+            "src.core.calc.calc.Calc.calcSignalTickerTra: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            % (exchange, threshold, resInfoSymbol))
         try:
             db = DB()
             signal = []
             # calc tra type
-            res = db.getViewMarketTickerCurrentTraServer(exchanges)
+            res = db.getViewMarketTickerCurrentTraServer(exchange)
             # calc gains with fee
             for r in res:
                 r['V1_fee'] = resInfoSymbol[
@@ -232,15 +232,15 @@ class Calc(object):
         except (DBException, Exception) as err:
             raise CalcException(err)
 
-    def calcSignalTickerPair(self, exchanges, threshold, resInfoSymbol):
+    def calcSignalTickerPair(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcSignalTickerPair: {exchanges=%s, threshold=%s, resInfoSymbol=%s}"
-            % (exchanges, threshold, resInfoSymbol))
+            "src.core.calc.calc.Calc.calcSignalTickerPair: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            % (exchange, threshold, resInfoSymbol))
         try:
             db = DB()
             signal = []
             # calc pair type
-            for item in combinations(exchanges, 2):
+            for item in combinations(exchange, 2):
                 res = db.getViewMarketTickerCurrentPairServer(item[0], item[1])
                 # calc gains with fee
                 for r in res:

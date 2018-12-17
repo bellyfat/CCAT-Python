@@ -185,11 +185,8 @@ class Binance(Coin):
             raise BinanceException(errStr)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
-    def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth=''):
+    def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth=0):
         try:
-            if aggDepth != '':
-                if float(aggDepth) > 1:
-                    raise Exception("aggDepth must < 1.0")
             symbol = fSymbol + tSymbol
             timeStamp = self._client.get_server_time()["serverTime"]
             base = self._client.get_order_book(symbol=symbol, limit=100)
@@ -198,7 +195,7 @@ class Binance(Coin):
                 err = "{fSymbol=%s, tSymbol=%s, base=%s}" % (fSymbol, tSymbol,
                                                              base)
                 raise BinanceException(err)
-            if aggDepth == '':
+            if aggDepth == 0:
                 res = {
                     "timeStamp": timeStamp,
                     "fSymbol": fSymbol,
@@ -210,8 +207,7 @@ class Binance(Coin):
                 }
             else:
                 # calc bids
-                aggPrice = Decimal(base["bids"][0][0]).quantize(
-                    Decimal(str(aggDepth)), rounding=ROUND_DOWN)
+                aggPrice = num_to_precision(float(base["bids"][0][0]), float(aggDepth), rounding=ROUND_DOWN)
                 bid_one_price = float(aggPrice)
                 bid_one_size = 0.0
                 for bid in base["bids"]:
@@ -219,8 +215,7 @@ class Binance(Coin):
                         break
                     bid_one_size = bid_one_size + float(bid[1])
                 # calc asks
-                aggPrice = Decimal(base["asks"][0][0]).quantize(
-                    Decimal(str(aggDepth)), rounding=ROUND_UP)
+                aggPrice =  num_to_precision(float(base["asks"][0][0]), float(aggDepth), rounding=ROUND_UP)
                 ask_one_price = float(aggPrice)
                 ask_one_size = 0.0
                 for ask in base["asks"]:
@@ -236,7 +231,6 @@ class Binance(Coin):
                     "ask_one_price": ask_one_price,
                     "ask_one_size": ask_one_size
                 }
-
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,
@@ -521,11 +515,7 @@ class Binance(Coin):
                 for wi in withdraw["withdrawList"]:
                     if wi["asset"] == a:
                         wiRes.append(wi)
-                res.append({
-                    "asset": a,
-                    "deposit": deRes,
-                    "withdraw": wiRes
-                })
+                res.append({"asset": a, "deposit": deRes, "withdraw": wiRes})
             return res
         except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
                 BinanceRequestException, BinanceOrderException,

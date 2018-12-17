@@ -36,7 +36,7 @@ LISTEN_ACCOUNT_BALANCE_EVENT = MyTemplate("""
     "type": "LISTEN_ACCOUNT_BALANCE_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
-    "args": ["$server"]
+    "args": ["$exchange"]
 }
 """)
 
@@ -46,7 +46,7 @@ LISTEN_ACCOUNT_WITHDRAW_EVENT = MyTemplate("""
     "type": "LISTEN_ACCOUNT_WITHDRAW_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
-    "args": ["$server", "$asset"]
+    "args": ["$exchange", "$asset"]
 }
 """)
 
@@ -56,7 +56,7 @@ LISTEN_MARKET_KLINE_EVENT = MyTemplate("""
     "type": "LISTEN_MARKET_KLINE_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
-    "args": ["$server", "$fSymbol", "$tSymbol", "$interval", "$start", "$end"]
+    "args": ["$exchange", "$fSymbol", "$tSymbol", "$interval", "$start", "$end"]
 }
 """)
 
@@ -66,7 +66,7 @@ LISTEN_MARKET_TICKER_EVENT = MyTemplate("""
     "type": "LISTEN_MARKET_TICKER_EVENT",
     "priority": "medium",
     "timeStamp": "$timeStamp",
-    "args": ["$server", "$fSymbol", "$tSymbol", "$aggDepth"]
+    "args": ["$exchange", "$fSymbol", "$tSymbol", "$aggDepth"]
 }
 """)
 
@@ -76,7 +76,7 @@ LISTEN_MARKET_DEPTH_EVENT = MyTemplate("""
     "type": "LISTEN_MARKET_DEPTH_EVENT",
     "priority": "medium",
     "timeStamp": "$timeStamp",
-    "args": ["$server","$fSymbol", "$tSymbol", "$limit"]
+    "args": ["$exchange","$fSymbol", "$tSymbol", "$limit"]
 }
 """)
 
@@ -107,7 +107,7 @@ JUDGE_MARKET_TICKER_EVENT = MyTemplate("""
     "type": "JUDGE_MARKET_TICKER_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
-    "args": ["$types", "$exchanges"]
+    "args": ["$exchange", "$types"]
 }
 """)
 
@@ -129,7 +129,7 @@ ORDER_HISTORY_INSERT_EVENT = MyTemplate("""
     "type": "ORDER_HISTORY_INSERT_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
-    "args": ["$server", "$fSymbol", "$tSymbol", "$limit", "$ratio"]
+    "args": ["$exchange", "$fSymbol", "$tSymbol", "$limit", "$ratio"]
 }
 """)
 
@@ -139,7 +139,7 @@ ORDER_HISTORY_CREAT_EVENT = MyTemplate("""
     "type": "ORDER_HISTORY_CREAT_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
-    "args": []
+    "args": ["$exchange", "$types"]
 }
 """)
 

@@ -163,10 +163,11 @@ class Util(object):
             % (current_thread().name, res, epoch, async, timeout))
         ids = []
         for r in res:
-            if not r['can_deposit'] == 'False' and not r['can_withdraw'] == 'False':
+            if not r['can_deposit'] == 'False' and not r[
+                    'can_withdraw'] == 'False':
                 time.sleep(epoch)
                 id = self._sender.sendListenAccountWithdrawEvent(
-                    r["server"], r["asset"])
+                    [r["server"]], r["asset"])
                 ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
@@ -223,7 +224,7 @@ class Util(object):
         for r in res:
             time.sleep(epoch)
             id = self._sender.sendListenMarketDepthEvent(
-                r["server"], r["fSymbol"], r["tSymbol"],
+                [r["server"]], r["fSymbol"], r["tSymbol"],
                 self._marketDepthLimit)
             ids.append(id)
         if not async:
@@ -275,7 +276,7 @@ class Util(object):
         for r in res:
             time.sleep(epoch)
             id = self._sender.sendListenMarketKlineEvent(
-                r["server"], r["fSymbol"], r["tSymbol"], interval, start, end)
+                [r["server"]], r["fSymbol"], r["tSymbol"], interval, start, end)
             ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
@@ -335,11 +336,11 @@ class Util(object):
             db = DB()
             aggDepth = db.getViewMarketSymbolPairsAggDepth(
                 self._exchanges, r["fSymbol"],
-                r["tSymbol"])[0]["aggDepth"] * self._marketTickerAggStep
-            aggDepth = 1.0 if aggDepth > 1 else aggDepth  # make sure < 1.0
+                r["tSymbol"])[0]["aggDepth"]
+            aggDepth = float(aggDepth) * self._marketTickerAggStep
             time.sleep(epoch)
             id = self._sender.sendListenMarketTickerEvent(
-                r["server"], r["fSymbol"], r["tSymbol"], aggDepth)
+                [r["server"]], r["fSymbol"], r["tSymbol"], aggDepth)
             ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
@@ -381,6 +382,9 @@ class Util(object):
             raise UtilException(err)
 
     # Judge 事件
+    def updateDBJudgeMarketDepth(self):
+        pass
+
     def updateDBJudgeMarketKline(self):
         pass
 
@@ -390,7 +394,7 @@ class Util(object):
             % (async, timeout))
         try:
             id = self._sender.sendJudgeMarketTickerEvent(
-                self._types, self._exchanges)
+                self._exchanges, self._types)
             if not async:
                 st = self._engine.getEventStatus(id)
                 startTime = time.time()
@@ -428,7 +432,8 @@ class Util(object):
         for r in res:
             time.sleep(epoch)
             id = self._sender.sendOrderHistoryInsertEvent(
-                [r["server"]], r["fSymbol"], r["tSymbol"], '100', r["fee_taker"])
+                [r["server"]], r["fSymbol"], r["tSymbol"], '100',
+                r["fee_taker"])
             ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
@@ -544,9 +549,9 @@ class Util(object):
                 self._logger.error(errStr)
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.threadOneClickTransToBaseCoin: {thread: %s, server: %s, baseCoin %s, epoch: %s, timeout: %s}，exception err=%s" % (
-                current_thread().name, server, baseCoin, epoch, timeout, Exception(err))
+                current_thread().name, server, baseCoin, epoch, timeout,
+                Exception(err))
             self._logger.error(errStr)
-
 
     def oneClickTransToBaseCoin(self, baseCoin='', timeout=30):
         self._logger.debug("src.core.util.util.Util.oneClickTransToBaseCoin")

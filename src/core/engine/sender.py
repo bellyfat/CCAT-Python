@@ -22,7 +22,7 @@ class Sender(object):
                 LISTEN_ACCOUNT_BALANCE_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
-                    server=exchange))
+                    exchange=exchange))
             event = Event(TEMP_EVENT)
             self._logger.debug(
                 "src.core.engine.sender.Sender.sendListenAccountBalanceEvent: "
@@ -43,7 +43,7 @@ class Sender(object):
                 LISTEN_ACCOUNT_WITHDRAW_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
-                    server=exchange,
+                    exchange=exchange,
                     asset=asset))
             event = Event(TEMP_EVENT)
             self._logger.debug(
@@ -66,7 +66,7 @@ class Sender(object):
                 LISTEN_MARKET_DEPTH_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
-                    server=exchange,
+                    exchange=exchange,
                     fSymbol=fSymbol,
                     tSymbol=tSymbol,
                     limit=limit))
@@ -91,7 +91,7 @@ class Sender(object):
                 LISTEN_MARKET_KLINE_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
-                    server=exchange,
+                    exchange=exchange,
                     fSymbol=fSymbol,
                     tSymbol=tSymbol,
                     interval=interval,
@@ -118,7 +118,7 @@ class Sender(object):
                 LISTEN_MARKET_TICKER_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
-                    server=exchange,
+                    exchange=exchange,
                     fSymbol=fSymbol,
                     tSymbol=tSymbol,
                     aggDepth=aggDepth))
@@ -135,7 +135,7 @@ class Sender(object):
                 err)
             raise EngineException(err)
 
-    def sendJudgeMarketDepthEvent(self, types, exchanges):
+    def sendJudgeMarketDepthEvent(self, args):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
@@ -173,15 +173,15 @@ class Sender(object):
                 err)
             raise EngineException(err)
 
-    def sendJudgeMarketTickerEvent(self, types, exchanges):
+    def sendJudgeMarketTickerEvent(self, exchange, types):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
                 JUDGE_MARKET_TICKER_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
-                    types=types,
-                    exchanges=exchanges))
+                    exchange=exchange,
+                    types=types))
             event = Event(TEMP_EVENT)
             self._logger.debug(
                 "src.core.engine.sender.Sender.sendJudgeMarketTickerEvent: " +
@@ -224,7 +224,7 @@ class Sender(object):
                 ORDER_HISTORY_INSERT_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
-                    server=exchange,
+                    exchange=exchange,
                     fSymbol=fSymbol,
                     tSymbol=tSymbol,
                     limit=limit,
