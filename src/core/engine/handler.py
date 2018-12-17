@@ -181,7 +181,7 @@ class Handler(object):
         try:
             db = DB()
             calc = Calc()
-            resInfoSymbol = pd.DataFrame(db.getInfoSymbol())
+            resInfoSymbol = pd.DataFrame(db.getInfoSymbol(exchanges))
             prs = []
             # calc dis type
             if TYPE_DIS in types:

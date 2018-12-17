@@ -18,7 +18,7 @@ if __name__ == '__main__':
     start = time.time()
 
     # app init
-    __Router.initAPP()
+    # __Router.initAPP()
 
     # app update
     __Router.updateAPP()
