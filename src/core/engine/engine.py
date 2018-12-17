@@ -37,7 +37,7 @@ class EventEngine(object):
         # 保存已执行事件处理状态
         self.__status = Status()
         # 事件引擎主进程
-        self.__mainProcess = None  # Process(target=self.__run)
+        self.__mainProcess = Process(target=self.__run)
         # logger
         self.__logger = Logger()
 
@@ -155,7 +155,6 @@ class EventEngine(object):
         if not self.__active.value:
             self.__active.value = True
             # 开启事件引擎主进程
-            self.__mainProcess = Process(target=self.__run)
             self.__mainProcess.start()
 
     # 暂停事件引擎

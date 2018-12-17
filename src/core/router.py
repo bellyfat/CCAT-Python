@@ -35,12 +35,14 @@ class Router(object):
         self._util = Util(self._eventEngine, self._sender)
         # logger
         self._logger = Logger()
+
+    def start(self):
         # register engine
         self._register.register()
         # start engine
         self._eventEngine.start()
 
-    def __del__(self):
+    def stop(self):
         # stop engine
         self._eventEngine.stop()
         # unregister engine
@@ -67,7 +69,8 @@ class Router(object):
             if not self._start:
                 self._start = True
                 self._startTime = time.time()
-                self._util.initServerLimits()
+            # run initServerLimits
+            self._util.initServerLimits()
             # run monitor
             while time.time() - self._startTime < timeout:
                 self.runMonitor()

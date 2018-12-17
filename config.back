@@ -54,7 +54,7 @@
 [Main]
   types = dis, tra, pair
   exchanges = okex, binance, huobi
-  excludeCoins = HOT, VEN, PAX
+  excludeCoins = HOT, VEN, PAX, CHAT
   baseCoin = USDT
   apiEpochSaveBound = 1.25
   apiResultEpoch = 0.5
