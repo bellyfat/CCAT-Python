@@ -41,7 +41,7 @@ class Handler(object):
         [exchange, asset] = event.args
         try:
             db = DB()
-            db.insertAccountWithdrawHistory(exchange, asset)
+            db.insertAccountWithdrawHistoryAsset(exchange, asset)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
@@ -228,12 +228,13 @@ class Handler(object):
             % (event.type, event.priority, event.args))
         # 接收事件
         [exchange, fSymbol, tSymbol, limit, ratio] = event.args
+        exchange = str_to_list(exchange)
         try:
             db = DB()
             db.insertTradeOrderHistory(exchange, fSymbol, tSymbol, limit,
                                        ratio)
         except (DBException, CalcException, EngineException, Exception) as err:
-            errStr = "src.core.engine.handler.Handler.handleListenKlineEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
+            errStr = "src.core.engine.handler.Handler.handleOrderHistoryInsertEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
         callback(event)

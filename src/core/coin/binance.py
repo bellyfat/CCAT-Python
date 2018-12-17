@@ -84,7 +84,7 @@ class Binance(Coin):
                 if b["rateLimitType"] == "ORDERS" and b["interval"] == "DAY":
                     orders_day = float(b["limit"])
             res = {
-                "info_second": requests_second,
+                "info_second": 5,
                 "market_second": requests_second,
                 "orders_second": orders_second,
                 "webSockets_second": ''
@@ -497,6 +497,41 @@ class Binance(Coin):
                 BinanceRequestException, BinanceOrderException,
                 BinanceWithdrawException, Exception) as err:
             errStr = "src.core.coin.binance.Binance.getAccountBalances: exception err=%s" % err
+            raise BinanceException(errStr)
+
+    # get account all asset deposit and withdraw history
+    def getAccountDetail(self):
+        try:
+            deposit = self._client.get_deposit_history()
+            withdraw = self._client.get_withdraw_history()
+            assets = []
+            for de in deposit["depositList"]:
+                if not de["asset"] in assets:
+                    assets.append(de["asset"])
+            for wi in withdraw["withdrawList"]:
+                if not wi["asset"] in assets:
+                    assets.append(wi["asset"])
+            res = []
+            for a in assets:
+                deRes = []
+                wiRes = []
+                for de in deposit["depositList"]:
+                    if de["asset"] == a:
+                        deRes.append(de)
+                for wi in withdraw["withdrawList"]:
+                    if wi["asset"] == a:
+                        wiRes.append(wi)
+                res.append({
+                    "asset": a,
+                    "deposit": deRes,
+                    "withdraw": wiRes
+                })
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, BinanceAPIException,
+                BinanceRequestException, BinanceOrderException,
+                BinanceWithdrawException, Exception) as err:
+            errStr = "src.core.coin.binance.Binance.getAccountDetail: exception err=%s" % (
+                asset, err)
             raise BinanceException(errStr)
 
     # get account assets deposit and withdraw limit

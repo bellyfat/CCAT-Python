@@ -234,7 +234,9 @@ class Sender(object):
                 "src.core.engine.sender.Sender.sendOrderHistoryInsertEvent: " +
                 json.dumps(TEMP_EVENT))
             # 发送事件
-            pass
+            self._engine.sendEvent(event)
+            # 返回参数
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendOrderHistoryInsertEvent: %s" % EngineException(
                 err)

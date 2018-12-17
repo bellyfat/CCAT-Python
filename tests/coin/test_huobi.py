@@ -100,6 +100,11 @@ class TestHuobi(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_getAccountDetail(self):
+        res = huobi.getAccountDetail()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
     def test_getAccountLimits(self):
         res = huobi.getAccountLimits()
         logger.debug(res)

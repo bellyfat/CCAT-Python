@@ -17,7 +17,8 @@ from src.core.coin.lib.okex_v3_api.exceptions import (OkexAPIException,
                                                       OkexRequestException)
 from src.core.coin.lib.okex_v3_api.spot_api import SpotAPI
 from src.core.util.exceptions import OkexException
-from src.core.util.helper import date_to_milliseconds, interval_to_milliseconds, num_to_precision
+from src.core.util.helper import (date_to_milliseconds,
+                                  interval_to_milliseconds, num_to_precision)
 
 
 class Okex(Coin):
@@ -460,6 +461,36 @@ class Okex(Coin):
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
             errStr = "src.core.coin.okex.Okex.getAccountBalances: exception err=%s" % err
+            raise OkexException(errStr)
+
+    # get account all asset deposit and withdraw history
+    def getAccountDetail(self):
+        try:
+            base = self._accountAPI.get_ledger_record(0, 10, 100, '', '',
+                                                      self._proxies)
+            assets = []
+            for b in base[0]:
+                if b["typename"] == 'deposit' or b["typename"] == 'withdrawal':
+                    if b["currency"] not in assets:
+                        assets.append(b["currency"])
+            res = []
+            for a in assets:
+                deposit = []
+                withdraw = []
+                for b in base[0]:
+                    if b['typename'] == 'deposit' and b["currency"] == a:
+                        deposit.append(b)
+                    if b['typename'] == 'withdrawal' and b["currency"] == a:
+                        withdraw.append(b)
+                res.append({
+                    "asset": a,
+                    "deposit": deposit,
+                    "withdraw": withdraw
+                })
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException, Exception) as err:
+            errStr = "src.core.coin.okex.Okex.getAccountDetail: exception err=%s" % err
             raise OkexException(errStr)
 
     # get account asset deposit and withdraw limits

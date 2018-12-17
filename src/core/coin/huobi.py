@@ -600,6 +600,16 @@ class Huobi(Coin):
             errStr = "src.core.coin.huobi.Huobi.getAccountBalances: exception err=%s" % err
             raise HuobiException(errStr)
 
+    # get account all asset deposit and withdraw history
+    def getAccountDetail(self):
+        try:
+            res = []
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, Exception) as err:
+            errStr = "src.core.coin.huobi.Huobi.getAccountDetail: exception err=%s" % (
+                asset, err)
+            raise HuobiException(errStr)
+
     # get account asset deposit and withdraw limits
     def getAccountLimits(self):
         '''

@@ -28,6 +28,10 @@ class Util(object):
         self._marketTickerAggStep = Config()._Main_marketTickerAggStep
         self._apiEpochSaveBound = Config()._Main_apiEpochSaveBound
         self._apiResultEpoch = Config()._Main_apiResultEpoch
+        # huobi exchange for insert deposit and withdraw history
+        self._Okex_exchange = Config()._Okex_exchange
+        self._Binance_exchange = Config()._Binance_exchange
+        self._Huobi_exchange = Config()._Huobi_exchange
         # ServerLimit
         self._serverLimits = None
         # Engine
@@ -159,7 +163,7 @@ class Util(object):
             % (current_thread().name, res, epoch, async, timeout))
         ids = []
         for r in res:
-            if r['can_deposit'] == 'True' and r['can_withdraw'] == 'True':
+            if not r['can_deposit'] == 'False' and not r['can_withdraw'] == 'False':
                 time.sleep(epoch)
                 id = self._sender.sendListenAccountWithdrawEvent(
                     r["server"], r["asset"])
@@ -186,15 +190,23 @@ class Util(object):
             db = DB()
             tds = []
             for server in self._exchanges:
-                epoch = float(self._apiEpochSaveBound) / float(
-                    self._serverLimits.at[server, "info_second"])
-                res = db.getInfoWithdraw([server])
-                td = Thread(
-                    target=self.threadSendListenAccountWithdrawEvent,
-                    name="%s-thread" % server,
-                    args=(res, epoch, async, timeout))
-                tds.append(td)
-                td.start()
+                if server in [self._Okex_exchange, self._Binance_exchange]:
+                    td = Thread(
+                        target=db.insertAccountWithdrawHistory,
+                        name="%s-thread" % server,
+                        args=([server], ))
+                    tds.append(td)
+                    td.start()
+                if server == self._Huobi_exchange:
+                    epoch = float(self._apiEpochSaveBound) / float(
+                        self._serverLimits.at[server, "info_second"])
+                    res = db.getInfoWithdraw([server])
+                    td = Thread(
+                        target=self.threadSendListenAccountWithdrawEvent,
+                        name="%s-thread" % server,
+                        args=(res, epoch, async, timeout))
+                    tds.append(td)
+                    td.start()
             for td in tds:
                 td.join()
         except (DBException, EngineException, Exception) as err:
@@ -416,7 +428,7 @@ class Util(object):
         for r in res:
             time.sleep(epoch)
             id = self._sender.sendOrderHistoryInsertEvent(
-                r["server"], r["fSymbol"], r["tSymbol"], '100', r["fee_taker"])
+                [r["server"]], r["fSymbol"], r["tSymbol"], '100', r["fee_taker"])
             ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT

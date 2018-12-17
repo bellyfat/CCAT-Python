@@ -100,6 +100,11 @@ class TestBinance(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_getAccountDetail(self):
+        res = binance.getAccountDetail()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
     def test_getAccountLimits(self):
         res = binance.getAccountLimits()
         logger.debug(res)

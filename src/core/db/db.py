@@ -617,9 +617,66 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertAccountWithdrawHistory(self, exchange, asset):
+    def insertAccountWithdrawHistory(self, exchange):
         self._logger.debug(
-            "src.core.db.db.DB.insertAccountWithdrawHistory: { exchange=%s, asset=%s }"
+            "src.core.db.db.DB.insertAccountWithdrawHistory: { exchange=%s }"
+            % exchange)
+        try:
+            timeStamp = utcnow_timestamp()
+            TEMP_SQL_TITLE = INSERT_ACCOUNT_WITHDRAW_HISTORY_SQL
+            TEMP_SQL_VALUE = []
+            # Okex
+            if exchange == "all" or self._Okex_exchange in exchange:
+                res = self._Okex.getAccountDetail()
+                for base in res:
+                    TEMP_SQL_VALUE.append(
+                        (str(self._Okex_exchange), int(timeStamp), str(base["asset"]),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["deposit"]))),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["withdraw"])))))
+            # Binance
+            if exchange == "all" or self._Binance_exchange in exchange:
+                res = self._Binance.getAccountDetail()
+                for base in res:
+                    TEMP_SQL_VALUE.append(
+                        (str(self._Binance_exchange), int(timeStamp), str(base["asset"]),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["deposit"]))),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["withdraw"])))))
+            # Huobi
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                res = self._Huobi.getAccountDetail()
+                for base in res:
+                    TEMP_SQL_VALUE.append(
+                        (str(self._Huobi_exchange), int(timeStamp), str(base["asset"]),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["deposit"]))),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["withdraw"])))))
+            # Others
+            # to_be_continue
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
+                self._conn.commit()
+                curs.close()
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
+
+    def insertAccountWithdrawHistoryAsset(self, exchange, asset):
+        self._logger.debug(
+            "src.core.db.db.DB.insertAccountWithdrawHistoryAsset: { exchange=%s, asset=%s }"
             % (exchange, asset))
         try:
             timeStamp = utcnow_timestamp()

@@ -32,7 +32,7 @@ COINS_WITHDRAW_RECORD = '/api/account/v3/withdrawal/history'
 COIN_WITHDRAW_RECORD = '/api/account/v3/withdrawal/history/'
 LEDGER_RECORD = '/api/account/v3/ledger'
 TOP_UP_ADDRESS = '/api/account/v3/deposit/address'
-COIN_TOP_UP_RECORDS = '/api/account/v3/deposit/history'
+COINS_TOP_UP_RECORD = '/api/account/v3/deposit/history'
 COIN_TOP_UP_RECORD = '/api/account/v3/deposit/history/'
 
 # spot

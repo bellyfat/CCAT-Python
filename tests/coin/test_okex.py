@@ -99,6 +99,11 @@ class TestOkex(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_getAccountDetail(self):
+        res = okex.getAccountDetail()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
     def test_getAccountLimits(self):
         res = okex.getAccountLimits()
         logger.debug(res)

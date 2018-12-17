@@ -234,7 +234,13 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_insertAccountWithdrawHistory(self):
-        db.insertAccountWithdrawHistory("all", "USDT")
+        db.insertAccountWithdrawHistory("all")
+        res = db.getAccountWithdrawHistory()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertAccountWithdrawHistoryAsset(self):
+        db.insertAccountWithdrawHistoryAsset("all", "USDT")
         res = db.getAccountWithdrawHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
@@ -290,7 +296,8 @@ test_db = [
     # TestDB("test_getTradeBacktestHistory"),
     # TestDB("test_getTradeOrderHistory"),
     # TestDB("test_insertAccountBalanceHistory"),
-    # TestDB("test_insertAccountWithdrawHistory"),
+    TestDB("test_insertAccountWithdrawHistory"),
+    # TestDB("test_insertAccountWithdrawHistoryAsset"),
     # TestDB("test_insertMarketDepth"),
     # TestDB("test_insertMarketKline"),
     # TestDB("test_insertMarketTicker"),
@@ -305,7 +312,7 @@ test_db = [
     # # TestDB("test_updateCreatTradeOrderHistory"),
     # TestDB("test_updateCheckTradeOrderHistory"),
     # TestDB("test_updateCancleTradeOrderHistory"),
-    TestDB("test_oneClickCancleOrders"),
+    # TestDB("test_oneClickCancleOrders"),
     # TestDB("test_oneClickTransToBaseCoin"),
     # TestDB("test_creatViews"),
     # TestDB("test_getViews"),
