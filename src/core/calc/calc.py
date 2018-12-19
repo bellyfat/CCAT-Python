@@ -113,6 +113,18 @@ class Calc(object):
         except (DBException, Exception) as err:
             raise CalcException(err)
 
+    def processCalcSignalTickerTra(self, r, resInfoSymbol):
+        self._logger.debug(
+            "src.core.calc.calc.Calc.processCalcSignalTickerTra: {process=%s, r=%s, resInfoSymbol=%s}"
+            % (current_process().name, r, resInfoSymbol))
+        try:
+            pass
+        except Exception as err:
+            errStr = "src.core.calc.calc.Calc.processCalcSignalTickerTra: {process=%s, r=%s, resInfoSymbol=%s}, err=%s" % (
+                current_process().name, r, resInfoSymbol, Exception(err))
+            self._logger.error(errStr)
+
+
     def calcSignalTickerTra(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
             "src.core.calc.calc.Calc.calcSignalTickerTra: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
@@ -258,6 +270,17 @@ class Calc(object):
             return signal
         except (DBException, Exception) as err:
             raise CalcException(err)
+
+    def processCalcSignalTickerPair(self, r, resInfoSymbol):
+        self._logger.debug(
+            "src.core.calc.calc.Calc.processCalcSignalTickerPair: {process=%s, r=%s, resInfoSymbol=%s}"
+            % (current_process().name, r, resInfoSymbol))
+        try:
+            pass
+        except Exception as err:
+            errStr = "src.core.calc.calc.Calc.processCalcSignalTickerPair: {process=%s, r=%s, resInfoSymbol=%s}, err=%s" % (
+                current_process().name, r, resInfoSymbol, Exception(err))
+            self._logger.error(errStr)
 
     def calcSignalTickerPair(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
