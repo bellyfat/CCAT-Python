@@ -243,7 +243,7 @@ INSERT_SIGNAL_TICKER_TRA_SQL = '''
 
 # insert db signal ticker dis sql
 INSERT_SIGNAL_TICKER_PAIR_SQL = '''
-    INSERT OR REPLACE INTO SIGNAL_TICKER_PAIR (timeStamp, J1_server, J2_server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, J1_V1_bid_one_price, J1_V1_bid_one_size, J1_V1_bid_one_price_base, J1_V1_ask_one_price, J1_V1_ask_one_size, J1_V1_ask_one_price_base, J1_V2_bid_one_price, J1_V2_bid_one_size, J1_V2_bid_one_price_base, J1_V2_ask_one_price, J1_V2_ask_one_size, J1_V2_ask_one_price_base, J1_V3_bid_one_price, J1_V3_bid_one_size, J1_V3_bid_one_price_base, J1_V3_ask_one_price, J1_V3_ask_one_size, J1_V3_ask_one_price_base, J2_V1_bid_one_price, J2_V1_bid_one_size, J2_V1_bid_one_price_base, J2_V1_ask_one_price, J2_V1_ask_one_size, J2_V1_ask_one_price_base, J2_V2_bid_one_price, J2_V2_bid_one_size, J2_V2_bid_one_price_base, J2_V2_ask_one_price, J2_V2_ask_one_size, J2_V2_ask_one_price_base, J2_V3_bid_one_price, J2_V3_bid_one_size, J2_V3_bid_one_price_base, J2_V3_ask_one_price, J2_V3_ask_one_size, J2_V3_ask_one_price_base, J1_V1_fee, J1_V2_fee, J1_V3_fee, J2_V1_fee, J2_V2_fee, J2_V3_fee, C1_symbol, C2_symbol, C3_symbol, J1_V1_one_price, J1_V1_one_price_base, J1_V1_one_size, J2_V1_one_price, J2_V1_one_price_base, J2_V1_one_size, J1_V2_one_price, J1_V2_one_price_base, J1_V2_one_size, J2_V2_one_price, J2_V2_one_price_base, J2_V2_one_size, J1_V3_one_price, J1_V3_one_price_base, J1_V3_one_size, J2_V3_one_price, J2_V3_one_price_base, J2_V3_one_size, gain_base, gain_ratio)
+    INSERT OR REPLACE INTO SIGNAL_TICKER_PAIR (timeStamp, J1_server, J2_server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, J1_V1_bid_one_price, J1_V1_bid_one_size, J1_V1_bid_one_price_base, J1_V1_ask_one_price, J1_V1_ask_one_size, J1_V1_ask_one_price_base, J1_V2_bid_one_price, J1_V2_bid_one_size, J1_V2_bid_one_price_base, J1_V2_ask_one_price, J1_V2_ask_one_size, J1_V2_ask_one_price_base, J1_V3_bid_one_price, J1_V3_bid_one_size, J1_V3_bid_one_price_base, J1_V3_ask_one_price, J1_V3_ask_one_size, J1_V3_ask_one_price_base, J2_V1_bid_one_price, J2_V1_bid_one_size, J2_V1_bid_one_price_base, J2_V1_ask_one_price, J2_V1_ask_one_size, J2_V1_ask_one_price_base, J2_V2_bid_one_price, J2_V2_bid_one_size, J2_V2_bid_one_price_base, J2_V2_ask_one_price, J2_V2_ask_one_size, J2_V2_ask_one_price_base, J2_V3_bid_one_price, J2_V3_bid_one_size, J2_V3_bid_one_price_base, J2_V3_ask_one_price, J2_V3_ask_one_size, J2_V3_ask_one_price_base, J1_V1_fee, J1_V2_fee, J1_V3_fee, J2_V1_fee, J2_V2_fee, J2_V3_fee, C1_symbol, C2_symbol, C3_symbol, J1_V1_one_price, J1_V1_one_side, J1_V1_one_size, J2_V1_one_price, J2_V1_one_side, J2_V1_one_size, J1_V2_one_price, J1_V2_one_side, J1_V2_one_size, J2_V2_one_price, J2_V2_one_side, J2_V2_one_size, J1_V3_one_price, J1_V3_one_side, J1_V3_one_size, J2_V3_one_price, J2_V3_one_side, J2_V3_one_size, gain_base, gain_ratio)
     VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?)'''
 
 # insert db trade backtest history sql
@@ -369,22 +369,22 @@ CREATE_TABELS_SQL = '''
         `C2_symbol`	TEXT NOT NULL,
         `C3_symbol`	TEXT NOT NULL,
         `J1_V1_one_price`	REAL,
-        `J1_V1_one_price_base`	REAL,
+        `J1_V1_one_side`	TEXT,
         `J1_V1_one_size`	REAL,
         `J2_V1_one_price`	REAL,
-        `J2_V1_one_price_base`	REAL,
+        `J2_V1_one_side`	TEXT,
         `J2_V1_one_size`	REAL,
         `J1_V2_one_price`	REAL,
-        `J1_V2_one_price_base`	REAL,
+        `J1_V2_one_side`	TEXT,
         `J1_V2_one_size`	REAL,
         `J2_V2_one_price`	REAL,
-        `J2_V2_one_price_base`	REAL,
+        `J2_V2_one_side`	TEXT,
         `J2_V2_one_size`	REAL,
         `J1_V3_one_price`	REAL,
-        `J1_V3_one_price_base`	REAL,
+        `J1_V3_one_side`	TEXT,
         `J1_V3_one_size`	REAL,
         `J2_V3_one_price`	REAL,
-        `J2_V3_one_price_base`	REAL,
+        `J2_V3_one_side`	TEXT,
         `J2_V3_one_size`	REAL,
         `gain_base`	REAL,
         `gain_ratio`	REAL,
