@@ -8,6 +8,7 @@ from logging.handlers import RotatingFileHandler, TimedRotatingFileHandler
 import colorlog
 
 from src.core.config import Config
+from src.core.util.exceptions import LogException
 
 
 class Logger(object):
@@ -67,16 +68,31 @@ class Logger(object):
         self._logger.setLevel(logging.DEBUG)
 
     def debug(self, msg):
-        self._logger.debug(msg)
+        try:
+            self._logger.debug(msg)
+        except Exception as err:
+            raise LogException(err)
 
     def info(self, msg):
-        self._logger.info(msg)
+        try:
+            self._logger.info(msg)
+        except Exception as err:
+            raise LogException(err)
 
     def warn(self, msg):
-        self._logger.warn(msg)
+        try:
+            self._logger.warn(msg)
+        except Exception as err:
+            raise LogException(err)
 
     def error(self, msg):
-        self._logger.error(msg)
+        try:
+            self._logger.error(msg)
+        except Exception as err:
+            raise LogException(err)
 
     def critical(self, msg):
-        self._logger.critical(msg)
+        try:
+            self._logger.critical(msg)
+        except Exception as err:
+            raise LogException(err)
