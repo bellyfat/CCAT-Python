@@ -1284,7 +1284,6 @@ class DB(object):
                                            float(s['V3_one_price']),
                                            str(s['V3_one_side']),
                                            float(s['V3_one_size']),
-                                           str(s['gain_symbol']),
                                            float(s['gain_base']),
                                            float(s['gain_ratio'])))
             if not TEMP_SQL_VALUE == []:

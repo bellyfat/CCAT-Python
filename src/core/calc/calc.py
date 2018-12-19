@@ -217,8 +217,6 @@ class Calc(object):
                     r['V1_one_size'] = temp_size * C3_C1_one_price
                     r['V2_one_size'] = temp_size
                     r['V3_one_size'] = temp_size
-                    # tra symbol
-                    r['gain_symbol'] = r['C2_symbol']
                     # calc gain_base
                     r['gain_base'] = (C1_C2_one_price * C3_C1_one_price *
                                       (1 - r['V1_fee']) *
@@ -239,8 +237,6 @@ class Calc(object):
                     r['V1_one_size'] = temp_size
                     r['V2_one_size'] = temp_size
                     r['V3_one_size'] = temp_size * C2_C3_one_price
-                    # tra symbol
-                    r['gain_symbol'] = r['C1_symbol']
                     # calc gain_base
                     r['gain_base'] = (
                         C1_C2_one_price * (1 - r['V1_fee']) -
