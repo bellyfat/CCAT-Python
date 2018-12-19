@@ -85,7 +85,7 @@ JUDGE_MARKET_DEPTH_EVENT = MyTemplate("""
 {
     "id": "$id",
     "type": "JUDGE_MARKET_DEPTH_EVENT",
-    "priority": "high",
+    "priority": "medium",
     "timeStamp": "$timeStamp",
     "args": []
 }
@@ -95,7 +95,7 @@ JUDGE_MARKET_KLINE_EVENT = MyTemplate("""
 {
     "id": "$id",
     "type": "JUDGE_MARKET_KLINE_EVENT",
-    "priority": "high",
+    "priority": "medium",
     "timeStamp": "$timeStamp",
     "args": []
 }
@@ -105,7 +105,7 @@ JUDGE_MARKET_TICKER_EVENT = MyTemplate("""
 {
     "id": "$id",
     "type": "JUDGE_MARKET_TICKER_EVENT",
-    "priority": "high",
+    "priority": "medium",
     "timeStamp": "$timeStamp",
     "args": ["$exchange", "$types"]
 }
@@ -164,11 +164,21 @@ ORDER_HISTORY_CANCEL_EVENT = MyTemplate("""
 """)
 
 # statistic event list
+STATISTIC_JUDGE_EVENT = MyTemplate("""
+{
+    "id": "$id",
+    "type": "STATISTIC_BACKTEST_EVENT",
+    "priority": "medium",
+    "timeStamp": "$timeStamp",
+    "args": ["$exchange", "$types"]
+}
+""")
+
 STATISTIC_BACKTEST_EVENT = MyTemplate("""
 {
     "id": "$id",
     "type": "STATISTIC_BACKTEST_EVENT",
-    "priority": "low",
+    "priority": "medium",
     "timeStamp": "$timeStamp",
     "args": []
 }
@@ -178,7 +188,7 @@ STATISTIC_ORDER_EVENT = MyTemplate("""
 {
     "id": "$id",
     "type": "STATISTIC_ORDER_EVENT",
-    "priority": "low",
+    "priority": "medium",
     "timeStamp": "$timeStamp",
     "args": []
 }

@@ -127,9 +127,10 @@ class Handler(object):
             self._logger.error(errStr)
         callback(event)
 
-    def processCalcSignalTickerDis(self, exchange, threshold, resInfoSymbol):
+    def processJudgeMarketTickerCalcSignalTickerDis(self, exchange, threshold,
+                                                    resInfoSymbol):
         self._logger.debug(
-            "src.core.engine.handler.Handler.processCalcSignalTickerDis: {process=%s, exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            "src.core.engine.handler.Handler.processJudgeMarketTickerCalcSignalTickerDis: {process=%s, exchange=%s, threshold=%s, resInfoSymbol=%s}"
             % (current_process().name, exchange, threshold, resInfoSymbol))
         try:
             db = DB()
@@ -139,13 +140,15 @@ class Handler(object):
             if not signalDis == []:
                 db.insertSignalTickerDis(signalDis)
         except (DBException, CalcException, EngineException, Exception) as err:
-            errStr = "src.core.engine.handler.Handler.processCalcSignalTickerDis:  {exchange=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
-                exchange, threshold, resInfoSymbol, EngineException(err))
+            errStr = "src.core.engine.handler.Handler.processJudgeMarketTickerCalcSignalTickerDis:  {process=%s, exchange=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
+                current_process().name, exchange, threshold, resInfoSymbol,
+                EngineException(err))
             self._logger.error(errStr)
 
-    def processCalcSignalTickerTra(self, exchange, threshold, resInfoSymbol):
+    def processJudgeMarketTickerCalcSignalTickerTra(self, exchange, threshold,
+                                                    resInfoSymbol):
         self._logger.debug(
-            "src.core.engine.handler.Handler.processCalcSignalTickerTra: {process=%s, exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            "src.core.engine.handler.Handler.processJudgeMarketTickerCalcSignalTickerTra: {process=%s, exchange=%s, threshold=%s, resInfoSymbol=%s}"
             % (current_process().name, exchange, threshold, resInfoSymbol))
         try:
             db = DB()
@@ -155,13 +158,15 @@ class Handler(object):
             if not signalTra == []:
                 db.insertSignalTickerTra(signalTra)
         except (DBException, CalcException, EngineException, Exception) as err:
-            errStr = "src.core.engine.handler.Handler.processCalcSignalTickerTra:  {exchange=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
-                exchange, threshold, resInfoSymbol, EngineException(err))
+            errStr = "src.core.engine.handler.Handler.processJudgeMarketTickerCalcSignalTickerTra:  {process=%s, exchange=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
+                current_process().name, exchange, threshold, resInfoSymbol,
+                EngineException(err))
             self._logger.error(errStr)
 
-    def processCalcSignalTickerPair(self, exchange, threshold, resInfoSymbol):
+    def processJudgeMarketTickerCalcSignalTickerPair(self, exchange, threshold,
+                                                     resInfoSymbol):
         self._logger.debug(
-            "src.core.engine.handler.Handler.processCalcSignalTickerPair: {process=%s, exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            "src.core.engine.handler.Handler.processJudgeMarketTickerCalcSignalTickerPair: {process=%s, exchange=%s, threshold=%s, resInfoSymbol=%s}"
             % (current_process().name, exchange, threshold, resInfoSymbol))
         try:
             db = DB()
@@ -171,8 +176,9 @@ class Handler(object):
             if not signalPair == []:
                 db.insertSignalTickerPair(signalPair)
         except (DBException, CalcException, EngineException, Exception) as err:
-            errStr = "src.core.engine.handler.Handler.processCalcSignalTickerPair:  {exchange=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
-                exchange, threshold, resInfoSymbol, EngineException(err))
+            errStr = "src.core.engine.handler.Handler.processJudgeMarketTickerCalcSignalTickerPair:  {process=%s, exchange=%s, threshold=%s, resInfoSymbol=%s}, err=%s" % (
+                current_process().name, exchange, threshold, resInfoSymbol,
+                EngineException(err))
             self._logger.error(errStr)
 
     def handleJudgeMarketTickerEvent(self, event, callback):
@@ -191,24 +197,24 @@ class Handler(object):
             # calc dis type
             if TYPE_DIS in types:
                 p = Process(
-                    target=self.processCalcSignalTickerDis,
-                    name="%s-processCalcSignalTickerDis" % TYPE_DIS,
+                    target=self.processJudgeMarketTickerCalcSignalTickerDis,
+                    name="processJudgeMarketTickerCalcSignalTickerDis",
                     args=(exchange, TYPE_DIS_THRESHOLD, resInfoSymbol))
                 prs.append(p)
                 p.start()
             # calc tra type
             if TYPE_TRA in types:
                 p = Process(
-                    target=self.processCalcSignalTickerTra,
-                    name="%s-processCalcSignalTickerTra" % TYPE_TRA,
+                    target=self.processJudgeMarketTickerCalcSignalTickerTra,
+                    name="processJudgeMarketTickerCalcSignalTickerTra",
                     args=(exchange, TYPE_TRA_THRESHOLD, resInfoSymbol))
                 prs.append(p)
                 p.start()
             # calc pair type
             if TYPE_PAIR in types:
                 p = Process(
-                    target=self.processCalcSignalTickerPair,
-                    name="%s-processCalcSignalTickerPair" % TYPE_PAIR,
+                    target=self.processJudgeMarketTickerCalcSignalTickerPair,
+                    name="processJudgeMarketTickerCalcSignalTickerPair",
                     args=(exchange, TYPE_PAIR_THRESHOLD, resInfoSymbol))
                 prs.append(p)
                 p.start()
@@ -264,6 +270,91 @@ class Handler(object):
             % (event.type, event.priority, event.args))
         # 接收事件
         pass
+
+    def processStatisticJudgeStatisticSignalTickerDis(self, exchange):
+        self._logger.debug(
+            "src.core.engine.handler.Handler.processStatisticJudgeStatisticSignalTickerDis: {process=%s, exchange=%s}"
+            % (current_process().name, exchange))
+        try:
+            db = DB()
+            calc = Calc()
+            statisticDis = calc.statisticSignalTickerDis(exchange)
+            pass
+        except (DBException, CalcException, EngineException, Exception) as err:
+            errStr = "src.core.engine.handler.Handler.processStatisticJudgeStatisticSignalTickerDis:  {process=%s, exchange=%s}, err=%s" % (
+                current_process().name, exchange, EngineException(err))
+            self._logger.error(errStr)
+
+    def processStatisticJudgeStatisticSignalTickerTra(self, exchange):
+        self._logger.debug(
+            "src.core.engine.handler.Handler.processStatisticJudgeStatisticSignalTickerTra: {process=%s, exchange=%s}"
+            % (current_process().name, exchange))
+        try:
+            db = DB()
+            calc = Calc()
+            statisticTra = calc.statisticSignalTickerTra(exchange)
+            pass
+        except (DBException, CalcException, EngineException, Exception) as err:
+            errStr = "src.core.engine.handler.Handler.processStatisticJudgeStatisticSignalTickerTra:  {process=%s, exchange=%s}, err=%s" % (
+                current_process().name, exchange, EngineException(err))
+            self._logger.error(errStr)
+
+    def processStatisticJudgeStatisticSignalTickerPair(self, exchange):
+        self._logger.debug(
+            "src.core.engine.handler.Handler.processStatisticJudgeStatisticSignalTickerPair: {process=%s, exchange=%s}"
+            % (current_process().name, exchange))
+        try:
+            db = DB()
+            calc = Calc()
+            statisticPair = calc.statisticSignalTickerPair(exchange)
+            pass
+        except (DBException, CalcException, EngineException, Exception) as err:
+            errStr = "src.core.engine.handler.Handler.processStatisticJudgeStatisticSignalTickerPair:  {process=%s, exchange=%s}, err=%s" % (
+                current_process().name, exchange, EngineException(err))
+            self._logger.error(errStr)
+
+    def handleStatisticJudgeEvent(self, event, callback):
+        self._logger.debug(
+            "src.core.engine.handler.Handler.handleStatisticJudgeEvent: { type=%s, priority=%s, args=%s }"
+            % (event.type, event.priority, event.args))
+        # 接收事件
+        [exchange, types] = event.args
+        exchange = str_to_list(exchange)
+        types = str_to_list(types)
+        try:
+            calc = Calc()
+            prs = []
+            # calc dis type
+            if TYPE_DIS in types:
+                p = Process(
+                    target=self.processStatisticJudgeStatisticSignalTickerDis,
+                    name="processStatisticJudgeStatisticSignalTickerDis",
+                    args=(exchange, ))
+                prs.append(p)
+                p.start()
+            # calc tra type
+            if TYPE_TRA in types:
+                p = Process(
+                    target=self.processStatisticJudgeStatisticSignalTickerTra,
+                    name="processStatisticJudgeStatisticSignalTickerTra",
+                    args=(exchange, ))
+                prs.append(p)
+                p.start()
+            # calc pair type
+            if TYPE_PAIR in types:
+                p = Process(
+                    target=self.processStatisticJudgeStatisticSignalTickerPair,
+                    name="processStatisticJudgeStatisticSignalTickerPair",
+                    args=(exchange, ))
+                prs.append(p)
+                p.start()
+            for p in prs:
+                p.join()
+        except (DBException, CalcException, EngineException, Exception) as err:
+            errStr = "src.core.engine.handler.Handler.handleStatisticJudgeEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
+                event.type, event.priority, event.args, EngineException(err))
+            self._logger.error(errStr)
+        callback(event)
 
     def handleStatisticBacktestEvent(self, event, callback):
         self._logger.debug(

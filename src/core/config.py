@@ -74,8 +74,8 @@ class Config(object):
                 'Main', 'syncBacktestTimeout')
             Config._Main_syncOrderTimeout = cf.getint(
                 'Main', 'syncOrderTimeout')
-            Config._Main_signalTickerTimeout = cf.getint(
-                'Main', 'signalTickerTimeout')
+            Config._Main_signalTickerCycle = cf.getint(
+                'Main', 'signalTickerCycle')
             Config._Main_symbolStartBaseCoin = cf.getfloat(
                 'Main', 'symbolStartBaseCoin')
             Config._Main_symbolEndBaseCoin = cf.getfloat(

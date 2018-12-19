@@ -72,7 +72,7 @@ class Router(object):
             # run initServerLimits
             self._util.initServerLimits()
             # run monitor
-            while time.time() - self._startTime < timeout:
+            while time.time() - self._startTime < timeout or timeout == 0:
                 self.runMonitor()
         except (UtilException, Exception) as err:
             errStr = "src.core.router.Router.updateAPP: %s" % RouterException(err)

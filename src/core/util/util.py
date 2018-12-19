@@ -303,7 +303,7 @@ class Util(object):
             db.delSignalTickerDis()
             db.delSignalTickerTra()
             db.delSignalTickerPair()
-            interval = '1h'
+            interval = '1d'
             end = utcnow_timestamp() - 12 * 60 * 60 * 1000
             start = end - 24 * 60 * 60 * 1000
             tds = []
@@ -483,6 +483,29 @@ class Util(object):
         pass
 
     # Statistic 事件
+    def updateDBStatisticJudge(self, async=True, timeout=30):
+        self._logger.debug(
+            "src.core.util.util.Util.updateDBStatisticJudge: {async: %s, timeout: %s}"
+            % (async, timeout))
+        try:
+            id = self._sender.sendStatiscJudgeEvent(
+                self._exchanges, self._types)
+            if not async:
+                st = self._engine.getEventStatus(id)
+                startTime = time.time()
+                while st != DONE_STATUS_EVENT and time.time(
+                ) - startTime < timeout:
+                    st = self._engine.getEventStatus(id)
+                    time.sleep(self._apiResultEpoch)
+                if st != DONE_STATUS_EVENT:
+                    self._logger.warn(
+                        "src.core.util.util.Util.updateDBJudgeMarketTicker: {async: %s, timeout: %s}, err=Timeout Error, waiting for event handler result timeout."
+                        % (async, timeout))
+        except (DBException, EngineException, Exception) as err:
+            errStr = "src.core.util.util.Util.updateDBJudgeMarketTicker: {async: %s, timeout: %s}, exception err=%s" % (
+                async, timeout, UtilException(err))
+            raise UtilException(err)
+
     def updateDBStatisticBacktest(self):
         pass
 

@@ -27,7 +27,7 @@ class DB(object):
         self._basePriceVolume = Config()._Main_basePriceVolume
         self._basePriceTimeout = Config()._Main_basePriceTimeout
         self._baseJudgeTimeout = Config()._Main_baseJudgeTimeout
-        self._signalTickerTimeout = Config()._Main_signalTickerTimeout
+        self._signalTickerCycle = Config()._Main_signalTickerCycle
         # proxies
         self._proxies = Config()._Proxies_url if Config(
         )._Proxies_proxies else None
@@ -112,6 +112,89 @@ class DB(object):
             self._logger.debug(TEMP_SQL)
             curs.executescript(TEMP_SQL)
             curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewSignalTickerPairCurrentServer(self, server, server_pair):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewSignalTickerPairCurrentServer")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_SIGNAL_TICKER_PAIR_CURRENT_SERVER_SQL.substitute(
+                server=server, server_pair=server_pair)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewSignalTickerPairCurrent(self):
+        self._logger.debug("src.core.db.db.DB.getViewSignalTickerPairCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_SIGNAL_TICKER_PAIR_CURRENT_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewSignalTickerTraCurrentServer(self, exchange):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewSignalTickerTraCurrentServer")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_SIGNAL_TICKER_TRA_CURRENT_SERVER_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewSignalTickerTraCurrent(self):
+        self._logger.debug("src.core.db.db.DB.getViewSignalTickerTraCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_SIGNAL_TICKER_TRA_CURRENT_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewSignalTickerDisCurrentServer(self, server, server_pair):
+        self._logger.debug("src.core.db.db.DB.getViewSignalTickerDisCurrentServer")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_SIGNAL_TICKER_DIS_CURRENT_SERVER_SQL.substitute(
+                server=server, server_pair=server_pair)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewSignalTickerDisCurrent(self):
+        self._logger.debug("src.core.db.db.DB.getViewSignalTickerDisCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_SIGNAL_TICKER_DIS_CURRENT_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
@@ -309,10 +392,11 @@ class DB(object):
 
     def getTables(self):
         self._logger.debug("src.core.db.db.DB.getTables")
-        self._logger.debug(GET_TABLES_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_TABLES_SQL)
+            TEMP_SQL = GET_TABLES_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -321,10 +405,11 @@ class DB(object):
 
     def creatTables(self):
         self._logger.debug("src.core.db.db.DB.creatTables")
-        self._logger.debug(CREATE_TABELS_SQL)
         try:
             curs = self._conn.cursor()
-            curs.executescript(CREATE_TABELS_SQL)
+            TEMP_SQL = CREATE_TABELS_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.executescript(TEMP_SQL)
             curs.close()
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
@@ -345,10 +430,11 @@ class DB(object):
 
     def getAccountWithdrawHistory(self):
         self._logger.debug("src.core.db.db.DB.getAccountWithdrawHistory")
-        self._logger.debug(GET_ACCOUNT_WITHDRAW_HISTORY_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_ACCOUNT_WITHDRAW_HISTORY_SQL)
+            TEMP_SQL = GET_ACCOUNT_WITHDRAW_HISTORY_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -357,10 +443,11 @@ class DB(object):
 
     def getInfoServer(self):
         self._logger.debug("src.core.db.db.DB.getInfoServer")
-        self._logger.debug(GET_INFO_SERVER_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_INFO_SERVER_SQL)
+            TEMP_SQL = GET_INFO_SERVER_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -397,10 +484,11 @@ class DB(object):
 
     def getMarketDepth(self):
         self._logger.debug("src.core.db.db.DB.getMarketDepth")
-        self._logger.debug(GET_MARKET_DEPTH_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_MARKET_DEPTH_SQL)
+            TEMP_SQL = GET_MARKET_DEPTH_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -409,10 +497,11 @@ class DB(object):
 
     def delMarketDepth(self):
         self._logger.debug("src.core.db.db.DB.delMarketDepth")
-        self._logger.debug(DEL_MARKET_DEPTH_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(DEL_MARKET_DEPTH_SQL)
+            TEMP_SQL = DEL_MARKET_DEPTH_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             self._conn.commit()
             curs.close()
         except (sqlite3.Error, Exception) as err:
@@ -420,10 +509,11 @@ class DB(object):
 
     def getMarketKline(self):
         self._logger.debug("src.core.db.db.DB.getMarketKline")
-        self._logger.debug(GET_MARKET_KLINE_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_MARKET_KLINE_SQL)
+            TEMP_SQL = GET_MARKET_KLINE_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -432,10 +522,11 @@ class DB(object):
 
     def delMarketKline(self):
         self._logger.debug("src.core.db.db.DB.delMarketKline")
-        self._logger.debug(DEL_MARKET_KLINE_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(DEL_MARKET_KLINE_SQL)
+            TEMP_SQL = DEL_MARKET_KLINE_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             self._conn.commit()
             curs.close()
         except (sqlite3.Error, Exception) as err:
@@ -443,10 +534,11 @@ class DB(object):
 
     def getMarketTicker(self):
         self._logger.debug("src.core.db.db.DB.getMarketTicker")
-        self._logger.debug(GET_MARKET_TICKER_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_MARKET_TICKER_SQL)
+            TEMP_SQL = GET_MARKET_TICKER_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -455,10 +547,11 @@ class DB(object):
 
     def delMarketTicker(self):
         self._logger.debug("src.core.db.db.DB.delMarketTicker")
-        self._logger.debug(DEL_MARKET_TICKER_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(DEL_MARKET_TICKER_SQL)
+            TEMP_SQL = DEL_MARKET_TICKER_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             self._conn.commit()
             curs.close()
         except (sqlite3.Error, Exception) as err:
@@ -466,10 +559,11 @@ class DB(object):
 
     def getSignalTickerDis(self):
         self._logger.debug("src.core.db.db.DB.getSignalTickerDis")
-        self._logger.debug(GET_SIGNAL_TICKER_DIS_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_SIGNAL_TICKER_DIS_SQL)
+            TEMP_SQL = GET_SIGNAL_TICKER_DIS_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -480,7 +574,7 @@ class DB(object):
         self._logger.debug("src.core.db.db.DB.delSignalTickerDis")
         try:
             TEMP_SQL = DEL_SIGNAL_TICKER_DIS_SQL.substitute(
-                period=self._signalTickerTimeout)
+                period=self._signalTickerCycle)
             curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
@@ -491,11 +585,9 @@ class DB(object):
 
     def getSignalTickerTra(self):
         self._logger.debug("src.core.db.db.DB.getSignalTickerTra")
-        self._logger.debug(GET_SIGNAL_TICKER_TRA_SQL)
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_ACCOUNT_BALANCE_HISTORY_SQL.substitute(
-                server=exchange).replace('[', '(').replace(']', ')')
+            TEMP_SQL = GET_SIGNAL_TICKER_TRA_SQL
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             curs.close()
@@ -507,7 +599,7 @@ class DB(object):
         self._logger.debug("src.core.db.db.DB.delSignalTickerTra")
         try:
             TEMP_SQL = DEL_SIGNAL_TICKER_TRA_SQL.substitute(
-                period=self._signalTickerTimeout)
+                period=self._signalTickerCycle)
             curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
@@ -518,10 +610,11 @@ class DB(object):
 
     def getSignalTickerPair(self):
         self._logger.debug("src.core.db.db.DB.getSignalTickerPair")
-        self._logger.debug(GET_SIGNAL_TICKER_PAIR_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_SIGNAL_TICKER_PAIR_SQL)
+            TEMP_SQL = GET_SIGNAL_TICKER_PAIR_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -532,7 +625,7 @@ class DB(object):
         self._logger.debug("src.core.db.db.DB.delSignalTickerPair")
         try:
             TEMP_SQL = DEL_SIGNAL_TICKER_PAIR_SQL.substitute(
-                period=self._signalTickerTimeout)
+                period=self._signalTickerCycle)
             curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
@@ -543,10 +636,11 @@ class DB(object):
 
     def getTradeBacktestHistory(self):
         self._logger.debug("src.core.db.db.DB.getTradeBacktestHistory")
-        self._logger.debug(GET_TRADE_BACKTEST_HISTORY_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_TRADE_BACKTEST_HISTORY_SQL)
+            TEMP_SQL = GET_TRADE_BACKTEST_HISTORY_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -555,10 +649,11 @@ class DB(object):
 
     def getTradeOrderHistory(self):
         self._logger.debug("src.core.db.db.DB.getTradeOrderHistory")
-        self._logger.debug(GET_TRADE_ORDER_HISTORY_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_TRADE_ORDER_HISTORY_SQL)
+            TEMP_SQL = GET_TRADE_ORDER_HISTORY_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -1181,17 +1276,14 @@ class DB(object):
                                            str(s['C2_symbol']),
                                            str(s['C3_symbol']),
                                            float(s['V1_one_price']),
-                                           float(s['V1_one_price_base']),
+                                           str(s['V1_one_side']),
                                            float(s['V1_one_size']),
-                                           float(s['C1_symbol_base']),
                                            float(s['V2_one_price']),
-                                           float(s['V2_one_price_base']),
+                                           str(s['V2_one_side']),
                                            float(s['V2_one_size']),
-                                           float(s['C2_symbol_base']),
                                            float(s['V3_one_price']),
-                                           float(s['V3_one_price_base']),
+                                           str(s['V3_one_side']),
                                            float(s['V3_one_size']),
-                                           float(s['C3_symbol_base']),
                                            str(s['gain_symbol']),
                                            float(s['gain_base']),
                                            float(s['gain_ratio'])))

@@ -2,48 +2,64 @@
 
 from string import Template
 
-# get db signal ticker dis sql
-GET_VIEW_SIGNAL_TICKER_DIS_CURRENT_SQL = '''
-    SELECT * FROM VIEW_SIGNAL_TICKER_DIS_CURRENT;
-'''
-# get db signal ticker dis sql
-GET_VIEW_SIGNAL_TICKER_TRA_CURRENT_SQL = '''
-    SELECT * FROM VIEW_SIGNAL_TICKER_TRA_CURRENT;
-'''
-# get db signal ticker dis sql
+
+# get db signal ticker pair current server sql
+GET_VIEW_SIGNAL_TICKER_PAIR_CURRENT_SERVER_SQL =  Template('''
+    SELECT *
+    FROM VIEW_SIGNAL_TICKER_PAIR_CURRENT
+    WHERE (J1_server='$server' AND J2_server='$server_pair') OR (J1_server='$server_pair' AND J2_server='$server');
+''')
+# get db signal ticker pair current sql
 GET_VIEW_SIGNAL_TICKER_PAIR_CURRENT_SQL = '''
     SELECT * FROM VIEW_SIGNAL_TICKER_PAIR_CURRENT;
 '''
 
-# get db view market ticker current tra sql
+# get db signal ticker tra current server sql
+GET_VIEW_SIGNAL_TICKER_TRA_CURRENT_SERVER_SQL =  Template('''
+    SELECT * FROM VIEW_SIGNAL_TICKER_TRA_CURRENT WHERE server IN $server;
+''')
+# get db signal ticker tra current sql
+GET_VIEW_SIGNAL_TICKER_TRA_CURRENT_SQL = '''
+    SELECT * FROM VIEW_SIGNAL_TICKER_TRA_CURRENT;
+'''
+
+# get db signal ticker dis current server sql
+GET_VIEW_SIGNAL_TICKER_DIS_CURRENT_SERVER_SQL =  Template('''
+    SELECT *
+    FROM VIEW_SIGNAL_TICKER_DIS_CURRENT
+    WHERE (bid_server='$server' AND ask_server='$server_pair') OR (bid_server='$server_pair' AND ask_server='$server');
+''')
+# get db signal ticker dis current sql
+GET_VIEW_SIGNAL_TICKER_DIS_CURRENT_SQL = '''
+    SELECT * FROM VIEW_SIGNAL_TICKER_DIS_CURRENT;
+'''
+
+# get db view market ticker current pair server sql
 GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SERVER_SQL = Template('''
     SELECT *
     FROM VIEW_MARKET_TICKER_CURRENT_PAIR
     WHERE (J1_server='$server' AND J2_server='$server_pair') OR (J1_server='$server_pair' AND J2_server='$server');
 ''')
-
-# get db view market ticker current tra sql
+# get db view market ticker current pair sql
 GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SQL = '''
     SELECT * FROM VIEW_MARKET_TICKER_CURRENT_PAIR;
 '''
 
-# get db view market ticker current tra sql
+# get db view market ticker current tra server sql
 GET_VIEW_MARKET_TICKER_CURRENT_TRA_SERVER_SQL = Template('''
     SELECT * FROM VIEW_MARKET_TICKER_CURRENT_TRA WHERE server IN $server;
 ''')
-
 # get db view market ticker current tra sql
 GET_VIEW_MARKET_TICKER_CURRENT_TRA_SQL = '''
     SELECT * FROM VIEW_MARKET_TICKER_CURRENT_TRA;
 '''
 
-# get db view market ticker current dis pair sql
+# get db view market ticker current dis server sql
 GET_VIEW_MARKET_TICKER_CURRENT_DIS_SERVER_SQL = Template('''
     SELECT *
     FROM VIEW_MARKET_TICKER_CURRENT_DIS
     WHERE (bid_server='$server' AND ask_server='$server_pair') OR (bid_server='$server_pair' AND ask_server='$server');
 ''')
-
 # get db view market ticker current dis sql
 GET_VIEW_MARKET_TICKER_CURRENT_DIS_SQL = '''
     SELECT * FROM VIEW_MARKET_TICKER_CURRENT_DIS;
@@ -222,8 +238,8 @@ INSERT_SIGNAL_TICKER_DIS_SQL = '''
 
 # insert db signal ticker dis sql
 INSERT_SIGNAL_TICKER_TRA_SQL = '''
-    INSERT OR REPLACE INTO SIGNAL_TICKER_TRA (timeStamp, server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, V1_bid_one_price, V1_bid_one_size, V1_bid_one_price_base, V1_ask_one_price, V1_ask_one_size, V1_ask_one_price_base, V2_bid_one_price, V2_bid_one_size, V2_bid_one_price_base, V2_ask_one_price, V2_ask_one_size, V2_ask_one_price_base, V3_bid_one_price, V3_bid_one_size, V3_bid_one_price_base, V3_ask_one_price, V3_ask_one_size, V3_ask_one_price_base, V1_fee, V2_fee, V3_fee, C1_symbol, C2_symbol, C3_symbol, V1_one_price, V1_one_price_base, V1_one_size, C1_symbol_base, V2_one_price, V2_one_price_base, V2_one_size, C2_symbol_base, V3_one_price, V3_one_price_base, V3_one_size, C3_symbol_base, gain_symbol, gain_base, gain_ratio)
-    VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?)'''
+    INSERT OR REPLACE INTO SIGNAL_TICKER_TRA (timeStamp, server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, V1_bid_one_price, V1_bid_one_size, V1_bid_one_price_base, V1_ask_one_price, V1_ask_one_size, V1_ask_one_price_base, V2_bid_one_price, V2_bid_one_size, V2_bid_one_price_base, V2_ask_one_price, V2_ask_one_size, V2_ask_one_price_base, V3_bid_one_price, V3_bid_one_size, V3_bid_one_price_base, V3_ask_one_price, V3_ask_one_size, V3_ask_one_price_base, V1_fee, V2_fee, V3_fee, C1_symbol, C2_symbol, C3_symbol, V1_one_price, V1_one_side, V1_one_size, V2_one_price, V2_one_side, V2_one_size, V3_one_price, V3_one_side, V3_one_size, gain_symbol, gain_base, gain_ratio)
+    VALUES (?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?)'''
 
 # insert db signal ticker dis sql
 INSERT_SIGNAL_TICKER_PAIR_SQL = '''
@@ -408,17 +424,14 @@ CREATE_TABELS_SQL = '''
     	`C2_symbol`	TEXT,
     	`C3_symbol`	TEXT,
     	`V1_one_price`	REAL,
-    	`V1_one_price_base`	REAL,
+    	`V1_one_side`	TEXT,
     	`V1_one_size`	REAL,
-    	`C1_symbol_base`	REAL,
     	`V2_one_price`	REAL,
-    	`V2_one_price_base`	REAL,
+    	`V2_one_side`	TEXT,
     	`V2_one_size`	REAL,
-    	`C2_symbol_base`	REAL,
     	`V3_one_price`	REAL,
-    	`V3_one_price_base`	REAL,
+    	`V3_one_side`	TEXT,
     	`V3_one_size`	REAL,
-    	`C3_symbol_base`	REAL,
     	`gain_symbol`	REAL,
     	`gain_base`	REAL,
     	`gain_ratio`	REAL,
@@ -538,10 +551,9 @@ CREATE_VIEWS_SQL = Template('''
     BEGIN TRANSACTION;
     CREATE VIEW IF NOT EXISTS VIEW_INFO_SYMBOL
         AS
-            SELECT DISTINCT S1.*
-            FROM INFO_SYMBOL S1
-            LEFT JOIN INFO_SYMBOL S2 ON S1.server<>S2.server AND S1.fSymbol = S2.fSymbol AND S1.tSymbol = S2.tSymbol
-            WHERE S2.server iS NOT NULL AND S1.fSymbol NOT IN $excludeCoins AND S1.tSymbol NOT IN $excludeCoins;
+            SELECT DISTINCT *
+            FROM INFO_SYMBOL
+            WHERE fSymbol NOT IN $excludeCoins AND tSymbol NOT IN $excludeCoins;
     CREATE VIEW IF NOT EXISTS VIEW_ACCOUNT_BALANCE_CURRENT
         AS
 			SELECT B1.*
@@ -569,21 +581,21 @@ CREATE_VIEWS_SQL = Template('''
             FROM(
                 SELECT DISTINCT V1.server, V1.fSymbol, V1.tSymbol
                 FROM(
-                        SELECT DISTINCT server, fSymbol, tSymbol
-                        FROM VIEW_INFO_SYMBOL
-                        EXCEPT
-                        SELECT DISTINCT server, fSymbol, tSymbol
-                        FROM VIEW_MARKET_KLINE_CURRENT
-                        WHERE price_volume_base < $basePriceVolume
-                    ) V1
-                    LEFT JOIN(
-                        SELECT DISTINCT server, fSymbol, tSymbol
-                        FROM VIEW_INFO_SYMBOL
-                        EXCEPT
-                        SELECT DISTINCT server, fSymbol, tSymbol
-                        FROM VIEW_MARKET_KLINE_CURRENT
-                        WHERE price_volume_base < $basePriceVolume
-                    ) V2 ON V1.server <> V2.server AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
+						SELECT DISTINCT server, fSymbol, tSymbol
+						FROM VIEW_INFO_SYMBOL M1
+					UNION
+						SELECT DISTINCT server, fSymbol, tSymbol
+						FROM VIEW_MARKET_KLINE_CURRENT
+						WHERE price_volume_base > $basePriceVolume
+				) V1
+				LEFT JOIN(
+						SELECT DISTINCT server, fSymbol, tSymbol
+						FROM VIEW_INFO_SYMBOL M1
+					UNION
+						SELECT DISTINCT server, fSymbol, tSymbol
+						FROM VIEW_MARKET_KLINE_CURRENT
+						WHERE price_volume_base > $basePriceVolume
+				) V2 ON V1.server <> V2.server AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
                 WHERE V2.server IS NOT NULL
             ) J1
             JOIN VIEW_INFO_SYMBOL J2 ON J1.server = J2.server AND J1.fSymbol = J2.fSymbol AND J1.tSymbol = J2.tSymbol;
@@ -613,8 +625,8 @@ CREATE_VIEWS_SQL = Template('''
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_TICKER_CURRENT_DIS
     	AS
     		SELECT V1.timeStamp, V1.server as bid_server, V2.server as ask_server, V1.fSymbol, V1.tSymbol,
-                V1.bid_one_price as bid_price, min(V1.bid_one_size, V2.ask_one_size) as bid_size, V1.bid_one_price_base as bid_price_base,
-                V2.ask_one_price as ask_price, min(V1.bid_one_size, V2.ask_one_size) as ask_size, V2.ask_one_price_base as ask_price_base
+                V1.bid_one_price as bid_price, V1.bid_one_size as bid_size, V1.bid_one_price_base as bid_price_base,
+                V2.ask_one_price as ask_price, V2.ask_one_size as ask_size, V2.ask_one_price_base as ask_price_base
     		FROM VIEW_MARKET_TICKER_CURRENT V1
     		LEFT JOIN VIEW_MARKET_TICKER_CURRENT V2 ON V1.server <> V2.server AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
     		WHERE abs(V1.timeStamp - V2.timeStamp) < 1000*$basePriceTimeout;

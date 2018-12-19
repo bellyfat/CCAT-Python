@@ -305,6 +305,28 @@ class Sender(object):
                 err)
             raise EngineException(err)
 
+    def sendStatiscJudgeEvent(self, exchange, types):
+        try:
+            # 构造事件对象
+            TEMP_EVENT = json.loads(
+                STATISTIC_JUDGE_EVENT.substitute(
+                    id=self._engine.getEventID(),
+                    timeStamp=utcnow_timestamp(),
+                    exchange = exchange,
+                    types = types))
+            event = Event(TEMP_EVENT)
+            self._logger.debug(
+                "src.core.engine.sender.Sender.sendStatiscJudgeEvent: " +
+                json.dumps(TEMP_EVENT))
+            # 发送事件
+            self._engine.sendEvent(event)
+            # 返回参数
+            return event.id
+        except Exception as err:
+            errStr = "src.core.engine.sender.Sender.sendStatiscJudgeEvent: %s" % EngineException(
+                err)
+            raise EngineException(err)
+
     def sendStatiscBacktestEvent(self, args):
         try:
             # 构造事件对象
