@@ -309,24 +309,11 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getViewMarketTickerSymbol(self):
-        self._logger.debug("src.core.db.db.DB.getViewMarketTickerSymbol")
-        try:
-            curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_MARKET_TICKER_SYMBOL_SQL
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            res = curs.fetchall()
-            curs.close()
-            return res
-        except (sqlite3.Error, Exception) as err:
-            raise DBException(err)
-
     def getViewMarketSymbolPairsAggDepth(self, exchange, fSymbol, tSymbol):
         self._logger.debug("src.core.db.db.DB.getViewMarketSymbolPairs")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_MARKET_SYMBOL_PAIRS_AGGDEPTH_SQL.substitute(
+            TEMP_SQL = GET_VIEW_MARKET_SYMBOL_SERVER_AGGDEPTH_SQL.substitute(
                 server=exchange, fSymbol=fSymbol, tSymbol=tSymbol).replace(
                     '[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
@@ -341,7 +328,7 @@ class DB(object):
         self._logger.debug("src.core.db.db.DB.getViewMarketSymbolPairs")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_MARKET_SYMBOL_PAIRS_SQL.substitute(
+            TEMP_SQL = GET_VIEW_MARKET_SYMBOL_SERVER_SQL.substitute(
                 server=exchange).replace('[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
@@ -355,7 +342,7 @@ class DB(object):
         self._logger.debug("src.core.db.db.DB.getViewInfoSymbolPairs")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_INFO_SYMBOL_PAIRS_SQL.substitute(
+            TEMP_SQL = GET_VIEW_INFO_SYMBOL_SERVER_SQL.substitute(
                 server=exchange).replace('[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)

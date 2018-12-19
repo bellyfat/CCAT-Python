@@ -271,42 +271,46 @@ class Handler(object):
         # 接收事件
         pass
 
-    def processStatisticJudgeStatisticSignalTickerDis(self, exchange):
+    def processStatisticJudgeStatisticSignalTickerDis(self, exchange,
+                                                      timeWindow):
         self._logger.debug(
             "src.core.engine.handler.Handler.processStatisticJudgeStatisticSignalTickerDis: {process=%s, exchange=%s}"
             % (current_process().name, exchange))
         try:
             db = DB()
             calc = Calc()
-            statisticDis = calc.statisticSignalTickerDis(exchange)
+            statisticDis = calc.statisticSignalTickerDis(exchange, timeWindow)
+            print(statisticDis)
             pass
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.processStatisticJudgeStatisticSignalTickerDis:  {process=%s, exchange=%s}, err=%s" % (
                 current_process().name, exchange, EngineException(err))
             self._logger.error(errStr)
 
-    def processStatisticJudgeStatisticSignalTickerTra(self, exchange):
+    def processStatisticJudgeStatisticSignalTickerTra(self, exchange,
+                                                      timeWindow):
         self._logger.debug(
             "src.core.engine.handler.Handler.processStatisticJudgeStatisticSignalTickerTra: {process=%s, exchange=%s}"
             % (current_process().name, exchange))
         try:
             db = DB()
             calc = Calc()
-            statisticTra = calc.statisticSignalTickerTra(exchange)
+            statisticTra = calc.statisticSignalTickerTra(exchange, timeWindow)
             pass
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.processStatisticJudgeStatisticSignalTickerTra:  {process=%s, exchange=%s}, err=%s" % (
                 current_process().name, exchange, EngineException(err))
             self._logger.error(errStr)
 
-    def processStatisticJudgeStatisticSignalTickerPair(self, exchange):
+    def processStatisticJudgeStatisticSignalTickerPair(self, exchange,
+                                                       timeWindow):
         self._logger.debug(
             "src.core.engine.handler.Handler.processStatisticJudgeStatisticSignalTickerPair: {process=%s, exchange=%s}"
             % (current_process().name, exchange))
         try:
             db = DB()
             calc = Calc()
-            statisticPair = calc.statisticSignalTickerPair(exchange)
+            statisticPair = calc.statisticSignalTickerPair(exchange, timeWindow)
             pass
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.processStatisticJudgeStatisticSignalTickerPair:  {process=%s, exchange=%s}, err=%s" % (
@@ -329,7 +333,7 @@ class Handler(object):
                 p = Process(
                     target=self.processStatisticJudgeStatisticSignalTickerDis,
                     name="processStatisticJudgeStatisticSignalTickerDis",
-                    args=(exchange, ))
+                    args=(exchange, TYPE_DIS_TIMEWINDOW))
                 prs.append(p)
                 p.start()
             # calc tra type
@@ -337,7 +341,7 @@ class Handler(object):
                 p = Process(
                     target=self.processStatisticJudgeStatisticSignalTickerTra,
                     name="processStatisticJudgeStatisticSignalTickerTra",
-                    args=(exchange, ))
+                    args=(exchange, TYPE_TRA_TIMEWINDOW))
                 prs.append(p)
                 p.start()
             # calc pair type
@@ -345,7 +349,7 @@ class Handler(object):
                 p = Process(
                     target=self.processStatisticJudgeStatisticSignalTickerPair,
                     name="processStatisticJudgeStatisticSignalTickerPair",
-                    args=(exchange, ))
+                    args=(exchange, TYPE_PAIR_TIMEWINDOW))
                 prs.append(p)
                 p.start()
             for p in prs:

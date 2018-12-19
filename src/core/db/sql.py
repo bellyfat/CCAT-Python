@@ -5,9 +5,13 @@ from string import Template
 
 # get db signal ticker pair current server sql
 GET_VIEW_SIGNAL_TICKER_PAIR_CURRENT_SERVER_SQL =  Template('''
-    SELECT *
-    FROM VIEW_SIGNAL_TICKER_PAIR_CURRENT
-    WHERE (J1_server='$server' AND J2_server='$server_pair') OR (J1_server='$server_pair' AND J2_server='$server');
+        SELECT *
+        FROM VIEW_SIGNAL_TICKER_PAIR_CURRENT
+        WHERE J1_server='$server' AND J2_server='$server_pair'
+    UNION
+        SELECT *
+        FROM VIEW_SIGNAL_TICKER_PAIR_CURRENT
+        WHERE J1_server='$server_pair' AND J2_server='$server';
 ''')
 # get db signal ticker pair current sql
 GET_VIEW_SIGNAL_TICKER_PAIR_CURRENT_SQL = '''
@@ -25,9 +29,13 @@ GET_VIEW_SIGNAL_TICKER_TRA_CURRENT_SQL = '''
 
 # get db signal ticker dis current server sql
 GET_VIEW_SIGNAL_TICKER_DIS_CURRENT_SERVER_SQL =  Template('''
-    SELECT *
-    FROM VIEW_SIGNAL_TICKER_DIS_CURRENT
-    WHERE (bid_server='$server' AND ask_server='$server_pair') OR (bid_server='$server_pair' AND ask_server='$server');
+        SELECT *
+        FROM VIEW_SIGNAL_TICKER_DIS_CURRENT
+        WHERE bid_server='$server' AND ask_server='$server_pair'
+    UNION
+        SELECT *
+        FROM VIEW_SIGNAL_TICKER_DIS_CURRENT
+        WHERE bid_server='$server_pair' AND ask_server='$server';
 ''')
 # get db signal ticker dis current sql
 GET_VIEW_SIGNAL_TICKER_DIS_CURRENT_SQL = '''
@@ -36,9 +44,13 @@ GET_VIEW_SIGNAL_TICKER_DIS_CURRENT_SQL = '''
 
 # get db view market ticker current pair server sql
 GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SERVER_SQL = Template('''
-    SELECT *
-    FROM VIEW_MARKET_TICKER_CURRENT_PAIR
-    WHERE (J1_server='$server' AND J2_server='$server_pair') OR (J1_server='$server_pair' AND J2_server='$server');
+        SELECT *
+        FROM VIEW_MARKET_TICKER_CURRENT_PAIR
+        WHERE bid_server='$server' AND ask_server='$server_pair'
+    UNION
+        SELECT *
+        FROM VIEW_MARKET_TICKER_CURRENT_PAIR
+        WHERE bid_server='$server_pair' AND ask_server='$server';
 ''')
 # get db view market ticker current pair sql
 GET_VIEW_MARKET_TICKER_CURRENT_PAIR_SQL = '''
@@ -56,9 +68,13 @@ GET_VIEW_MARKET_TICKER_CURRENT_TRA_SQL = '''
 
 # get db view market ticker current dis server sql
 GET_VIEW_MARKET_TICKER_CURRENT_DIS_SERVER_SQL = Template('''
-    SELECT *
-    FROM VIEW_MARKET_TICKER_CURRENT_DIS
-    WHERE (bid_server='$server' AND ask_server='$server_pair') OR (bid_server='$server_pair' AND ask_server='$server');
+        SELECT *
+        FROM VIEW_MARKET_TICKER_CURRENT_DIS
+        WHERE bid_server='$server' AND ask_server='$server_pair'
+    UNION
+        SELECT *
+        FROM VIEW_MARKET_TICKER_CURRENT_DIS
+        WHERE bid_server='$server_pair' AND ask_server='$server';
 ''')
 # get db view market ticker current dis sql
 GET_VIEW_MARKET_TICKER_CURRENT_DIS_SQL = '''
@@ -75,28 +91,20 @@ GET_VIEW_MARKET_KLINE_CURRENT_SQL = '''
     SELECT * FROM VIEW_MARKET_KLINE_CURRENT;
 '''
 
-# get db view market symbol sql
-GET_VIEW_MARKET_TICKER_SYMBOL_SQL = '''
-    SELECT V1.*
-    FROM VIEW_MARKET_SYMBOL V1
-    LEFT JOIN VIEW_MARKET_TICKER_CURRENT_DIS V2 ON (V1.server = V2.bid_server OR V1.server = V2.ask_server) AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
-    WHERE V2.bid_server IS NOT NULL;
-'''
-
-# get db view market symbol sql
-GET_VIEW_MARKET_SYMBOL_PAIRS_AGGDEPTH_SQL = Template('''
+# get db view market symbol server aggDepth sql
+GET_VIEW_MARKET_SYMBOL_SERVER_AGGDEPTH_SQL = Template('''
     SELECT max(limit_price_step) as aggDepth
     FROM INFO_SYMBOL
     WHERE server IN $server and fSymbol='$fSymbol' and tSymbol='$tSymbol';
 ''')
 
-# get db view market symbol sql
-GET_VIEW_MARKET_SYMBOL_PAIRS_SQL = Template('''
+# get db view market symbol server sql
+GET_VIEW_MARKET_SYMBOL_SERVER_SQL = Template('''
     SELECT * FROM VIEW_MARKET_SYMBOL WHERE server IN $server;
 ''')
 
 # get db view info symbol sql
-GET_VIEW_INFO_SYMBOL_PAIRS_SQL = Template('''
+GET_VIEW_INFO_SYMBOL_SERVER_SQL = Template('''
     SELECT * FROM VIEW_INFO_SYMBOL WHERE server IN $server;
 ''')
 
@@ -564,7 +572,7 @@ CREATE_VIEWS_SQL = Template('''
             SELECT B1.*
             FROM ACCOUNT_WITHDRAW_HISTORY B1
             LEFT JOIN ACCOUNT_WITHDRAW_HISTORY B2 ON B1.server = B2.server AND B1.asset = B2.asset AND B1.timeStamp < B2.timeStamp
-            WHERE (B1.deposit<>'' OR B1.withdraw <>'') and B2.server IS NULL;
+            WHERE B2.server IS NULL;
     CREATE VIEW IF NOT EXISTS VIEW_MARKET_KLINE_CURRENT
     	AS
     			SELECT M1.*, M1.close*M2.close as price_base, M1.close*M1.volume*M2.close as price_volume_base

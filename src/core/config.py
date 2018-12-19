@@ -60,6 +60,8 @@ class Config(object):
                 'Main', 'marketDepthLimit')
             Config._Main_marketTickerAggStep = cf.getint(
                 'Main', 'marketTickerAggStep')
+            Config._Main_signalTickerCycle = cf.getint(
+                'Main', 'signalTickerCycle')
             Config._Main_syncAccountTimeout = cf.getint(
                 'Main', 'syncAccountTimeout')
             Config._Main_syncMarketKlineTimeout = cf.getint(
@@ -74,8 +76,6 @@ class Config(object):
                 'Main', 'syncBacktestTimeout')
             Config._Main_syncOrderTimeout = cf.getint(
                 'Main', 'syncOrderTimeout')
-            Config._Main_signalTickerCycle = cf.getint(
-                'Main', 'signalTickerCycle')
             Config._Main_symbolStartBaseCoin = cf.getfloat(
                 'Main', 'symbolStartBaseCoin')
             Config._Main_symbolEndBaseCoin = cf.getfloat(
@@ -88,6 +88,12 @@ class Config(object):
                 'Main', 'typeTraThreshold')
             Config._Main_typePairThreshold = cf.getfloat(
                 'Main', 'typePairThreshold')
+            Config._Main_typeDisTimeWindow = cf.getfloat(
+                'Main', 'typeDisTimeWindow')
+            Config._Main_typeTraTimeWindow = cf.getfloat(
+                'Main', 'typeTraTimeWindow')
+            Config._Main_typePairTimeWindow = cf.getfloat(
+                'Main', 'typePairTimeWindow')
             # Engine Settings
             Config._Engine_epoch = cf.getfloat('Engine', 'epoch')
             Config._Engine_maxProcess = cf.getint('Engine', 'maxProcess')

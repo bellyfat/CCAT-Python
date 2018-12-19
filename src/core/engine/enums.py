@@ -3,6 +3,11 @@
 from src.core.config import Config
 from src.core.util.helper import MyTemplate
 
+# CCAT types timeWindow
+TYPE_DIS_TIMEWINDOW = Config()._Main_typeDisTimeWindow*1000
+TYPE_TRA_TIMEWINDOW = Config()._Main_typeTraTimeWindow*1000
+TYPE_PAIR_TIMEWINDOW = Config()._Main_typePairTimeWindow*1000
+
 # CCAT types Threshold
 TYPE_DIS_THRESHOLD = Config()._Main_typeDisThreshold
 TYPE_TRA_THRESHOLD = Config()._Main_typeTraThreshold

@@ -6,6 +6,7 @@ import pandas as pd
 from src.core.coin.enums import CCAT_ORDER_SIDE_BUY, CCAT_ORDER_SIDE_SELL
 from src.core.db.db import DB
 from src.core.util.exceptions import CalcException, DBException
+from src.core.util.helper import utcnow_timestamp
 from src.core.util.log import Logger
 
 
@@ -14,10 +15,10 @@ class Calc(object):
         # logger
         self._logger = Logger()
 
-    def statisticSignalTickerDis(self, exchange):
+    def statisticSignalTickerDis(self, exchange, timeWindow):
         self._logger.debug(
-            "src.core.calc.calc.Calc.statisticSignalTickerDis: {exchange=%s}" %
-            exchange)
+            "src.core.calc.calc.Calc.statisticSignalTickerDis: {exchange=%s, timeWindow=%s}"
+            % (exchange, timeWindow))
         try:
             statistic = []
             db = DB()
@@ -25,33 +26,147 @@ class Calc(object):
             for server, server_pair in combinations(exchange, 2):
                 signal = db.getViewSignalTickerDisCurrentServer(
                     server, server_pair)
-                signal = db.getSignalTickerDis()  # test only
                 if not signal == []:
                     df = pd.DataFrame(signal)
                     for (fSymbol,
                          tSymbol), group in df.groupby(['fSymbol', 'tSymbol']):
-
-                        print((fSymbol, tSymbol))
-                        print(group.describe())
-                        statistic.append({
-                            "server": server,
-                            "server_pair": server_pair,
-                            "fSymbol": fSymbol,
-                            "tSymbol": tSymbol,
-                            "group": group
-                        })
-            print(statistic)
+                        # calc timeStamp
+                        period = []
+                        periodTime = 0
+                        lastTime = group['timeStamp'].min()
+                        for index, value in group['timeStamp'].sort_values(
+                        ).items():
+                            if value - lastTime < timeWindow:
+                                periodTime = periodTime + (value - lastTime)
+                            else:
+                                period.append(periodTime)
+                                periodTime = 0
+                            lastTime = value
+                        period.append(periodTime)
+                        # calc sta
+                        sta = {
+                            "server":
+                            server,
+                            "server_pair":
+                            server_pair,
+                            "timeStamp":
+                            utcnow_timestamp(),
+                            "fSymbol":
+                            fSymbol,
+                            "tSymbol":
+                            tSymbol,
+                            "count_total":
+                            group.shape[0],
+                            "count_forward":
+                            group[(group['bid_server'] == server)].shape[0],
+                            "count_backward":
+                            group[(
+                                group['bid_server'] == server_pair)].shape[0],
+                            "timeStamp_times":
+                            len(period),
+                            "timeStamp_longest":
+                            max(period),
+                            "timeStamp_latest":
+                            group['timeStamp'].max(),
+                            "gain_base_max":
+                            group['gain_base'].max(),
+                            "gain_base_min":
+                            group['gain_base'].min(),
+                            "gain_base_mean":
+                            group['gain_base'].mean(),
+                            "gain_base_std":
+                            group['gain_base'].std(),
+                            "gain_ratio_max":
+                            group['gain_ratio'].max(),
+                            "gain_ratio_min":
+                            group['gain_ratio'].min(),
+                            "gain_ratio_mean":
+                            group['gain_ratio'].mean(),
+                            "gain_ratio_std":
+                            group['gain_ratio'].std()
+                        }
+                        # update statistic
+                        statistic.append(sta)
             return statistic
         except (DBException, Exception) as err:
             raise CalcException(err)
 
-    def statisticSignalTickerTra(self, exchange):
+    def statisticSignalTickerTra(self, exchange, timeWindow):
         self._logger.debug(
-            "src.core.calc.calc.Calc.statisticSignalTickerTra: {exchange=%s}" %
-            exchange)
-        return ['Tra']
+            "src.core.calc.calc.Calc.statisticSignalTickerTra: {exchange=%s, timeWindow=%s}"
+            % (exchange, timeWindow))
+        try:
+            statistic = []
+            db = DB()
+            # statistic dis type
+            signal = db.getViewSignalTickerTraCurrentServer(exchange)
+            if not signal == []:
+                df = pd.DataFrame(signal)
+                for (fSymbol, tSymbol), group in df.groupby([
+                        'server', 'V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol',
+                        'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol'
+                ]):
+                    # calc timeStamp
+                    period = []
+                    periodTime = 0
+                    lastTime = group['timeStamp'].min()
+                    for index, value in group['timeStamp'].sort_values().items(
+                    ):
+                        if value - lastTime < timeWindow:
+                            periodTime = periodTime + (value - lastTime)
+                        else:
+                            period.append(periodTime)
+                            periodTime = 0
+                        lastTime = value
+                    period.append(periodTime)
+                    # calc sta
+                    sta = {
+                        "server":
+                        server,
+                        "server_pair":
+                        server_pair,
+                        "timeStamp":
+                        utcnow_timestamp(),
+                        "fSymbol":
+                        fSymbol,
+                        "tSymbol":
+                        tSymbol,
+                        "count_total":
+                        group.shape[0],
+                        "count_forward":
+                        group[(group['bid_server'] == server)].shape[0],
+                        "count_backward":
+                        group[(group['bid_server'] == server_pair)].shape[0],
+                        "timeStamp_times":
+                        len(period),
+                        "timeStamp_longest":
+                        max(period),
+                        "timeStamp_latest":
+                        group['timeStamp'].max(),
+                        "gain_base_max":
+                        group['gain_base'].max(),
+                        "gain_base_min":
+                        group['gain_base'].min(),
+                        "gain_base_mean":
+                        group['gain_base'].mean(),
+                        "gain_base_std":
+                        group['gain_base'].std(),
+                        "gain_ratio_max":
+                        group['gain_ratio'].max(),
+                        "gain_ratio_min":
+                        group['gain_ratio'].min(),
+                        "gain_ratio_mean":
+                        group['gain_ratio'].mean(),
+                        "gain_ratio_std":
+                        group['gain_ratio'].std()
+                    }
+                    # update statistic
+                    statistic.append(sta)
+            return statistic
+        except (DBException, Exception) as err:
+            raise CalcException(err)
 
-    def statisticSignalTickerPair(self, exchange):
+    def statisticSignalTickerPair(self, exchange, timeWindow):
         self._logger.debug(
             "src.core.calc.calc.Calc.statisticSignalTickerPair: {exchange=%s}"
             % exchange)
