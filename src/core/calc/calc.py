@@ -15,16 +15,16 @@ class Calc(object):
         # logger
         self._logger = Logger()
 
-    def statisticSignalTickerDis(self, exchange, timeWindow):
+    def calcStatisticSignalTickerDis(self, exchange, timeWindow):
         self._logger.debug(
-            "src.core.calc.calc.Calc.statisticSignalTickerDis: {exchange=%s, timeWindow=%s}"
+            "src.core.calc.calc.Calc.calcStatisticSignalTickerDis: {exchange=%s, timeWindow=%s}"
             % (exchange, timeWindow))
         try:
             statistic = []
             db = DB()
             # statistic dis type
             for server, server_pair in combinations(exchange, 2):
-                signal = db.getViewSignalTickerDisCurrentServer(
+                signal = db.getViewJudgeSignalTickerDisCurrentServer(
                     server, server_pair)
                 if not signal == []:
                     df = pd.DataFrame(signal)
@@ -45,16 +45,26 @@ class Calc(object):
                         period.append(periodTime)
                         # calc sta
                         sta = {
-                            "server":
-                            server,
-                            "server_pair":
-                            server_pair,
                             "timeStamp":
                             utcnow_timestamp(),
+                            "bid_server":
+                            server,
+                            "ask_server":
+                            server_pair,
                             "fSymbol":
                             fSymbol,
                             "tSymbol":
                             tSymbol,
+                            "timeStamp_start":
+                            group['timeStamp'].min(),
+                            "timeStamp_end":
+                            group['timeStamp'].max(),
+                            "timeStamp_times":
+                            len(period),
+                            "timeStamp_period_times":
+                            sum([p > 0 for p in period]),
+                            "timeStamp_period_longest":
+                            max(period),
                             "count_total":
                             group.shape[0],
                             "count_forward":
@@ -62,12 +72,6 @@ class Calc(object):
                             "count_backward":
                             group[(
                                 group['bid_server'] == server_pair)].shape[0],
-                            "timeStamp_times":
-                            len(period),
-                            "timeStamp_longest":
-                            max(period),
-                            "timeStamp_latest":
-                            group['timeStamp'].max(),
                             "gain_base_max":
                             group['gain_base'].max(),
                             "gain_base_min":
@@ -91,21 +95,29 @@ class Calc(object):
         except (DBException, Exception) as err:
             raise CalcException(err)
 
-    def statisticSignalTickerTra(self, exchange, timeWindow):
+    def calcStatisticSignalTickerTra(self, exchange, timeWindow):
         self._logger.debug(
-            "src.core.calc.calc.Calc.statisticSignalTickerTra: {exchange=%s, timeWindow=%s}"
+            "src.core.calc.calc.Calc.calcStatisticSignalTickerTra: {exchange=%s, timeWindow=%s}"
             % (exchange, timeWindow))
         try:
             statistic = []
             db = DB()
             # statistic dis type
-            signal = db.getViewSignalTickerTraCurrentServer(exchange)
+            signal = db.getViewJudgeSignalTickerTraCurrentServer(exchange)
             if not signal == []:
+                df = []
+                # calc sort df
+                for s in signal:
+                    symbol_pair = [
+                        s['C1_symbol'], s['C2_symbol'], s['C3_symbol']
+                    ]
+                    symbol_pair.sort()
+                    s['symbol_pair'] = ', '.join(symbol_pair)
+                    df.append(s)
                 df = pd.DataFrame(signal)
-                for (fSymbol, tSymbol), group in df.groupby([
-                        'server', 'V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol',
-                        'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol'
-                ]):
+                # calc
+                for (server, symbol_pair), group in df.groupby(
+                    ['server', 'symbol_pair']):
                     # calc timeStamp
                     period = []
                     periodTime = 0
@@ -121,28 +133,28 @@ class Calc(object):
                     period.append(periodTime)
                     # calc sta
                     sta = {
-                        "server":
-                        server,
-                        "server_pair":
-                        server_pair,
                         "timeStamp":
                         utcnow_timestamp(),
-                        "fSymbol":
-                        fSymbol,
-                        "tSymbol":
-                        tSymbol,
+                        "server":
+                        server,
+                        "symbol_pair":
+                        symbol_pair,
+                        "timeStamp_start":
+                        group['timeStamp'].min(),
+                        "timeStamp_end":
+                        group['timeStamp'].max(),
+                        "timeStamp_times":
+                        len(period),
+                        "timeStamp_period_times":
+                        sum([p > 0 for p in period]),
+                        "timeStamp_period_longest":
+                        max(period),
                         "count_total":
                         group.shape[0],
                         "count_forward":
-                        group[(group['bid_server'] == server)].shape[0],
+                        group[(group['C3_symbol'] == group['V3_fSymbol'])].shape[0],
                         "count_backward":
-                        group[(group['bid_server'] == server_pair)].shape[0],
-                        "timeStamp_times":
-                        len(period),
-                        "timeStamp_longest":
-                        max(period),
-                        "timeStamp_latest":
-                        group['timeStamp'].max(),
+                        group[(group['C3_symbol'] == group['V3_tSymbol'])].shape[0],
                         "gain_base_max":
                         group['gain_base'].max(),
                         "gain_base_min":
@@ -166,15 +178,96 @@ class Calc(object):
         except (DBException, Exception) as err:
             raise CalcException(err)
 
-    def statisticSignalTickerPair(self, exchange, timeWindow):
+    def calcStatisticSignalTickerPair(self, exchange, timeWindow):
         self._logger.debug(
-            "src.core.calc.calc.Calc.statisticSignalTickerPair: {exchange=%s}"
+            "src.core.calc.calc.Calc.calcStatisticSignalTickerPair: {exchange=%s}"
             % exchange)
-        return ['Pair']
+        try:
+            statistic = []
+            db = DB()
+            # statistic dis type
+            for server, server_pair in combinations(exchange, 2):
+                signal = db.getViewJudgeSignalTickerPairCurrentServer(
+                    server, server_pair)
+                if not signal == []:
+                    df = []
+                    # calc sort df
+                    for s in signal:
+                        symbol_pair = [
+                            s['C1_symbol'], s['C2_symbol'], s['C3_symbol']
+                        ]
+                        symbol_pair.sort()
+                        s['symbol_pair'] = ', '.join(symbol_pair)
+                        df.append(s)
+                    df = pd.DataFrame(signal)
+                    # calc
+                    for symbol_pair, group in df.groupby(
+                        ['symbol_pair']):
+                        # calc timeStamp
+                        period = []
+                        periodTime = 0
+                        lastTime = group['timeStamp'].min()
+                        for index, value in group['timeStamp'].sort_values().items(
+                        ):
+                            if value - lastTime < timeWindow:
+                                periodTime = periodTime + (value - lastTime)
+                            else:
+                                period.append(periodTime)
+                                periodTime = 0
+                            lastTime = value
+                        period.append(periodTime)
+                        # calc sta
+                        sta = {
+                            "timeStamp":
+                            utcnow_timestamp(),
+                            "J1_server":
+                            server,
+                            "J2_server":
+                            server_pair,
+                            "symbol_pair":
+                            symbol_pair,
+                            "timeStamp_start":
+                            group['timeStamp'].min(),
+                            "timeStamp_end":
+                            group['timeStamp'].max(),
+                            "timeStamp_times":
+                            len(period),
+                            "timeStamp_period_times":
+                            sum([p > 0 for p in period]),
+                            "timeStamp_period_longest":
+                            max(period),
+                            "count_total":
+                            group.shape[0],
+                            "count_forward":
+                            group[(group['C3_symbol'] == group['V3_fSymbol'])].shape[0],
+                            "count_backward":
+                            group[(group['C3_symbol'] == group['V3_tSymbol'])].shape[0],
+                            "gain_base_max":
+                            group['gain_base'].max(),
+                            "gain_base_min":
+                            group['gain_base'].min(),
+                            "gain_base_mean":
+                            group['gain_base'].mean(),
+                            "gain_base_std":
+                            group['gain_base'].std(),
+                            "gain_ratio_max":
+                            group['gain_ratio'].max(),
+                            "gain_ratio_min":
+                            group['gain_ratio'].min(),
+                            "gain_ratio_mean":
+                            group['gain_ratio'].mean(),
+                            "gain_ratio_std":
+                            group['gain_ratio'].std()
+                        }
+                        # update statistic
+                        statistic.append(sta)
+                return statistic
+        except (DBException, Exception) as err:
+            raise CalcException(err)
 
-    def calcSignalTickerDis(self, exchange, threshold, resInfoSymbol):
+    def calcJudgeSignalTickerDis(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcSignalTickerDis: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            "src.core.calc.calc.Calc.calcJudgeSignalTickerDis: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
             % (exchange, threshold, resInfoSymbol))
         try:
             db = DB()
@@ -228,9 +321,9 @@ class Calc(object):
         except (DBException, Exception) as err:
             raise CalcException(err)
 
-    def calcSignalTickerTra(self, exchange, threshold, resInfoSymbol):
+    def calcJudgeSignalTickerTra(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcSignalTickerTra: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            "src.core.calc.calc.Calc.calcJudgeSignalTickerTra: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
             % (exchange, threshold, resInfoSymbol))
         try:
             db = DB()
@@ -377,9 +470,9 @@ class Calc(object):
         except (DBException, Exception) as err:
             raise CalcException(err)
 
-    def calcSignalTickerPair(self, exchange, threshold, resInfoSymbol):
+    def calcJudgeSignalTickerPair(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcSignalTickerPair: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            "src.core.calc.calc.Calc.calcJudgeSignalTickerPair: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
             % (exchange, threshold, resInfoSymbol))
         try:
             db = DB()

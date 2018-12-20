@@ -115,12 +115,12 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getViewSignalTickerPairCurrentServer(self, server, server_pair):
+    def getViewJudgeSignalTickerPairCurrentServer(self, server, server_pair):
         self._logger.debug(
-            "src.core.db.db.DB.getViewSignalTickerPairCurrentServer")
+            "src.core.db.db.DB.getViewJudgeSignalTickerPairCurrentServer")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_SIGNAL_TICKER_PAIR_CURRENT_SERVER_SQL.substitute(
+            TEMP_SQL = GET_VIEW_JUDGE_SIGNAL_TICKER_PAIR_CURRENT_SERVER_SQL.substitute(
                 server=server, server_pair=server_pair)
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
@@ -130,11 +130,11 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getViewSignalTickerPairCurrent(self):
-        self._logger.debug("src.core.db.db.DB.getViewSignalTickerPairCurrent")
+    def getViewJudgeSignalTickerPairCurrent(self):
+        self._logger.debug("src.core.db.db.DB.getViewJudgeSignalTickerPairCurrent")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_SIGNAL_TICKER_PAIR_CURRENT_SQL
+            TEMP_SQL = GET_VIEW_JUDGE_SIGNAL_TICKER_PAIR_CURRENT_SQL
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -143,12 +143,12 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getViewSignalTickerTraCurrentServer(self, exchange):
+    def getViewJudgeSignalTickerTraCurrentServer(self, exchange):
         self._logger.debug(
-            "src.core.db.db.DB.getViewSignalTickerTraCurrentServer")
+            "src.core.db.db.DB.getViewJudgeSignalTickerTraCurrentServer")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_SIGNAL_TICKER_TRA_CURRENT_SERVER_SQL.substitute(
+            TEMP_SQL = GET_VIEW_JUDGE_SIGNAL_TICKER_TRA_CURRENT_SERVER_SQL.substitute(
                 server=exchange).replace('[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
@@ -158,11 +158,11 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getViewSignalTickerTraCurrent(self):
-        self._logger.debug("src.core.db.db.DB.getViewSignalTickerTraCurrent")
+    def getViewJudgeSignalTickerTraCurrent(self):
+        self._logger.debug("src.core.db.db.DB.getViewJudgeSignalTickerTraCurrent")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_SIGNAL_TICKER_TRA_CURRENT_SQL
+            TEMP_SQL = GET_VIEW_JUDGE_SIGNAL_TICKER_TRA_CURRENT_SQL
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -171,12 +171,12 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getViewSignalTickerDisCurrentServer(self, server, server_pair):
+    def getViewJudgeSignalTickerDisCurrentServer(self, server, server_pair):
         self._logger.debug(
-            "src.core.db.db.DB.getViewSignalTickerDisCurrentServer")
+            "src.core.db.db.DB.getViewJudgeSignalTickerDisCurrentServer")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_SIGNAL_TICKER_DIS_CURRENT_SERVER_SQL.substitute(
+            TEMP_SQL = GET_VIEW_JUDGE_SIGNAL_TICKER_DIS_CURRENT_SERVER_SQL.substitute(
                 server=server, server_pair=server_pair)
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
@@ -186,11 +186,11 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getViewSignalTickerDisCurrent(self):
-        self._logger.debug("src.core.db.db.DB.getViewSignalTickerDisCurrent")
+    def getViewJudgeSignalTickerDisCurrent(self):
+        self._logger.debug("src.core.db.db.DB.getViewJudgeSignalTickerDisCurrent")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_SIGNAL_TICKER_DIS_CURRENT_SQL
+            TEMP_SQL = GET_VIEW_JUDGE_SIGNAL_TICKER_DIS_CURRENT_SQL
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -545,11 +545,11 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getSignalTickerDis(self):
-        self._logger.debug("src.core.db.db.DB.getSignalTickerDis")
+    def getJudgeSignalTickerDis(self):
+        self._logger.debug("src.core.db.db.DB.getJudgeSignalTickerDis")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_SIGNAL_TICKER_DIS_SQL
+            TEMP_SQL = GET_JUDGE_SIGNAL_TICKER_DIS_SQL
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -558,10 +558,10 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def delSignalTickerDis(self):
-        self._logger.debug("src.core.db.db.DB.delSignalTickerDis")
+    def delJudgeSignalTickerDis(self):
+        self._logger.debug("src.core.db.db.DB.delJudgeSignalTickerDis")
         try:
-            TEMP_SQL = DEL_SIGNAL_TICKER_DIS_SQL.substitute(
+            TEMP_SQL = DEL_JUDGE_SIGNAL_TICKER_DIS_SQL.substitute(
                 period=self._signalTickerCycle)
             curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
@@ -571,11 +571,11 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getSignalTickerTra(self):
-        self._logger.debug("src.core.db.db.DB.getSignalTickerTra")
+    def getJudgeSignalTickerTra(self):
+        self._logger.debug("src.core.db.db.DB.getJudgeSignalTickerTra")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_SIGNAL_TICKER_TRA_SQL
+            TEMP_SQL = GET_JUDGE_SIGNAL_TICKER_TRA_SQL
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             curs.close()
@@ -583,10 +583,10 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def delSignalTickerTra(self):
-        self._logger.debug("src.core.db.db.DB.delSignalTickerTra")
+    def delJudgeSignalTickerTra(self):
+        self._logger.debug("src.core.db.db.DB.delJudgeSignalTickerTra")
         try:
-            TEMP_SQL = DEL_SIGNAL_TICKER_TRA_SQL.substitute(
+            TEMP_SQL = DEL_JUDGE_SIGNAL_TICKER_TRA_SQL.substitute(
                 period=self._signalTickerCycle)
             curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
@@ -596,11 +596,11 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getSignalTickerPair(self):
-        self._logger.debug("src.core.db.db.DB.getSignalTickerPair")
+    def getJudgeSignalTickerPair(self):
+        self._logger.debug("src.core.db.db.DB.getJudgeSignalTickerPair")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_SIGNAL_TICKER_PAIR_SQL
+            TEMP_SQL = GET_JUDGE_SIGNAL_TICKER_PAIR_SQL
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -609,10 +609,10 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def delSignalTickerPair(self):
-        self._logger.debug("src.core.db.db.DB.delSignalTickerPair")
+    def delJudgeSignalTickerPair(self):
+        self._logger.debug("src.core.db.db.DB.delJudgeSignalTickerPair")
         try:
-            TEMP_SQL = DEL_SIGNAL_TICKER_PAIR_SQL.substitute(
+            TEMP_SQL = DEL_JUDGE_SIGNAL_TICKER_PAIR_SQL.substitute(
                 period=self._signalTickerCycle)
             curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
@@ -1192,11 +1192,11 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertSignalTickerDis(self, signal):
+    def insertJudgeSignalTickerDis(self, signal):
         self._logger.debug(
-            "src.core.db.db.DB.insertSignalTickerDis: {signal=%s}" % signal)
+            "src.core.db.db.DB.insertJudgeSignalTickerDis: {signal=%s}" % signal)
         try:
-            TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_DIS_SQL
+            TEMP_SQL_TITLE = INSERT_JUDGE_SIGNAL_TICKER_DIS_SQL
             TEMP_SQL_VALUE = []
             for s in signal:
                 TEMP_SQL_VALUE.append(
@@ -1219,11 +1219,11 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertSignalTickerTra(self, signal):
+    def insertJudgeSignalTickerTra(self, signal):
         self._logger.debug(
-            "src.core.db.db.DB.insertSignalTickerTra: {signal=%s}" % signal)
+            "src.core.db.db.DB.insertJudgeSignalTickerTra: {signal=%s}" % signal)
         try:
-            TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_TRA_SQL
+            TEMP_SQL_TITLE = INSERT_JUDGE_SIGNAL_TICKER_TRA_SQL
             TEMP_SQL_VALUE = []
             for s in signal:
                 TEMP_SQL_VALUE.append((int(s['timeStamp']), str(s['server']),
@@ -1277,11 +1277,11 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertSignalTickerPair(self, signal):
+    def insertJudgeSignalTickerPair(self, signal):
         self._logger.debug(
-            "src.core.db.db.DB.insertSignalTickerPair: {signal=%s}" % signal)
+            "src.core.db.db.DB.insertJudgeSignalTickerPair: {signal=%s}" % signal)
         try:
-            TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_PAIR_SQL
+            TEMP_SQL_TITLE = INSERT_JUDGE_SIGNAL_TICKER_PAIR_SQL
             TEMP_SQL_VALUE = []
             for s in signal:
                 TEMP_SQL_VALUE.append(
@@ -1711,6 +1711,34 @@ class DB(object):
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
+
+    def insertStatisticSignalTickerDis(self, statistic):
+        self._logger.debug(
+            "src.core.db.db.DB.insertStatisticSignalTickerDis: {signal=%s}" % signal)
+        try:
+            TEMP_SQL_TITLE = INSERT_JUDGE_SIGNAL_TICKER_DIS_SQL
+            TEMP_SQL_VALUE = []
+            for s in signal:
+                TEMP_SQL_VALUE.append(
+                    (int(s['timeStamp']), str(s['bid_server']),
+                     str(s['ask_server']), str(s['fSymbol']),
+                     str(s['tSymbol']), float(s['bid_price']),
+                     float(s['bid_size']), float(s['bid_price_base']),
+                     float(s['ask_price']), float(s['ask_size']),
+                     float(s['ask_price_base']), float(s['bid_fee']),
+                     float(s['ask_fee']), float(s['gain_base']),
+                     float(s['gain_ratio'])))
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
+                self._conn.commit()
+                curs.close()
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
+
 
     # db 紧急功能 不更新数据库
     def oneClickCancleOrders(self, exchange):
