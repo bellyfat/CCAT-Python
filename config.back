@@ -87,11 +87,11 @@
   apiResultEpoch = 0.5
   marketKlineInterval = 86400
   marketTickerInterval = 60
-  statisticJudgeInterval = 900
+  statisticJudgeInterval = 300
   marketDepthLimit = 20
   marketTickerAggStep = 1
   judgeSignalTickerCycle = 604800
-  statisticSignalTickerCycle = 2592000
+  statisticSignalTickerCycle = 604800
   syncAccountTimeout = 90
   syncMarketKlineTimeout = 90
   syncMarketDepthTimeout = 60

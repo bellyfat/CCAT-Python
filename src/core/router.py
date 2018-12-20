@@ -37,7 +37,8 @@ class Router(object):
         # router param
         self._start = False
         self._startTime = time.time()
-        self._marketKlineUpdateTime = time.time() - self._marketKlineInterval
+        self._marketKlineUpdateTime = time.time()
+        # self._marketKlineUpdateTime = time.time() - self._marketKlineInterval
         self._marketTickerUpdateTime = time.time() - self._marketTickerInterval
         self._statisticJudgeUpdateTime = time.time() - self._statisticJudgeInterval
 
