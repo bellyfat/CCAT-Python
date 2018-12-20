@@ -79,7 +79,7 @@ class Calc(object):
                             "gain_base_mean":
                             group['gain_base'].mean(),
                             "gain_base_std":
-                            group['gain_base'].std(),
+                            group['gain_base'].values.std(),
                             "gain_ratio_max":
                             group['gain_ratio'].max(),
                             "gain_ratio_min":
@@ -87,7 +87,7 @@ class Calc(object):
                             "gain_ratio_mean":
                             group['gain_ratio'].mean(),
                             "gain_ratio_std":
-                            group['gain_ratio'].std()
+                            group['gain_ratio'].values.std()
                         }
                         # update statistic
                         statistic.append(sta)
@@ -162,7 +162,7 @@ class Calc(object):
                         "gain_base_mean":
                         group['gain_base'].mean(),
                         "gain_base_std":
-                        group['gain_base'].std(),
+                        group['gain_base'].values.std(),
                         "gain_ratio_max":
                         group['gain_ratio'].max(),
                         "gain_ratio_min":
@@ -170,7 +170,7 @@ class Calc(object):
                         "gain_ratio_mean":
                         group['gain_ratio'].mean(),
                         "gain_ratio_std":
-                        group['gain_ratio'].std()
+                        group['gain_ratio'].values.std()
                     }
                     # update statistic
                     statistic.append(sta)
@@ -249,7 +249,7 @@ class Calc(object):
                             "gain_base_mean":
                             group['gain_base'].mean(),
                             "gain_base_std":
-                            group['gain_base'].std(),
+                            group['gain_base'].values.std(),
                             "gain_ratio_max":
                             group['gain_ratio'].max(),
                             "gain_ratio_min":
@@ -257,11 +257,11 @@ class Calc(object):
                             "gain_ratio_mean":
                             group['gain_ratio'].mean(),
                             "gain_ratio_std":
-                            group['gain_ratio'].std()
+                            group['gain_ratio'].values.std()
                         }
                         # update statistic
                         statistic.append(sta)
-                return statistic
+            return statistic
         except (DBException, Exception) as err:
             raise CalcException(err)
 

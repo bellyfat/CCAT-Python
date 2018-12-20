@@ -3,7 +3,46 @@
 from string import Template
 
 
-# get db signal ticker pair current server sql
+# get db statistic signal ticker pair current server sql
+GET_VIEW_STATISTIC_SIGNAL_TICKER_PAIR_CURRENT_SERVER_SQL =  Template('''
+        SELECT *
+        FROM VIEW_STATISTIC_SIGNAL_TICKER_PAIR_CURRENT
+        WHERE J1_server='$server' AND J2_server='$server_pair'
+    UNION
+        SELECT *
+        FROM VIEW_STATISTIC_SIGNAL_TICKER_PAIR_CURRENT
+        WHERE J1_server='$server_pair' AND J2_server='$server';
+''')
+# get db statistic signal ticker pair current sql
+GET_VIEW_STATISTIC_SIGNAL_TICKER_PAIR_CURRENT_SQL = '''
+    SELECT * FROM VIEW_STATISTIC_SIGNAL_TICKER_PAIR_CURRENT;
+'''
+
+# get db statistic signal ticker tra current server sql
+GET_VIEW_STATISTIC_SIGNAL_TICKER_TRA_CURRENT_SERVER_SQL =  Template('''
+    SELECT * FROM VIEW_STATISTIC_SIGNAL_TICKER_TRA_CURRENT WHERE server IN $server;
+''')
+# get db statistic signal ticker tra current sql
+GET_VIEW_STATISTIC_SIGNAL_TICKER_TRA_CURRENT_SQL = '''
+    SELECT * FROM VIEW_STATISTIC_SIGNAL_TICKER_TRA_CURRENT;
+'''
+
+# get db statistic signal ticker dis current server sql
+GET_VIEW_STATISTIC_SIGNAL_TICKER_DIS_CURRENT_SERVER_SQL =  Template('''
+        SELECT *
+        FROM VIEW_STATISTIC_SIGNAL_TICKER_DIS_CURRENT
+        WHERE bid_server='$server' AND ask_server='$server_pair'
+    UNION
+        SELECT *
+        FROM VIEW_STATISTIC_SIGNAL_TICKER_DIS_CURRENT
+        WHERE bid_server='$server_pair' AND ask_server='$server';
+''')
+# get db statistic signal ticker dis current sql
+GET_VIEW_STATISTIC_SIGNAL_TICKER_DIS_CURRENT_SQL = '''
+    SELECT * FROM VIEW_STATISTIC_SIGNAL_TICKER_DIS_CURRENT;
+'''
+
+# get db judge signal ticker pair current server sql
 GET_VIEW_JUDGE_SIGNAL_TICKER_PAIR_CURRENT_SERVER_SQL =  Template('''
         SELECT *
         FROM VIEW_JUDGE_SIGNAL_TICKER_PAIR_CURRENT
@@ -13,21 +52,21 @@ GET_VIEW_JUDGE_SIGNAL_TICKER_PAIR_CURRENT_SERVER_SQL =  Template('''
         FROM VIEW_JUDGE_SIGNAL_TICKER_PAIR_CURRENT
         WHERE J1_server='$server_pair' AND J2_server='$server';
 ''')
-# get db signal ticker pair current sql
+# get db judge signal ticker pair current sql
 GET_VIEW_JUDGE_SIGNAL_TICKER_PAIR_CURRENT_SQL = '''
     SELECT * FROM VIEW_JUDGE_SIGNAL_TICKER_PAIR_CURRENT;
 '''
 
-# get db signal ticker tra current server sql
+# get db judge signal ticker tra current server sql
 GET_VIEW_JUDGE_SIGNAL_TICKER_TRA_CURRENT_SERVER_SQL =  Template('''
     SELECT * FROM VIEW_JUDGE_SIGNAL_TICKER_TRA_CURRENT WHERE server IN $server;
 ''')
-# get db signal ticker tra current sql
+# get db judge signal ticker tra current sql
 GET_VIEW_JUDGE_SIGNAL_TICKER_TRA_CURRENT_SQL = '''
     SELECT * FROM VIEW_JUDGE_SIGNAL_TICKER_TRA_CURRENT;
 '''
 
-# get db signal ticker dis current server sql
+# get db judge signal ticker dis current server sql
 GET_VIEW_JUDGE_SIGNAL_TICKER_DIS_CURRENT_SERVER_SQL =  Template('''
         SELECT *
         FROM VIEW_JUDGE_SIGNAL_TICKER_DIS_CURRENT
@@ -37,7 +76,7 @@ GET_VIEW_JUDGE_SIGNAL_TICKER_DIS_CURRENT_SERVER_SQL =  Template('''
         FROM VIEW_JUDGE_SIGNAL_TICKER_DIS_CURRENT
         WHERE bid_server='$server_pair' AND ask_server='$server';
 ''')
-# get db signal ticker dis current sql
+# get db judge signal ticker dis current sql
 GET_VIEW_JUDGE_SIGNAL_TICKER_DIS_CURRENT_SQL = '''
     SELECT * FROM VIEW_JUDGE_SIGNAL_TICKER_DIS_CURRENT;
 '''
@@ -165,27 +204,27 @@ DEL_MARKET_TICKER_SQL = '''
     DELETE FROM MARKET_TICKER;
 '''
 
-# get db signal ticker dis sql
+# get db judge signal ticker dis sql
 GET_JUDGE_SIGNAL_TICKER_DIS_SQL = '''
     SELECT * FROM JUDGE_SIGNAL_TICKER_DIS;
 '''
-# delete db signal ticker dis sql
+# delete db judge signal ticker dis sql
 DEL_JUDGE_SIGNAL_TICKER_DIS_SQL = Template('''
     DELETE FROM JUDGE_SIGNAL_TICKER_DIS WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
 ''')
-# get db signal ticker dis sql
+# get db judge signal ticker tra sql
 GET_JUDGE_SIGNAL_TICKER_TRA_SQL = '''
     SELECT * FROM JUDGE_SIGNAL_TICKER_TRA;
 '''
-# delete db signal ticker dis sql
+# delete db judge signal ticker tra sql
 DEL_JUDGE_SIGNAL_TICKER_TRA_SQL = Template('''
     DELETE FROM JUDGE_SIGNAL_TICKER_TRA WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
 ''')
-# get db signal ticker dis sql
+# get db judge signal ticker pair sql
 GET_JUDGE_SIGNAL_TICKER_PAIR_SQL = '''
     SELECT * FROM JUDGE_SIGNAL_TICKER_PAIR;
 '''
-# delete db signal ticker dis sql
+# delete db judge signal ticker pair sql
 DEL_JUDGE_SIGNAL_TICKER_PAIR_SQL = Template('''
     DELETE FROM JUDGE_SIGNAL_TICKER_PAIR WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
 ''')
@@ -198,6 +237,35 @@ GET_TRADE_BACKTEST_HISTORY_SQL = '''
 GET_TRADE_ORDER_HISTORY_SQL = '''
     SELECT * FROM TRADE_ORDER_HISTORY;
 '''
+
+
+# get db statistic signal ticker dis sql
+GET_STATISTIC_SIGNAL_TICKER_DIS_SQL = '''
+    SELECT * FROM STATISTIC_SIGNAL_TICKER_DIS;
+'''
+# delete db statistic signal ticker dis sql
+DEL_STATISTIC_SIGNAL_TICKER_DIS_SQL = Template('''
+    DELETE FROM STATISTIC_SIGNAL_TICKER_DIS WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
+# get db statistic signal ticker tra sql
+GET_STATISTIC_SIGNAL_TICKER_TRA_SQL = '''
+    SELECT * FROM STATISTIC_SIGNAL_TICKER_TRA;
+'''
+# delete db statistic signal ticker tra sql
+DEL_STATISTIC_SIGNAL_TICKER_TRA_SQL = Template('''
+    DELETE FROM STATISTIC_SIGNAL_TICKER_TRA WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
+# get db statistic signal ticker pair sql
+GET_STATISTIC_SIGNAL_TICKER_PAIR_SQL = '''
+    SELECT * FROM STATISTIC_SIGNAL_TICKER_PAIR;
+'''
+# delete db statistic signal ticker pair sql
+DEL_STATISTIC_SIGNAL_TICKER_PAIR_SQL = Template('''
+    DELETE FROM STATISTIC_SIGNAL_TICKER_PAIR WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
+
+
+
 
 # insert db account balance history sql
 INSERT_ACCOUNT_BALANCE_HISTORY_SQL = '''
@@ -239,17 +307,17 @@ INSERT_MARKET_TICKER_SQL = '''
     INSERT OR REPLACE INTO MARKET_TICKER (server, timeStamp, fSymbol, tSymbol, bid_one_price, bid_one_size, ask_one_price, ask_one_size)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
 
-# insert db signal ticker dis sql
+# insert db judge signal ticker dis sql
 INSERT_JUDGE_SIGNAL_TICKER_DIS_SQL = '''
     INSERT OR REPLACE INTO JUDGE_SIGNAL_TICKER_DIS (timeStamp, bid_server, ask_server, fSymbol, tSymbol, bid_price, bid_size, bid_price_base, ask_price, ask_size, ask_price_base, bid_fee, ask_fee, gain_base, gain_ratio)
     VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?)'''
 
-# insert db signal ticker dis sql
+# insert db judge signal ticker dis sql
 INSERT_JUDGE_SIGNAL_TICKER_TRA_SQL = '''
     INSERT OR REPLACE INTO JUDGE_SIGNAL_TICKER_TRA (timeStamp, server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, V1_bid_one_price, V1_bid_one_size, V1_bid_one_price_base, V1_ask_one_price, V1_ask_one_size, V1_ask_one_price_base, V2_bid_one_price, V2_bid_one_size, V2_bid_one_price_base, V2_ask_one_price, V2_ask_one_size, V2_ask_one_price_base, V3_bid_one_price, V3_bid_one_size, V3_bid_one_price_base, V3_ask_one_price, V3_ask_one_size, V3_ask_one_price_base, V1_fee, V2_fee, V3_fee, C1_symbol, C2_symbol, C3_symbol, V1_one_price, V1_one_side, V1_one_size, V2_one_price, V2_one_side, V2_one_size, V3_one_price, V3_one_side, V3_one_size, gain_base, gain_ratio)
     VALUES (?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?)'''
 
-# insert db signal ticker dis sql
+# insert db judge signal ticker dis sql
 INSERT_JUDGE_SIGNAL_TICKER_PAIR_SQL = '''
     INSERT OR REPLACE INTO JUDGE_SIGNAL_TICKER_PAIR (timeStamp, J1_server, J2_server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, J1_V1_bid_one_price, J1_V1_bid_one_size, J1_V1_bid_one_price_base, J1_V1_ask_one_price, J1_V1_ask_one_size, J1_V1_ask_one_price_base, J1_V2_bid_one_price, J1_V2_bid_one_size, J1_V2_bid_one_price_base, J1_V2_ask_one_price, J1_V2_ask_one_size, J1_V2_ask_one_price_base, J1_V3_bid_one_price, J1_V3_bid_one_size, J1_V3_bid_one_price_base, J1_V3_ask_one_price, J1_V3_ask_one_size, J1_V3_ask_one_price_base, J2_V1_bid_one_price, J2_V1_bid_one_size, J2_V1_bid_one_price_base, J2_V1_ask_one_price, J2_V1_ask_one_size, J2_V1_ask_one_price_base, J2_V2_bid_one_price, J2_V2_bid_one_size, J2_V2_bid_one_price_base, J2_V2_ask_one_price, J2_V2_ask_one_size, J2_V2_ask_one_price_base, J2_V3_bid_one_price, J2_V3_bid_one_size, J2_V3_bid_one_price_base, J2_V3_ask_one_price, J2_V3_ask_one_size, J2_V3_ask_one_price_base, J1_V1_fee, J1_V2_fee, J1_V3_fee, J2_V1_fee, J2_V2_fee, J2_V3_fee, C1_symbol, C2_symbol, C3_symbol, J1_V1_one_price, J1_V1_one_side, J1_V1_one_size, J2_V1_one_price, J2_V1_one_side, J2_V1_one_size, J1_V2_one_price, J1_V2_one_side, J1_V2_one_size, J2_V2_one_price, J2_V2_one_side, J2_V2_one_size, J1_V3_one_price, J1_V3_one_side, J1_V3_one_size, J2_V3_one_price, J2_V3_one_side, J2_V3_one_size, gain_base, gain_ratio)
     VALUES (?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?)'''
@@ -279,6 +347,20 @@ UPDATE_CANCLE_TRADE_ORDER_HISTORY_SQL = Template('''
     UPDATE TRADE_ORDER_HISTORY SET status = '$status' WHERE order_id='$order_id';
 ''')
 
+# insert db statistic signal ticker dis sql
+INSERT_STATISTIC_SIGNAL_TICKER_DIS_SQL = '''
+    INSERT OR REPLACE INTO STATISTIC_SIGNAL_TICKER_DIS (timeStamp, bid_server, ask_server, fSymbol, tSymbol, timeStamp_start, timeStamp_end, timeStamp_times, timeStamp_period_times, timeStamp_period_longest, count_total, count_forward, count_backward, gain_base_max, gain_base_min, gain_base_mean, gain_base_std, gain_ratio_max, gain_ratio_min, gain_ratio_mean, gain_ratio_std)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
+# insert db statistic signal ticker tra sql
+INSERT_STATISTIC_SIGNAL_TICKER_TRA_SQL = '''
+    INSERT OR REPLACE INTO STATISTIC_SIGNAL_TICKER_TRA (timeStamp, server, symbol_pair, timeStamp_start, timeStamp_end, timeStamp_times, timeStamp_period_times, timeStamp_period_longest, count_total, count_forward, count_backward, gain_base_max, gain_base_min, gain_base_mean, gain_base_std, gain_ratio_max, gain_ratio_min, gain_ratio_mean, gain_ratio_std)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
+# insert db statistic signal ticker pair sql
+INSERT_STATISTIC_SIGNAL_TICKER_PAIR_SQL = '''
+    INSERT OR REPLACE INTO STATISTIC_SIGNAL_TICKER_PAIR (timeStamp, J1_server, J2_server, symbol_pair, timeStamp_start, timeStamp_end, timeStamp_times, timeStamp_period_times, timeStamp_period_longest, count_total, count_forward, count_backward, gain_base_max, gain_base_min, gain_base_mean, gain_base_std, gain_ratio_max, gain_ratio_min, gain_ratio_mean, gain_ratio_std)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # get db talbes sql
 GET_TABLES_SQL = '''
@@ -833,5 +915,20 @@ CREATE_VIEWS_SQL = Template('''
 			SELECT *
 			FROM JUDGE_SIGNAL_TICKER_PAIR
 			WHERE timeStamp > (strftime('%s', 'now')-$baseJudgeTimeout)*1000;
+    CREATE VIEW IF NOT EXISTS VIEW_STATISTIC_SIGNAL_TICKER_DIS_CURRENT
+        AS
+			SELECT *
+			FROM STATISTIC_SIGNAL_TICKER_DIS
+			WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticTimeout)*1000;
+    CREATE VIEW IF NOT EXISTS VIEW_STATISTIC_SIGNAL_TICKER_TRA_CURRENT
+        AS
+			SELECT *
+			FROM STATISTIC_SIGNAL_TICKER_TRA
+			WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticTimeout)*1000;
+    CREATE VIEW IF NOT EXISTS VIEW_STATISTIC_SIGNAL_TICKER_PAIR_CURRENT
+        AS
+			SELECT *
+			FROM STATISTIC_SIGNAL_TICKER_PAIR
+			WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticTimeout)*1000;
     COMMIT;
 ''')

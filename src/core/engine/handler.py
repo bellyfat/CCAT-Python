@@ -280,8 +280,8 @@ class Handler(object):
             db = DB()
             calc = Calc()
             statisticDis = calc.calcStatisticSignalTickerDis(exchange, timeWindow)
-            # print(statisticDis)
-            pass
+            if not statisticDis == []:
+                db.insertStatisticSignalTickerDis(statisticDis)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.processStatisticJudgeCalcStatisticSignalTickerDis:  {process=%s, exchange=%s}, err=%s" % (
                 current_process().name, exchange, EngineException(err))
@@ -296,8 +296,8 @@ class Handler(object):
             db = DB()
             calc = Calc()
             statisticTra = calc.calcStatisticSignalTickerTra(exchange, timeWindow)
-            # print(statisticTra)
-            pass
+            if not statisticTra == []:
+                db.insertStatisticSignalTickerTra(statisticTra)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.processStatisticJudgeCalcStatisticSignalTickerTra:  {process=%s, exchange=%s}, err=%s" % (
                 current_process().name, exchange, EngineException(err))
@@ -312,8 +312,8 @@ class Handler(object):
             db = DB()
             calc = Calc()
             statisticPair = calc.calcStatisticSignalTickerPair(exchange, timeWindow)
-            print(statisticPair)
-            pass
+            if not statisticPair == []:
+                db.insertStatisticSignalTickerPair(statisticPair)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.processStatisticJudgeCalcStatisticSignalTickerPair:  {process=%s, exchange=%s}, err=%s" % (
                 current_process().name, exchange, EngineException(err))

@@ -3,7 +3,7 @@
 import configparser
 import os
 
-from src.core.util.exceptions import ConfigException, ApplicationException
+from src.core.util.exceptions import ApplicationException, ConfigException
 
 
 class Config(object):
@@ -38,6 +38,7 @@ class Config(object):
                 raise Exception(
                     "Config Debug Settings Error, debug level not suport.")
             # Main Settings
+            # change re-init needed
             Config._Main_types = str(cf['Main']['types']).replace(
                 ' ', '').split(',')
             Config._Main_exchanges = str(cf['Main']['exchanges']).replace(
@@ -45,23 +46,28 @@ class Config(object):
             Config._Main_excludeCoins = str(
                 cf['Main']['excludeCoins']).replace(' ', '').split(',')
             Config._Main_baseCoin = str(cf['Main']['baseCoin'])
-            Config._Main_apiEpochSaveBound = cf.getfloat(
-                'Main', 'apiEpochSaveBound')
-            Config._Main_apiResultEpoch = cf.getfloat('Main', 'apiResultEpoch')
             Config._Main_basePriceVolume = cf.getfloat('Main',
                                                        'basePriceVolume')
             Config._Main_basePriceTimeout = cf.getfloat(
                 'Main', 'basePriceTimeout')
             Config._Main_baseJudgeTimeout = cf.getfloat(
                 'Main', 'baseJudgeTimeout')
-            Config._Main_marketKlineCycle = cf.getint(
-                'Main', 'marketKlineCycle')
-            Config._Main_marketDepthLimit = cf.getint(
-                'Main', 'marketDepthLimit')
+            Config._Main_baseStatisticTimeout = cf.getfloat(
+                'Main', 'baseStatisticTimeout')
+            # plug and play
+            Config._Main_apiEpochSaveBound = cf.getfloat(
+                'Main', 'apiEpochSaveBound')
+            Config._Main_apiResultEpoch = cf.getfloat('Main', 'apiResultEpoch')
+            Config._Main_marketKlineCycle = cf.getint('Main',
+                                                      'marketKlineCycle')
+            Config._Main_marketDepthLimit = cf.getint('Main',
+                                                      'marketDepthLimit')
             Config._Main_marketTickerAggStep = cf.getint(
                 'Main', 'marketTickerAggStep')
-            Config._Main_signalTickerCycle = cf.getint(
-                'Main', 'signalTickerCycle')
+            Config._Main_judgeSignalTickerCycle = cf.getint(
+                'Main', 'judgeSignalTickerCycle')
+            Config._Main_statisticSignalTickerCycle = cf.getint(
+                'Main', 'statisticSignalTickerCycle')
             Config._Main_syncAccountTimeout = cf.getint(
                 'Main', 'syncAccountTimeout')
             Config._Main_syncMarketKlineTimeout = cf.getint(
@@ -70,12 +76,12 @@ class Config(object):
                 'Main', 'syncMarketDepthTimeout')
             Config._Main_syncMarketTickerTimeout = cf.getint(
                 'Main', 'syncMarketTickerTimeout')
-            Config._Main_syncJudgeTimeout = cf.getint(
-                'Main', 'syncJudgeTimeout')
+            Config._Main_syncJudgeTimeout = cf.getint('Main',
+                                                      'syncJudgeTimeout')
             Config._Main_syncBacktestTimeout = cf.getint(
                 'Main', 'syncBacktestTimeout')
-            Config._Main_syncOrderTimeout = cf.getint(
-                'Main', 'syncOrderTimeout')
+            Config._Main_syncOrderTimeout = cf.getint('Main',
+                                                      'syncOrderTimeout')
             Config._Main_symbolStartBaseCoin = cf.getfloat(
                 'Main', 'symbolStartBaseCoin')
             Config._Main_symbolEndBaseCoin = cf.getfloat(
