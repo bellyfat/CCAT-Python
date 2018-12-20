@@ -67,7 +67,7 @@ class AccountAPI(Client):
 
     # query top up records
     def get_top_up_records(self, proxies=None):
-        return self._request_without_params(GET, COIN_TOP_UP_RECORDS, proxies)
+        return self._request_without_params(GET, COINS_TOP_UP_RECORD, proxies)
 
     # query top up record
     def get_top_up_record(self, symbol, proxies=None):

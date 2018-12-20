@@ -41,15 +41,15 @@ if __name__ == '__main__':
 
     util.updateDBAccountBalance(async=False)
 
-    # util.updateDBAccountWithdraw()
+    util.updateDBAccountWithdraw()
 
-    # util.updateDBOrderHistoryInsert()
+    util.updateDBOrderHistoryInsert()
 
     util.updateDBMarketKline(async=False)
 
     util.updateDBMarketDepth()
 
-    util.updateDBMarketTicker()
+    util.updateDBMarketTicker(async=False)
 
 
     # # stop engine

@@ -29,7 +29,7 @@ def num_to_precision(num, precision, rounding=ROUND_HALF_UP):
         for s in float_to_str(precision)[::-1]:
             if s == '0':
                 idx = idx + '0'
-        numStr = Decimal(float_to_str(num/float(idx))).quantize(
+        numStr = Decimal(float_to_str(num / float(idx))).quantize(
             Decimal('1'), rounding=rounding)
         if not str(numStr) == '0':
             numStr = str(numStr) + idx[1:]

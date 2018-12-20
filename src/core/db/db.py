@@ -27,7 +27,10 @@ class DB(object):
         self._basePriceVolume = Config()._Main_basePriceVolume
         self._basePriceTimeout = Config()._Main_basePriceTimeout
         self._baseJudgeTimeout = Config()._Main_baseJudgeTimeout
-        self._signalTickerTimeout = Config()._Main_signalTickerTimeout
+        self._baseStatisticTimeout = Config()._Main_baseStatisticTimeout
+        self._judgeSignalTickerCycle = Config()._Main_judgeSignalTickerCycle
+        self._statisticSignalTickerCycle = Config(
+        )._Main_statisticSignalTickerCycle
         # proxies
         self._proxies = Config()._Proxies_url if Config(
         )._Proxies_proxies else None
@@ -106,12 +109,186 @@ class DB(object):
                 excludeCoins=self._excludeCoins,
                 basePriceVolume=self._basePriceVolume,
                 basePriceTimeout=self._basePriceTimeout,
-                baseJudgeTimeout=self._baseJudgeTimeout).replace('[',
-                                                                 '(').replace(
-                                                                     ']', ')')
+                baseJudgeTimeout=self._baseJudgeTimeout,
+                baseStatisticTimeout=self._baseStatisticTimeout).replace('[', '(').replace(
+                    ']', ')')
             self._logger.debug(TEMP_SQL)
             curs.executescript(TEMP_SQL)
             curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewStatisticSignalTickerPairCurrentServer(self, server, server_pair):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewStatisticSignalTickerPairCurrentServer")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_STATISTIC_SIGNAL_TICKER_PAIR_CURRENT_SERVER_SQL.substitute(
+                server=server, server_pair=server_pair)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewStatisticSignalTickerPairCurrent(self):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewStatisticSignalTickerPairCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_STATISTIC_SIGNAL_TICKER_PAIR_CURRENT_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewStatisticSignalTickerTraCurrentServer(self, exchange):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewStatisticSignalTickerTraCurrentServer")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_STATISTIC_SIGNAL_TICKER_TRA_CURRENT_SERVER_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewStatisticSignalTickerTraCurrent(self):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewStatisticSignalTickerTraCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_STATISTIC_SIGNAL_TICKER_TRA_CURRENT_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewStatisticSignalTickerDisCurrentServer(self, server, server_pair):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewStatisticSignalTickerDisCurrentServer")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_STATISTIC_SIGNAL_TICKER_DIS_CURRENT_SERVER_SQL.substitute(
+                server=server, server_pair=server_pair)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewStatisticSignalTickerDisCurrent(self):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewStatisticSignalTickerDisCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_STATISTIC_SIGNAL_TICKER_DIS_CURRENT_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewJudgeSignalTickerPairCurrentServer(self, server, server_pair):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewJudgeSignalTickerPairCurrentServer")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_JUDGE_SIGNAL_TICKER_PAIR_CURRENT_SERVER_SQL.substitute(
+                server=server, server_pair=server_pair)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewJudgeSignalTickerPairCurrent(self):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewJudgeSignalTickerPairCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_JUDGE_SIGNAL_TICKER_PAIR_CURRENT_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewJudgeSignalTickerTraCurrentServer(self, exchange):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewJudgeSignalTickerTraCurrentServer")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_JUDGE_SIGNAL_TICKER_TRA_CURRENT_SERVER_SQL.substitute(
+                server=exchange).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewJudgeSignalTickerTraCurrent(self):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewJudgeSignalTickerTraCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_JUDGE_SIGNAL_TICKER_TRA_CURRENT_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewJudgeSignalTickerDisCurrentServer(self, server, server_pair):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewJudgeSignalTickerDisCurrentServer")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_JUDGE_SIGNAL_TICKER_DIS_CURRENT_SERVER_SQL.substitute(
+                server=server, server_pair=server_pair)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewJudgeSignalTickerDisCurrent(self):
+        self._logger.debug(
+            "src.core.db.db.DB.getViewJudgeSignalTickerDisCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_JUDGE_SIGNAL_TICKER_DIS_CURRENT_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
@@ -225,24 +402,11 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getViewMarketTickerSymbol(self):
-        self._logger.debug("src.core.db.db.DB.getViewMarketTickerSymbol")
-        try:
-            curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_MARKET_TICKER_SYMBOL_SQL
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            res = curs.fetchall()
-            curs.close()
-            return res
-        except (sqlite3.Error, Exception) as err:
-            raise DBException(err)
-
     def getViewMarketSymbolPairsAggDepth(self, exchange, fSymbol, tSymbol):
         self._logger.debug("src.core.db.db.DB.getViewMarketSymbolPairs")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_MARKET_SYMBOL_PAIRS_AGGDEPTH_SQL.substitute(
+            TEMP_SQL = GET_VIEW_MARKET_SYMBOL_SERVER_AGGDEPTH_SQL.substitute(
                 server=exchange, fSymbol=fSymbol, tSymbol=tSymbol).replace(
                     '[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
@@ -257,7 +421,7 @@ class DB(object):
         self._logger.debug("src.core.db.db.DB.getViewMarketSymbolPairs")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_MARKET_SYMBOL_PAIRS_SQL.substitute(
+            TEMP_SQL = GET_VIEW_MARKET_SYMBOL_SERVER_SQL.substitute(
                 server=exchange).replace('[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
@@ -271,7 +435,7 @@ class DB(object):
         self._logger.debug("src.core.db.db.DB.getViewInfoSymbolPairs")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_VIEW_INFO_SYMBOL_PAIRS_SQL.substitute(
+            TEMP_SQL = GET_VIEW_INFO_SYMBOL_SERVER_SQL.substitute(
                 server=exchange).replace('[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
@@ -309,10 +473,11 @@ class DB(object):
 
     def getTables(self):
         self._logger.debug("src.core.db.db.DB.getTables")
-        self._logger.debug(GET_TABLES_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_TABLES_SQL)
+            TEMP_SQL = GET_TABLES_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -321,10 +486,11 @@ class DB(object):
 
     def creatTables(self):
         self._logger.debug("src.core.db.db.DB.creatTables")
-        self._logger.debug(CREATE_TABELS_SQL)
         try:
             curs = self._conn.cursor()
-            curs.executescript(CREATE_TABELS_SQL)
+            TEMP_SQL = CREATE_TABELS_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.executescript(TEMP_SQL)
             curs.close()
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
@@ -345,10 +511,11 @@ class DB(object):
 
     def getAccountWithdrawHistory(self):
         self._logger.debug("src.core.db.db.DB.getAccountWithdrawHistory")
-        self._logger.debug(GET_ACCOUNT_WITHDRAW_HISTORY_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_ACCOUNT_WITHDRAW_HISTORY_SQL)
+            TEMP_SQL = GET_ACCOUNT_WITHDRAW_HISTORY_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -357,10 +524,11 @@ class DB(object):
 
     def getInfoServer(self):
         self._logger.debug("src.core.db.db.DB.getInfoServer")
-        self._logger.debug(GET_INFO_SERVER_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_INFO_SERVER_SQL)
+            TEMP_SQL = GET_INFO_SERVER_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -397,10 +565,11 @@ class DB(object):
 
     def getMarketDepth(self):
         self._logger.debug("src.core.db.db.DB.getMarketDepth")
-        self._logger.debug(GET_MARKET_DEPTH_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_MARKET_DEPTH_SQL)
+            TEMP_SQL = GET_MARKET_DEPTH_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -409,10 +578,11 @@ class DB(object):
 
     def delMarketDepth(self):
         self._logger.debug("src.core.db.db.DB.delMarketDepth")
-        self._logger.debug(DEL_MARKET_DEPTH_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(DEL_MARKET_DEPTH_SQL)
+            TEMP_SQL = DEL_MARKET_DEPTH_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             self._conn.commit()
             curs.close()
         except (sqlite3.Error, Exception) as err:
@@ -420,10 +590,11 @@ class DB(object):
 
     def getMarketKline(self):
         self._logger.debug("src.core.db.db.DB.getMarketKline")
-        self._logger.debug(GET_MARKET_KLINE_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_MARKET_KLINE_SQL)
+            TEMP_SQL = GET_MARKET_KLINE_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -432,10 +603,11 @@ class DB(object):
 
     def delMarketKline(self):
         self._logger.debug("src.core.db.db.DB.delMarketKline")
-        self._logger.debug(DEL_MARKET_KLINE_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(DEL_MARKET_KLINE_SQL)
+            TEMP_SQL = DEL_MARKET_KLINE_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             self._conn.commit()
             curs.close()
         except (sqlite3.Error, Exception) as err:
@@ -443,10 +615,11 @@ class DB(object):
 
     def getMarketTicker(self):
         self._logger.debug("src.core.db.db.DB.getMarketTicker")
-        self._logger.debug(GET_MARKET_TICKER_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_MARKET_TICKER_SQL)
+            TEMP_SQL = GET_MARKET_TICKER_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -455,32 +628,34 @@ class DB(object):
 
     def delMarketTicker(self):
         self._logger.debug("src.core.db.db.DB.delMarketTicker")
-        self._logger.debug(DEL_MARKET_TICKER_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(DEL_MARKET_TICKER_SQL)
+            TEMP_SQL = DEL_MARKET_TICKER_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             self._conn.commit()
             curs.close()
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getSignalTickerDis(self):
-        self._logger.debug("src.core.db.db.DB.getSignalTickerDis")
-        self._logger.debug(GET_SIGNAL_TICKER_DIS_SQL)
+    def getStatisticSignalTickerDis(self):
+        self._logger.debug("src.core.db.db.DB.getStatisticSignalTickerDis")
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_SIGNAL_TICKER_DIS_SQL)
+            TEMP_SQL = GET_STATISTIC_SIGNAL_TICKER_DIS_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def delSignalTickerDis(self):
-        self._logger.debug("src.core.db.db.DB.delSignalTickerDis")
+    def delStatisticSignalTickerDis(self):
+        self._logger.debug("src.core.db.db.DB.delStatisticSignalTickerDis")
         try:
-            TEMP_SQL = DEL_SIGNAL_TICKER_DIS_SQL.substitute(
-                period=self._signalTickerTimeout)
+            TEMP_SQL = DEL_STATISTIC_SIGNAL_TICKER_DIS_SQL.substitute(
+                period=self._statisticSignalTickerCycle)
             curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
@@ -489,50 +664,128 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getSignalTickerTra(self):
-        self._logger.debug("src.core.db.db.DB.getSignalTickerTra")
-        self._logger.debug(GET_SIGNAL_TICKER_TRA_SQL)
+    def getStatisticSignalTickerTra(self):
+        self._logger.debug("src.core.db.db.DB.getStatisticSignalTickerTra")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_ACCOUNT_BALANCE_HISTORY_SQL.substitute(
-                server=exchange).replace('[', '(').replace(']', ')')
+            TEMP_SQL = GET_STATISTIC_SIGNAL_TICKER_TRA_SQL
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
-            curs.close()
-            return res
-        except (sqlite3.Error, Exception) as err:
-            raise DBException(err)
-
-    def delSignalTickerTra(self):
-        self._logger.debug("src.core.db.db.DB.delSignalTickerTra")
-        try:
-            TEMP_SQL = DEL_SIGNAL_TICKER_TRA_SQL.substitute(
-                period=self._signalTickerTimeout)
-            curs = self._conn.cursor()
-            self._logger.debug(TEMP_SQL)
-            curs.execute(TEMP_SQL)
-            self._conn.commit()
-            curs.close()
-        except (sqlite3.Error, Exception) as err:
-            raise DBException(err)
-
-    def getSignalTickerPair(self):
-        self._logger.debug("src.core.db.db.DB.getSignalTickerPair")
-        self._logger.debug(GET_SIGNAL_TICKER_PAIR_SQL)
-        try:
-            curs = self._conn.cursor()
-            curs.execute(GET_SIGNAL_TICKER_PAIR_SQL)
             res = curs.fetchall()
             curs.close()
             return res
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def delSignalTickerPair(self):
-        self._logger.debug("src.core.db.db.DB.delSignalTickerPair")
+    def delStatisticSignalTickerTra(self):
+        self._logger.debug("src.core.db.db.DB.delStatisticSignalTickerTra")
         try:
-            TEMP_SQL = DEL_SIGNAL_TICKER_PAIR_SQL.substitute(
-                period=self._signalTickerTimeout)
+            TEMP_SQL = DEL_STATISTIC_SIGNAL_TICKER_TRA_SQL.substitute(
+                period=self._statisticSignalTickerCycle)
+            curs = self._conn.cursor()
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getStatisticSignalTickerPair(self):
+        self._logger.debug("src.core.db.db.DB.getStatisticSignalTickerPair")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_STATISTIC_SIGNAL_TICKER_PAIR_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def delStatisticSignalTickerPair(self):
+        self._logger.debug("src.core.db.db.DB.delStatisticSignalTickerPair")
+        try:
+            TEMP_SQL = DEL_STATISTIC_SIGNAL_TICKER_PAIR_SQL.substitute(
+                period=self._statisticSignalTickerCycle)
+            curs = self._conn.cursor()
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getJudgeSignalTickerDis(self):
+        self._logger.debug("src.core.db.db.DB.getJudgeSignalTickerDis")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_JUDGE_SIGNAL_TICKER_DIS_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def delJudgeSignalTickerDis(self):
+        self._logger.debug("src.core.db.db.DB.delJudgeSignalTickerDis")
+        try:
+            TEMP_SQL = DEL_JUDGE_SIGNAL_TICKER_DIS_SQL.substitute(
+                period=self._judgeSignalTickerCycle)
+            curs = self._conn.cursor()
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getJudgeSignalTickerTra(self):
+        self._logger.debug("src.core.db.db.DB.getJudgeSignalTickerTra")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_JUDGE_SIGNAL_TICKER_TRA_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def delJudgeSignalTickerTra(self):
+        self._logger.debug("src.core.db.db.DB.delJudgeSignalTickerTra")
+        try:
+            TEMP_SQL = DEL_JUDGE_SIGNAL_TICKER_TRA_SQL.substitute(
+                period=self._judgeSignalTickerCycle)
+            curs = self._conn.cursor()
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getJudgeSignalTickerPair(self):
+        self._logger.debug("src.core.db.db.DB.getJudgeSignalTickerPair")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_JUDGE_SIGNAL_TICKER_PAIR_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def delJudgeSignalTickerPair(self):
+        self._logger.debug("src.core.db.db.DB.delJudgeSignalTickerPair")
+        try:
+            TEMP_SQL = DEL_JUDGE_SIGNAL_TICKER_PAIR_SQL.substitute(
+                period=self._judgeSignalTickerCycle)
             curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
@@ -543,10 +796,11 @@ class DB(object):
 
     def getTradeBacktestHistory(self):
         self._logger.debug("src.core.db.db.DB.getTradeBacktestHistory")
-        self._logger.debug(GET_TRADE_BACKTEST_HISTORY_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_TRADE_BACKTEST_HISTORY_SQL)
+            TEMP_SQL = GET_TRADE_BACKTEST_HISTORY_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -555,10 +809,11 @@ class DB(object):
 
     def getTradeOrderHistory(self):
         self._logger.debug("src.core.db.db.DB.getTradeOrderHistory")
-        self._logger.debug(GET_TRADE_ORDER_HISTORY_SQL)
         try:
             curs = self._conn.cursor()
-            curs.execute(GET_TRADE_ORDER_HISTORY_SQL)
+            TEMP_SQL = GET_TRADE_ORDER_HISTORY_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
             return res
@@ -617,9 +872,69 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertAccountWithdrawHistory(self, exchange, asset):
+    def insertAccountWithdrawHistory(self, exchange="all"):
         self._logger.debug(
-            "src.core.db.db.DB.insertAccountWithdrawHistory: { exchange=%s, asset=%s }"
+            "src.core.db.db.DB.insertAccountWithdrawHistory: { exchange=%s }" %
+            exchange)
+        try:
+            timeStamp = utcnow_timestamp()
+            TEMP_SQL_TITLE = INSERT_ACCOUNT_WITHDRAW_HISTORY_SQL
+            TEMP_SQL_VALUE = []
+            # Okex
+            if exchange == "all" or self._Okex_exchange in exchange:
+                res = self._Okex.getAccountDetail()
+                for base in res:
+                    TEMP_SQL_VALUE.append(
+                        (str(self._Okex_exchange), int(timeStamp),
+                         str(base["asset"]),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["deposit"]))),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["withdraw"])))))
+            # Binance
+            if exchange == "all" or self._Binance_exchange in exchange:
+                res = self._Binance.getAccountDetail()
+                for base in res:
+                    TEMP_SQL_VALUE.append(
+                        (str(self._Binance_exchange), int(timeStamp),
+                         str(base["asset"]),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["deposit"]))),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["withdraw"])))))
+            # Huobi
+            if exchange == "all" or self._Huobi_exchange in exchange:
+                res = self._Huobi.getAccountDetail()
+                for base in res:
+                    TEMP_SQL_VALUE.append(
+                        (str(self._Huobi_exchange), int(timeStamp),
+                         str(base["asset"]),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["deposit"]))),
+                         str(
+                             sqlite_escape(','.join(
+                                 json.dumps(b) for b in base["withdraw"])))))
+            # Others
+            # to_be_continue
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
+                self._conn.commit()
+                curs.close()
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
+
+    def insertAccountWithdrawHistoryAsset(self, exchange, asset):
+        self._logger.debug(
+            "src.core.db.db.DB.insertAccountWithdrawHistoryAsset: { exchange=%s, asset=%s }"
             % (exchange, asset))
         try:
             timeStamp = utcnow_timestamp()
@@ -993,7 +1308,7 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertMarketTicker(self, exchange, fSymbol, tSymbol, aggDepth=''):
+    def insertMarketTicker(self, exchange, fSymbol, tSymbol, aggDepth=0):
         self._logger.debug(
             "src.core.db.db.DB.insertMarketTicker: { exchange=%s, fSymbol=%s, tSymbol=%s aggDepth=%s}"
             % (exchange, fSymbol, tSymbol, aggDepth))
@@ -1049,29 +1364,23 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertSignalTickerDis(self, signal):
+    def insertJudgeSignalTickerDis(self, signal):
         self._logger.debug(
-            "src.core.db.db.DB.insertSignalTickerDis: {signal=%s}" % signal)
+            "src.core.db.db.DB.insertJudgeSignalTickerDis: {signal=%s}" %
+            signal)
         try:
-            TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_DIS_SQL
+            TEMP_SQL_TITLE = INSERT_JUDGE_SIGNAL_TICKER_DIS_SQL
             TEMP_SQL_VALUE = []
-            if not signal == []:
-                for s in signal:
-                    TEMP_SQL_VALUE.append((int(s['timeStamp']),
-                                           str(s['bid_server']),
-                                           str(s['ask_server']),
-                                           str(s['fSymbol']),
-                                           str(s['tSymbol']),
-                                           float(s['bid_price']),
-                                           float(s['bid_size']),
-                                           float(s['bid_price_base']),
-                                           float(s['ask_price']),
-                                           float(s['ask_size']),
-                                           float(s['ask_price_base']),
-                                           float(s['bid_fee']),
-                                           float(s['ask_fee']),
-                                           float(s['gain_base']),
-                                           float(s['gain_ratio'])))
+            for s in signal:
+                TEMP_SQL_VALUE.append(
+                    (int(s['timeStamp']), str(s['bid_server']),
+                     str(s['ask_server']), str(s['fSymbol']),
+                     str(s['tSymbol']), float(s['bid_price']),
+                     float(s['bid_size']), float(s['bid_price_base']),
+                     float(s['ask_price']), float(s['ask_size']),
+                     float(s['ask_price_base']), float(s['bid_fee']),
+                     float(s['ask_fee']), float(s['gain_base']),
+                     float(s['gain_ratio'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
@@ -1083,61 +1392,54 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertSignalTickerTra(self, signal):
+    def insertJudgeSignalTickerTra(self, signal):
         self._logger.debug(
-            "src.core.db.db.DB.insertSignalTickerTra: {signal=%s}" % signal)
+            "src.core.db.db.DB.insertJudgeSignalTickerTra: {signal=%s}" %
+            signal)
         try:
-            TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_TRA_SQL
+            TEMP_SQL_TITLE = INSERT_JUDGE_SIGNAL_TICKER_TRA_SQL
             TEMP_SQL_VALUE = []
-            if not signal == []:
-                for s in signal:
-                    TEMP_SQL_VALUE.append((int(s['timeStamp']),
-                                           str(s['server']),
-                                           str(s['V1_fSymbol']),
-                                           str(s['V1_tSymbol']),
-                                           str(s['V2_fSymbol']),
-                                           str(s['V2_tSymbol']),
-                                           str(s['V3_fSymbol']),
-                                           str(s['V3_tSymbol']),
-                                           float(s['V1_bid_one_price']),
-                                           float(s['V1_bid_one_size']),
-                                           float(s['V1_bid_one_price_base']),
-                                           float(s['V1_ask_one_price']),
-                                           float(s['V1_ask_one_size']),
-                                           float(s['V1_ask_one_price_base']),
-                                           float(s['V2_bid_one_price']),
-                                           float(s['V2_bid_one_size']),
-                                           float(s['V2_bid_one_price_base']),
-                                           float(s['V2_ask_one_price']),
-                                           float(s['V2_ask_one_size']),
-                                           float(s['V2_ask_one_price_base']),
-                                           float(s['V3_bid_one_price']),
-                                           float(s['V3_bid_one_size']),
-                                           float(s['V3_bid_one_price_base']),
-                                           float(s['V3_ask_one_price']),
-                                           float(s['V3_ask_one_size']),
-                                           float(s['V3_ask_one_price_base']),
-                                           float(s['V1_fee']),
-                                           float(s['V2_fee']),
-                                           float(s['V3_fee']),
-                                           str(s['C1_symbol']),
-                                           str(s['C2_symbol']),
-                                           str(s['C3_symbol']),
-                                           float(s['V1_one_price']),
-                                           float(s['V1_one_price_base']),
-                                           float(s['V1_one_size']),
-                                           float(s['C1_symbol_base']),
-                                           float(s['V2_one_price']),
-                                           float(s['V2_one_price_base']),
-                                           float(s['V2_one_size']),
-                                           float(s['C2_symbol_base']),
-                                           float(s['V3_one_price']),
-                                           float(s['V3_one_price_base']),
-                                           float(s['V3_one_size']),
-                                           float(s['C3_symbol_base']),
-                                           str(s['gain_symbol']),
-                                           float(s['gain_base']),
-                                           float(s['gain_ratio'])))
+            for s in signal:
+                TEMP_SQL_VALUE.append((int(s['timeStamp']), str(s['server']),
+                                       str(s['V1_fSymbol']),
+                                       str(s['V1_tSymbol']),
+                                       str(s['V2_fSymbol']),
+                                       str(s['V2_tSymbol']),
+                                       str(s['V3_fSymbol']),
+                                       str(s['V3_tSymbol']),
+                                       float(s['V1_bid_one_price']),
+                                       float(s['V1_bid_one_size']),
+                                       float(s['V1_bid_one_price_base']),
+                                       float(s['V1_ask_one_price']),
+                                       float(s['V1_ask_one_size']),
+                                       float(s['V1_ask_one_price_base']),
+                                       float(s['V2_bid_one_price']),
+                                       float(s['V2_bid_one_size']),
+                                       float(s['V2_bid_one_price_base']),
+                                       float(s['V2_ask_one_price']),
+                                       float(s['V2_ask_one_size']),
+                                       float(s['V2_ask_one_price_base']),
+                                       float(s['V3_bid_one_price']),
+                                       float(s['V3_bid_one_size']),
+                                       float(s['V3_bid_one_price_base']),
+                                       float(s['V3_ask_one_price']),
+                                       float(s['V3_ask_one_size']),
+                                       float(s['V3_ask_one_price_base']),
+                                       float(s['V1_fee']), float(s['V2_fee']),
+                                       float(s['V3_fee']), str(s['C1_symbol']),
+                                       str(s['C2_symbol']),
+                                       str(s['C3_symbol']),
+                                       float(s['V1_one_price']),
+                                       str(s['V1_one_side']),
+                                       float(s['V1_one_size']),
+                                       float(s['V2_one_price']),
+                                       str(s['V2_one_side']),
+                                       float(s['V2_one_size']),
+                                       float(s['V3_one_price']),
+                                       str(s['V3_one_side']),
+                                       float(s['V3_one_size']),
+                                       float(s['gain_base']),
+                                       float(s['gain_ratio'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
@@ -1149,78 +1451,70 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertSignalTickerPair(self, signal):
+    def insertJudgeSignalTickerPair(self, signal):
         self._logger.debug(
-            "src.core.db.db.DB.insertSignalTickerPair: {signal=%s}" % signal)
+            "src.core.db.db.DB.insertJudgeSignalTickerPair: {signal=%s}" %
+            signal)
         try:
-            TEMP_SQL_TITLE = INSERT_SIGNAL_TICKER_PAIR_SQL
+            TEMP_SQL_TITLE = INSERT_JUDGE_SIGNAL_TICKER_PAIR_SQL
             TEMP_SQL_VALUE = []
-            if not signal == []:
-                for s in signal:
-                    TEMP_SQL_VALUE.append(
-                        (int(s['timeStamp']), str(s['J1_server']),
-                         str(s['J2_server']), str(s['V1_fSymbol']),
-                         str(s['V1_tSymbol']), str(s['V2_fSymbol']),
-                         str(s['V2_tSymbol']), str(s['V3_fSymbol']),
-                         str(s['V3_tSymbol']), float(s['J1_V1_bid_one_price']),
-                         float(s['J1_V1_bid_one_size']),
-                         float(s['J1_V1_bid_one_price_base']),
-                         float(s['J1_V1_ask_one_price']),
-                         float(s['J1_V1_ask_one_size']),
-                         float(s['J1_V1_ask_one_price_base']),
-                         float(s['J1_V2_bid_one_price']),
-                         float(s['J1_V2_bid_one_size']),
-                         float(s['J1_V2_bid_one_price_base']),
-                         float(s['J1_V2_ask_one_price']),
-                         float(s['J1_V2_ask_one_size']),
-                         float(s['J1_V2_ask_one_price_base']),
-                         float(s['J1_V3_bid_one_price']),
-                         float(s['J1_V3_bid_one_size']),
-                         float(s['J1_V3_bid_one_price_base']),
-                         float(s['J1_V3_ask_one_price']),
-                         float(s['J1_V3_ask_one_size']),
-                         float(s['J1_V3_ask_one_price_base']),
-                         float(s['J2_V1_bid_one_price']),
-                         float(s['J2_V1_bid_one_size']),
-                         float(s['J2_V1_bid_one_price_base']),
-                         float(s['J2_V1_ask_one_price']),
-                         float(s['J2_V1_ask_one_size']),
-                         float(s['J2_V1_ask_one_price_base']),
-                         float(s['J2_V2_bid_one_price']),
-                         float(s['J2_V2_bid_one_size']),
-                         float(s['J2_V2_bid_one_price_base']),
-                         float(s['J2_V2_ask_one_price']),
-                         float(s['J2_V2_ask_one_size']),
-                         float(s['J2_V2_ask_one_price_base']),
-                         float(s['J2_V3_bid_one_price']),
-                         float(s['J2_V3_bid_one_size']),
-                         float(s['J2_V3_bid_one_price_base']),
-                         float(s['J2_V3_ask_one_price']),
-                         float(s['J2_V3_ask_one_size']),
-                         float(s['J2_V3_ask_one_price_base']),
-                         float(s['J1_V1_fee']), float(s['J1_V2_fee']),
-                         float(s['J1_V3_fee']), float(s['J2_V1_fee']),
-                         float(s['J2_V2_fee']), float(s['J2_V3_fee']),
-                         str(s['C1_symbol']), str(s['C2_symbol']),
-                         str(s['C3_symbol']), float(s['J1_V1_one_price']),
-                         float(s['J1_V1_one_price_base']),
-                         float(s['J1_V1_one_size']),
-                         float(s['J2_V1_one_price']),
-                         float(s['J2_V1_one_price_base']),
-                         float(s['J2_V1_one_size']), float(
-                             s['J1_V2_one_price']),
-                         float(s['J1_V2_one_price_base']),
-                         float(s['J1_V2_one_size']), float(
-                             s['J2_V2_one_price']),
-                         float(s['J2_V2_one_price_base']),
-                         float(s['J2_V2_one_size']), float(
-                             s['J1_V3_one_price']),
-                         float(s['J1_V3_one_price_base']),
-                         float(s['J1_V3_one_size']), float(
-                             s['J2_V3_one_price']),
-                         float(s['J2_V3_one_price_base']),
-                         float(s['J2_V3_one_size']), float(s['gain_base']),
-                         float(s['gain_ratio'])))
+            for s in signal:
+                TEMP_SQL_VALUE.append(
+                    (int(s['timeStamp']), str(s['J1_server']),
+                     str(s['J2_server']), str(s['V1_fSymbol']),
+                     str(s['V1_tSymbol']), str(s['V2_fSymbol']),
+                     str(s['V2_tSymbol']), str(s['V3_fSymbol']),
+                     str(s['V3_tSymbol']), float(s['J1_V1_bid_one_price']),
+                     float(s['J1_V1_bid_one_size']),
+                     float(s['J1_V1_bid_one_price_base']),
+                     float(s['J1_V1_ask_one_price']),
+                     float(s['J1_V1_ask_one_size']),
+                     float(s['J1_V1_ask_one_price_base']),
+                     float(s['J1_V2_bid_one_price']),
+                     float(s['J1_V2_bid_one_size']),
+                     float(s['J1_V2_bid_one_price_base']),
+                     float(s['J1_V2_ask_one_price']),
+                     float(s['J1_V2_ask_one_size']),
+                     float(s['J1_V2_ask_one_price_base']),
+                     float(s['J1_V3_bid_one_price']),
+                     float(s['J1_V3_bid_one_size']),
+                     float(s['J1_V3_bid_one_price_base']),
+                     float(s['J1_V3_ask_one_price']),
+                     float(s['J1_V3_ask_one_size']),
+                     float(s['J1_V3_ask_one_price_base']),
+                     float(s['J2_V1_bid_one_price']),
+                     float(s['J2_V1_bid_one_size']),
+                     float(s['J2_V1_bid_one_price_base']),
+                     float(s['J2_V1_ask_one_price']),
+                     float(s['J2_V1_ask_one_size']),
+                     float(s['J2_V1_ask_one_price_base']),
+                     float(s['J2_V2_bid_one_price']),
+                     float(s['J2_V2_bid_one_size']),
+                     float(s['J2_V2_bid_one_price_base']),
+                     float(s['J2_V2_ask_one_price']),
+                     float(s['J2_V2_ask_one_size']),
+                     float(s['J2_V2_ask_one_price_base']),
+                     float(s['J2_V3_bid_one_price']),
+                     float(s['J2_V3_bid_one_size']),
+                     float(s['J2_V3_bid_one_price_base']),
+                     float(s['J2_V3_ask_one_price']),
+                     float(s['J2_V3_ask_one_size']),
+                     float(s['J2_V3_ask_one_price_base']),
+                     float(s['J1_V1_fee']), float(s['J1_V2_fee']),
+                     float(s['J1_V3_fee']), float(s['J2_V1_fee']),
+                     float(s['J2_V2_fee']), float(s['J2_V3_fee']),
+                     str(s['C1_symbol']), str(s['C2_symbol']),
+                     str(s['C3_symbol']), float(s['J1_V1_one_price']),
+                     str(s['J1_V1_one_side']), float(s['J1_V1_one_size']),
+                     float(s['J2_V1_one_price']), str(s['J2_V1_one_side']),
+                     float(s['J2_V1_one_size']), float(s['J1_V2_one_price']),
+                     str(s['J1_V2_one_side']), float(s['J1_V2_one_size']),
+                     float(s['J2_V2_one_price']), str(s['J2_V2_one_side']),
+                     float(s['J2_V2_one_size']), float(s['J1_V3_one_price']),
+                     str(s['J1_V3_one_side']), float(s['J1_V3_one_size']),
+                     float(s['J2_V3_one_price']), str(s['J2_V3_one_side']),
+                     float(s['J2_V3_one_size']), float(s['gain_base']),
+                     float(s['gain_ratio'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
@@ -1584,6 +1878,114 @@ class DB(object):
                     self._logger.debug(TEMP)
                     curs = self._conn.cursor()
                     curs.execute(TEMP)
+                self._conn.commit()
+                curs.close()
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
+
+    def insertStatisticSignalTickerDis(self, statistic):
+        self._logger.debug(
+            "src.core.db.db.DB.insertStatisticSignalTickerDis: {statistic=%s}"
+            % statistic)
+        try:
+            TEMP_SQL_TITLE = INSERT_STATISTIC_SIGNAL_TICKER_DIS_SQL
+            TEMP_SQL_VALUE = []
+            for s in statistic:
+                TEMP_SQL_VALUE.append((int(s['timeStamp']),
+                                       str(s['bid_server']),
+                                       str(s['ask_server']), str(s['fSymbol']),
+                                       str(s['tSymbol']),
+                                       float(s['timeStamp_start']),
+                                       float(s['timeStamp_end']),
+                                       float(s['timeStamp_times']),
+                                       float(s['timeStamp_period_times']),
+                                       float(s['timeStamp_period_longest']),
+                                       float(s['count_total']),
+                                       float(s['count_forward']),
+                                       float(s['count_backward']),
+                                       float(s['gain_base_max']),
+                                       float(s['gain_base_min']),
+                                       float(s['gain_base_mean']),
+                                       float(s['gain_base_std']),
+                                       float(s['gain_ratio_max']),
+                                       float(s['gain_ratio_min']),
+                                       float(s['gain_ratio_mean']),
+                                       float(s['gain_ratio_std'])))
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
+                self._conn.commit()
+                curs.close()
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
+
+    def insertStatisticSignalTickerTra(self, statistic):
+        self._logger.debug(
+            "src.core.db.db.DB.insertStatisticSignalTickerTra: {statistic=%s}"
+            % statistic)
+        try:
+            TEMP_SQL_TITLE = INSERT_STATISTIC_SIGNAL_TICKER_TRA_SQL
+            TEMP_SQL_VALUE = []
+            for s in statistic:
+                TEMP_SQL_VALUE.append((int(s['timeStamp']), str(s['server']),
+                                       str(s['symbol_pair']),
+                                       float(s['timeStamp_start']),
+                                       float(s['timeStamp_end']),
+                                       float(s['timeStamp_times']),
+                                       float(s['timeStamp_period_times']),
+                                       float(s['timeStamp_period_longest']),
+                                       float(s['count_total']),
+                                       float(s['count_forward']),
+                                       float(s['count_backward']),
+                                       float(s['gain_base_max']),
+                                       float(s['gain_base_min']),
+                                       float(s['gain_base_mean']),
+                                       float(s['gain_base_std']),
+                                       float(s['gain_ratio_max']),
+                                       float(s['gain_ratio_min']),
+                                       float(s['gain_ratio_mean']),
+                                       float(s['gain_ratio_std'])))
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
+                self._conn.commit()
+                curs.close()
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
+
+    def insertStatisticSignalTickerPair(self, statistic):
+        self._logger.debug(
+            "src.core.db.db.DB.insertStatisticSignalTickerPair: {statistic=%s}"
+            % statistic)
+        try:
+            TEMP_SQL_TITLE = INSERT_STATISTIC_SIGNAL_TICKER_PAIR_SQL
+            TEMP_SQL_VALUE = []
+            for s in statistic:
+                TEMP_SQL_VALUE.append(
+                    (int(s['timeStamp']), str(s['J1_server']),
+                     str(s['J2_server']), str(s['symbol_pair']),
+                     float(s['timeStamp_start']), float(s['timeStamp_end']),
+                     float(s['timeStamp_times']),
+                     float(s['timeStamp_period_times']),
+                     float(s['timeStamp_period_longest']),
+                     float(s['count_total']), float(s['count_forward']),
+                     float(s['count_backward']), float(s['gain_base_max']),
+                     float(s['gain_base_min']), float(s['gain_base_mean']),
+                     float(s['gain_base_std']), float(s['gain_ratio_max']),
+                     float(s['gain_ratio_min']), float(s['gain_ratio_mean']),
+                     float(s['gain_ratio_std'])))
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,

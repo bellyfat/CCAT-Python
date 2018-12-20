@@ -28,6 +28,10 @@ class Util(object):
         self._marketTickerAggStep = Config()._Main_marketTickerAggStep
         self._apiEpochSaveBound = Config()._Main_apiEpochSaveBound
         self._apiResultEpoch = Config()._Main_apiResultEpoch
+        # huobi exchange for insert deposit and withdraw history
+        self._Okex_exchange = Config()._Okex_exchange
+        self._Binance_exchange = Config()._Binance_exchange
+        self._Huobi_exchange = Config()._Huobi_exchange
         # ServerLimit
         self._serverLimits = None
         # Engine
@@ -159,10 +163,11 @@ class Util(object):
             % (current_thread().name, res, epoch, async, timeout))
         ids = []
         for r in res:
-            if r['can_deposit'] == 'True' and r['can_withdraw'] == 'True':
+            if not r['can_deposit'] == 'False' and not r[
+                    'can_withdraw'] == 'False':
                 time.sleep(epoch)
                 id = self._sender.sendListenAccountWithdrawEvent(
-                    r["server"], r["asset"])
+                    [r["server"]], r["asset"])
                 ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
@@ -186,15 +191,23 @@ class Util(object):
             db = DB()
             tds = []
             for server in self._exchanges:
-                epoch = float(self._apiEpochSaveBound) / float(
-                    self._serverLimits.at[server, "info_second"])
-                res = db.getInfoWithdraw([server])
-                td = Thread(
-                    target=self.threadSendListenAccountWithdrawEvent,
-                    name="%s-thread" % server,
-                    args=(res, epoch, async, timeout))
-                tds.append(td)
-                td.start()
+                if server in [self._Okex_exchange, self._Binance_exchange]:
+                    td = Thread(
+                        target=db.insertAccountWithdrawHistory,
+                        name="%s-thread" % server,
+                        args=([server], ))
+                    tds.append(td)
+                    td.start()
+                if server == self._Huobi_exchange:
+                    epoch = float(self._apiEpochSaveBound) / float(
+                        self._serverLimits.at[server, "info_second"])
+                    res = db.getInfoWithdraw([server])
+                    td = Thread(
+                        target=self.threadSendListenAccountWithdrawEvent,
+                        name="%s-thread" % server,
+                        args=(res, epoch, async, timeout))
+                    tds.append(td)
+                    td.start()
             for td in tds:
                 td.join()
         except (DBException, EngineException, Exception) as err:
@@ -211,7 +224,7 @@ class Util(object):
         for r in res:
             time.sleep(epoch)
             id = self._sender.sendListenMarketDepthEvent(
-                r["server"], r["fSymbol"], r["tSymbol"],
+                [r["server"]], r["fSymbol"], r["tSymbol"],
                 self._marketDepthLimit)
             ids.append(id)
         if not async:
@@ -234,6 +247,7 @@ class Util(object):
             % (async, timeout))
         try:
             db = DB()
+            db.delMarketDepth()
             tds = []
             for server in self._exchanges:
                 epoch = float(self._apiEpochSaveBound) / float(
@@ -263,7 +277,7 @@ class Util(object):
         for r in res:
             time.sleep(epoch)
             id = self._sender.sendListenMarketKlineEvent(
-                r["server"], r["fSymbol"], r["tSymbol"], interval, start, end)
+                [r["server"]], r["fSymbol"], r["tSymbol"], interval, start, end)
             ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
@@ -287,10 +301,7 @@ class Util(object):
         try:
             db = DB()
             db.delMarketKline()
-            db.delSignalTickerDis()
-            db.delSignalTickerTra()
-            db.delSignalTickerPair()
-            interval = '1h'
+            interval = '1d'
             end = utcnow_timestamp() - 12 * 60 * 60 * 1000
             start = end - 24 * 60 * 60 * 1000
             tds = []
@@ -323,11 +334,11 @@ class Util(object):
             db = DB()
             aggDepth = db.getViewMarketSymbolPairsAggDepth(
                 self._exchanges, r["fSymbol"],
-                r["tSymbol"])[0]["aggDepth"] * self._marketTickerAggStep
-            aggDepth = 1.0 if aggDepth > 1 else aggDepth  # make sure < 1.0
+                r["tSymbol"])[0]["aggDepth"]
+            aggDepth = float(aggDepth) * self._marketTickerAggStep
             time.sleep(epoch)
             id = self._sender.sendListenMarketTickerEvent(
-                r["server"], r["fSymbol"], r["tSymbol"], aggDepth)
+                [r["server"]], r["fSymbol"], r["tSymbol"], aggDepth)
             ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
@@ -369,6 +380,9 @@ class Util(object):
             raise UtilException(err)
 
     # Judge 事件
+    def updateDBJudgeMarketDepth(self):
+        pass
+
     def updateDBJudgeMarketKline(self):
         pass
 
@@ -377,8 +391,12 @@ class Util(object):
             "src.core.util.util.Util.updateDBJudgeMarketTicker: {async: %s, timeout: %s}"
             % (async, timeout))
         try:
+            db = DB()
+            db.delJudgeSignalTickerDis()
+            db.delJudgeSignalTickerTra()
+            db.delJudgeSignalTickerPair()
             id = self._sender.sendJudgeMarketTickerEvent(
-                self._types, self._exchanges)
+                self._exchanges, self._types)
             if not async:
                 st = self._engine.getEventStatus(id)
                 startTime = time.time()
@@ -416,7 +434,8 @@ class Util(object):
         for r in res:
             time.sleep(epoch)
             id = self._sender.sendOrderHistoryInsertEvent(
-                r["server"], r["fSymbol"], r["tSymbol"], '100', r["fee_taker"])
+                [r["server"]], r["fSymbol"], r["tSymbol"], '100',
+                r["fee_taker"])
             ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
@@ -466,6 +485,33 @@ class Util(object):
         pass
 
     # Statistic 事件
+    def updateDBStatisticJudge(self, async=True, timeout=30):
+        self._logger.debug(
+            "src.core.util.util.Util.updateDBStatisticJudge: {async: %s, timeout: %s}"
+            % (async, timeout))
+        try:
+            db = DB()
+            db.delStatisticSignalTickerDis()
+            db.delStatisticSignalTickerTra()
+            db.delStatisticSignalTickerPair()
+            id = self._sender.sendStatiscJudgeEvent(
+                self._exchanges, self._types)
+            if not async:
+                st = self._engine.getEventStatus(id)
+                startTime = time.time()
+                while st != DONE_STATUS_EVENT and time.time(
+                ) - startTime < timeout:
+                    st = self._engine.getEventStatus(id)
+                    time.sleep(self._apiResultEpoch)
+                if st != DONE_STATUS_EVENT:
+                    self._logger.warn(
+                        "src.core.util.util.Util.updateDBJudgeMarketTicker: {async: %s, timeout: %s}, err=Timeout Error, waiting for event handler result timeout."
+                        % (async, timeout))
+        except (DBException, EngineException, Exception) as err:
+            errStr = "src.core.util.util.Util.updateDBJudgeMarketTicker: {async: %s, timeout: %s}, exception err=%s" % (
+                async, timeout, UtilException(err))
+            raise UtilException(err)
+
     def updateDBStatisticBacktest(self):
         pass
 
@@ -532,9 +578,9 @@ class Util(object):
                 self._logger.error(errStr)
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.threadOneClickTransToBaseCoin: {thread: %s, server: %s, baseCoin %s, epoch: %s, timeout: %s}，exception err=%s" % (
-                current_thread().name, server, baseCoin, epoch, timeout, Exception(err))
+                current_thread().name, server, baseCoin, epoch, timeout,
+                Exception(err))
             self._logger.error(errStr)
-
 
     def oneClickTransToBaseCoin(self, baseCoin='', timeout=30):
         self._logger.debug("src.core.util.util.Util.oneClickTransToBaseCoin")

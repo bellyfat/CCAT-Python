@@ -38,11 +38,11 @@ if __name__ == '__main__':
     # app update
     # util.oneClickCancleOrders()
 
-    util.oneClickTransToBaseCoin()
+    # util.oneClickTransToBaseCoin()
 
     # util.updateDBOrderHistoryInsert()
 
-    # util.updateDBOrderHistoryCreat()
+    util.updateDBOrderHistoryCreat()
 
     # util.updateDBOrderHistoryCheck()
 

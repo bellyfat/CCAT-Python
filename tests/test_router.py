@@ -17,11 +17,17 @@ if __name__ == '__main__':
     # exec time
     start = time.time()
 
+    # start
+    __Router.start()
+
     # app init
-    __Router.initAPP()
+    # __Router.initAPP()
 
     # app update
     __Router.updateAPP()
+
+    # stop
+    __Router.stop()
 
     # exec time
     end = time.time()

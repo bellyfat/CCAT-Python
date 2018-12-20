@@ -44,6 +44,8 @@ class Register(object):
         self.ORDER_HISTORY_CANCEL_EVENT_TYPE = json.loads(
             ORDER_HISTORY_CANCEL_EVENT.substitute())["type"]
         # statistic event
+        self.STATISTIC_JUDGE_EVENT_TYPE = json.loads(
+            STATISTIC_JUDGE_EVENT.substitute())["type"]
         self.STATISTIC_BACKTEST_EVENT_TYPE = json.loads(
             STATISTIC_BACKTEST_EVENT.substitute())["type"]
         self.STATISTIC_ORDER_EVENT_TYPE = json.loads(
@@ -67,11 +69,12 @@ class Register(object):
         self.ORDER_HISTORY_CHECK_EVENT_HANDLER = self._handler.handleOrderHistoryCheckEvent
         self.ORDER_HISTORY_CANCEL_EVENT_HANDLER = self._handler.handleOrderHistoryCancelEvent
         # statistic handler
+        self.STATISTIC_JUDGE_EVENT_HANDLER = self._handler.handleStatisticJudgeEvent
         self.STATISTIC_BACKTEST_EVENT_HANDLER = self._handler.handleStatisticBacktestEvent
         self.STATISTIC_ORDER_EVENT_HANDLER = self._handler.handleStatisticOrderEvent
 
     def register(self):
-        self._logger.info("src.core.engine.register.Register.register")
+        self._logger.debug("src.core.engine.register.Register.register")
         try:
             # 注册事件
             self._eventEngine.register(
@@ -103,6 +106,8 @@ class Register(object):
                                        self.ORDER_HISTORY_CHECK_EVENT_HANDLER)
             self._eventEngine.register(self.ORDER_HISTORY_CANCEL_EVENT_TYPE,
                                        self.ORDER_HISTORY_CANCEL_EVENT_HANDLER)
+            self._eventEngine.register(self.STATISTIC_JUDGE_EVENT_TYPE,
+                                       self.STATISTIC_JUDGE_EVENT_HANDLER)
             self._eventEngine.register(self.STATISTIC_BACKTEST_EVENT_TYPE,
                                        self.STATISTIC_BACKTEST_EVENT_HANDLER)
             self._eventEngine.register(self.STATISTIC_ORDER_EVENT_TYPE,
@@ -114,7 +119,7 @@ class Register(object):
             raise EngineException(err)
 
     def unregister(self):
-        self._logger.info("src.core.engine.register.Register.unregister")
+        self._logger.debug("src.core.engine.register.Register.unregister")
         try:
             # 注销事件
             self._eventEngine.unregister(
@@ -149,6 +154,8 @@ class Register(object):
             self._eventEngine.unregister(
                 self.ORDER_HISTORY_CANCEL_EVENT_TYPE,
                 self.ORDER_HISTORY_CANCEL_EVENT_HANDLER)
+            self._eventEngine.unregister(self.STATISTIC_JUDGE_EVENT_TYPE,
+                                         self.STATISTIC_JUDGE_EVENT_HANDLER)
             self._eventEngine.unregister(self.STATISTIC_BACKTEST_EVENT_TYPE,
                                          self.STATISTIC_BACKTEST_EVENT_HANDLER)
             self._eventEngine.unregister(self.STATISTIC_ORDER_EVENT_TYPE,

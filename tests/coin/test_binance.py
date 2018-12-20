@@ -56,20 +56,19 @@ class TestBinance(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getMarketOrderbookTicker(self):
-        res = binance.getMarketOrderbookTicker("ETH", "USDT", 0.1)
+        res = binance.getMarketOrderbookTicker("ETH", "BTC", 0.00001)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_getMarketOrderbookDepth(self):
-        res = binance.getMarketOrderbookDepth("ETH", "USDT", 5)
+        res = binance.getMarketOrderbookDepth("ETH", "USDT", 10)
         logger.debug(res)
         self.assertIsInstance(res, dict)
 
     def test_getMarketKline(self):
         res = binance.getMarketKline("ETH", "USDT", "1h",
-                                     "2018-12-02T00:00:00.000Z",
-                                     "2018-12-03T00:00:00.000Z")
-        logger.debug(len(res))
+                                     "2018-12-16T00:00:00.000Z",
+                                     "2018-12-17T00:00:00.000Z")
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -97,6 +96,11 @@ class TestBinance(unittest.TestCase):
 
     def test_getAccountBalances(self):
         res = binance.getAccountBalances()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getAccountDetail(self):
+        res = binance.getAccountDetail()
         logger.debug(res)
         self.assertIsInstance(res, list)
 

@@ -3,6 +3,11 @@
 from src.core.config import Config
 from src.core.util.helper import MyTemplate
 
+# CCAT types timeWindow
+TYPE_DIS_TIMEWINDOW = Config()._Main_typeDisTimeWindow*1000
+TYPE_TRA_TIMEWINDOW = Config()._Main_typeTraTimeWindow*1000
+TYPE_PAIR_TIMEWINDOW = Config()._Main_typePairTimeWindow*1000
+
 # CCAT types Threshold
 TYPE_DIS_THRESHOLD = Config()._Main_typeDisThreshold
 TYPE_TRA_THRESHOLD = Config()._Main_typeTraThreshold
@@ -36,7 +41,7 @@ LISTEN_ACCOUNT_BALANCE_EVENT = MyTemplate("""
     "type": "LISTEN_ACCOUNT_BALANCE_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
-    "args": ["$server"]
+    "args": ["$exchange"]
 }
 """)
 
@@ -46,7 +51,7 @@ LISTEN_ACCOUNT_WITHDRAW_EVENT = MyTemplate("""
     "type": "LISTEN_ACCOUNT_WITHDRAW_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
-    "args": ["$server", "$asset"]
+    "args": ["$exchange", "$asset"]
 }
 """)
 
@@ -56,7 +61,7 @@ LISTEN_MARKET_KLINE_EVENT = MyTemplate("""
     "type": "LISTEN_MARKET_KLINE_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
-    "args": ["$server", "$fSymbol", "$tSymbol", "$interval", "$start", "$end"]
+    "args": ["$exchange", "$fSymbol", "$tSymbol", "$interval", "$start", "$end"]
 }
 """)
 
@@ -66,7 +71,7 @@ LISTEN_MARKET_TICKER_EVENT = MyTemplate("""
     "type": "LISTEN_MARKET_TICKER_EVENT",
     "priority": "medium",
     "timeStamp": "$timeStamp",
-    "args": ["$server", "$fSymbol", "$tSymbol", "$aggDepth"]
+    "args": ["$exchange", "$fSymbol", "$tSymbol", "$aggDepth"]
 }
 """)
 
@@ -76,7 +81,7 @@ LISTEN_MARKET_DEPTH_EVENT = MyTemplate("""
     "type": "LISTEN_MARKET_DEPTH_EVENT",
     "priority": "medium",
     "timeStamp": "$timeStamp",
-    "args": ["$server","$fSymbol", "$tSymbol", "$limit"]
+    "args": ["$exchange","$fSymbol", "$tSymbol", "$limit"]
 }
 """)
 
@@ -85,7 +90,7 @@ JUDGE_MARKET_DEPTH_EVENT = MyTemplate("""
 {
     "id": "$id",
     "type": "JUDGE_MARKET_DEPTH_EVENT",
-    "priority": "high",
+    "priority": "medium",
     "timeStamp": "$timeStamp",
     "args": []
 }
@@ -95,7 +100,7 @@ JUDGE_MARKET_KLINE_EVENT = MyTemplate("""
 {
     "id": "$id",
     "type": "JUDGE_MARKET_KLINE_EVENT",
-    "priority": "high",
+    "priority": "medium",
     "timeStamp": "$timeStamp",
     "args": []
 }
@@ -105,9 +110,9 @@ JUDGE_MARKET_TICKER_EVENT = MyTemplate("""
 {
     "id": "$id",
     "type": "JUDGE_MARKET_TICKER_EVENT",
-    "priority": "high",
+    "priority": "medium",
     "timeStamp": "$timeStamp",
-    "args": ["$types", "$exchanges"]
+    "args": ["$exchange", "$types"]
 }
 """)
 
@@ -129,7 +134,7 @@ ORDER_HISTORY_INSERT_EVENT = MyTemplate("""
     "type": "ORDER_HISTORY_INSERT_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
-    "args": ["$server", "$fSymbol", "$tSymbol", "$limit", "$ratio"]
+    "args": ["$exchange", "$fSymbol", "$tSymbol", "$limit", "$ratio"]
 }
 """)
 
@@ -139,7 +144,7 @@ ORDER_HISTORY_CREAT_EVENT = MyTemplate("""
     "type": "ORDER_HISTORY_CREAT_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
-    "args": []
+    "args": ["$exchange", "$types"]
 }
 """)
 
@@ -164,11 +169,21 @@ ORDER_HISTORY_CANCEL_EVENT = MyTemplate("""
 """)
 
 # statistic event list
+STATISTIC_JUDGE_EVENT = MyTemplate("""
+{
+    "id": "$id",
+    "type": "STATISTIC_BACKTEST_EVENT",
+    "priority": "medium",
+    "timeStamp": "$timeStamp",
+    "args": ["$exchange", "$types"]
+}
+""")
+
 STATISTIC_BACKTEST_EVENT = MyTemplate("""
 {
     "id": "$id",
     "type": "STATISTIC_BACKTEST_EVENT",
-    "priority": "low",
+    "priority": "medium",
     "timeStamp": "$timeStamp",
     "args": []
 }
@@ -178,7 +193,7 @@ STATISTIC_ORDER_EVENT = MyTemplate("""
 {
     "id": "$id",
     "type": "STATISTIC_ORDER_EVENT",
-    "priority": "low",
+    "priority": "medium",
     "timeStamp": "$timeStamp",
     "args": []
 }

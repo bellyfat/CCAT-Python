@@ -17,7 +17,8 @@ from src.core.coin.lib.okex_v3_api.exceptions import (OkexAPIException,
                                                       OkexRequestException)
 from src.core.coin.lib.okex_v3_api.spot_api import SpotAPI
 from src.core.util.exceptions import OkexException
-from src.core.util.helper import date_to_milliseconds, interval_to_milliseconds, num_to_precision
+from src.core.util.helper import (date_to_milliseconds,
+                                  interval_to_milliseconds, num_to_precision)
 
 
 class Okex(Coin):
@@ -165,16 +166,13 @@ class Okex(Coin):
             raise OkexException(errStr)
 
     # a specific symbol's tiker with bid 1 and ask 1 info
-    def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth=''):
+    def getMarketOrderbookTicker(self, fSymbol, tSymbol, aggDepth=0):
         try:
-            if aggDepth != '':
-                if float(aggDepth) > 1:
-                    raise Exception("aggDepth must < 1.0")
-            base = self._spotAPI.get_depth(fSymbol + "-" + tSymbol, '100', '',
+            base = self._spotAPI.get_depth(fSymbol + "-" + tSymbol, '200', '',
                                            self._proxies)
             if not len(base["bids"]) > 0 or not len(base["asks"]) > 0:
                 raise Exception(base)
-            if aggDepth == '':
+            if aggDepth == 0:
                 res = {
                     "timeStamp": date_to_milliseconds(base["timestamp"]),
                     "fSymbol": fSymbol,
@@ -186,8 +184,10 @@ class Okex(Coin):
                 }
             else:
                 # calc bids
-                aggPrice = Decimal(base["bids"][0][0]).quantize(
-                    Decimal(str(aggDepth)), rounding=ROUND_DOWN)
+                aggPrice = num_to_precision(
+                    float(base["bids"][0][0]),
+                    float(aggDepth),
+                    rounding=ROUND_DOWN)
                 bid_one_price = float(aggPrice)
                 bid_one_size = 0.0
                 for bid in base["bids"]:
@@ -195,8 +195,10 @@ class Okex(Coin):
                         break
                     bid_one_size = bid_one_size + float(bid[1])
                 # calc asks
-                aggPrice = Decimal(base["asks"][0][0]).quantize(
-                    Decimal(str(aggDepth)), rounding=ROUND_UP)
+                aggPrice = num_to_precision(
+                    float(base["asks"][0][0]),
+                    float(aggDepth),
+                    rounding=ROUND_UP)
                 ask_one_price = float(aggPrice)
                 ask_one_size = 0.0
                 for ask in base["asks"]:
@@ -460,6 +462,36 @@ class Okex(Coin):
         except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
                 OkexRequestException, OkexParamsException, Exception) as err:
             errStr = "src.core.coin.okex.Okex.getAccountBalances: exception err=%s" % err
+            raise OkexException(errStr)
+
+    # get account all asset deposit and withdraw history
+    def getAccountDetail(self):
+        try:
+            base = self._accountAPI.get_ledger_record(0, 10, 100, '', '',
+                                                      self._proxies)
+            assets = []
+            for b in base[0]:
+                if b["typename"] == 'deposit' or b["typename"] == 'withdrawal':
+                    if b["currency"] not in assets:
+                        assets.append(b["currency"])
+            res = []
+            for a in assets:
+                deposit = []
+                withdraw = []
+                for b in base[0]:
+                    if b['typename'] == 'deposit' and b["currency"] == a:
+                        deposit.append(b)
+                    if b['typename'] == 'withdrawal' and b["currency"] == a:
+                        withdraw.append(b)
+                res.append({
+                    "asset": a,
+                    "deposit": deposit,
+                    "withdraw": withdraw
+                })
+            return res
+        except (ReadTimeout, ConnectionError, KeyError, OkexAPIException,
+                OkexRequestException, OkexParamsException, Exception) as err:
+            errStr = "src.core.coin.okex.Okex.getAccountDetail: exception err=%s" % err
             raise OkexException(errStr)
 
     # get account asset deposit and withdraw limits
