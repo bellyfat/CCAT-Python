@@ -151,7 +151,7 @@ class EventEngine(object):
 
     # 开启事件引擎
     def start(self):
-        self.__logger.info("src.core.engine.engine.EventEngine.start")
+        self.__logger.debug("src.core.engine.engine.EventEngine.start")
         if not self.__active.value:
             self.__active.value = True
             # 开启事件引擎主进程
@@ -159,7 +159,7 @@ class EventEngine(object):
 
     # 暂停事件引擎
     def stop(self):
-        self.__logger.info("src.core.engine.engine.EventEngine.stop")
+        self.__logger.debug("src.core.engine.engine.EventEngine.stop")
         if self.__active.value:
             # 将事件管理器设为停止
             self.__active.value = False
@@ -168,7 +168,7 @@ class EventEngine(object):
 
     # 终止事件引擎
     def terminate(self):
-        self.__logger.info("src.core.engine.engine.EventEngine.terminate")
+        self.__logger.debug("src.core.engine.engine.EventEngine.terminate")
         # 将事件管理器设为停止
         self.__active.value = False
         # 等待事件引擎主进程退出

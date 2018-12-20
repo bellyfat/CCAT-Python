@@ -247,6 +247,7 @@ class Util(object):
             % (async, timeout))
         try:
             db = DB()
+            db.delMarketDepth()
             tds = []
             for server in self._exchanges:
                 epoch = float(self._apiEpochSaveBound) / float(
@@ -300,9 +301,6 @@ class Util(object):
         try:
             db = DB()
             db.delMarketKline()
-            db.delJudgeSignalTickerDis()
-            db.delJudgeSignalTickerTra()
-            db.delJudgeSignalTickerPair()
             interval = '1d'
             end = utcnow_timestamp() - 12 * 60 * 60 * 1000
             start = end - 24 * 60 * 60 * 1000
@@ -393,6 +391,10 @@ class Util(object):
             "src.core.util.util.Util.updateDBJudgeMarketTicker: {async: %s, timeout: %s}"
             % (async, timeout))
         try:
+            db = DB()
+            db.delJudgeSignalTickerDis()
+            db.delJudgeSignalTickerTra()
+            db.delJudgeSignalTickerPair()
             id = self._sender.sendJudgeMarketTickerEvent(
                 self._exchanges, self._types)
             if not async:
@@ -488,6 +490,10 @@ class Util(object):
             "src.core.util.util.Util.updateDBStatisticJudge: {async: %s, timeout: %s}"
             % (async, timeout))
         try:
+            db = DB()
+            db.delStatisticSignalTickerDis()
+            db.delStatisticSignalTickerTra()
+            db.delStatisticSignalTickerPair()
             id = self._sender.sendStatiscJudgeEvent(
                 self._exchanges, self._types)
             if not async:

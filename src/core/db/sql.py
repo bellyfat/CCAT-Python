@@ -741,18 +741,18 @@ CREATE_VIEWS_SQL = Template('''
                 FROM(
 						SELECT DISTINCT server, fSymbol, tSymbol
 						FROM VIEW_INFO_SYMBOL M1
-					UNION
+					EXCEPT
 						SELECT DISTINCT server, fSymbol, tSymbol
 						FROM VIEW_MARKET_KLINE_CURRENT
-						WHERE price_volume_base > $basePriceVolume
+						WHERE price_volume_base < $basePriceVolume
 				) V1
 				LEFT JOIN(
 						SELECT DISTINCT server, fSymbol, tSymbol
 						FROM VIEW_INFO_SYMBOL M1
-					UNION
+					EXCEPT
 						SELECT DISTINCT server, fSymbol, tSymbol
 						FROM VIEW_MARKET_KLINE_CURRENT
-						WHERE price_volume_base > $basePriceVolume
+						WHERE price_volume_base < $basePriceVolume
 				) V2 ON V1.server <> V2.server AND V1.fSymbol = V2.fSymbol AND V1.tSymbol = V2.tSymbol
                 WHERE V2.server IS NOT NULL
             ) J1

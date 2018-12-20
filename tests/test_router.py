@@ -24,7 +24,7 @@ if __name__ == '__main__':
     # __Router.initAPP()
 
     # app update
-    __Router.updateAPP(0)
+    __Router.updateAPP()
 
     # stop
     __Router.stop()

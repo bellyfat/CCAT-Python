@@ -58,8 +58,12 @@ class Config(object):
             Config._Main_apiEpochSaveBound = cf.getfloat(
                 'Main', 'apiEpochSaveBound')
             Config._Main_apiResultEpoch = cf.getfloat('Main', 'apiResultEpoch')
-            Config._Main_marketKlineCycle = cf.getint('Main',
-                                                      'marketKlineCycle')
+            Config._Main_marketKlineInterval = cf.getint(
+                'Main', 'marketKlineInterval')
+            Config._Main_marketTickerInterval = cf.getint(
+                'Main', 'marketTickerInterval')
+            Config._Main_statisticJudgeInterval = cf.getint(
+                'Main', 'statisticJudgeInterval')
             Config._Main_marketDepthLimit = cf.getint('Main',
                                                       'marketDepthLimit')
             Config._Main_marketTickerAggStep = cf.getint(
@@ -100,6 +104,9 @@ class Config(object):
                 'Main', 'typeTraTimeWindow')
             Config._Main_typePairTimeWindow = cf.getfloat(
                 'Main', 'typePairTimeWindow')
+            # Router Settings
+            Config._Router_epoch = cf.getfloat('Router', 'epoch')
+            Config._Router_timeout = cf.getfloat('Router', 'timeout')
             # Engine Settings
             Config._Engine_epoch = cf.getfloat('Engine', 'epoch')
             Config._Engine_maxProcess = cf.getint('Engine', 'maxProcess')

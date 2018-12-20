@@ -43,23 +43,30 @@
 # basePriceVolume: min price volume turnover
 # basePriceTimeout: price valid period
 # baseJudgeTimeout: judge valid period
+# baseStatisticTimeout: statistic valid period
 # apiEpochSaveBound: control api requests frequency
 # apiResultEpoch: control api event async=False timeout
-# marketKlineCycle: market kline cycle param
+# marketKlineInterval: market kline interval param
+# marketTickerInterval: market ticker interval param
+# statisticJudgeInterval: statistic judge interval param
 # marketDepthLimit: market depth limit param
 # marketTickerAggStep: market ticker aggregate param
+# judgeSignalTickerCycle: judge signal ticker valid period
+# statisticSignalTickerCycle: statistic signal ticker valid period
 # syncAccountTimeout: sync account timeout
 # syncMarketTimeout: sync market timeout
 # syncJudgeTimeout: sync judge timeout
 # syncBacktestTimeout: sync backtest timeout
 # syncOrderTimeout: sync order timeout
-# signalTickerTimeout: signal ticker valid period
 # symbolStartBaseCoin
 # symbolEndBaseCoin
 # symbolEndTimeout
 # typeDisThreshold: judge threshold for type dis
 # typeTraThreshold: judge threshold for type tra
 # typePairThreshold: judge threshold for type pair
+# typeDisTimeWindow: judge timeWindow for type dis
+# typeTraTimeWindow: judge timeWindow for type tra
+# typePairTimeWindow: judge timeWindow for type pair
 ################################################################################
 [Main]
   ########################################################
@@ -67,19 +74,24 @@
   ########################################################
   types = dis, tra, pair
   exchanges = okex, binance, huobi
-  excludeCoins = HOT, VEN, PAX, CHAT, USDC, CDC
+  excludeCoins = HOT, VEN, PAX, CHAT, USDC, CDC, BT1, BT2
   baseCoin = USDT
-  basePriceVolume = 100000
+  basePriceVolume = 10000
   basePriceTimeout = 60
-  baseJudgeTimeout = 86400
+  baseJudgeTimeout = 1800
+  baseStatisticTimeout = 3600
   ###########################################
   # plug and play param, change as you need #
   ###########################################
   apiEpochSaveBound = 1.25
   apiResultEpoch = 0.5
-  marketKlineCycle = 86400
+  marketKlineInterval = 86400
+  marketTickerInterval = 60
+  statisticJudgeInterval = 900
   marketDepthLimit = 20
   marketTickerAggStep = 1
+  judgeSignalTickerCycle = 604800
+  statisticSignalTickerCycle = 2592000
   syncAccountTimeout = 90
   syncMarketKlineTimeout = 90
   syncMarketDepthTimeout = 60
@@ -87,13 +99,24 @@
   syncJudgeTimeout = 30
   syncBacktestTimeout = 90
   syncOrderTimeout = 10
-  signalTickerCycle = 604800
   symbolStartBaseCoin = 15
   symbolEndBaseCoin = 20
   symbolEndTimeout = 300
   typeDisThreshold = 0.0001
   typeTraThreshold = 0.0001
   typePairThreshold = 0.0001
+  typeDisTimeWindow = 300
+  typeTraTimeWindow = 300
+  typePairTimeWindow = 300
+
+################################################################################
+# Router Settings
+# epoch: router loop epoch
+# timeout: router updateAPP timeout
+################################################################################
+[Router]
+  epoch = 1
+  timeout = 3600
 
 ################################################################################
 # Engine Settings
