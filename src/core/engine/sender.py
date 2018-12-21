@@ -15,6 +15,7 @@ class Sender(object):
         self._engine = eventEngine
         self._logger = Logger()
 
+    # Account Balance 事件
     def sendListenAccountBalanceEvent(self, exchange):
         try:
             # 构造事件对象
@@ -30,12 +31,13 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event.id
+            return event
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenAccountBalanceEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
+    # Account Withdraw 事件
     def sendListenAccountWithdrawEvent(self, exchange, asset):
         try:
             # 构造事件对象
@@ -52,12 +54,13 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event.id
+            return event
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenAccountWithdrawEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
+    # Market Depth 事件
     def sendListenMarketDepthEvent(self, exchange, fSymbol, tSymbol,
                                    limit=100):
         try:
@@ -77,12 +80,13 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event.id
+            return event
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenMarketDepthEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
+    # Market Kline 事件
     def sendListenMarketKlineEvent(self, exchange, fSymbol, tSymbol, interval,
                                    start, end):
         try:
@@ -104,12 +108,13 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event.id
+            return event
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenMarketKlineEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
+    # Market ticker 事件
     def sendListenMarketTickerEvent(self, exchange, fSymbol, tSymbol,
                                     aggDepth):
         try:
@@ -129,12 +134,13 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event.id
+            return event
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenMarketTickerEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
+    # Judge 事件
     def sendJudgeMarketDepthEvent(self, args):
         try:
             # 构造事件对象
@@ -152,7 +158,7 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendJudgeMarketDepthEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
     def sendJudgeMarketKlineEvent(self, args):
         try:
@@ -171,7 +177,7 @@ class Sender(object):
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendJudgeMarketKlineEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
     def sendJudgeMarketTickerEvent(self, exchange, types):
         try:
@@ -189,12 +195,13 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event.id
+            return event
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendJudgeMarketTickerEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
+    # Backtest 事件
     def sendBacktestHistoryCreatEvent(self, exchange, types):
         try:
             # 构造事件对象
@@ -211,12 +218,13 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event.id
+            return event
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendBacktestHistoryCreatEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
+    # Order 事件
     def sendOrderHistoryInsertEvent(self, exchange, fSymbol, tSymbol, limit,
                                     ratio):
         try:
@@ -237,11 +245,11 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event.id
+            return event
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendOrderHistoryInsertEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
     def sendOrderHistoryCreatEvent(self, args):
         try:
@@ -258,54 +266,13 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event.id
+            return event
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendOrderHistoryCreatEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
-    def sendOrderHistoryCheckEvent(self, args):
-        try:
-            # 构造事件对象
-            TEMP_EVENT = json.loads(
-                ORDER_HISTORY_CHECK_EVENT.substitute(
-                    id=self._engine.getEventID(),
-                    timeStamp=utcnow_timestamp(),
-                    args=""))
-            event = Event(TEMP_EVENT)
-            self._logger.debug(
-                "src.core.engine.sender.Sender.sendOrderHistoryCheckEvent: " +
-                json.dumps(TEMP_EVENT))
-            # 发送事件
-            self._engine.sendEvent(event)
-            # 返回参数
-            return event.id
-        except Exception as err:
-            errStr = "src.core.engine.sender.Sender.sendOrderHistoryCheckEvent: %s" % EngineException(
-                err)
-            raise EngineException(err)
-
-    def sendOrderHistoryCancleEvent(self, args):
-        try:
-            # 构造事件对象
-            TEMP_EVENT = json.loads(
-                ORDER_HISTORY_CANCEL_EVENT.substitute(
-                    id=self._engine.getEventID(),
-                    timeStamp=utcnow_timestamp(),
-                    args=""))
-            event = Event(TEMP_EVENT)
-            self._logger.debug(
-                "src.core.engine.sender.Sender.sendOrderHistoryCancleEvent: " +
-                json.dumps(TEMP_EVENT))
-            # 发送事件
-            self._engine.sendEvent(event)
-            # 返回参数
-            return event.id
-        except Exception as err:
-            errStr = "src.core.engine.sender.Sender.sendOrderHistoryCancleEvent: %s" % EngineException(
-                err)
-            raise EngineException(err)
-
+    # Statistic 事件
     def sendStatiscJudgeEvent(self, exchange, types):
         try:
             # 构造事件对象
@@ -322,11 +289,11 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event.id
+            return event
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendStatiscJudgeEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
     def sendStatiscBacktestEvent(self, args):
         try:
@@ -343,11 +310,11 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event.id
+            return event
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendStatiscBacktestEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)
 
     def sendStatiscOrderEvent(self, args):
         try:
@@ -364,8 +331,8 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event.id
+            return event
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendStatiscOrderEvent: %s" % EngineException(
                 err)
-            raise EngineException(err)
+            raise EngineException(errStr)

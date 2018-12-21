@@ -39,10 +39,6 @@ class Register(object):
             ORDER_HISTORY_INSERT_EVENT.substitute())["type"]
         self.ORDER_HISTORY_CREAT_EVENT_TYPE = json.loads(
             ORDER_HISTORY_CREAT_EVENT.substitute())["type"]
-        self.ORDER_HISTORY_CHECK_EVENT_TYPE = json.loads(
-            ORDER_HISTORY_CHECK_EVENT.substitute())["type"]
-        self.ORDER_HISTORY_CANCEL_EVENT_TYPE = json.loads(
-            ORDER_HISTORY_CANCEL_EVENT.substitute())["type"]
         # statistic event
         self.STATISTIC_JUDGE_EVENT_TYPE = json.loads(
             STATISTIC_JUDGE_EVENT.substitute())["type"]
@@ -66,8 +62,6 @@ class Register(object):
         # order handler
         self.ORDER_HISTORY_INSERT_EVENT_HANDLER = self._handler.handleOrderHistoryInsertEvent
         self.ORDER_HISTORY_CREAT_EVENT_HANDLER = self._handler.handleOrderHistoryCreatEvent
-        self.ORDER_HISTORY_CHECK_EVENT_HANDLER = self._handler.handleOrderHistoryCheckEvent
-        self.ORDER_HISTORY_CANCEL_EVENT_HANDLER = self._handler.handleOrderHistoryCancelEvent
         # statistic handler
         self.STATISTIC_JUDGE_EVENT_HANDLER = self._handler.handleStatisticJudgeEvent
         self.STATISTIC_BACKTEST_EVENT_HANDLER = self._handler.handleStatisticBacktestEvent
@@ -102,10 +96,6 @@ class Register(object):
                                        self.ORDER_HISTORY_INSERT_EVENT_HANDLER)
             self._eventEngine.register(self.ORDER_HISTORY_CREAT_EVENT_TYPE,
                                        self.ORDER_HISTORY_CREAT_EVENT_HANDLER)
-            self._eventEngine.register(self.ORDER_HISTORY_CHECK_EVENT_TYPE,
-                                       self.ORDER_HISTORY_CHECK_EVENT_HANDLER)
-            self._eventEngine.register(self.ORDER_HISTORY_CANCEL_EVENT_TYPE,
-                                       self.ORDER_HISTORY_CANCEL_EVENT_HANDLER)
             self._eventEngine.register(self.STATISTIC_JUDGE_EVENT_TYPE,
                                        self.STATISTIC_JUDGE_EVENT_HANDLER)
             self._eventEngine.register(self.STATISTIC_BACKTEST_EVENT_TYPE,
@@ -148,19 +138,12 @@ class Register(object):
             self._eventEngine.unregister(
                 self.ORDER_HISTORY_CREAT_EVENT_TYPE,
                 self.ORDER_HISTORY_CREAT_EVENT_HANDLER)
-            self._eventEngine.unregister(
-                self.ORDER_HISTORY_CHECK_EVENT_TYPE,
-                self.ORDER_HISTORY_CHECK_EVENT_HANDLER)
-            self._eventEngine.unregister(
-                self.ORDER_HISTORY_CANCEL_EVENT_TYPE,
-                self.ORDER_HISTORY_CANCEL_EVENT_HANDLER)
             self._eventEngine.unregister(self.STATISTIC_JUDGE_EVENT_TYPE,
                                          self.STATISTIC_JUDGE_EVENT_HANDLER)
             self._eventEngine.unregister(self.STATISTIC_BACKTEST_EVENT_TYPE,
                                          self.STATISTIC_BACKTEST_EVENT_HANDLER)
             self._eventEngine.unregister(self.STATISTIC_ORDER_EVENT_TYPE,
                                          self.STATISTIC_ORDER_EVENT_HANDLER)
-
         except Exception as err:
             errStr = "src.core.engine.register.Register.unregister: %s" % EngineException(
                 err)

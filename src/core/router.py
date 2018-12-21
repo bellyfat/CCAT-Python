@@ -90,8 +90,12 @@ class Router(object):
             self._util.initServerLimits()
             self._util.updateDBAccountBalance(
                 async=self._asyncAccount, timeout=self._syncAccountTimeout)
-            # self._util.updateDBAccountWithdraw() # 暂时不考虑充提币 耗时约 1min
-            # util.updateDBOrderHistoryInsert() # 暂时不同步历史交易 耗时约 2min
+            # 暂时可不考虑充提币 耗时约 1min
+            self._util.updateDBAccountWithdraw(
+                async=self._asyncAccount, timeout=self._syncAccountTimeout)
+            # 暂时不同步历史交易 耗时约 2min
+            # util.updateDBOrderHistoryInsert(
+            #     async=self._asyncAccount, timeout=self._syncAccountTimeout)
         except (UtilException, Exception) as err:
             errStr = "src.core.router.Router.initAPP: %s" % RouterException(
                 err)

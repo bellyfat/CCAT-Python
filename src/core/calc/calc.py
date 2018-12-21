@@ -22,11 +22,11 @@ class Calc(object):
         self._logger.debug("src.core.calc.calc.Calc.calcBacktestSignals: {exchange=%s, types=%s, auto=%s}" % (
             exchange, types, auto))
         try:
-            if not auto:
-                return Signal().signals()
-            Signals = []
             db = DB()
-            pass
+            signals = []
+            if not auto:
+                return Signal().signals(types)
+            return signals
         except (DBException, Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcBacktestSignals: {exchange=%s, types=%s, auto=%s}, exception err=" % (
                 exchange, types, auto, err)

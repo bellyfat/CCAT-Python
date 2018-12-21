@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import time
-from multiprocessing import Process, Queue, Value
+import psutil
+from multiprocessing import Process, Queue, Value, Manager
 
 from src.core.config import Config
 from src.core.engine.enums import (ACTIVE_STATUS_EVENT, DONE_STATUS_EVENT,
@@ -33,7 +34,7 @@ class EventEngine(object):
         # 事件处理字典{'event1': [handler1,handler2] , 'event2':[handler3, ...,handler4]}
         self.__handlers = {}
         # 保存事件处理进程池 控制最大进程数量 以及关闭引擎时处理已启动进程
-        self.__processPool = []
+        self.__processPool = Manager().list()
         # 保存已执行事件处理状态
         self.__status = Status()
         # 事件引擎主进程
@@ -123,14 +124,16 @@ class EventEngine(object):
                     )
                 # 定期清理进程池
                 if len(self.__processPool) > self.__maxProcess:
-                    for (_id, _p) in self.__processPool:
-                        if not _p.is_alive():
-                            self.__processPool.remove((_id, _p))
+                    for (_id, _pid) in self.__processPool:
+                        if not psutil.pid_exists(_pid):
+                            self.__processPool.remove((_id, _pid))
         # break out while
         # 终止所有事件处理进程
-        for (id, p) in self.__processPool:
-            if p.is_alive():
-                p.join()
+        for (_id, _pid) in self.__processPool:
+            if psutil.pid_exists(_pid):
+                _p = psutil.Process(_pid)
+                _p.terminate()
+                self.__processPool.remove((_id, _pid))
 
     # 执行事件
     def __process(self, event):
@@ -143,12 +146,12 @@ class EventEngine(object):
                 # 开一个进程去异步处理
                 p = Process(
                     target=handler, args=(event, self.__status.delEventStatus))
-                # 保存到进程池
-                self.__processPool.append((event.id, p))
                 # 同步抄送至事件运行状态表格里
                 self.__status.addEventStatus(event)
                 # 运行进程
                 p.start()
+                # 保存到进程池
+                self.__processPool.append((event.id, p.pid))
 
     # 开启事件引擎
     def start(self):
@@ -231,14 +234,21 @@ class EventEngine(object):
             % (event.id, event.type, event.priority, event.timeStamp,
                event.args))
         # 查询事件状态
-        status = self.getEventStatus(event.id)
+        status = self.getEventStatus(event)
+        # 删除事件进程
         if not status == DONE_STATUS_EVENT:
-            for (_id, _p) in self.__processPool:
-                if _id == event.id:
-                    _p.join()
-        # 更新事件状态
-        self.__status.delEventStatus(event)
-
+            for (_id, _pid) in self.__processPool:
+                if _id == event.id and psutil.pid_exists(_pid):
+                    _p = psutil.Process(_pid)
+                    _p.terminate()
+                    self.__processPool.remove((_id, _pid))
+                    # 更新事件状态
+                    self.__status.delEventStatus(event)
+            # 确认事件状态
+            status = self.getEventStatus(event)
+            if not status == DONE_STATUS_EVENT:
+                return False
+        return True
 
     # 获取事件ID
     def getEventID(self):
@@ -247,7 +257,8 @@ class EventEngine(object):
             "src.core.engine.engine.EventEngine.getEventID: { id=%s}" % id)
         return id
 
-    def getEventStatus(self, id):
+    def getEventStatus(self, event):
+        id = event.id
         status=QUEUE_STATUS_EVENT
         res=self.__status.getActiveStatusTable()
         if len(res) > 0:
