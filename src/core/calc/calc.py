@@ -15,6 +15,10 @@ class Calc(object):
         # logger
         self._logger = Logger()
 
+    def calcBacktest(self):
+        self._logger.debug("src.core.calc.calc.Calc.calcBacktest")
+        pass
+
     def calcStatisticSignalTickerDis(self, exchange, timeWindow):
         self._logger.debug(
             "src.core.calc.calc.Calc.calcStatisticSignalTickerDis: {exchange=%s, timeWindow=%s}"
@@ -108,11 +112,11 @@ class Calc(object):
                 df = []
                 # calc sort df
                 for s in signal:
-                    symbol_pair = [
-                        s['C1_symbol'], s['C2_symbol'], s['C3_symbol']
-                    ]
+                    symbol_pair = [(s['V1_fSymbol'], s['V1_tSymbol']),
+                                   (s['V2_fSymbol'], s['V2_tSymbol']),
+                                   (s['V3_fSymbol'], s['V3_tSymbol'])]
                     symbol_pair.sort()
-                    s['symbol_pair'] = ', '.join(symbol_pair)
+                    s['symbol_pair'] = str(symbol_pair)
                     df.append(s)
                 df = pd.DataFrame(signal)
                 # calc
@@ -152,9 +156,11 @@ class Calc(object):
                         "count_total":
                         group.shape[0],
                         "count_forward":
-                        group[(group['C3_symbol'] == group['V3_fSymbol'])].shape[0],
+                        group[(group['C3_symbol'] == group['V3_fSymbol']
+                               )].shape[0],
                         "count_backward":
-                        group[(group['C3_symbol'] == group['V3_tSymbol'])].shape[0],
+                        group[(group['C3_symbol'] == group['V3_tSymbol']
+                               )].shape[0],
                         "gain_base_max":
                         group['gain_base'].max(),
                         "gain_base_min":
@@ -193,22 +199,21 @@ class Calc(object):
                     df = []
                     # calc sort df
                     for s in signal:
-                        symbol_pair = [
-                            s['C1_symbol'], s['C2_symbol'], s['C3_symbol']
-                        ]
+                        symbol_pair = [(s['V1_fSymbol'], s['V1_tSymbol']),
+                                       (s['V2_fSymbol'], s['V2_tSymbol']),
+                                       (s['V3_fSymbol'], s['V3_tSymbol'])]
                         symbol_pair.sort()
-                        s['symbol_pair'] = ', '.join(symbol_pair)
+                        s['symbol_pair'] = str(symbol_pair)
                         df.append(s)
                     df = pd.DataFrame(signal)
                     # calc
-                    for symbol_pair, group in df.groupby(
-                        ['symbol_pair']):
+                    for symbol_pair, group in df.groupby(['symbol_pair']):
                         # calc timeStamp
                         period = []
                         periodTime = 0
                         lastTime = group['timeStamp'].min()
-                        for index, value in group['timeStamp'].sort_values().items(
-                        ):
+                        for index, value in group['timeStamp'].sort_values(
+                        ).items():
                             if value - lastTime < timeWindow:
                                 periodTime = periodTime + (value - lastTime)
                             else:
@@ -239,9 +244,11 @@ class Calc(object):
                             "count_total":
                             group.shape[0],
                             "count_forward":
-                            group[(group['C3_symbol'] == group['V3_fSymbol'])].shape[0],
+                            group[(group['C3_symbol'] == group['V3_fSymbol']
+                                   )].shape[0],
                             "count_backward":
-                            group[(group['C3_symbol'] == group['V3_tSymbol'])].shape[0],
+                            group[(group['C3_symbol'] == group['V3_tSymbol']
+                                   )].shape[0],
                             "gain_base_max":
                             group['gain_base'].max(),
                             "gain_base_min":

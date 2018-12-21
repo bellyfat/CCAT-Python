@@ -53,11 +53,22 @@
 # marketTickerAggStep: market ticker aggregate param
 # judgeSignalTickerCycle: judge signal ticker valid period
 # statisticSignalTickerCycle: statistic signal ticker valid period
+# asyncAccount: async account switch
 # syncAccountTimeout: sync account timeout
-# syncMarketTimeout: sync market timeout
+# asyncMarketKline: async market kline switch
+# syncMarketKlineTimeout: sync market kline timeout
+# asyncMarketDepth: async market depth switch
+# syncMarketDepthTimeout: sync market depth timeout
+# asyncMarketTicker: async market ticker switch
+# syncMarketTickerTimeout: sync market ticker timeout
+# asyncJudge: async judge switch
 # syncJudgeTimeout: sync judge timeout
+# asyncBacktest: async backtest switch
 # syncBacktestTimeout: sync backtest timeout
+# asyncOrder: async order switch
 # syncOrderTimeout: sync order timeout
+# asyncStatistic: async statistic switch
+# syncStatisticTimeout: sync statistic timeout
 # symbolStartBaseCoin
 # symbolEndBaseCoin
 # symbolEndTimeout
@@ -92,13 +103,22 @@
   marketTickerAggStep = 1
   judgeSignalTickerCycle = 604800
   statisticSignalTickerCycle = 604800
+  asyncAccount = False
   syncAccountTimeout = 90
+  asyncMarketKline = False
   syncMarketKlineTimeout = 90
+  asyncMarketDepth = False
   syncMarketDepthTimeout = 60
+  asyncMarketTicker = False
   syncMarketTickerTimeout = 30
+  asyncJudge = True
   syncJudgeTimeout = 30
-  syncBacktestTimeout = 90
-  syncOrderTimeout = 10
+  asyncBacktest = True
+  syncBacktestTimeout = 900
+  asyncOrder = False
+  syncOrderTimeout = 900
+  asyncStatistic = True
+  syncStatisticTimeout = 30
   symbolStartBaseCoin = 15
   symbolEndBaseCoin = 20
   symbolEndTimeout = 300
@@ -108,6 +128,18 @@
   typeDisTimeWindow = 300
   typeTraTimeWindow = 300
   typePairTimeWindow = 300
+
+################################################################################
+# Signal Settings
+# auto: auto generate or manual define switch
+# signals: signal list
+################################################################################
+[Signal]
+  auto = False
+  signals = [
+    {"type": "dis", "type_arg":{"bid_server": "okex", "ask_server": "huobi", "fSymbol": "IOTA", "tSymbol": "ETH"}, "base_start":20, "base_gain": 0.01, "timeout": 300},
+    {"type": "tra", "type_arg":{"server": "huobi", "symbol_pair": "[('CTXC', 'ETH'), ('CTXC', 'USDT'), ('ETH', 'USDT')]"}, "base_start":20, "base_gain": 0.01, "timeout": 300},
+    {"type": "pair", "type_arg":{"J1_server": "okex", "J2_server": "binance", "symbol_pair": "[('ETH', 'BTC'), ('ZEC', 'BTC'), ('ZEC', 'ETH')]"}, "base_start":20, "base_gain": 0.01, "timeout": 300}]
 
 ################################################################################
 # Router Settings

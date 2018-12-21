@@ -30,7 +30,7 @@ class Config(object):
             Config._Register_regCode = str(cf['Register']['regCode'])
             # Debug Settings
             Config._Debug_debug = cf.getboolean(
-                'Debug', 'debug', fallback=True)
+                'Debug', 'debug', fallback=False)
             Config._Debug_level = str(cf['Debug']['level'])
             if Config._Debug_level not in [
                     'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
@@ -72,20 +72,39 @@ class Config(object):
                 'Main', 'judgeSignalTickerCycle')
             Config._Main_statisticSignalTickerCycle = cf.getint(
                 'Main', 'statisticSignalTickerCycle')
+            Config._Main_asyncAccount = cf.getboolean(
+                'Main', 'asyncAccount', fallback=False)
             Config._Main_syncAccountTimeout = cf.getint(
                 'Main', 'syncAccountTimeout')
+            Config._Main_asyncMarketKline = cf.getboolean(
+                'Main', 'asyncMarketKline', fallback=False)
             Config._Main_syncMarketKlineTimeout = cf.getint(
                 'Main', 'syncMarketKlineTimeout')
+            Config._Main_asyncMarketDepth = cf.getboolean(
+                'Main', 'asyncMarketDepth', fallback=False)
             Config._Main_syncMarketDepthTimeout = cf.getint(
                 'Main', 'syncMarketDepthTimeout')
+            Config._Main_asyncMarketTicker = cf.getboolean(
+                'Main', 'asyncMarketTicker', fallback=False)
             Config._Main_syncMarketTickerTimeout = cf.getint(
                 'Main', 'syncMarketTickerTimeout')
+            Config._Main_asyncJudge = cf.getboolean(
+                'Main', 'asyncJudge', fallback=False)
             Config._Main_syncJudgeTimeout = cf.getint('Main',
                                                       'syncJudgeTimeout')
+
+            Config._Main_asyncBacktest = cf.getboolean(
+                'Main', 'asyncBacktest', fallback=False)
             Config._Main_syncBacktestTimeout = cf.getint(
                 'Main', 'syncBacktestTimeout')
+            Config._Main_asyncOrder = cf.getboolean(
+                'Main', 'asyncOrder', fallback=False)
             Config._Main_syncOrderTimeout = cf.getint('Main',
                                                       'syncOrderTimeout')
+            Config._Main_asyncStatistic = cf.getboolean(
+                'Main', 'asyncStatistic', fallback=False)
+            Config._Main_syncStatisticTimeout = cf.getint(
+                'Main', 'syncStatisticTimeout')
             Config._Main_symbolStartBaseCoin = cf.getfloat(
                 'Main', 'symbolStartBaseCoin')
             Config._Main_symbolEndBaseCoin = cf.getfloat(
@@ -104,6 +123,9 @@ class Config(object):
                 'Main', 'typeTraTimeWindow')
             Config._Main_typePairTimeWindow = cf.getfloat(
                 'Main', 'typePairTimeWindow')
+            # Signal Settings
+            Config._Signal_auto = cf.getboolean('Signal', 'auto', fallback=False)
+            Config._Signal_signals = cf['Signal']['signals']
             # Router Settings
             Config._Router_epoch = cf.getfloat('Router', 'epoch')
             Config._Router_timeout = cf.getfloat('Router', 'timeout')

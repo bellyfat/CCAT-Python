@@ -36,6 +36,21 @@ def num_to_precision(num, precision, rounding=ROUND_HALF_UP):
     return str(numStr)
 
 
+def tuple_str_to_list(str):
+    strList = str.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace("'", '').replace(
+        ' ', '').split(',')
+    res = []
+    isTuple = False
+    for s in strList:
+        if not isTuple:
+            tu = s
+            isTuple = True
+        else:
+            res.append((tu, s))
+            isTuple = False
+    return res
+
+
 def str_to_list(str):
     return str.replace('[', '').replace(']', '').replace("'", '').replace(
         ' ', '').split(',')
