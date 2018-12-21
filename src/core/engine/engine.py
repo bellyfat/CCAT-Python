@@ -121,13 +121,14 @@ class EventEngine(object):
                     self.__logger.debug(
                         "src.core.engine.engine.EventEngine.__mainProcess.__run.__eventQueue: empty"
                     )
-                    # 趁队列空闲的时候清理进程池
-                    for p in self.__processPool:
-                        if not p.is_alive():
-                            self.__processPool.remove(p)
+                # 定期清理进程池
+                if len(self.__processPool) > self.__maxProcess:
+                    for (_id, _p) in self.__processPool:
+                        if not _p.is_alive():
+                            self.__processPool.remove((_id, _p))
         # break out while
         # 终止所有事件处理进程
-        for p in self.__processPool:
+        for (id, p) in self.__processPool:
             if p.is_alive():
                 p.join()
 
@@ -143,7 +144,7 @@ class EventEngine(object):
                 p = Process(
                     target=handler, args=(event, self.__status.delEventStatus))
                 # 保存到进程池
-                self.__processPool.append(p)
+                self.__processPool.append((event.id, p))
                 # 同步抄送至事件运行状态表格里
                 self.__status.addEventStatus(event)
                 # 运行进程
@@ -171,7 +172,7 @@ class EventEngine(object):
         self.__logger.debug("src.core.engine.engine.EventEngine.terminate")
         # 将事件管理器设为停止
         self.__active.value = False
-        # 等待事件引擎主进程退出
+        # 引擎主进程直接退出
         self.__mainProcess.terminate()
 
     # 注册事件
@@ -189,6 +190,7 @@ class EventEngine(object):
             handlerList.append(handler)
         self.__handlers[type] = handlerList
 
+    # 注销事件
     def unregister(self, type, handler):
         self.__logger.debug(
             "src.core.engine.engine.EventEngine.unregister: {type:%s, handler:%s}"
@@ -208,6 +210,7 @@ class EventEngine(object):
             self.__logger.error(errStr)
             raise EngineException(err)
 
+    # 发送事件
     def sendEvent(self, event):
         self.__logger.debug(
             "src.core.engine.engine.EventEngine.sendEvent: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
@@ -221,36 +224,53 @@ class EventEngine(object):
         if event.priority == HIGH_PRIORITY_EVENT:
             self.__highEventQueue.put(event)
 
+    # kill 事件
+    def killEvent(self, event):
+        self.__logger.debug(
+            "src.core.engine.engine.EventEngine.killEvent: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
+        # 查询事件状态
+        status = self.getEventStatus(event.id)
+        if not status == DONE_STATUS_EVENT:
+            for (_id, _p) in self.__processPool:
+                if _id == event.id:
+                    _p.join()
+        # 更新事件状态
+        self.__status.delEventStatus(event)
+
+
+    # 获取事件ID
     def getEventID(self):
-        id = self.__status.calcEventID()
+        id=self.__status.calcEventID()
         self.__logger.debug(
             "src.core.engine.engine.EventEngine.getEventID: { id=%s}" % id)
         return id
 
     def getEventStatus(self, id):
-        status = QUEUE_STATUS_EVENT
-        res = self.__status.getActiveStatusTable()
-        if len(res)>0:
+        status=QUEUE_STATUS_EVENT
+        res=self.__status.getActiveStatusTable()
+        if len(res) > 0:
             if id in res:
-                status = ACTIVE_STATUS_EVENT
-        res = self.__status.getDoneStatusTable()
-        if len(res)>0:
+                status=ACTIVE_STATUS_EVENT
+        res=self.__status.getDoneStatusTable()
+        if len(res) > 0:
             if id in res:
-                status = DONE_STATUS_EVENT
+                status=DONE_STATUS_EVENT
         self.__logger.debug(
             "src.core.engine.engine.EventEngine.getEventStatus: { id=%s, status=%s}"
             % (id, status))
         return status
 
     def getActiveEventTable(self):
-        res = self.__status.getActiveStatusTable()
+        res=self.__status.getActiveStatusTable()
         self.__logger.debug(
             "src.core.engine.engine.EventEngine.getActiveEventTable:%s" %
             res)
         return res
 
     def getDoneEventTable(self):
-        res = self.__status.getDoneStatusTable()
+        res=self.__status.getDoneStatusTable()
         self.__logger.debug(
             "src.core.engine.engine.EventEngine.getDoneEventTable:%s" %
             res)
@@ -260,8 +280,8 @@ class EventEngine(object):
 class Event(object):
     # 事件对象
     def __init__(self, event):
-        self.id = event["id"]
-        self.type = event["type"]
-        self.priority = event["priority"]
-        self.timeStamp = int(event["timeStamp"])
-        self.args = event["args"]
+        self.id=event["id"]
+        self.type=event["type"]
+        self.priority=event["priority"]
+        self.timeStamp=int(event["timeStamp"])
+        self.args=event["args"]
