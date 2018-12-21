@@ -21,10 +21,10 @@ if __name__ == '__main__':
     # exec time
     start = time.time()
     # clase instanse
-    util = Util()
     sender = Sender(__eventEngine)
-    handler = Handler(sender)
+    handler = Handler(__eventEngine)
     register = Register(__eventEngine, handler)
+    util = Util(__eventEngine, sender)
 
     # app init
     util.initServerLimits()
@@ -36,7 +36,8 @@ if __name__ == '__main__':
     __eventEngine.start()
 
     # app update
-    util.updateDBBacktest(sender)
+    util.updateDBBacktest(async=False)
+
 
     # # stop engine
     time.sleep(2) # for engine begin handle
@@ -47,4 +48,4 @@ if __name__ == '__main__':
 
     # exec time
     end = time.time()
-    __logger.info("tests.engine.test_listen finished in %0.3fs" % float(end-start))
+    __logger.info("tests.engine.test_backtest finished in %0.3fs" % float(end-start))

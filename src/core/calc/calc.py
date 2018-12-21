@@ -3,8 +3,11 @@
 from itertools import combinations
 
 import pandas as pd
+
+from src.core.calc.signal import Signal
 from src.core.coin.enums import CCAT_ORDER_SIDE_BUY, CCAT_ORDER_SIDE_SELL
 from src.core.db.db import DB
+from src.core.engine.enums import SIGNAL_AUTO
 from src.core.util.exceptions import CalcException, DBException
 from src.core.util.helper import utcnow_timestamp
 from src.core.util.log import Logger
@@ -15,9 +18,19 @@ class Calc(object):
         # logger
         self._logger = Logger()
 
-    def calcBacktest(self):
-        self._logger.debug("src.core.calc.calc.Calc.calcBacktest")
-        pass
+    def calcBacktestSignals(self, exchange, types, auto=SIGNAL_AUTO):
+        self._logger.debug("src.core.calc.calc.Calc.calcBacktestSignals: {exchange=%s, types=%s, auto=%s}" % (
+            exchange, types, auto))
+        try:
+            if not auto:
+                return Signal().signals()
+            Signals = []
+            db = DB()
+            pass
+        except (DBException, Exception) as err:
+            errStr = "src.core.calc.calc.Calc.calcBacktestSignals: {exchange=%s, types=%s, auto=%s}, exception err=" % (
+                exchange, types, auto, err)
+            raise CalcException(errStr)
 
     def calcStatisticSignalTickerDis(self, exchange, timeWindow):
         self._logger.debug(
@@ -97,7 +110,9 @@ class Calc(object):
                         statistic.append(sta)
             return statistic
         except (DBException, Exception) as err:
-            raise CalcException(err)
+            errStr = "src.core.calc.calc.Calc.calcStatisticSignalTickerDis: {exchange=%s, timeWindow=%s}, exception err=%s" % (
+                exchange, timeWindow, err)
+            raise CalcException(errStr)
 
     def calcStatisticSignalTickerTra(self, exchange, timeWindow):
         self._logger.debug(
@@ -121,7 +136,7 @@ class Calc(object):
                 df = pd.DataFrame(signal)
                 # calc
                 for (server, symbol_pair), group in df.groupby(
-                    ['server', 'symbol_pair']):
+                        ['server', 'symbol_pair']):
                     # calc timeStamp
                     period = []
                     periodTime = 0
@@ -182,7 +197,9 @@ class Calc(object):
                     statistic.append(sta)
             return statistic
         except (DBException, Exception) as err:
-            raise CalcException(err)
+            errStr = "src.core.calc.calc.Calc.calcStatisticSignalTickerTra: {exchange=%s, timeWindow=%s}, exception err=%s" % (
+                exchange, timeWindow, err)
+            raise CalcException(errStr)
 
     def calcStatisticSignalTickerPair(self, exchange, timeWindow):
         self._logger.debug(
@@ -270,7 +287,9 @@ class Calc(object):
                         statistic.append(sta)
             return statistic
         except (DBException, Exception) as err:
-            raise CalcException(err)
+            errStr = "src.core.calc.calc.Calc.calcStatisticSignalTickerPair: {exchange=%s, timeWindow=%s}, exception err=%s" % (
+                exchange, timeWindow, err)
+            raise CalcException(errStr)
 
     def calcJudgeSignalTickerDis(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
@@ -289,15 +308,15 @@ class Calc(object):
                         continue
                     # calc fees
                     r['bid_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['bid_server'])
-                        & (resInfoSymbol['fSymbol'] == r['fSymbol']) &
+                        (resInfoSymbol['server'] == r['bid_server']) &
+                        (resInfoSymbol['fSymbol'] == r['fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     r['ask_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['ask_server'])
-                        & (resInfoSymbol['fSymbol'] == r['fSymbol']) &
+                        (resInfoSymbol['server'] == r['ask_server']) &
+                        (resInfoSymbol['fSymbol'] == r['fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     if r['bid_fee'] == 'NULL':
                         r['bid_fee'] = 0
                     if r['ask_fee'] == 'NULL':
@@ -326,7 +345,9 @@ class Calc(object):
             # return signal
             return signal
         except (DBException, Exception) as err:
-            raise CalcException(err)
+            errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerDis: {exchange=%s, timeWindow=%s}, exception err=%s" % (
+                exchange, timeWindow, err)
+            raise CalcException(errStr)
 
     def calcJudgeSignalTickerTra(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
@@ -395,20 +416,20 @@ class Calc(object):
                     continue
                 # calc fees
                 r['V1_fee'] = resInfoSymbol[
-                    (resInfoSymbol['server'] == r['server'])
-                    & (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
+                    (resInfoSymbol['server'] == r['server']) &
+                    (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
                     (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                     )]['fee_taker'].values[0]
+                       )]['fee_taker'].values[0]
                 r['V2_fee'] = resInfoSymbol[
-                    (resInfoSymbol['server'] == r['server'])
-                    & (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
+                    (resInfoSymbol['server'] == r['server']) &
+                    (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
                     (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                     )]['fee_taker'].values[0]
+                       )]['fee_taker'].values[0]
                 r['V3_fee'] = resInfoSymbol[
-                    (resInfoSymbol['server'] == r['server'])
-                    & (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
+                    (resInfoSymbol['server'] == r['server']) &
+                    (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
                     (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                     )]['fee_taker'].values[0]
+                       )]['fee_taker'].values[0]
                 if r['V1_fee'] == 'NULL':
                     r['V1_fee'] = 0
                 if r['V2_fee'] == 'NULL':
@@ -475,7 +496,9 @@ class Calc(object):
             # return signal
             return signal
         except (DBException, Exception) as err:
-            raise CalcException(err)
+            errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerTra: {exchange=%s, timeWindow=%s}, exception err=%s" % (
+                exchange, timeWindow, err)
+            raise CalcException(errStr)
 
     def calcJudgeSignalTickerPair(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
@@ -574,35 +597,35 @@ class Calc(object):
                         continue
                     # calc fees
                     r['J1_V1_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J1_server'])
-                        & (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
+                        (resInfoSymbol['server'] == r['J1_server']) &
+                        (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     r['J1_V2_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J1_server'])
-                        & (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
+                        (resInfoSymbol['server'] == r['J1_server']) &
+                        (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     r['J1_V3_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J1_server'])
-                        & (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
+                        (resInfoSymbol['server'] == r['J1_server']) &
+                        (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     r['J2_V1_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J2_server'])
-                        & (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
+                        (resInfoSymbol['server'] == r['J2_server']) &
+                        (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     r['J2_V2_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J2_server'])
-                        & (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
+                        (resInfoSymbol['server'] == r['J2_server']) &
+                        (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     r['J2_V3_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J2_server'])
-                        & (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
+                        (resInfoSymbol['server'] == r['J2_server']) &
+                        (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     if r['J1_V1_fee'] == 'NULL':
                         r['J1_V1_fee'] = 0
                     if r['J1_V2_fee'] == 'NULL':
@@ -736,4 +759,6 @@ class Calc(object):
             # return signal
             return signal
         except (DBException, Exception) as err:
-            raise CalcException(err)
+            errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerPair: {exchange=%s, timeWindow=%s}, exception err=%s" % (
+                exchange, timeWindow, err)
+            raise CalcException(errStr)

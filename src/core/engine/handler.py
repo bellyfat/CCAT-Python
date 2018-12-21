@@ -231,7 +231,19 @@ class Handler(object):
             "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         # 接收事件
-        pass
+        [exchange, types] = event.args
+        exchange = str_to_list(exchange)
+        types = str_to_list(types)
+        try:
+            calc = Calc()
+            signals = calc.calcBacktestSignals(exchange, types)
+            print(signals)
+            pass
+        except (DBException, CalcException, EngineException, Exception) as err:
+            errStr = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
+            event.type, event.priority, event.args, EngineException(err))
+            self._logger.error(errStr)
+        callback(event)
 
     def handleOrderHistoryInsertEvent(self, event, callback):
         self._logger.debug(

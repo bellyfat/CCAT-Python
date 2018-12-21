@@ -419,8 +419,7 @@ class Util(object):
             "src.core.util.util.Util.updateDBBacktest: {async: %s, timeout: %s}"
             % (async, timeout))
         try:
-
-            pass
+            id = self._sender.sendBacktestHistoryCreatEvent(self._exchanges, self._types)
             if not async:
                 st = self._engine.getEventStatus(id)
                 startTime = time.time()
