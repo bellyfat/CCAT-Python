@@ -103,14 +103,14 @@
   marketTickerAggStep = 1
   judgeSignalTickerCycle = 604800
   statisticSignalTickerCycle = 604800
-  asyncAccount = False
-  syncAccountTimeout = 90
+  asyncAccount = True
+  syncAccountTimeout = 60
   asyncMarketKline = False
   syncMarketKlineTimeout = 90
   asyncMarketDepth = False
   syncMarketDepthTimeout = 60
   asyncMarketTicker = False
-  syncMarketTickerTimeout = 30
+  syncMarketTickerTimeout = 60
   asyncJudge = True
   syncJudgeTimeout = 30
   asyncBacktest = True
@@ -141,6 +141,7 @@
     {"type": "tra", "type_arg":{"server": "huobi", "symbol_pair": "[('CTXC', 'ETH'), ('CTXC', 'USDT'), ('ETH', 'USDT')]"}, "base_start":20, "base_gain": 0.01, "timeout": 300},
     {"type": "pair", "type_arg":{"J1_server": "okex", "J2_server": "binance", "symbol_pair": "[('ETH', 'BTC'), ('ZEC', 'BTC'), ('ZEC', 'ETH')]"}, "base_start":20, "base_gain": 0.01, "timeout": 300}]
 
+
 ################################################################################
 # Router Settings
 # epoch: router loop epoch
@@ -169,8 +170,8 @@
 ################################################################################
 [Event]
   lowTimeout = 60
-  mediumTimeout = 15
-  highTimeout = 5
+  mediumTimeout = 30
+  highTimeout = 15
 
 ################################################################################
 # Log Settings
