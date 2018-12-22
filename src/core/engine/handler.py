@@ -2,6 +2,7 @@
 from itertools import combinations
 
 import pandas as pd
+from src.core.calc.signal import Signal
 from src.core.calc.calc import Calc
 from src.core.db.db import DB
 from src.core.engine.enums import *
@@ -174,13 +175,13 @@ class Handler(object):
             "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }"
             % (event.type, event.priority, event.args))
         # 接收事件
-        [exchange, types] = event.args
-        exchange = str_to_list(exchange)
-        types = str_to_list(types)
+        [signals, timeout] = event.args
+        signals = str_to_list(signals)
+        print(signals, timeout)
         try:
-            calc = Calc()
-            signals = calc.calcBacktestSignals(exchange, types)
-            print(signals)
+            sgl = Signal(signals)
+            res = sgl.backtestSignals(timeout)
+
             pass
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }, err=%s" % (

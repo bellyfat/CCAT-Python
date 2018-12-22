@@ -36,7 +36,7 @@ if __name__ == '__main__':
     __eventEngine.start()
 
     # app update
-    util.updateDBBacktestHistoryCreat(async=False)
+    util.updateDBBacktestHistoryCreat(async=False, timeout=900)
 
 
     # # stop engine

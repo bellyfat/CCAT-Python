@@ -127,7 +127,7 @@ BACKTEST_HISTORY_CREAT_EVENT = MyTemplate("""
     "type": "BACKTEST_HISTORY_CREAT_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
-    "args": ["$exchange", "$types"]
+    "args": ["$signals", "$timeout"]
 }
 """)
 
@@ -148,27 +148,7 @@ ORDER_HISTORY_CREAT_EVENT = MyTemplate("""
     "type": "ORDER_HISTORY_CREAT_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
-    "args": ["$exchange", "$types"]
-}
-""")
-
-ORDER_HISTORY_CHECK_EVENT = MyTemplate("""
-{
-    "id": "$id",
-    "type": "ORDER_HISTORY_CHECK_EVENT",
-    "priority": "high",
-    "timeStamp": "$timeStamp",
-    "args": []
-}
-""")
-
-ORDER_HISTORY_CANCEL_EVENT = MyTemplate("""
-{
-    "id": "$id",
-    "type": "ORDER_HISTORY_CANCEL_EVENT",
-    "priority": "high",
-    "timeStamp": "$timeStamp",
-    "args": []
+    "args": ["$signals"]
 }
 """)
 

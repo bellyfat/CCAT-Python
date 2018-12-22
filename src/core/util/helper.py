@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import ast
 import decimal
 from datetime import datetime, timezone
 from decimal import ROUND_HALF_UP, Context, Decimal
@@ -37,23 +38,11 @@ def num_to_precision(num, precision, rounding=ROUND_HALF_UP):
 
 
 def tuple_str_to_list(str):
-    strList = str.replace('(', '').replace(')', '').replace('[', '').replace(']', '').replace("'", '').replace(
-        ' ', '').split(',')
-    res = []
-    isTuple = False
-    for s in strList:
-        if not isTuple:
-            tu = s
-            isTuple = True
-        else:
-            res.append((tu, s))
-            isTuple = False
-    return res
+    return ast.literal_eval(str)
 
 
 def str_to_list(str):
-    return str.replace('[', '').replace(']', '').replace("'", '').replace(
-        ' ', '').split(',')
+    return ast.literal_eval(str)
 
 
 def dict_factory(cursor, row):

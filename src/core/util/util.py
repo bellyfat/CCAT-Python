@@ -5,10 +5,12 @@ import time
 from threading import Thread, current_thread
 
 import pandas as pd
+from src.core.calc.signal import Signal
 from src.core.config import Config
 from src.core.db.db import DB
 from src.core.engine.enums import (ACTIVE_STATUS_EVENT, DONE_STATUS_EVENT,
-                                   QUEUE_STATUS_EVENT)
+                                   QUEUE_STATUS_EVENT, TYPE_DIS, TYPE_PAIR,
+                                   TYPE_TRA)
 from src.core.util.exceptions import (DBException, EngineException,
                                       UtilException)
 from src.core.util.helper import timestamp_to_isoformat, utcnow_timestamp
@@ -456,10 +458,27 @@ class Util(object):
             % (async, timeout))
         try:
             ets = []
+            # calc signals
+            sig = Signal()
             for type in self._types:
-                event = self._sender.sendBacktestHistoryCreatEvent(
-                    self._exchanges, [type])
-                ets.append(event)
+                signals = sig.signals(self._exchanges, [type])
+                if not signals == []:
+                    df = pd.DataFrame(signals)
+                    if type == TYPE_DIS:
+                        for group_key, group in df.groupby(['fSymbol', 'tSymbol']):
+                            event = self._sender.sendBacktestHistoryCreatEvent(
+                                group.to_dict('records'), timeout)
+                            ets.append(event)
+                    if type == TYPE_TRA:
+                        for group_key, group in df.groupby(['V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol', 'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol']):
+                            event = self._sender.sendBacktestHistoryCreatEvent(
+                                group.to_dict('records'), timeout)
+                            ets.append(event)
+                    if type == TYPE_PAIR:
+                        for group_key, group in df.groupby(['V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol', 'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol']):
+                            event = self._sender.sendBacktestHistoryCreatEvent(
+                                group.to_dict('records'), timeout)
+                            ets.append(event)
             if not async:
                 st = QUEUE_STATUS_EVENT
                 startTime = time.time()

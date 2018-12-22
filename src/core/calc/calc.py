@@ -3,8 +3,6 @@
 from itertools import combinations
 
 import pandas as pd
-
-from src.core.calc.signal import Signal
 from src.core.coin.enums import CCAT_ORDER_SIDE_BUY, CCAT_ORDER_SIDE_SELL
 from src.core.db.db import DB
 from src.core.engine.enums import SIGNAL_AUTO
@@ -18,15 +16,11 @@ class Calc(object):
         # logger
         self._logger = Logger()
 
-    def calcBacktestSignals(self, exchange, types, auto=SIGNAL_AUTO):
-        self._logger.debug("src.core.calc.calc.Calc.calcBacktestSignals: {exchange=%s, types=%s, auto=%s}" % (
-            exchange, types, auto))
+    def calcBacktestSignals(self, signals):
+        self._logger.debug(
+            "src.core.calc.calc.Calc.calcBacktestSignals: {signals=%s}" % signals)
         try:
-            db = DB()
-            signals = []
-            if not auto:
-                return Signal().signals(types)
-            return signals
+            pass
         except (DBException, Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcBacktestSignals: {exchange=%s, types=%s, auto=%s}, exception err=" % (
                 exchange, types, auto, err)
@@ -308,15 +302,15 @@ class Calc(object):
                         continue
                     # calc fees
                     r['bid_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['bid_server']) &
-                        (resInfoSymbol['fSymbol'] == r['fSymbol']) &
-                        (resInfoSymbol['tSymbol'] == r['tSymbol']
-                           )]['fee_taker'].values[0]
+                        (resInfoSymbol['server'] == r['bid_server'])
+                        & (resInfoSymbol['fSymbol'] == r['fSymbol'])
+                        & (resInfoSymbol['tSymbol'] == r['tSymbol']
+                         )]['fee_taker'].values[0]
                     r['ask_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['ask_server']) &
-                        (resInfoSymbol['fSymbol'] == r['fSymbol']) &
-                        (resInfoSymbol['tSymbol'] == r['tSymbol']
-                           )]['fee_taker'].values[0]
+                        (resInfoSymbol['server'] == r['ask_server'])
+                        & (resInfoSymbol['fSymbol'] == r['fSymbol'])
+                        & (resInfoSymbol['tSymbol'] == r['tSymbol']
+                         )]['fee_taker'].values[0]
                     if r['bid_fee'] == 'NULL':
                         r['bid_fee'] = 0
                     if r['ask_fee'] == 'NULL':
@@ -326,19 +320,19 @@ class Calc(object):
                     r['ask_size'] = min(r['bid_size'], r['ask_size'])
                     # calc base price
                     tSymbol_base_price = (
-                        r['bid_price_base'] / r['bid_price'] +
-                        r['ask_price_base'] / r['ask_price']) / 2
+                        r['bid_price_base'] / r['bid_price']
+                        + r['ask_price_base'] / r['ask_price']) / 2
                     # calc gain_base
                     r['gain_base'] = (
-                        r['bid_price'] * r['bid_size'] -
-                        r['ask_price'] * r['ask_size'] - r['bid_price'] *
-                        r['bid_size'] * r['bid_fee'] - r['ask_price'] *
-                        r['ask_size'] * r['ask_fee']) * tSymbol_base_price
+                        r['bid_price'] * r['bid_size']
+                        - r['ask_price'] * r['ask_size'] - r['bid_price']
+                        * r['bid_size'] * r['bid_fee'] - r['ask_price']
+                        * r['ask_size'] * r['ask_fee']) * tSymbol_base_price
                     # calc gain_ratio
                     r['gain_ratio'] = (
-                        r['bid_price'] - r['ask_price'] -
-                        r['bid_price'] * r['bid_fee'] -
-                        r['ask_price'] * r['ask_fee']) / r['ask_price']
+                        r['bid_price'] - r['ask_price']
+                        - r['bid_price'] * r['bid_fee']
+                        - r['ask_price'] * r['ask_fee']) / r['ask_price']
                     # calc signal
                     if r['gain_ratio'] > threshold:
                         signal.append(r)
@@ -416,20 +410,20 @@ class Calc(object):
                     continue
                 # calc fees
                 r['V1_fee'] = resInfoSymbol[
-                    (resInfoSymbol['server'] == r['server']) &
-                    (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
-                    (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                       )]['fee_taker'].values[0]
+                    (resInfoSymbol['server'] == r['server'])
+                    & (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
+                    & (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
+                     )]['fee_taker'].values[0]
                 r['V2_fee'] = resInfoSymbol[
-                    (resInfoSymbol['server'] == r['server']) &
-                    (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
-                    (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                       )]['fee_taker'].values[0]
+                    (resInfoSymbol['server'] == r['server'])
+                    & (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
+                    & (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
+                     )]['fee_taker'].values[0]
                 r['V3_fee'] = resInfoSymbol[
-                    (resInfoSymbol['server'] == r['server']) &
-                    (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
-                    (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                       )]['fee_taker'].values[0]
+                    (resInfoSymbol['server'] == r['server'])
+                    & (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
+                    & (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
+                     )]['fee_taker'].values[0]
                 if r['V1_fee'] == 'NULL':
                     r['V1_fee'] = 0
                 if r['V2_fee'] == 'NULL':
@@ -438,14 +432,14 @@ class Calc(object):
                     r['V3_fee'] = 0
                 # calc symbol base
                 V1_tSymbol_base_price = (
-                    r['V1_bid_one_price_base'] / r['V1_bid_one_price'] +
-                    r['V1_ask_one_price_base'] / r['V1_ask_one_price']) / 2
+                    r['V1_bid_one_price_base'] / r['V1_bid_one_price']
+                    + r['V1_ask_one_price_base'] / r['V1_ask_one_price']) / 2
                 V2_tSymbol_base_price = (
-                    r['V2_bid_one_price_base'] / r['V2_bid_one_price'] +
-                    r['V2_ask_one_price_base'] / r['V2_ask_one_price']) / 2
+                    r['V2_bid_one_price_base'] / r['V2_bid_one_price']
+                    + r['V2_ask_one_price_base'] / r['V2_ask_one_price']) / 2
                 V3_tSymbol_base_price = (
-                    r['V3_bid_one_price_base'] / r['V3_bid_one_price'] +
-                    r['V3_ask_one_price_base'] / r['V3_ask_one_price']) / 2
+                    r['V3_bid_one_price_base'] / r['V3_bid_one_price']
+                    + r['V3_ask_one_price_base'] / r['V3_ask_one_price']) / 2
                 # Begin Calc Gain
                 if r['C3_symbol'] == r['V3_fSymbol']:
                     # Type clockwise: sell->buy->sell
@@ -457,16 +451,16 @@ class Calc(object):
                     r['V2_one_size'] = temp_size
                     r['V3_one_size'] = temp_size
                     # calc gain_base
-                    r['gain_base'] = (C1_C2_one_price * C3_C1_one_price *
-                                      (1 - r['V1_fee']) *
-                                      (1 - r['V3_fee']) - 1 / C2_C3_one_price -
-                                      1 / C2_C3_one_price * r['V2_fee']
+                    r['gain_base'] = (C1_C2_one_price * C3_C1_one_price
+                                      * (1 - r['V1_fee'])
+                                      * (1 - r['V3_fee']) - 1 / C2_C3_one_price
+                                      - 1 / C2_C3_one_price * r['V2_fee']
                                       ) * temp_size * V2_tSymbol_base_price
                     # calc gain_ratio
                     r['gain_ratio'] = (
-                        C1_C2_one_price * C3_C1_one_price * (1 - r['V1_fee']) *
-                        (1 - r['V3_fee']) - 1 / C2_C3_one_price - 1 /
-                        C2_C3_one_price * r['V2_fee']) / (1 / C2_C3_one_price)
+                        C1_C2_one_price * C3_C1_one_price * (1 - r['V1_fee'])
+                        * (1 - r['V3_fee']) - 1 / C2_C3_one_price - 1
+                        / C2_C3_one_price * r['V2_fee']) / (1 / C2_C3_one_price)
                 else:
                     # Type anti-clockwise: sell->buy->buy
                     # calc symbol size
@@ -478,17 +472,17 @@ class Calc(object):
                     r['V3_one_size'] = temp_size * C2_C3_one_price
                     # calc gain_base
                     r['gain_base'] = (
-                        C1_C2_one_price * (1 - r['V1_fee']) -
-                        (1 / (C2_C3_one_price * C3_C1_one_price)) -
-                        (1 / (C2_C3_one_price * C3_C1_one_price)) *
-                        (r['V2_fee'] + r['V3_fee'] - r['V2_fee'] * r['V3_fee'])
+                        C1_C2_one_price * (1 - r['V1_fee'])
+                        - (1 / (C2_C3_one_price * C3_C1_one_price))
+                        - (1 / (C2_C3_one_price * C3_C1_one_price))
+                        * (r['V2_fee'] + r['V3_fee'] - r['V2_fee'] * r['V3_fee'])
                     ) * temp_size * V1_tSymbol_base_price
                     # calc gain_ratio
                     r['gain_ratio'] = (
-                        C1_C2_one_price * (1 - r['V1_fee']) -
-                        (1 / (C2_C3_one_price * C3_C1_one_price)) -
-                        (1 / (C2_C3_one_price * C3_C1_one_price)) *
-                        (r['V2_fee'] + r['V3_fee'] - r['V2_fee'] * r['V3_fee'])
+                        C1_C2_one_price * (1 - r['V1_fee'])
+                        - (1 / (C2_C3_one_price * C3_C1_one_price))
+                        - (1 / (C2_C3_one_price * C3_C1_one_price))
+                        * (r['V2_fee'] + r['V3_fee'] - r['V2_fee'] * r['V3_fee'])
                     ) / (1 / (C2_C3_one_price * C3_C1_one_price))
                 # calc signal
                 if r['gain_ratio'] > threshold:
@@ -597,35 +591,35 @@ class Calc(object):
                         continue
                     # calc fees
                     r['J1_V1_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J1_server']) &
-                        (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
-                        (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                           )]['fee_taker'].values[0]
+                        (resInfoSymbol['server'] == r['J1_server'])
+                        & (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
+                        & (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
+                         )]['fee_taker'].values[0]
                     r['J1_V2_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J1_server']) &
-                        (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
-                        (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                           )]['fee_taker'].values[0]
+                        (resInfoSymbol['server'] == r['J1_server'])
+                        & (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
+                        & (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
+                         )]['fee_taker'].values[0]
                     r['J1_V3_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J1_server']) &
-                        (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
-                        (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                           )]['fee_taker'].values[0]
+                        (resInfoSymbol['server'] == r['J1_server'])
+                        & (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
+                        & (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
+                         )]['fee_taker'].values[0]
                     r['J2_V1_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J2_server']) &
-                        (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
-                        (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                           )]['fee_taker'].values[0]
+                        (resInfoSymbol['server'] == r['J2_server'])
+                        & (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
+                        & (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
+                         )]['fee_taker'].values[0]
                     r['J2_V2_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J2_server']) &
-                        (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
-                        (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                           )]['fee_taker'].values[0]
+                        (resInfoSymbol['server'] == r['J2_server'])
+                        & (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
+                        & (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
+                         )]['fee_taker'].values[0]
                     r['J2_V3_fee'] = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J2_server']) &
-                        (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
-                        (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                           )]['fee_taker'].values[0]
+                        (resInfoSymbol['server'] == r['J2_server'])
+                        & (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
+                        & (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
+                         )]['fee_taker'].values[0]
                     if r['J1_V1_fee'] == 'NULL':
                         r['J1_V1_fee'] = 0
                     if r['J1_V2_fee'] == 'NULL':
@@ -686,73 +680,73 @@ class Calc(object):
                                               r['J2_V3_one_size'])
                     # calc base price
                     # calc J1
-                    J1_V1_tSymbol_base_price = (r['J1_V1_bid_one_price_base'] /
-                                                r['J1_V1_bid_one_price'] +
-                                                r['J1_V1_ask_one_price_base'] /
-                                                r['J1_V1_ask_one_price']) / 2
-                    J1_V2_tSymbol_base_price = (r['J1_V2_bid_one_price_base'] /
-                                                r['J1_V2_bid_one_price'] +
-                                                r['J1_V2_ask_one_price_base'] /
-                                                r['J1_V2_ask_one_price']) / 2
-                    J1_V3_tSymbol_base_price = (r['J1_V3_bid_one_price_base'] /
-                                                r['J1_V3_bid_one_price'] +
-                                                r['J1_V3_ask_one_price_base'] /
-                                                r['J1_V3_ask_one_price']) / 2
+                    J1_V1_tSymbol_base_price = (r['J1_V1_bid_one_price_base']
+                                                / r['J1_V1_bid_one_price']
+                                                + r['J1_V1_ask_one_price_base']
+                                                / r['J1_V1_ask_one_price']) / 2
+                    J1_V2_tSymbol_base_price = (r['J1_V2_bid_one_price_base']
+                                                / r['J1_V2_bid_one_price']
+                                                + r['J1_V2_ask_one_price_base']
+                                                / r['J1_V2_ask_one_price']) / 2
+                    J1_V3_tSymbol_base_price = (r['J1_V3_bid_one_price_base']
+                                                / r['J1_V3_bid_one_price']
+                                                + r['J1_V3_ask_one_price_base']
+                                                / r['J1_V3_ask_one_price']) / 2
                     # calc J2
-                    J2_V1_tSymbol_base_price = (r['J2_V1_bid_one_price_base'] /
-                                                r['J2_V1_bid_one_price'] +
-                                                r['J2_V1_ask_one_price_base'] /
-                                                r['J2_V1_ask_one_price']) / 2
-                    J2_V2_tSymbol_base_price = (r['J2_V2_bid_one_price_base'] /
-                                                r['J2_V2_bid_one_price'] +
-                                                r['J2_V2_ask_one_price_base'] /
-                                                r['J2_V2_ask_one_price']) / 2
-                    J2_V3_tSymbol_base_price = (r['J2_V3_bid_one_price_base'] /
-                                                r['J2_V3_bid_one_price'] +
-                                                r['J2_V3_ask_one_price_base'] /
-                                                r['J2_V3_ask_one_price']) / 2
+                    J2_V1_tSymbol_base_price = (r['J2_V1_bid_one_price_base']
+                                                / r['J2_V1_bid_one_price']
+                                                + r['J2_V1_ask_one_price_base']
+                                                / r['J2_V1_ask_one_price']) / 2
+                    J2_V2_tSymbol_base_price = (r['J2_V2_bid_one_price_base']
+                                                / r['J2_V2_bid_one_price']
+                                                + r['J2_V2_ask_one_price_base']
+                                                / r['J2_V2_ask_one_price']) / 2
+                    J2_V3_tSymbol_base_price = (r['J2_V3_bid_one_price_base']
+                                                / r['J2_V3_bid_one_price']
+                                                + r['J2_V3_ask_one_price_base']
+                                                / r['J2_V3_ask_one_price']) / 2
                     tSymbol_base_price = (
-                        (J1_V1_tSymbol_base_price + J2_V1_tSymbol_base_price) *
-                        (r['J1_V1_one_size'] + r['J2_V1_one_size']) +
-                        (J1_V2_tSymbol_base_price + J2_V2_tSymbol_base_price) *
-                        (r['J1_V2_one_size'] + r['J2_V2_one_size']) +
-                        (J1_V3_tSymbol_base_price + J2_V3_tSymbol_base_price) *
-                        (r['J1_V3_one_size'] + r['J2_V3_one_size'])) / (
-                            r['J1_V1_one_size'] + r['J2_V1_one_size'] +
-                            r['J1_V2_one_size'] + r['J2_V2_one_size'] +
-                            r['J1_V3_one_size'] + r['J2_V3_one_size'])
+                        (J1_V1_tSymbol_base_price + J2_V1_tSymbol_base_price)
+                        * (r['J1_V1_one_size'] + r['J2_V1_one_size'])
+                        + (J1_V2_tSymbol_base_price + J2_V2_tSymbol_base_price)
+                        * (r['J1_V2_one_size'] + r['J2_V2_one_size'])
+                        + (J1_V3_tSymbol_base_price + J2_V3_tSymbol_base_price)
+                        * (r['J1_V3_one_size'] + r['J2_V3_one_size'])) / (
+                            r['J1_V1_one_size'] + r['J2_V1_one_size']
+                            + r['J1_V2_one_size'] + r['J2_V2_one_size']
+                            + r['J1_V3_one_size'] + r['J2_V3_one_size'])
                     # Begin Calc Gain
                     C1_symbol_gain_ratio_up = (
-                        r['J1_V1_one_price'] - r['J2_V1_one_price'] -
-                        r['J1_V1_one_price'] * r['J1_V1_fee'] -
-                        r['J2_V1_one_price'] * r['J2_V1_fee']) * (
+                        r['J1_V1_one_price'] - r['J2_V1_one_price']
+                        - r['J1_V1_one_price'] * r['J1_V1_fee']
+                        - r['J2_V1_one_price'] * r['J2_V1_fee']) * (
                             r['J1_V1_one_size'] + r['J2_V1_one_size']) / 2
                     C1_symbol_gain_ratio_dn = r['J2_V1_one_price'] * (
                         r['J1_V1_one_size'] + r['J2_V1_one_size']) / 2
                     C2_symbol_gain_ratio_up = (
-                        r['J1_V2_one_price'] - r['J2_V2_one_price'] -
-                        r['J1_V2_one_price'] * r['J1_V2_fee'] -
-                        r['J2_V2_one_price'] * r['J2_V2_fee']) * (
+                        r['J1_V2_one_price'] - r['J2_V2_one_price']
+                        - r['J1_V2_one_price'] * r['J1_V2_fee']
+                        - r['J2_V2_one_price'] * r['J2_V2_fee']) * (
                             r['J1_V2_one_size'] + r['J2_V2_one_size']) / 2
                     C2_symbol_gain_ratio_dn = r['J2_V2_one_price'] * (
                         r['J1_V2_one_size'] + r['J2_V2_one_size']) / 2
                     C3_symbol_gain_ratio_up = (
-                        r['J1_V3_one_price'] - r['J2_V3_one_price'] -
-                        r['J1_V3_one_price'] * r['J1_V3_fee'] -
-                        r['J2_V3_one_price'] * r['J2_V3_fee']) * (
+                        r['J1_V3_one_price'] - r['J2_V3_one_price']
+                        - r['J1_V3_one_price'] * r['J1_V3_fee']
+                        - r['J2_V3_one_price'] * r['J2_V3_fee']) * (
                             r['J1_V3_one_size'] + r['J2_V3_one_size']) / 2
                     C3_symbol_gain_ratio_dn = r['J2_V3_one_price'] * (
                         r['J1_V3_one_size'] + r['J2_V3_one_size']) / 2
                     # calc gain_base
                     r['gain_base'] = (
-                        C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up +
-                        C3_symbol_gain_ratio_up) * tSymbol_base_price
+                        C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up
+                        + C3_symbol_gain_ratio_up) * tSymbol_base_price
                     # calc gain_ratio
                     r['gain_ratio'] = (
-                        C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up +
-                        C3_symbol_gain_ratio_up) / (
-                            C1_symbol_gain_ratio_dn + C2_symbol_gain_ratio_dn +
-                            C3_symbol_gain_ratio_dn)
+                        C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up
+                        + C3_symbol_gain_ratio_up) / (
+                            C1_symbol_gain_ratio_dn + C2_symbol_gain_ratio_dn
+                            + C3_symbol_gain_ratio_dn)
                     # calc signal
                     if r['gain_ratio'] > threshold:
                         signal.append(r)
