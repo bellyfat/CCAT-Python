@@ -4,7 +4,7 @@ from multiprocessing import Manager, Value
 
 from src.core.config import Config
 from src.core.util.log import Logger
-
+from src.core.util.exceptions import EngineException
 
 class Status(object):
     def __init__(self):
@@ -19,41 +19,59 @@ class Status(object):
     def getActiveStatusTable(self):
         self._logger.debug(
             "src.core.engine.status.Status.getActiveStatusTable")
-        return self._activeStatus
+        try:
+            return self._activeStatus
+        except Exception as err:
+            raise(EngineException(err))
 
     def getDoneStatusTable(self):
         self._logger.debug(
             "src.core.engine.status.Status.getDoneStatusTable")
-        return self._doneStatus
+        try:
+            return self._doneStatus
+        except Exception as err:
+            raise(EngineException(err))
 
     def calcEventID(self):
         self._logger.debug(
             "src.core.engine.status.Status.calcEventID")
-        self._id.value = self._id.value + 1
-        return self._id.value
+        try:
+            self._id.value = self._id.value + 1
+            return self._id.value
+        except Exception as err:
+            raise(EngineException(err))
 
     def calcActiveEventNum(self):
         self._logger.debug(
             "src.core.engine.status.Status.calcActiveEventNum")
-        num = len(self._activeStatus)
-        return num
+        try:
+            num = len(self._activeStatus)
+            return num
+        except Exception as err:
+            raise(EngineException(err))
 
     def addEventStatus(self, id):
         self._logger.debug(
             "src.core.engine.status.Status.addEventStatus: {id=%s}"
             % id)
-        if not id in self._activeStatus:
-            self._activeStatus.append(id)
+        try:
+            if not id in self._activeStatus:
+                self._activeStatus.append(id)
+        except Exception as err:
+            raise(EngineException(err))
 
     def delEventStatus(self, id):
         self._logger.debug(
             "src.core.engine.status.Status.delEventStatus: {id=%s}"
             % id)
-        if id in self._activeStatus:
-            self._activeStatus.remove(id)
-        if not id in self._doneStatus:
-            if len(self._doneStatus) < self._cachesize:
-                self._doneStatus.append(id)
-            else:
-                self._doneStatus.pop(0)
-                self._doneStatus.append(id)
+        try:
+            if id in self._activeStatus:
+                self._activeStatus.remove(id)
+            if not id in self._doneStatus:
+                if len(self._doneStatus) < self._cachesize:
+                    self._doneStatus.append(id)
+                else:
+                    self._doneStatus.pop(0)
+                    self._doneStatus.append(id)
+        except Exception as err:
+            raise(EngineException(err))

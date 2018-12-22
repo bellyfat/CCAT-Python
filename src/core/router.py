@@ -8,7 +8,7 @@ from src.core.engine.engine import EventEngine
 from src.core.engine.handler import Handler
 from src.core.engine.register import Register
 from src.core.engine.sender import Sender
-from src.core.util.exceptions import RouterException, UtilException
+from src.core.util.exceptions import RouterException, UtilException, EngineException
 from src.core.util.log import Logger
 from src.core.util.util import Util
 
@@ -63,7 +63,7 @@ class Router(object):
             self._eventEngine.start()
             # set start param
             self._start = True
-        except (UtilException, Exception) as err:
+        except (UtilException, EngineException, Exception) as err:
             errStr = "src.core.router.Router.start: %s" % RouterException(err)
             self._logger.critical(errStr)
             raise RouterException(err)
@@ -77,7 +77,7 @@ class Router(object):
             self._register.unregister()
             # set start param
             self._start = False
-        except (UtilException, Exception) as err:
+        except (UtilException, EngineException, Exception) as err:
             errStr = "src.core.router.Router.stop: %s" % RouterException(err)
             self._logger.critical(errStr)
             raise RouterException(err)
@@ -96,7 +96,7 @@ class Router(object):
             # 暂时不同步历史交易 耗时约 2min
             # util.updateDBOrderHistoryInsert(
             #     async=self._asyncAccount, timeout=self._syncAccountTimeout)
-        except (UtilException, Exception) as err:
+        except (UtilException, EngineException, Exception) as err:
             errStr = "src.core.router.Router.initAPP: %s" % RouterException(
                 err)
             self._logger.critical(errStr)
@@ -121,7 +121,7 @@ class Router(object):
                     "src.core.router.Router.updateAPP: sleep epoch for %ss" %
                     self._epoch)
                 time.sleep(self._epoch)
-        except (UtilException, Exception) as err:
+        except (UtilException, EngineException, Exception) as err:
             errStr = "src.core.router.Router.updateAPP: %s" % RouterException(
                 err)
             self._logger.critical(errStr)
@@ -167,7 +167,7 @@ class Router(object):
                 self._util.updateDBStatisticJudge(
                     async=self._asyncStatistic,
                     timeout=self._syncStatisticTimeout)
-        except (UtilException, Exception) as err:
+        except (UtilException, EngineException, Exception) as err:
             errStr = "src.core.router.Router.runMonitor: %s" % RouterException(
                 err)
             raise RouterException(err)
@@ -176,7 +176,7 @@ class Router(object):
         self._logger.info("src.core.router.Router.runBacktest")
         try:
             pass
-        except (UtilException, Exception) as err:
+        except (UtilException, EngineException, Exception) as err:
             errStr = "src.core.router.Router.runBacktest: %s" % RouterException(
                 err)
             self._logger.critical(errStr)
@@ -186,7 +186,7 @@ class Router(object):
         self._logger.info("src.core.router.Router.runBacktestStatistic")
         try:
             pass
-        except (UtilException, Exception) as err:
+        except (UtilException, EngineException, Exception) as err:
             errStr = "src.core.router.Router.runBacktestStatistic: %s" % RouterException(
                 err)
             raise RouterException(err)
@@ -195,7 +195,7 @@ class Router(object):
         self._logger.info("src.core.router.Router.runOrder")
         try:
             pass
-        except (UtilException, Exception) as err:
+        except (UtilException, EngineException, Exception) as err:
             errStr = "src.core.router.Router.runOrder: %s" % RouterException(
                 err)
             raise RouterException(err)
@@ -204,7 +204,7 @@ class Router(object):
         self._logger.info("src.core.router.Router.runOrder")
         try:
             pass
-        except (UtilException, Exception) as err:
+        except (UtilException, EngineException, Exception) as err:
             errStr = "src.core.router.Router.runOrder: %s" % RouterException(
                 err)
             raise RouterException(err)
