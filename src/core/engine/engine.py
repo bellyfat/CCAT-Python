@@ -269,11 +269,11 @@ class EventEngine(object):
             if id in res:
                 status = DONE_STATUS_EVENT
         # 进程池二次确认
-        if status==ACTIVE_STATUS_EVENT:
+        if status == ACTIVE_STATUS_EVENT:
             for (_id, _pid) in self.__processPool:
                 if _id == id:
                     if not psutil.pid_exists(_pid):
-                        status=DONE_STATUS_EVENT
+                        status = DONE_STATUS_EVENT
                         self.__status.delEventStatus(_id)
                         self.__processPool.remove((_id, _pid))
         self.__logger.debug(
@@ -282,14 +282,18 @@ class EventEngine(object):
         return status
 
     def getActiveEventTable(self):
+        res = self.__status.getActiveStatusTable()
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.getActiveEventTable")
-        return self.__status.getActiveStatusTable()
+            "src.core.engine.engine.EventEngine.getActiveEventTable: {res=%s}" %
+            res)
+        return res
 
     def getDoneEventTable(self):
+        res = self.__status.getDoneStatusTable()
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.getDoneEventTable")
-        return self.__status.getDoneStatusTable()
+            "src.core.engine.engine.EventEngine.getDoneEventTable: {res=%s}" %
+            res)
+        return res
 
 
 class Event(object):

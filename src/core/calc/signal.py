@@ -104,4 +104,6 @@ class Signal(object):
 
     def backtestSignals(self, timeout=30):
         self._logger.debug("src.core.calc.signal.Signal.backtestSignals")
+        for signal in self._signals:
+            print(signal)
         pass

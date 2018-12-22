@@ -17,30 +17,25 @@ class Status(object):
         self._logger = Logger()
 
     def getActiveStatusTable(self):
-        res = self._activeStatus
         self._logger.debug(
-            "src.core.engine.status.Status.getActiveStatusTable: {res=%s}" %
-            res)
-        return res
+            "src.core.engine.status.Status.getActiveStatusTable")
+        return self._activeStatus
 
     def getDoneStatusTable(self):
-        res = self._doneStatus
         self._logger.debug(
-            "src.core.engine.status.Status.getDoneStatusTable: {res=%s}" % res)
-        return res
+            "src.core.engine.status.Status.getDoneStatusTable")
+        return self._doneStatus
 
     def calcEventID(self):
-        self._id.value = self._id.value + 1
         self._logger.debug(
-            "src.core.engine.status.Status.calcEventID: {id=%s}" %
-            self._id.value)
+            "src.core.engine.status.Status.calcEventID")
+        self._id.value = self._id.value + 1
         return self._id.value
 
     def calcActiveEventNum(self):
-        num = len(self._activeStatus)
         self._logger.debug(
-            "src.core.engine.status.Status.calcActiveEventNum: {num=%s}" %
-            num)
+            "src.core.engine.status.Status.calcActiveEventNum")
+        num = len(self._activeStatus)
         return num
 
     def addEventStatus(self, id):

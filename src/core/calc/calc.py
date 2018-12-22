@@ -3,7 +3,11 @@
 from itertools import combinations
 
 import pandas as pd
+from src.core.coin.binance import Binance
+from src.core.coin.enums import *
 from src.core.coin.enums import CCAT_ORDER_SIDE_BUY, CCAT_ORDER_SIDE_SELL
+from src.core.coin.huobi import Huobi
+from src.core.coin.okex import Okex
 from src.core.db.db import DB
 from src.core.engine.enums import SIGNAL_AUTO
 from src.core.util.exceptions import CalcException, DBException
@@ -16,9 +20,9 @@ class Calc(object):
         # logger
         self._logger = Logger()
 
-    def calcBacktestSignals(self, signals):
+    def calcSignalInitTrans(self, signals):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcBacktestSignals: {signals=%s}" % signals)
+            "src.core.calc.calc.Calc.calcSignalInitTrans: {signals=%s}" % signals)
         try:
             pass
         except (DBException, Exception) as err:

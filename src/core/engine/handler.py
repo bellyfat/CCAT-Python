@@ -177,7 +177,6 @@ class Handler(object):
         # 接收事件
         [signals, timeout] = event.args
         signals = str_to_list(signals)
-        print(signals, timeout)
         try:
             sgl = Signal(signals)
             res = sgl.backtestSignals(timeout)
