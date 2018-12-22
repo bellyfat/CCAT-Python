@@ -105,12 +105,6 @@ class Config(object):
                 'Main', 'asyncStatistic', fallback=False)
             Config._Main_syncStatisticTimeout = cf.getint(
                 'Main', 'syncStatisticTimeout')
-            Config._Main_symbolStartBaseCoin = cf.getfloat(
-                'Main', 'symbolStartBaseCoin')
-            Config._Main_symbolEndBaseCoin = cf.getfloat(
-                'Main', 'symbolEndBaseCoin')
-            Config._Main_symbolEndTimeout = cf.getfloat(
-                'Main', 'symbolEndTimeout')
             Config._Main_typeDisThreshold = cf.getfloat(
                 'Main', 'typeDisThreshold')
             Config._Main_typeTraThreshold = cf.getfloat(

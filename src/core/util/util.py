@@ -142,11 +142,11 @@ class Util(object):
             % (async, timeout))
         try:
             ets = []
+            startTime = time.time()
             event = self._sender.sendListenAccountBalanceEvent(self._exchanges)
             ets.append(event)
             if not async:
                 st = QUEUE_STATUS_EVENT
-                startTime = time.time()
                 for event in ets:
                     st = self._engine.getEventStatus(event)
                     while st != DONE_STATUS_EVENT and (time.time(
@@ -171,7 +171,14 @@ class Util(object):
             "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}"
             % (current_thread().name, res, epoch, async, timeout))
         ets = []
+        startTime = time.time()
         for r in res:
+            if not time.time(
+            ) - startTime < timeout and not timeout == 0:
+                self._logger.error(
+                    "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending for event handler timeout."
+                    % (current_thread().name, res, epoch, async, timeout))
+                break
             if not r['can_deposit'] == 'False' and not r[
                     'can_withdraw'] == 'False':
                 time.sleep(epoch)
@@ -180,7 +187,6 @@ class Util(object):
                 ets.append(event)
         if not async:
             st = QUEUE_STATUS_EVENT
-            startTime = time.time()
             for event in ets:
                 st = self._engine.getEventStatus(event)
                 while st != DONE_STATUS_EVENT and (time.time(
@@ -235,6 +241,12 @@ class Util(object):
             % (current_thread().name, res, epoch, async, timeout))
         ets = []
         for r in res:
+            if not time.time(
+            ) - startTime < timeout and not timeout == 0:
+                self._logger.error(
+                    "src.core.util.util.Util.threadSendListenAccountWithdrawEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending for event handler timeout."
+                    % (current_thread().name, res, epoch, async, timeout))
+                break
             time.sleep(epoch)
             event = self._sender.sendListenMarketDepthEvent(
                 [r["server"]], r["fSymbol"], r["tSymbol"],
@@ -291,14 +303,21 @@ class Util(object):
             % (current_thread().name, res, start, end, interval, epoch, async,
                timeout))
         ets = []
+        startTime = time.time()
         for r in res:
+            if not time.time(
+            ) - startTime < timeout and not timeout == 0:
+                self._logger.error(
+                    "src.core.util.util.Util.threadSendListenMarketKlineEvent: {thread: %s, res: %s, start: %s, interval: %s, end: %s, epoch: %s, async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending for event handler timeout."
+                    % (current_thread().name, res, start, end, interval, epoch, async,
+                       timeout))
+                break
             time.sleep(epoch)
             event = self._sender.sendListenMarketKlineEvent(
                 [r["server"]], r["fSymbol"], r["tSymbol"], interval, start, end)
             ets.append(event)
         if not async:
             st = QUEUE_STATUS_EVENT
-            startTime = time.time()
             for event in ets:
                 st = self._engine.getEventStatus(event)
                 while st != DONE_STATUS_EVENT and (time.time(
@@ -353,8 +372,15 @@ class Util(object):
             "src.core.util.util.Util.threadSendListenMarketTickerEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}"
             % (current_thread().name, res, epoch, async, timeout))
         ets = []
+        db = DB()
+        startTime = time.time()
         for r in res:
-            db = DB()
+            if not time.time(
+            ) - startTime < timeout and not timeout == 0:
+                self._logger.error(
+                    "src.core.util.util.Util.threadSendListenMarketTickerEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending for event handler timeout."
+                    % (current_thread().name, res, epoch, async, timeout))
+                break
             aggDepth = db.getViewMarketSymbolPairsAggDepth(
                 self._exchanges, r["fSymbol"],
                 r["tSymbol"])[0]["aggDepth"]
@@ -365,7 +391,6 @@ class Util(object):
             ets.append(event)
         if not async:
             st = QUEUE_STATUS_EVENT
-            startTime = time.time()
             for event in ets:
                 st = self._engine.getEventStatus(event)
                 while st != DONE_STATUS_EVENT and (time.time(
@@ -424,13 +449,13 @@ class Util(object):
             db.delJudgeSignalTickerTra()
             db.delJudgeSignalTickerPair()
             ets = []
+            startTime = time.time()
             for type in self._types:
                 event = self._sender.sendJudgeMarketTickerEvent(
                     self._exchanges, [type])
                 ets.append(event)
             if not async:
                 st = QUEUE_STATUS_EVENT
-                startTime = time.time()
                 for event in ets:
                     st = self._engine.getEventStatus(event)
                     while st != DONE_STATUS_EVENT and (time.time(
@@ -458,9 +483,10 @@ class Util(object):
             % (async, timeout))
         try:
             ets = []
-            # calc signals
             sig = Signal()
+            startTime = time.time()
             for type in self._types:
+                # calc signals
                 signals = sig.signals(self._exchanges, [type])
                 if not signals == []:
                     df = pd.DataFrame(signals)
@@ -481,7 +507,6 @@ class Util(object):
                             ets.append(event)
             if not async:
                 st = QUEUE_STATUS_EVENT
-                startTime = time.time()
                 for event in ets:
                     st = self._engine.getEventStatus(event)
                     while st != DONE_STATUS_EVENT and (time.time(
@@ -566,18 +591,18 @@ class Util(object):
             "src.core.util.util.Util.updateDBStatisticJudge: {async: %s, timeout: %s}"
             % (async, timeout))
         try:
+            ets = []
             db = DB()
             db.delStatisticSignalTickerDis()
             db.delStatisticSignalTickerTra()
             db.delStatisticSignalTickerPair()
-            ets = []
+            startTime = time.time()
             for type in self._types:
                 event = self._sender.sendStatiscJudgeEvent(
                     self._exchanges, [type])
                 ets.append(event)
             if not async:
                 st = QUEUE_STATUS_EVENT
-                startTime = time.time()
                 for event in ets:
                     st = self._engine.getEventStatus(event)
                     while st != DONE_STATUS_EVENT and (time.time(

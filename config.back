@@ -69,9 +69,6 @@
 # syncOrderTimeout: sync order timeout
 # asyncStatistic: async statistic switch
 # syncStatisticTimeout: sync statistic timeout
-# symbolStartBaseCoin
-# symbolEndBaseCoin
-# symbolEndTimeout
 # typeDisThreshold: judge threshold for type dis
 # typeTraThreshold: judge threshold for type tra
 # typePairThreshold: judge threshold for type pair
@@ -119,9 +116,6 @@
   syncOrderTimeout = 900
   asyncStatistic = True
   syncStatisticTimeout = 30
-  symbolStartBaseCoin = 15
-  symbolEndBaseCoin = 20
-  symbolEndTimeout = 300
   typeDisThreshold = 0.0001
   typeTraThreshold = 0.0001
   typePairThreshold = 0.0001
@@ -137,9 +131,13 @@
 [Signal]
   auto = False
   signals = [
-    {"type": "dis", "type_arg":{"bid_server": "okex", "ask_server": "huobi", "fSymbol": "IOTA", "tSymbol": "ETH"}, "base_start":20, "base_gain": 0.01, "timeout": 300},
-    {"type": "tra", "type_arg":{"server": "huobi", "symbol_pair": "[('CTXC', 'ETH'), ('CTXC', 'USDT'), ('ETH', 'USDT')]"}, "base_start":20, "base_gain": 0.01, "timeout": 300},
-    {"type": "pair", "type_arg":{"J1_server": "okex", "J2_server": "binance", "symbol_pair": "[('ETH', 'BTC'), ('ZEC', 'BTC'), ('ZEC', 'ETH')]"}, "base_start":20, "base_gain": 0.01, "timeout": 300}]
+    {"type": "dis", "bid_server": "binance", "ask_server": "huobi", "fSymbol": "ICX", "tSymbol": "ETH", "forward_ratio": 0.065338, "backward_ratio":0.057862, "base_start":20, "base_gain": 0.01, "base_timeout": 300},
+    {"type": "dis", "bid_server": "okex", "ask_server": "huobi", "fSymbol": "ICX", "tSymbol": "ETH", "forward_ratio": 0.065338, "backward_ratio":0.057862, "base_start":20, "base_gain": 0.01, "base_timeout": 300},
+    {"type": "dis", "bid_server": "okex", "ask_server": "huobi", "fSymbol": "ICX", "tSymbol": "BTC", "forward_ratio": 0.065338, "backward_ratio":0.057862, "base_start":20, "base_gain": 0.01, "base_timeout": 300},
+    {"type": "tra", "server": "okex", "symbol_pair": "[('CTXC', 'ETH'), ('CTXC', 'USDT'), ('ETH', 'USDT')]", "base_start":20, "base_gain": 0.01, "base_timeout": 300},
+    {"type": "tra", "server": "huobi", "symbol_pair": "[('BLZ', 'BTC'), ('BLZ', 'ETH'), ('ETH', 'BTC')]", "base_start":20, "base_gain": 0.01, "base_timeout": 300},
+    {"type": "tra", "server": "huobi", "symbol_pair": "[('CTXC', 'ETH'), ('CTXC', 'USDT'), ('ETH', 'USDT')]", "base_start":20, "base_gain": 0.01, "base_timeout": 300},
+    {"type": "pair", "J1_server": "okex", "J2_server": "binance", "symbol_pair": "[('ETH', 'BTC'), ('ZEC', 'BTC'), ('ZEC', 'ETH')]", "base_start":20, "base_gain": 0.01, "base_timeout": 300}]
 
 
 ################################################################################
