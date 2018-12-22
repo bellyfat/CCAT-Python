@@ -238,11 +238,12 @@ class EventEngine(object):
         # 删除事件进程
         if not status == DONE_STATUS_EVENT:
             for (_id, _pid) in self.__processPool:
-                if _id == event.id and psutil.pid_exists(_pid):
-                    _p = psutil.Process(_pid)
-                    _p.terminate()
-                    self.__processPool.remove((_id, _pid))
+                if _id == event.id:
+                    if psutil.pid_exists(_pid):
+                        _p = psutil.Process(_pid)
+                        _p.terminate()
                     # 更新事件状态
+                    self.__processPool.remove((_id, _pid))
                     self.__status.delEventStatus(event)
             # 确认事件状态
             status = self.getEventStatus(event)

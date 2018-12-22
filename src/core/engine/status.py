@@ -19,33 +19,33 @@ class Status(object):
     def getActiveStatusTable(self):
         res = [item["id"] for item in self._activeStatus]
         self._logger.debug(
-            "src.core.engine.status.Status.getActiveStatusTable: {res=%s }" %
+            "src.core.engine.status.Status.getActiveStatusTable: {res=%s}" %
             res)
         return res
 
     def getDoneStatusTable(self):
         res = [item["id"] for item in self._doneStatus]
         self._logger.debug(
-            "src.core.engine.status.Status.getDoneStatusTable: {res=%s }" % res)
+            "src.core.engine.status.Status.getDoneStatusTable: {res=%s}" % res)
         return res
 
     def calcEventID(self):
         self._id.value = self._id.value + 1
         self._logger.debug(
-            "src.core.engine.status.Status.calcEventID: { id=%s }" %
+            "src.core.engine.status.Status.calcEventID: {id=%s}" %
             self._id.value)
         return self._id.value
 
     def calcActiveEventNum(self):
         num = len(self._activeStatus)
         self._logger.debug(
-            "src.core.engine.status.Status.calcActiveEventNum: { num=%s}" %
+            "src.core.engine.status.Status.calcActiveEventNum: {num=%s}" %
             num)
         return num
 
     def addEventStatus(self, event):
         self._logger.debug(
-            "src.core.engine.status.Status.addEventStatus: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+            "src.core.engine.status.Status.addEventStatus: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
             % (event.id, event.type, event.priority, event.timeStamp,
                event.args))
         item = {
@@ -59,7 +59,7 @@ class Status(object):
 
     def delEventStatus(self, event):
         self._logger.debug(
-            "src.core.engine.status.Status.delEventStatus: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+            "src.core.engine.status.Status.delEventStatus: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
             % (event.id, event.type, event.priority, event.timeStamp,
                event.args))
         for item in self._activeStatus:
