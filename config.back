@@ -139,7 +139,6 @@
     {"type": "tra", "server": "huobi", "symbol_pair": "[('CTXC', 'ETH'), ('CTXC', 'USDT'), ('ETH', 'USDT')]", "base_start":20, "base_gain": 0.01, "base_timeout": 300},
     {"type": "pair", "J1_server": "okex", "J2_server": "binance", "symbol_pair": "[('ETH', 'BTC'), ('ZEC', 'BTC'), ('ZEC', 'ETH')]", "base_start":20, "base_gain": 0.01, "base_timeout": 300}]
 
-
 ################################################################################
 # Router Settings
 # epoch: router loop epoch
