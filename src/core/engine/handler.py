@@ -21,8 +21,8 @@ class Handler(object):
     def handleListenAccountBalanceEvent(self, event, callback):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         [exchange] = event.args
         exchange = str_to_list(exchange)
         try:
@@ -32,14 +32,14 @@ class Handler(object):
             errStr = "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
-        callback(event)
+        callback(event.id)
 
     # Account Withdraw 事件
     def handleListenAccountWithdrawEvent(self, event, callback):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         [exchange, asset] = event.args
         exchange = str_to_list(exchange)
         try:
@@ -49,14 +49,14 @@ class Handler(object):
             errStr = "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
-        callback(event)
+        callback(event.id)
 
     # Market Depth 事件
     def handleListenMarketDepthEvent(self, event, callback):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenMarketDepthEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleListenMarketDepthEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         [exchange, fSymbol, tSymbol, limit] = event.args
         exchange = str_to_list(exchange)
         try:
@@ -66,14 +66,14 @@ class Handler(object):
             errStr = "src.core.engine.handler.Handler.handleListenDepthEvent { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
-        callback(event)
+        callback(event.id)
 
     # Market Kline 事件
     def handleListenMarketKlineEvent(self, event, callback):
         # 接收事件
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenMarketKlineEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleListenMarketKlineEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         [exchange, fSymbol, tSymbol, interval, start, end] = event.args
         exchange = str_to_list(exchange)
         try:
@@ -84,13 +84,13 @@ class Handler(object):
             errStr = "src.core.engine.handler.Handler.handleListenKlineEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
-        callback(event)
+        callback(event.id)
 
     # Market ticker 事件
     def handleListenMarketTickerEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleListenMarketTickerEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleListenMarketTickerEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         # 接收事件
         [exchange, fSymbol, tSymbol, aggDepth] = event.args
         exchange = str_to_list(exchange)
@@ -101,13 +101,13 @@ class Handler(object):
             errStr = "src.core.engine.handler.Handler.handleListenTickerEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
-        callback(event)
+        callback(event.id)
 
     # Judge 事件
     def handleJudgeMarketDepthEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleJudgeMarketDepthEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleJudgeMarketDepthEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         # 接收事件
         [args] = event.args
         try:
@@ -116,12 +116,12 @@ class Handler(object):
             errStr = "src.core.engine.handler.Handler.handleJudgeMarketDepthEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
-        callback(event)
+        callback(event.id)
 
     def handleJudgeMarketKlineEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         # 接收事件
         [args] = event.args
         try:
@@ -130,7 +130,7 @@ class Handler(object):
             errStr = "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
-        callback(event)
+        callback(event.id)
 
     def handleJudgeMarketTickerEvent(self, event, callback):
         self._logger.debug(
@@ -167,13 +167,13 @@ class Handler(object):
             errStr = "src.core.engine.handler.Handler.handleJudgeMarketTickerEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
-        callback(event)
+        callback(event.id)
 
     # Backtest 事件
     def handleBacktestHistoryCreatEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         # 接收事件
         [signals, timeout] = event.args
         signals = str_to_list(signals)
@@ -187,13 +187,13 @@ class Handler(object):
             errStr = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
-        callback(event)
+        callback(event.id)
 
     # Order 事件
     def handleOrderHistoryInsertEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderHistoryInsertEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleOrderHistoryInsertEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         # 接收事件
         [exchange, fSymbol, tSymbol, limit, ratio] = event.args
         exchange = str_to_list(exchange)
@@ -205,34 +205,34 @@ class Handler(object):
             errStr = "src.core.engine.handler.Handler.handleOrderHistoryInsertEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
-        callback(event)
+        callback(event.id)
 
     def handleOrderHistoryCreatEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderHistoryCreatEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleOrderHistoryCreatEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         # 接收事件
         pass
 
     def handleOrderHistoryCheckEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderHistoryCheckEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleOrderHistoryCheckEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         # 接收事件
         pass
 
     def handleOrderHistoryCancelEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderHistoryCancelEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleOrderHistoryCancelEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         # 接收事件
         pass
 
     # Statistic 事件
     def handleStatisticJudgeEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleStatisticJudgeEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleStatisticJudgeEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         # 接收事件
         [exchange, types] = event.args
         exchange = str_to_list(exchange)
@@ -263,18 +263,18 @@ class Handler(object):
             errStr = "src.core.engine.handler.Handler.handleStatisticJudgeEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
             self._logger.error(errStr)
-        callback(event)
+        callback(event.id)
 
     def handleStatisticBacktestEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleStatisticBacktestEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleStatisticBacktestEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         # 接收事件
         pass
 
     def handleStatisticOrderEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleStatisticOrderEvent: { type=%s, priority=%s, args=%s }"
-            % (event.type, event.priority, event.args))
+            "src.core.engine.handler.Handler.handleStatisticOrderEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            % (event.id, event.type, event.priority, event.timeStamp, event.args))
         # 接收事件
         pass

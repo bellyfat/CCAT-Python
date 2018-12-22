@@ -17,14 +17,14 @@ class Status(object):
         self._logger = Logger()
 
     def getActiveStatusTable(self):
-        res = [item["id"] for item in self._activeStatus]
+        res = self._activeStatus
         self._logger.debug(
             "src.core.engine.status.Status.getActiveStatusTable: {res=%s}" %
             res)
         return res
 
     def getDoneStatusTable(self):
-        res = [item["id"] for item in self._doneStatus]
+        res = self._doneStatus
         self._logger.debug(
             "src.core.engine.status.Status.getDoneStatusTable: {res=%s}" % res)
         return res
@@ -43,30 +43,22 @@ class Status(object):
             num)
         return num
 
-    def addEventStatus(self, event):
+    def addEventStatus(self, id):
         self._logger.debug(
-            "src.core.engine.status.Status.addEventStatus: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp,
-               event.args))
-        item = {
-            "id": event.id,
-            "type": event.type,
-            "priority": event.priority,
-            "timeStamp": event.timeStamp,
-            "args": event.args
-        }
-        self._activeStatus.append(item)
+            "src.core.engine.status.Status.addEventStatus: {id=%s}"
+            % id)
+        if not id in self._activeStatus:
+            self._activeStatus.append(id)
 
-    def delEventStatus(self, event):
+    def delEventStatus(self, id):
         self._logger.debug(
-            "src.core.engine.status.Status.delEventStatus: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp,
-               event.args))
-        for item in self._activeStatus:
-            if item["id"] == event.id:
-                self._activeStatus.remove(item)
-                if len(self._doneStatus) < self._cachesize:
-                    self._doneStatus.append(item)
-                else:
-                    self._doneStatus.pop(0)
-                    self._doneStatus.append(item)
+            "src.core.engine.status.Status.delEventStatus: {id=%s}"
+            % id)
+        if id in self._activeStatus:
+            self._activeStatus.remove(id)
+        if not id in self._doneStatus:
+            if len(self._doneStatus) < self._cachesize:
+                self._doneStatus.append(id)
+            else:
+                self._doneStatus.pop(0)
+                self._doneStatus.append(id)

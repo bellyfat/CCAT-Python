@@ -31,7 +31,7 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenAccountBalanceEvent: %s" % EngineException(
                 err)
@@ -54,7 +54,7 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenAccountWithdrawEvent: %s" % EngineException(
                 err)
@@ -80,7 +80,7 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenMarketDepthEvent: %s" % EngineException(
                 err)
@@ -108,7 +108,7 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenMarketKlineEvent: %s" % EngineException(
                 err)
@@ -134,7 +134,7 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendListenMarketTickerEvent: %s" % EngineException(
                 err)
@@ -195,7 +195,7 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendJudgeMarketTickerEvent: %s" % EngineException(
                 err)
@@ -218,7 +218,7 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendBacktestHistoryCreatEvent: %s" % EngineException(
                 err)
@@ -245,7 +245,7 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendOrderHistoryInsertEvent: %s" % EngineException(
                 err)
@@ -266,7 +266,7 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendOrderHistoryCreatEvent: %s" % EngineException(
                 err)
@@ -289,7 +289,7 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendStatiscJudgeEvent: %s" % EngineException(
                 err)
@@ -310,7 +310,7 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendStatiscBacktestEvent: %s" % EngineException(
                 err)
@@ -331,7 +331,7 @@ class Sender(object):
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
-            return event
+            return event.id
         except Exception as err:
             errStr = "src.core.engine.sender.Sender.sendStatiscOrderEvent: %s" % EngineException(
                 err)

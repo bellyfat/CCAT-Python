@@ -30,7 +30,7 @@ def http_get_request(url, params, add_to_headers=None, proxies=None):
     postdata = urllib.parse.urlencode(params)
     try:
         response = requests.get(
-            url, postdata, headers=headers, proxies=proxies, timeout=TIMEOUT)
+            url, postdata, headers=headers, verify=False, proxies=proxies, timeout=TIMEOUT)
         if response.status_code == 200:
             return response.json()
         else:
@@ -50,7 +50,7 @@ def http_post_request(url, params, add_to_headers=None, proxies=None):
     postdata = json.dumps(params)
     try:
         response = requests.post(
-            url, postdata, headers=headers, proxies=proxies, timeout=TIMEOUT)
+            url, postdata, headers=headers, verify=False, proxies=proxies, timeout=TIMEOUT)
         if response.status_code == 200:
             return response.json()
         else:

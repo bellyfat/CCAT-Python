@@ -45,7 +45,7 @@ class Binance(Coin):
         self._client = Client(api_key, api_secret, {
             "proxies": proxies,
             "verify": False,
-            "timeout": 20
+            "timeout": 5
         })
 
     def __del__(self):
@@ -57,7 +57,7 @@ class Binance(Coin):
         self._client = Client(self._api_key, self._api_secret, {
             "proxies": proxies,
             "verify": False,
-            "timeout": 20
+            "timeout": 5
         })
 
     # UTC Zone, Unix timestamp in millseconds

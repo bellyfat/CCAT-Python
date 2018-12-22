@@ -39,17 +39,18 @@ if __name__ == '__main__':
 
     # app update
 
-    # util.updateDBAccountBalance(async=False, timeout=90)
-    #
-    # util.updateDBAccountWithdraw(async=False, timeout=90)
-    #
-    # util.updateDBMarketKline(async=False, timeout=300)
-    #
-    # util.updateDBMarketDepth(async=False, timeout=60)
-    #
-    # util.updateDBMarketTicker(async=False, timeout=60)
-    #
-    # util.updateDBOrderHistoryInsert(async=False, timeout=90)
+    util.updateDBAccountBalance(async=True, timeout=90)
+
+    util.updateDBAccountWithdraw(async=True, timeout=90)
+
+    util.updateDBOrderHistoryInsert(async=True, timeout=90)
+
+    util.updateDBMarketKline(async=False, timeout=180)
+
+    util.updateDBMarketDepth(async=False, timeout=60)
+
+    util.updateDBMarketTicker(async=False, timeout=60)
+
 
     # # stop engine
     time.sleep(2) # for engine begin handle

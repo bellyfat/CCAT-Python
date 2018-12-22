@@ -40,12 +40,12 @@ class Client(object):
         #print("body:", body)
         try:
             if method == c.GET:
-                response = requests.get(url, headers=header, proxies=proxies, timeout=self.TIMEOUT)
+                response = requests.get(url, headers=header, verify=False, proxies=proxies, timeout=self.TIMEOUT)
             elif method == c.POST:
-                response = requests.post(url, data=body, headers=header, proxies=proxies, timeout=self.TIMEOUT)
+                response = requests.post(url, data=body, headers=header, verify=False, proxies=proxies, timeout=self.TIMEOUT)
                 #response = requests.post(url, json=body, headers=header)
             elif method == c.DELETE:
-                response = requests.delete(url, headers=header, proxies=proxies, timeout=self.TIMEOUT)
+                response = requests.delete(url, headers=header, verify=False, proxies=proxies, timeout=self.TIMEOUT)
         except requests.exceptions.ProxyError as err:
             raise exceptions.OkexRequestException('Proxy Connection timeout : %s' % err)
 

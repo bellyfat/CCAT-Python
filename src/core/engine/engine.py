@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import time
+from multiprocessing import Manager, Process, Queue, Value
+
 import psutil
-from multiprocessing import Process, Queue, Value, Manager
 
 from src.core.config import Config
 from src.core.engine.enums import (ACTIVE_STATUS_EVENT, DONE_STATUS_EVENT,
@@ -66,7 +67,7 @@ class EventEngine(object):
                     ) - event.timeStamp > HIGH_PRIORITY_EVENT_TIMEOUT:
                         if not self.__highEventQueue.empty():
                             self.__logger.error(
-                                "src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+                                "src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue TIMEOUT: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
                                 % (event.id, event.type, event.priority,
                                    event.timeStamp, event.args))
                             self.__status.delEventStatus(event)
@@ -84,7 +85,7 @@ class EventEngine(object):
                     ) - event.timeStamp > MEDIUM_PRIORITY_EVENT_TIMEOUT:
                         if not self.__mediumEventQueue.empty():
                             self.__logger.error(
-                                "src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+                                "src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
                                 % (event.id, event.type, event.priority,
                                    event.timeStamp, event.args))
                             self.__status.delEventStatus(event)
@@ -102,7 +103,7 @@ class EventEngine(object):
                     ) - event.timeStamp > LOW_PRIORITY_EVENT_TIMEOUT:
                         if not self.__lowEnventQueue.empty():
                             self.__logger.error(
-                                "src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+                                "src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
                                 % (event.id, event.type, event.priority,
                                    event.timeStamp, event.args))
                             self.__status.delEventStatus(event)
@@ -114,7 +115,7 @@ class EventEngine(object):
                 if not event == None:
                     # 执行事件
                     self.__logger.debug(
-                        "src.core.engine.engine.EventEngine.__mainProcess.__run.__eventQueue: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+                        "src.core.engine.engine.EventEngine.__mainProcess.__run.__eventQueue: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
                         % (event.id, event.type, event.priority,
                            event.timeStamp, event.args))
                     self.__process(event)
@@ -138,7 +139,7 @@ class EventEngine(object):
     # 执行事件
     def __process(self, event):
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.__mainProcess.__run.__process: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+            "src.core.engine.engine.EventEngine.__mainProcess.__run.__process: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
             % (event.id, event.type, event.priority, event.timeStamp,
                event.args))
         if event.type in self.__handlers:
@@ -146,12 +147,12 @@ class EventEngine(object):
                 # 开一个进程去异步处理
                 p = Process(
                     target=handler, args=(event, self.__status.delEventStatus))
-                # 同步抄送至事件运行状态表格里
-                self.__status.addEventStatus(event)
                 # 运行进程
                 p.start()
                 # 保存到进程池
                 self.__processPool.append((event.id, p.pid))
+                # 同步抄送至事件运行状态表格里
+                self.__status.addEventStatus(event.id)
 
     # 开启事件引擎
     def start(self):
@@ -216,7 +217,7 @@ class EventEngine(object):
     # 发送事件
     def sendEvent(self, event):
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.sendEvent: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
+            "src.core.engine.engine.EventEngine.sendEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
             % (event.id, event.type, event.priority, event.timeStamp,
                event.args))
         # 发送事件 像队列里存入事件
@@ -228,72 +229,74 @@ class EventEngine(object):
             self.__highEventQueue.put(event)
 
     # kill 事件
-    def killEvent(self, event):
+    def killEvent(self, id):
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.killEvent: { id=%s, type=%s, priority=%s, timeStamp=%s, args=%s }"
-            % (event.id, event.type, event.priority, event.timeStamp,
-               event.args))
+            "src.core.engine.engine.EventEngine.killEvent: {id=%s}"
+            % id)
         # 查询事件状态
-        status = self.getEventStatus(event)
+        status = self.getEventStatus(id)
         # 删除事件进程
         if not status == DONE_STATUS_EVENT:
             for (_id, _pid) in self.__processPool:
-                if _id == event.id:
+                if _id == id:
                     if psutil.pid_exists(_pid):
                         _p = psutil.Process(_pid)
                         _p.terminate()
                     # 更新事件状态
                     self.__processPool.remove((_id, _pid))
-                    self.__status.delEventStatus(event)
+                    self.__status.delEventStatus(id)
             # 确认事件状态
-            status = self.getEventStatus(event)
+            status = self.getEventStatus(id)
             if not status == DONE_STATUS_EVENT:
                 return False
         return True
 
     # 获取事件ID
     def getEventID(self):
-        id=self.__status.calcEventID()
+        id = self.__status.calcEventID()
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.getEventID: { id=%s}" % id)
+            "src.core.engine.engine.EventEngine.getEventID: {id=%s}" % id)
         return id
 
-    def getEventStatus(self, event):
-        id = event.id
-        status=QUEUE_STATUS_EVENT
-        res=self.__status.getActiveStatusTable()
-        if len(res) > 0:
+    def getEventStatus(self, id):
+        status = QUEUE_STATUS_EVENT
+        res = self.__status.getActiveStatusTable()
+        if not res == []:
             if id in res:
-                status=ACTIVE_STATUS_EVENT
-        res=self.__status.getDoneStatusTable()
-        if len(res) > 0:
+                status = ACTIVE_STATUS_EVENT
+        res = self.__status.getDoneStatusTable()
+        if not res == []:
             if id in res:
-                status=DONE_STATUS_EVENT
+                status = DONE_STATUS_EVENT
+        # 进程池二次确认
+        if status==ACTIVE_STATUS_EVENT:
+            for (_id, _pid) in self.__processPool:
+                if _id == id:
+                    if not psutil.pid_exists(_pid):
+                        status=DONE_STATUS_EVENT
+                        self.__status.delEventStatus(_id)
+                        self.__processPool.remove((_id, _pid))
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.getEventStatus: { id=%s, status=%s}"
+            "src.core.engine.engine.EventEngine.getEventStatus: {id=%s, status=%s}"
             % (id, status))
         return status
 
     def getActiveEventTable(self):
-        res=self.__status.getActiveStatusTable()
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.getActiveEventTable:%s" %
-            res)
-        return res
+            "src.core.engine.engine.EventEngine.getActiveEventTable")
+        return self.__status.getActiveStatusTable()
 
     def getDoneEventTable(self):
-        res=self.__status.getDoneStatusTable()
         self.__logger.debug(
-            "src.core.engine.engine.EventEngine.getDoneEventTable:%s" %
-            res)
-        return res
+            "src.core.engine.engine.EventEngine.getDoneEventTable")
+        return self.__status.getDoneStatusTable()
 
 
 class Event(object):
     # 事件对象
     def __init__(self, event):
-        self.id=event["id"]
-        self.type=event["type"]
-        self.priority=event["priority"]
-        self.timeStamp=int(event["timeStamp"])
-        self.args=event["args"]
+        self.id = event["id"]
+        self.type = event["type"]
+        self.priority = event["priority"]
+        self.timeStamp = int(event["timeStamp"])
+        self.args = event["args"]
