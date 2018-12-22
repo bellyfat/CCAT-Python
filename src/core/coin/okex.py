@@ -700,6 +700,7 @@ class Okex(Coin):
                 orderIDs, fSymbol, tSymbol, err)
             raise OkexException(errStr)
 
+    # one click cancle all orders
     def oneClickCancleOrders(self):
         try:
             res = self.getTradeOpen()
@@ -713,6 +714,7 @@ class Okex(Coin):
             errStr = "src.core.coin.okex.Okex.oneClickCancleOrders: exception err=%s" % err
             raise OkexException(errStr)
 
+    # one click trans all to baseCoin
     def oneClickTransToBaseCoin(self, baseCoin='USDT'):
         try:
             exceptionStr = []

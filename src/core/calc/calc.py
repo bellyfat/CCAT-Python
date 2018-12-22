@@ -4,12 +4,12 @@ from itertools import combinations
 
 import pandas as pd
 from src.core.coin.binance import Binance
-from src.core.coin.enums import *
 from src.core.coin.enums import CCAT_ORDER_SIDE_BUY, CCAT_ORDER_SIDE_SELL
 from src.core.coin.huobi import Huobi
 from src.core.coin.okex import Okex
+from src.core.config import Config
 from src.core.db.db import DB
-from src.core.engine.enums import SIGNAL_AUTO
+from src.core.engine.enums import TYPE_DIS, TYPE_PAIR, TYPE_TRA
 from src.core.util.exceptions import CalcException, DBException
 from src.core.util.helper import utcnow_timestamp
 from src.core.util.log import Logger
@@ -17,17 +17,62 @@ from src.core.util.log import Logger
 
 class Calc(object):
     def __init__(self):
+        # config init
+        # proxies
+        self._proxies = Config()._Proxies_url if Config(
+        )._Proxies_proxies else None
+        # Okex
+        self._Okex_exchange = Config()._Okex_exchange
+        self._Okex_api_key = Config()._Okex_api_key
+        self._Okex_api_secret = Config()._Okex_api_secret
+        self._Okex_passphrase = Config()._Okex_passphrase
+        # Binance
+        self._Binance_exchange = Config()._Binance_exchange
+        self._Binance_api_key = Config()._Binance_api_key
+        self._Binance_api_secret = Config()._Binance_api_secret
+        # Huobi
+        self._Huobi_exchange = Config()._Huobi_exchange
+        self._Huobi_api_key = Config()._Huobi_api_key
+        self._Huobi_api_secret = Config()._Huobi_api_secret
+        self._Huobi_acct_id = Config()._Huobi_acct_id
+        # Coin API init
+        self._Okex = Okex(self._Okex_exchange, self._Okex_api_key,
+                          self._Okex_api_secret, self._Okex_passphrase,
+                          self._proxies)
+        self._Binance = Binance(self._Binance_exchange, self._Binance_api_key,
+                                self._Binance_api_secret, self._proxies)
+        self._Huobi = Huobi(self._Huobi_exchange, self._Huobi_api_key,
+                            self._Huobi_api_secret, self._Huobi_acct_id,
+                            self._proxies)
         # logger
         self._logger = Logger()
 
-    def calcSignalInitTrans(self, signals):
+    def calcServerTrans
+
+    def calcSignalPreTrans(self, signal, baseCoin, resInfoSymbol):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcSignalInitTrans: {signals=%s}" % signals)
+            "src.core.calc.calc.Calc.calcSignalPreTrans: {self, signal=%s, baseCoin=%s, resInfoSymbol=%s}"
+            % (self, signal, baseCoin, 'resInfoSymbol'))
         try:
-            pass
+            res = []
+            type = signal['type']
+            if type == TYPE_DIS:
+                bid_server = signal['bid_server']
+                ask_server = signal['ask_server']
+                fSymbol = signal['fSymbol']
+                tSymbol = signal['tSymbol']
+                base_start = signal['base_start']
+
+            if server == self._Okex_exchange:
+                self._Okex.getMarketOrderbookDepth(fSymbol, tSymbol)
+            if fSymbol_base > 0:
+                if tSymbol == baseCoin:
+                    pass
+
+
         except (DBException, Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcBacktestSignals: {exchange=%s, types=%s, auto=%s}, exception err=" % (
-                exchange, types, auto, err)
+            errStr = "src.core.calc.calc.Calc.calcSignalPreTrans: {self, signal=%s, baseCoin=%s, resInfoSymbol=%s}, exception err=" % (
+                 signal, baseCoin, 'resInfoSymbol', err)
             raise CalcException(errStr)
 
     def calcStatisticSignalTickerDis(self, exchange, timeWindow):
@@ -134,7 +179,7 @@ class Calc(object):
                 df = pd.DataFrame(signal)
                 # calc
                 for (server, symbol_pair), group in df.groupby(
-                        ['server', 'symbol_pair']):
+                    ['server', 'symbol_pair']):
                     # calc timeStamp
                     period = []
                     periodTime = 0
@@ -201,8 +246,8 @@ class Calc(object):
 
     def calcStatisticSignalTickerPair(self, exchange, timeWindow):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcStatisticSignalTickerPair: {exchange=%s}"
-            % exchange)
+            "src.core.calc.calc.Calc.calcStatisticSignalTickerPair: {exchange=%s, timeWindow=%s}"
+            % (exchange, timeWindow))
         try:
             statistic = []
             db = DB()
@@ -292,7 +337,7 @@ class Calc(object):
     def calcJudgeSignalTickerDis(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
             "src.core.calc.calc.Calc.calcJudgeSignalTickerDis: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
-            % (exchange, threshold, resInfoSymbol))
+            % (exchange, threshold, 'resInfoSymbol'))
         try:
             db = DB()
             signal = []
@@ -309,12 +354,12 @@ class Calc(object):
                         (resInfoSymbol['server'] == r['bid_server'])
                         & (resInfoSymbol['fSymbol'] == r['fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     r['ask_fee'] = resInfoSymbol[
                         (resInfoSymbol['server'] == r['ask_server'])
                         & (resInfoSymbol['fSymbol'] == r['fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     if r['bid_fee'] == 'NULL':
                         r['bid_fee'] = 0
                     if r['ask_fee'] == 'NULL':
@@ -324,33 +369,33 @@ class Calc(object):
                     r['ask_size'] = min(r['bid_size'], r['ask_size'])
                     # calc base price
                     tSymbol_base_price = (
-                        r['bid_price_base'] / r['bid_price']
-                        + r['ask_price_base'] / r['ask_price']) / 2
+                        r['bid_price_base'] / r['bid_price'] +
+                        r['ask_price_base'] / r['ask_price']) / 2
                     # calc gain_base
                     r['gain_base'] = (
-                        r['bid_price'] * r['bid_size']
-                        - r['ask_price'] * r['ask_size'] - r['bid_price']
-                        * r['bid_size'] * r['bid_fee'] - r['ask_price']
-                        * r['ask_size'] * r['ask_fee']) * tSymbol_base_price
+                        r['bid_price'] * r['bid_size'] -
+                        r['ask_price'] * r['ask_size'] - r['bid_price'] *
+                        r['bid_size'] * r['bid_fee'] - r['ask_price'] *
+                        r['ask_size'] * r['ask_fee']) * tSymbol_base_price
                     # calc gain_ratio
                     r['gain_ratio'] = (
-                        r['bid_price'] - r['ask_price']
-                        - r['bid_price'] * r['bid_fee']
-                        - r['ask_price'] * r['ask_fee']) / r['ask_price']
+                        r['bid_price'] - r['ask_price'] -
+                        r['bid_price'] * r['bid_fee'] -
+                        r['ask_price'] * r['ask_fee']) / r['ask_price']
                     # calc signal
                     if r['gain_ratio'] > threshold:
                         signal.append(r)
             # return signal
             return signal
         except (DBException, Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerDis: {exchange=%s, timeWindow=%s}, exception err=%s" % (
-                exchange, timeWindow, err)
+            errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerDis: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
+                exchange, threshold, 'resInfoSymbol', err)
             raise CalcException(errStr)
 
     def calcJudgeSignalTickerTra(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
             "src.core.calc.calc.Calc.calcJudgeSignalTickerTra: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
-            % (exchange, threshold, resInfoSymbol))
+            % (exchange, threshold, 'resInfoSymbol'))
         try:
             db = DB()
             signal = []
@@ -417,17 +462,17 @@ class Calc(object):
                     (resInfoSymbol['server'] == r['server'])
                     & (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
                     & (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                     )]['fee_taker'].values[0]
+                       )]['fee_taker'].values[0]
                 r['V2_fee'] = resInfoSymbol[
                     (resInfoSymbol['server'] == r['server'])
                     & (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
                     & (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                     )]['fee_taker'].values[0]
+                       )]['fee_taker'].values[0]
                 r['V3_fee'] = resInfoSymbol[
                     (resInfoSymbol['server'] == r['server'])
                     & (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
                     & (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                     )]['fee_taker'].values[0]
+                       )]['fee_taker'].values[0]
                 if r['V1_fee'] == 'NULL':
                     r['V1_fee'] = 0
                 if r['V2_fee'] == 'NULL':
@@ -436,14 +481,14 @@ class Calc(object):
                     r['V3_fee'] = 0
                 # calc symbol base
                 V1_tSymbol_base_price = (
-                    r['V1_bid_one_price_base'] / r['V1_bid_one_price']
-                    + r['V1_ask_one_price_base'] / r['V1_ask_one_price']) / 2
+                    r['V1_bid_one_price_base'] / r['V1_bid_one_price'] +
+                    r['V1_ask_one_price_base'] / r['V1_ask_one_price']) / 2
                 V2_tSymbol_base_price = (
-                    r['V2_bid_one_price_base'] / r['V2_bid_one_price']
-                    + r['V2_ask_one_price_base'] / r['V2_ask_one_price']) / 2
+                    r['V2_bid_one_price_base'] / r['V2_bid_one_price'] +
+                    r['V2_ask_one_price_base'] / r['V2_ask_one_price']) / 2
                 V3_tSymbol_base_price = (
-                    r['V3_bid_one_price_base'] / r['V3_bid_one_price']
-                    + r['V3_ask_one_price_base'] / r['V3_ask_one_price']) / 2
+                    r['V3_bid_one_price_base'] / r['V3_bid_one_price'] +
+                    r['V3_ask_one_price_base'] / r['V3_ask_one_price']) / 2
                 # Begin Calc Gain
                 if r['C3_symbol'] == r['V3_fSymbol']:
                     # Type clockwise: sell->buy->sell
@@ -455,16 +500,16 @@ class Calc(object):
                     r['V2_one_size'] = temp_size
                     r['V3_one_size'] = temp_size
                     # calc gain_base
-                    r['gain_base'] = (C1_C2_one_price * C3_C1_one_price
-                                      * (1 - r['V1_fee'])
-                                      * (1 - r['V3_fee']) - 1 / C2_C3_one_price
-                                      - 1 / C2_C3_one_price * r['V2_fee']
+                    r['gain_base'] = (C1_C2_one_price * C3_C1_one_price *
+                                      (1 - r['V1_fee']) *
+                                      (1 - r['V3_fee']) - 1 / C2_C3_one_price -
+                                      1 / C2_C3_one_price * r['V2_fee']
                                       ) * temp_size * V2_tSymbol_base_price
                     # calc gain_ratio
                     r['gain_ratio'] = (
-                        C1_C2_one_price * C3_C1_one_price * (1 - r['V1_fee'])
-                        * (1 - r['V3_fee']) - 1 / C2_C3_one_price - 1
-                        / C2_C3_one_price * r['V2_fee']) / (1 / C2_C3_one_price)
+                        C1_C2_one_price * C3_C1_one_price * (1 - r['V1_fee']) *
+                        (1 - r['V3_fee']) - 1 / C2_C3_one_price - 1 /
+                        C2_C3_one_price * r['V2_fee']) / (1 / C2_C3_one_price)
                 else:
                     # Type anti-clockwise: sell->buy->buy
                     # calc symbol size
@@ -476,17 +521,17 @@ class Calc(object):
                     r['V3_one_size'] = temp_size * C2_C3_one_price
                     # calc gain_base
                     r['gain_base'] = (
-                        C1_C2_one_price * (1 - r['V1_fee'])
-                        - (1 / (C2_C3_one_price * C3_C1_one_price))
-                        - (1 / (C2_C3_one_price * C3_C1_one_price))
-                        * (r['V2_fee'] + r['V3_fee'] - r['V2_fee'] * r['V3_fee'])
+                        C1_C2_one_price * (1 - r['V1_fee']) -
+                        (1 / (C2_C3_one_price * C3_C1_one_price)) -
+                        (1 / (C2_C3_one_price * C3_C1_one_price)) *
+                        (r['V2_fee'] + r['V3_fee'] - r['V2_fee'] * r['V3_fee'])
                     ) * temp_size * V1_tSymbol_base_price
                     # calc gain_ratio
                     r['gain_ratio'] = (
-                        C1_C2_one_price * (1 - r['V1_fee'])
-                        - (1 / (C2_C3_one_price * C3_C1_one_price))
-                        - (1 / (C2_C3_one_price * C3_C1_one_price))
-                        * (r['V2_fee'] + r['V3_fee'] - r['V2_fee'] * r['V3_fee'])
+                        C1_C2_one_price * (1 - r['V1_fee']) -
+                        (1 / (C2_C3_one_price * C3_C1_one_price)) -
+                        (1 / (C2_C3_one_price * C3_C1_one_price)) *
+                        (r['V2_fee'] + r['V3_fee'] - r['V2_fee'] * r['V3_fee'])
                     ) / (1 / (C2_C3_one_price * C3_C1_one_price))
                 # calc signal
                 if r['gain_ratio'] > threshold:
@@ -494,14 +539,14 @@ class Calc(object):
             # return signal
             return signal
         except (DBException, Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerTra: {exchange=%s, timeWindow=%s}, exception err=%s" % (
-                exchange, timeWindow, err)
+            errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerTra: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
+                exchange, threshold, 'resInfoSymbol', err)
             raise CalcException(errStr)
 
     def calcJudgeSignalTickerPair(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
             "src.core.calc.calc.Calc.calcJudgeSignalTickerPair: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
-            % (exchange, threshold, resInfoSymbol))
+            % (exchange, threshold, 'resInfoSymbol'))
         try:
             db = DB()
             signal = []
@@ -598,32 +643,32 @@ class Calc(object):
                         (resInfoSymbol['server'] == r['J1_server'])
                         & (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     r['J1_V2_fee'] = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J1_server'])
                         & (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     r['J1_V3_fee'] = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J1_server'])
                         & (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     r['J2_V1_fee'] = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J2_server'])
                         & (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     r['J2_V2_fee'] = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J2_server'])
                         & (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     r['J2_V3_fee'] = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J2_server'])
                         & (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                         )]['fee_taker'].values[0]
+                           )]['fee_taker'].values[0]
                     if r['J1_V1_fee'] == 'NULL':
                         r['J1_V1_fee'] = 0
                     if r['J1_V2_fee'] == 'NULL':
@@ -684,79 +729,79 @@ class Calc(object):
                                               r['J2_V3_one_size'])
                     # calc base price
                     # calc J1
-                    J1_V1_tSymbol_base_price = (r['J1_V1_bid_one_price_base']
-                                                / r['J1_V1_bid_one_price']
-                                                + r['J1_V1_ask_one_price_base']
-                                                / r['J1_V1_ask_one_price']) / 2
-                    J1_V2_tSymbol_base_price = (r['J1_V2_bid_one_price_base']
-                                                / r['J1_V2_bid_one_price']
-                                                + r['J1_V2_ask_one_price_base']
-                                                / r['J1_V2_ask_one_price']) / 2
-                    J1_V3_tSymbol_base_price = (r['J1_V3_bid_one_price_base']
-                                                / r['J1_V3_bid_one_price']
-                                                + r['J1_V3_ask_one_price_base']
-                                                / r['J1_V3_ask_one_price']) / 2
+                    J1_V1_tSymbol_base_price = (r['J1_V1_bid_one_price_base'] /
+                                                r['J1_V1_bid_one_price'] +
+                                                r['J1_V1_ask_one_price_base'] /
+                                                r['J1_V1_ask_one_price']) / 2
+                    J1_V2_tSymbol_base_price = (r['J1_V2_bid_one_price_base'] /
+                                                r['J1_V2_bid_one_price'] +
+                                                r['J1_V2_ask_one_price_base'] /
+                                                r['J1_V2_ask_one_price']) / 2
+                    J1_V3_tSymbol_base_price = (r['J1_V3_bid_one_price_base'] /
+                                                r['J1_V3_bid_one_price'] +
+                                                r['J1_V3_ask_one_price_base'] /
+                                                r['J1_V3_ask_one_price']) / 2
                     # calc J2
-                    J2_V1_tSymbol_base_price = (r['J2_V1_bid_one_price_base']
-                                                / r['J2_V1_bid_one_price']
-                                                + r['J2_V1_ask_one_price_base']
-                                                / r['J2_V1_ask_one_price']) / 2
-                    J2_V2_tSymbol_base_price = (r['J2_V2_bid_one_price_base']
-                                                / r['J2_V2_bid_one_price']
-                                                + r['J2_V2_ask_one_price_base']
-                                                / r['J2_V2_ask_one_price']) / 2
-                    J2_V3_tSymbol_base_price = (r['J2_V3_bid_one_price_base']
-                                                / r['J2_V3_bid_one_price']
-                                                + r['J2_V3_ask_one_price_base']
-                                                / r['J2_V3_ask_one_price']) / 2
+                    J2_V1_tSymbol_base_price = (r['J2_V1_bid_one_price_base'] /
+                                                r['J2_V1_bid_one_price'] +
+                                                r['J2_V1_ask_one_price_base'] /
+                                                r['J2_V1_ask_one_price']) / 2
+                    J2_V2_tSymbol_base_price = (r['J2_V2_bid_one_price_base'] /
+                                                r['J2_V2_bid_one_price'] +
+                                                r['J2_V2_ask_one_price_base'] /
+                                                r['J2_V2_ask_one_price']) / 2
+                    J2_V3_tSymbol_base_price = (r['J2_V3_bid_one_price_base'] /
+                                                r['J2_V3_bid_one_price'] +
+                                                r['J2_V3_ask_one_price_base'] /
+                                                r['J2_V3_ask_one_price']) / 2
                     tSymbol_base_price = (
-                        (J1_V1_tSymbol_base_price + J2_V1_tSymbol_base_price)
-                        * (r['J1_V1_one_size'] + r['J2_V1_one_size'])
-                        + (J1_V2_tSymbol_base_price + J2_V2_tSymbol_base_price)
-                        * (r['J1_V2_one_size'] + r['J2_V2_one_size'])
-                        + (J1_V3_tSymbol_base_price + J2_V3_tSymbol_base_price)
-                        * (r['J1_V3_one_size'] + r['J2_V3_one_size'])) / (
-                            r['J1_V1_one_size'] + r['J2_V1_one_size']
-                            + r['J1_V2_one_size'] + r['J2_V2_one_size']
-                            + r['J1_V3_one_size'] + r['J2_V3_one_size'])
+                        (J1_V1_tSymbol_base_price + J2_V1_tSymbol_base_price) *
+                        (r['J1_V1_one_size'] + r['J2_V1_one_size']) +
+                        (J1_V2_tSymbol_base_price + J2_V2_tSymbol_base_price) *
+                        (r['J1_V2_one_size'] + r['J2_V2_one_size']) +
+                        (J1_V3_tSymbol_base_price + J2_V3_tSymbol_base_price) *
+                        (r['J1_V3_one_size'] + r['J2_V3_one_size'])) / (
+                            r['J1_V1_one_size'] + r['J2_V1_one_size'] +
+                            r['J1_V2_one_size'] + r['J2_V2_one_size'] +
+                            r['J1_V3_one_size'] + r['J2_V3_one_size'])
                     # Begin Calc Gain
                     C1_symbol_gain_ratio_up = (
-                        r['J1_V1_one_price'] - r['J2_V1_one_price']
-                        - r['J1_V1_one_price'] * r['J1_V1_fee']
-                        - r['J2_V1_one_price'] * r['J2_V1_fee']) * (
+                        r['J1_V1_one_price'] - r['J2_V1_one_price'] -
+                        r['J1_V1_one_price'] * r['J1_V1_fee'] -
+                        r['J2_V1_one_price'] * r['J2_V1_fee']) * (
                             r['J1_V1_one_size'] + r['J2_V1_one_size']) / 2
                     C1_symbol_gain_ratio_dn = r['J2_V1_one_price'] * (
                         r['J1_V1_one_size'] + r['J2_V1_one_size']) / 2
                     C2_symbol_gain_ratio_up = (
-                        r['J1_V2_one_price'] - r['J2_V2_one_price']
-                        - r['J1_V2_one_price'] * r['J1_V2_fee']
-                        - r['J2_V2_one_price'] * r['J2_V2_fee']) * (
+                        r['J1_V2_one_price'] - r['J2_V2_one_price'] -
+                        r['J1_V2_one_price'] * r['J1_V2_fee'] -
+                        r['J2_V2_one_price'] * r['J2_V2_fee']) * (
                             r['J1_V2_one_size'] + r['J2_V2_one_size']) / 2
                     C2_symbol_gain_ratio_dn = r['J2_V2_one_price'] * (
                         r['J1_V2_one_size'] + r['J2_V2_one_size']) / 2
                     C3_symbol_gain_ratio_up = (
-                        r['J1_V3_one_price'] - r['J2_V3_one_price']
-                        - r['J1_V3_one_price'] * r['J1_V3_fee']
-                        - r['J2_V3_one_price'] * r['J2_V3_fee']) * (
+                        r['J1_V3_one_price'] - r['J2_V3_one_price'] -
+                        r['J1_V3_one_price'] * r['J1_V3_fee'] -
+                        r['J2_V3_one_price'] * r['J2_V3_fee']) * (
                             r['J1_V3_one_size'] + r['J2_V3_one_size']) / 2
                     C3_symbol_gain_ratio_dn = r['J2_V3_one_price'] * (
                         r['J1_V3_one_size'] + r['J2_V3_one_size']) / 2
                     # calc gain_base
                     r['gain_base'] = (
-                        C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up
-                        + C3_symbol_gain_ratio_up) * tSymbol_base_price
+                        C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up +
+                        C3_symbol_gain_ratio_up) * tSymbol_base_price
                     # calc gain_ratio
                     r['gain_ratio'] = (
-                        C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up
-                        + C3_symbol_gain_ratio_up) / (
-                            C1_symbol_gain_ratio_dn + C2_symbol_gain_ratio_dn
-                            + C3_symbol_gain_ratio_dn)
+                        C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up +
+                        C3_symbol_gain_ratio_up) / (
+                            C1_symbol_gain_ratio_dn + C2_symbol_gain_ratio_dn +
+                            C3_symbol_gain_ratio_dn)
                     # calc signal
                     if r['gain_ratio'] > threshold:
                         signal.append(r)
             # return signal
             return signal
         except (DBException, Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerPair: {exchange=%s, timeWindow=%s}, exception err=%s" % (
-                exchange, timeWindow, err)
+            errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerPair: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
+                exchange, threshold, 'resInfoSymbol', err)
             raise CalcException(errStr)

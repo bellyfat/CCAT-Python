@@ -522,7 +522,7 @@ class Util(object):
             % (async, timeout))
         try:
             ids = []
-            sig = Signal()
+            sgn = Signal()
             startTime = time.time()
             for type in self._types:
                 if not time.time(
@@ -531,7 +531,7 @@ class Util(object):
                         "src.core.util.util.Util.updateDBBacktestHistoryCreat: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout." % (async, timeout))
                     break
                 # calc signals
-                signals = sig.signals(self._exchanges, [type])
+                signals = sgn.signals(self._exchanges, [type])
                 if not signals == []:
                     df = pd.DataFrame(signals)
                     if type == TYPE_DIS:
@@ -624,7 +624,7 @@ class Util(object):
                     break
                 epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "info_second"])
-                res = db.getInfoSymbol([server])
+                res = db.getViewMarketSymbolPairs([server])
                 td = Thread(
                     target=self.threadSendInsertDBOrderHistory,
                     name="%s-thread" % server,

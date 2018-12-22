@@ -834,6 +834,7 @@ class Huobi(Coin):
                 orderIDs, fSymbol, tSymbol, err)
             raise HuobiException(errStr)
 
+    # one click cancle all orders
     def oneClickCancleOrders(self):
         try:
             res = self._huobiAPI.cancel_open_orders()
@@ -847,6 +848,7 @@ class Huobi(Coin):
             errStr = "src.core.coin.huobi.Huobi.oneClickCancleOrders: exception err=%s" % err
             raise HuobiException(errStr)
 
+    # one click trans all to baseCoin
     def oneClickTransToBaseCoin(self, baseCoin='USDT'):
         try:
             exceptionStr = []

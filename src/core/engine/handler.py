@@ -143,7 +143,7 @@ class Handler(object):
         try:
             db = DB()
             calc = Calc()
-            resInfoSymbol = pd.DataFrame(db.getInfoSymbol(exchange))
+            resInfoSymbol = pd.DataFrame(db.getViewMarketSymbolPairs(exchange))
             prs = []
             # calc dis type
             if TYPE_DIS in types:
@@ -178,8 +178,11 @@ class Handler(object):
         [signals, timeout] = event.args
         signals = str_to_list(signals)
         try:
-            sgl = Signal(signals)
-            res = sgl.backtestSignals(timeout)
+            db = DB()
+            sgn = Signal(signals)
+            resInfoSymbol = pd.DataFrame(db.getViewMarketSymbolPairs(exchange))
+            # pre trans
+            res = sgn.backtestSignalsPreTrans(resInfoSymbol, timeout)
 
             pass
         except (DBException, CalcException, EngineException, Exception) as err:

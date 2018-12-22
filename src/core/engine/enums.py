@@ -3,10 +3,6 @@
 from src.core.config import Config
 from src.core.util.helper import MyTemplate
 
-# CCAT signal
-SIGNAL_AUTO = Config()._Signal_auto
-SIGNAL_SIGNALS = Config()._Signal_signals
-
 # CCAT types timeWindow
 TYPE_DIS_TIMEWINDOW = Config()._Main_typeDisTimeWindow*1000
 TYPE_TRA_TIMEWINDOW = Config()._Main_typeTraTimeWindow*1000

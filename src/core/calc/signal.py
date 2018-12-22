@@ -4,9 +4,9 @@ import ast
 import json
 
 from src.core.calc.calc import Calc
+from src.core.calc.enums import SIGNAL_AUTO, SIGNAL_BASECOIN, SIGNAL_SIGNALS
 from src.core.db.db import DB
-from src.core.engine.enums import (SIGNAL_AUTO, SIGNAL_SIGNALS, TYPE_DIS,
-                                   TYPE_PAIR, TYPE_TRA)
+from src.core.engine.enums import TYPE_DIS, TYPE_PAIR, TYPE_TRA
 from src.core.util.exceptions import CalcException
 from src.core.util.helper import tuple_str_to_list
 from src.core.util.log import Logger
@@ -50,23 +50,24 @@ class Signal(object):
             for s in strList:
                 signal = {}
                 if s['type'] == TYPE_DIS:
-                    if (types == 'all' or TYPE_DIS in types) and (exchange == 'all' or (s['bid_server'] in exchange and s['ask_server'] in exchange)):
+                    if (types == 'all' or TYPE_DIS in types) and (
+                            exchange == 'all' or
+                        (s['bid_server'] in exchange
+                         and s['ask_server'] in exchange)):
                         signal['type'] = s['type']
                         signal['bid_server'] = s['bid_server']
                         signal['ask_server'] = s['ask_server']
                         signal['fSymbol'] = s['fSymbol']
                         signal['tSymbol'] = s['tSymbol']
-                        signal['forward_ratio'] = float(
-                            s['forward_ratio'])
-                        signal['backward_ratio'] = float(
-                            s['backward_ratio'])
+                        signal['forward_ratio'] = float(s['forward_ratio'])
+                        signal['backward_ratio'] = float(s['backward_ratio'])
                         signal['base_start'] = float(s['base_start'])
                         signal['base_gain'] = float(s['base_gain'])
                         signal['base_timeout'] = float(s['base_timeout'])
                 if s['type'] == TYPE_TRA:
-                    if (types == 'all' or TYPE_TRA in types) and (exchange == 'all' or s['server'] in exchange):
-                        tuple = tuple_str_to_list(
-                            s['symbol_pair'])
+                    if (types == 'all' or TYPE_TRA in types) and (
+                            exchange == 'all' or s['server'] in exchange):
+                        tuple = tuple_str_to_list(s['symbol_pair'])
                         signal['type'] = s['type']
                         signal['server'] = s['server']
                         signal['V1_fSymbol'] = tuple[0][0]
@@ -79,9 +80,11 @@ class Signal(object):
                         signal['base_gain'] = float(s['base_gain'])
                         signal['base_timeout'] = float(s['base_timeout'])
                 if s['type'] == TYPE_PAIR:
-                    if (types == 'all' or TYPE_PAIR in types) and (exchange == 'all' or (s['J1_server'] in exchange and s['J2_server'] in exchange)):
-                        tuple = tuple_str_to_list(
-                            s['symbol_pair'])
+                    if (types == 'all' or TYPE_PAIR in types) and (
+                            exchange == 'all' or
+                        (s['J1_server'] in exchange
+                         and s['J2_server'] in exchange)):
+                        tuple = tuple_str_to_list(s['symbol_pair'])
                         signal['type'] = s['type']
                         signal['J1_server'] = s['J1_server']
                         signal['J2_server'] = s['J2_server']
@@ -102,8 +105,15 @@ class Signal(object):
             errStr = "src.core.calc.signal.Signal.signals, exception err=%s" % err
             raise CalcException(errStr)
 
-    def backtestSignals(self, timeout=30):
-        self._logger.debug("src.core.calc.signal.Signal.backtestSignals")
-        for signal in self._signals:
-            print(signal)
-        pass
+    def backtestSignalsPreTrans(self, resInfoSymbol, timeout=30):
+        self._logger.debug("src.core.calc.signal.Signal.backtestSignals: {resInfoSymbol=%s, timeout=%s}" % ('resInfoSymbol', timeout))
+        try:
+            if not self._signals:
+                raise Exception("NO SIGNAL ERROR, signals empty.")
+            calc = Calc()
+            for signal in self._signals:
+                res = calc.calcSignalInitTrans(signal, SIGNAL_BASECOIN, resInfoSymbol)
+            pass
+        except Exception as err:
+            errStr = "src.core.calc.signal.Signal.backtestSignals: {resInfoSymbol=%s, timeout=%s}, exception err=%s" % ('resInfoSymbol', timeout, err)
+            raise CalcException(errStr)

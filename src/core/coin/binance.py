@@ -722,6 +722,7 @@ class Binance(Coin):
                 orderIDs, fSymbol, tSymbol, err)
             raise BinanceException(errStr)
 
+    # one click cancle all orders
     def oneClickCancleOrders(self):
         try:
             res = self.getTradeOpen()
@@ -736,6 +737,7 @@ class Binance(Coin):
             errStr = "src.core.coin.binance.Binance.oneClickCancleOrders: exception err=%s" % err
             raise BinanceException(errStr)
 
+    # one click trans all to baseCoin
     def oneClickTransToBaseCoin(self, baseCoin='USDT'):
         try:
             exceptionStr = []
