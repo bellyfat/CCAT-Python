@@ -52,7 +52,7 @@ class EventEngine(object):
                 # 执行 Epoch
                 time.sleep(self.__epoch)
                 # 控制最大进程数量
-                if self.__status.calcActiveEventNum() > int(self.__maxProcess):
+                if self.getActiveEventNum() > int(self.__maxProcess):
                     self.__logger.warn(
                         "src.core.engine.engine.EventEngine.__mainProcess.__run.__eventQueue: Too Many"
                     )
@@ -66,12 +66,12 @@ class EventEngine(object):
                         event = self.__highEventQueue.get(block=False)
                         while utcnow_timestamp(
                         ) - event.timeStamp > HIGH_PRIORITY_EVENT_TIMEOUT:
+                            self.__status.delEventStatus(event)
                             if not self.__highEventQueue.empty():
                                 self.__logger.error(
                                     "src.core.engine.engine.EventEngine.__mainProcess.__run.__highEventQueue TIMEOUT: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
                                     % (event.id, event.type, event.priority,
                                        event.timeStamp, event.args))
-                                self.__status.delEventStatus(event)
                                 event = self.__highEventQueue.get(block=False)
                             else:
                                 event = None
@@ -84,12 +84,12 @@ class EventEngine(object):
                         event = self.__mediumEventQueue.get(block=False)
                         while utcnow_timestamp(
                         ) - event.timeStamp > MEDIUM_PRIORITY_EVENT_TIMEOUT:
+                            self.__status.delEventStatus(event)
                             if not self.__mediumEventQueue.empty():
                                 self.__logger.error(
                                     "src.core.engine.engine.EventEngine.__mainProcess.__run.__mediumEventQueue TIMEOUT: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
                                     % (event.id, event.type, event.priority,
                                        event.timeStamp, event.args))
-                                self.__status.delEventStatus(event)
                                 event = self.__mediumEventQueue.get(
                                     block=False)
                             else:
@@ -103,16 +103,17 @@ class EventEngine(object):
                         event = self.__lowEnventQueue.get(block=False)
                         while utcnow_timestamp(
                         ) - event.timeStamp > LOW_PRIORITY_EVENT_TIMEOUT:
+                            self.__status.delEventStatus(event)
                             if not self.__lowEnventQueue.empty():
                                 self.__logger.error(
                                     "src.core.engine.engine.EventEngine.__mainProcess.__run.__lowEnventQueue TIMEOUT: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
                                     % (event.id, event.type, event.priority,
                                        event.timeStamp, event.args))
-                                self.__status.delEventStatus(event)
                                 event = self.__lowEnventQueue.get(block=False)
                             else:
                                 event = None
                                 break
+
                     # 事件队列非空
                     if not event == None:
                         # 执行事件
@@ -156,10 +157,10 @@ class EventEngine(object):
                         target=handler, args=(event, self.__status.delEventStatus))
                     # 运行进程
                     p.start()
-                    # 保存到进程池
-                    self.__processPool.append((event.id, p.pid))
                     # 同步抄送至事件运行状态表格里
                     self.__status.addEventStatus(event.id)
+                    # 保存到进程池
+                    self.__processPool.append((event.id, p.pid))
         except Exception as err:
             errStr = "src.core.engine.engine.EventEngine.__mainProcess.__run.__process: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}, exception err=%s" % (
                 event.id, event.type, event.priority, event.timeStamp, event.args, EngineException(err))
@@ -327,6 +328,18 @@ class EventEngine(object):
             return status
         except Exception as err:
             errStr = "src.core.engine.engine.EventEngine.getEventStatus: exception err=%s" % EngineException(
+                err)
+            raise EngineException(errStr)
+
+    def getActiveEventNum(self):
+        try:
+            res = self.__status.calcActiveEventNum()
+            self.__logger.debug(
+                "src.core.engine.engine.EventEngine.getActiveEventNum: {res=%s}" %
+                res)
+            return res
+        except Exception as err:
+            errStr = "src.core.engine.engine.EventEngine.getActiveEventNum: exception err=%s" % EngineException(
                 err)
             raise EngineException(errStr)
 
