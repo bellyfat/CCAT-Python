@@ -86,7 +86,7 @@
   baseCoin = USDT
   basePriceVolume = 10000
   basePriceTimeout = 60
-  baseJudgeTimeout = 1800
+  baseJudgeTimeout = 300
   baseStatisticTimeout = 3600
   ###########################################
   # plug and play param, change as you need #
@@ -101,9 +101,9 @@
   judgeSignalTickerCycle = 604800
   statisticSignalTickerCycle = 604800
   asyncAccount = True
-  syncAccountTimeout = 60
+  syncAccountTimeout = 90
   asyncMarketKline = False
-  syncMarketKlineTimeout = 90
+  syncMarketKlineTimeout = 180
   asyncMarketDepth = False
   syncMarketDepthTimeout = 60
   asyncMarketTicker = False
@@ -139,6 +139,7 @@
     {"type": "tra", "server": "huobi", "symbol_pair": "[('CTXC', 'ETH'), ('CTXC', 'USDT'), ('ETH', 'USDT')]", "base_start":20, "base_gain": 0.01, "base_timeout": 300},
     {"type": "pair", "J1_server": "okex", "J2_server": "binance", "symbol_pair": "[('ETH', 'BTC'), ('ZEC', 'BTC'), ('ZEC', 'ETH')]", "base_start":20, "base_gain": 0.01, "base_timeout": 300}]
 
+
 ################################################################################
 # Router Settings
 # epoch: router loop epoch
@@ -151,13 +152,13 @@
 ################################################################################
 # Engine Settings
 # epoch: engine loop epoch
-# maxProcess: engine handle max process
-# cacheSize: engine process result cache size
+# maxProcess: engine handle max process, depends on pc environment
+# cacheSize: engine process result cache size, should be a big integer
 ################################################################################
 [Engine]
   epoch = 0.01
-  maxProcess = 2048
-  cacheSize = 4096
+  maxProcess = 128
+  cacheSize = 2048
 
 ################################################################################
 # Event Settings
@@ -166,9 +167,9 @@
 # highTimeout: high event timeout
 ################################################################################
 [Event]
-  lowTimeout = 60
-  mediumTimeout = 30
-  highTimeout = 15
+  lowTimeout = 120
+  mediumTimeout = 60
+  highTimeout = 30
 
 ################################################################################
 # Log Settings
