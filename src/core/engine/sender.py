@@ -202,13 +202,14 @@ class Sender(object):
             raise EngineException(errStr)
 
     # Backtest 事件
-    def sendBacktestHistoryCreatEvent(self, signals, timeout):
+    def sendBacktestHistoryCreatEvent(self, exchange, signals, timeout):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
                 BACKTEST_HISTORY_CREAT_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
+                    exchange=exchange,
                     signals=signals,
                     timeout=timeout))
             event = Event(TEMP_EVENT)

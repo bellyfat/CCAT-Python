@@ -105,15 +105,48 @@ class Signal(object):
             errStr = "src.core.calc.signal.Signal.signals, exception err=%s" % err
             raise CalcException(errStr)
 
-    def backtestSignalsPreTrans(self, resInfoSymbol, timeout=30):
+    def backtestSignals(self, resInfoSymbol, timeout=30):
         self._logger.debug("src.core.calc.signal.Signal.backtestSignals: {resInfoSymbol=%s, timeout=%s}" % ('resInfoSymbol', timeout))
         try:
             if not self._signals:
                 raise Exception("NO SIGNAL ERROR, signals empty.")
-            calc = Calc()
-            for signal in self._signals:
-                res = calc.calcSignalInitTrans(signal, SIGNAL_BASECOIN, resInfoSymbol)
-            pass
+            # pre trans
+            self._backtestSignalsPreTrans(self._signals, resInfoSymbol, timeout)
+            # run trans
+            self._backtestSignalsRunTrans(self._signals, resInfoSymbol, timeout)
+            # after trans
+            self._backtestSignalsAfterTrans(self._signals, resInfoSymbol, timeout)
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.backtestSignals: {resInfoSymbol=%s, timeout=%s}, exception err=%s" % ('resInfoSymbol', timeout, err)
+            raise CalcException(errStr)
+
+    def _backtestSignalsPreTrans(self, signals, resInfoSymbol, timeout=30):
+        self._logger.debug("src.core.calc.signal.Signal._backtestSignalsPreTrans: {resInfoSymbol=%s, timeout=%s}" % ('resInfoSymbol', timeout))
+        try:
+            calc = Calc()
+            orders = []
+            for signal in signals:
+                order = calc.calcSignalPreTransOrders(signal, resInfoSymbol, SIGNAL_BASECOIN)
+                orders.append(order)
+            # print(orders)
+            # do orders
+
+        except Exception as err:
+            errStr = "src.core.calc.signal.Signal._backtestSignalsPreTrans: {resInfoSymbol=%s, timeout=%s}, exception err=%s" % ('resInfoSymbol', timeout, err)
+            raise CalcException(errStr)
+
+    def _backtestSignalsRunTrans(self, signals, resInfoSymbol, timeout=30):
+        self._logger.debug("src.core.calc.signal.Signal._backtestSignalsRunTrans: {resInfoSymbol=%s, timeout=%s}" % ('resInfoSymbol', timeout))
+        try:
+            pass
+        except Exception as err:
+            errStr = "src.core.calc.signal.Signal._backtestSignalsRunTrans: {resInfoSymbol=%s, timeout=%s}, exception err=%s" % ('resInfoSymbol', timeout, err)
+            raise CalcException(errStr)
+
+    def _backtestSignalsAfterTrans(self, signals, resInfoSymbol, timeout=30):
+        self._logger.debug("src.core.calc.signal.Signal._backtestSignalsAfterTrans: {resInfoSymbol=%s, timeout=%s}" % ('resInfoSymbol', timeout))
+        try:
+            pass
+        except Exception as err:
+            errStr = "src.core.calc.signal.Signal._backtestSignalsAfterTrans: {resInfoSymbol=%s, timeout=%s}, exception err=%s" % ('resInfoSymbol', timeout, err)
             raise CalcException(errStr)

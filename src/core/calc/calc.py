@@ -4,13 +4,14 @@ from itertools import combinations
 
 import pandas as pd
 from src.core.coin.binance import Binance
-from src.core.coin.enums import CCAT_ORDER_SIDE_BUY, CCAT_ORDER_SIDE_SELL
+from src.core.coin.enums import CCAT_ORDER_SIDE_BUY, CCAT_ORDER_SIDE_SELL, CCAT_ORDER_TYPE_LIMIT
 from src.core.coin.huobi import Huobi
 from src.core.coin.okex import Okex
 from src.core.config import Config
 from src.core.db.db import DB
 from src.core.engine.enums import TYPE_DIS, TYPE_PAIR, TYPE_TRA
-from src.core.util.exceptions import CalcException, DBException
+from src.core.util.exceptions import (BinanceException, CalcException,
+                                      HuobiException, OkexException)
 from src.core.util.helper import utcnow_timestamp
 from src.core.util.log import Logger
 
@@ -47,32 +48,108 @@ class Calc(object):
         # logger
         self._logger = Logger()
 
-    def calcServerTrans
+    def _calcSymbolTransOrders(self):
+        self._logger.debug("src.core.calc.calc.Calc._calcSymbolTransOrders:")
+        try:
+            pass
+        except (BinanceException, HuobiException, OkexException, Exception) as err:
+            errStr = "src.core.calc.calc.Calc._calcSymbolTransOrders: exception err=" % err
+            raise CalcException(errStr)
 
-    def calcSignalPreTrans(self, signal, baseCoin, resInfoSymbol):
+    def _calcSymbolPreTransOrders(self, server, fSymbol, tSymbol, fSymbol_base,
+                                  tSymbol_base, resInfoSymbol, baseCoin):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcSignalPreTrans: {self, signal=%s, baseCoin=%s, resInfoSymbol=%s}"
-            % (self, signal, baseCoin, 'resInfoSymbol'))
+            "src.core.calc.calc.Calc._calcSymbolPreTransOrders:")
+        try:
+            print('in here')
+            orders = []
+            price_precision = 0
+            size_precision = 0
+            size_min = 0
+            fee_ratio = 0
+            # handle fSymbol
+            if fSymbol_base > 0:
+                # de: direct trans
+                isDe = resInfoSymbol[(resInfoSymbol['server'] == server) & (resInfoSymbol['fSymbol']==fSymbol) & (resInfoSymbol['tSymbol']== baseCoin)]
+                if not isDe.empty:
+                    if not isDe['limit_price_precision'].values[0] == 'NULL':
+                        price_precision =  isDe['limit_price_precision'].values[0]
+                    if not isDe['limit_size_precision'].values[0] == 'NULL':
+                        size_precision =  isDe['limit_size_precision'].values[0]
+                    if not isDe['limit_size_min'].values[0] == 'NULL':
+                        size_min =  isDe['limit_size_min'].values[0]
+                    if not isDe['fee_taker'].values[0] == 'NULL':
+                        fee_ratio = isDe['fee_taker'].values[0]
+                    if sever == self._Okex_exchange:
+                        res = self._Okex.getMarketOrderbookDepth(fSymbol, tSymbol)
+                    if sever == self._Binance_exchange:
+                        res = self._Binance.getMarketOrderbookDepth(fSymbol, tSymbol)
+                    if sever == self._Huobi_exchange:
+                        res = self._Huobi.getMarketOrderbookDepth(fSymbol, tSymbol)
+                    # calc orders
+                    sum = 0
+                    nowPrice = float(res['bid_price_size'][0][0])
+                    deSize = fSymbol_base/nowPrice
+                    for r in res['ask_price_size']:
+                        rprice = float(r[0])
+                        rSize = float(r[1])
+                        if sum < deSize:
+
+
+                    order = {"exchange":server, "fSymbol":fSymbol, "tSymbol":baseCoin, "ask_or_bid":CCAT_ORDER_SIDE_BUY, "price":price, "quantity":quantity, "ratio":fee_ratio, "type":CCAT_ORDER_TYPE_LIMIT}
+                # tra: trangle trans
+
+            # handle tSymbol
+            if tSymbol_base >0:
+                # need no trans
+                if tSymbol == baseCoin:
+                    pass
+                # direct trans
+
+        except (BinanceException, HuobiException, OkexException, Exception) as err:
+            errStr = "src.core.calc.calc.Calc._calcSymbolPreTransOrders: exception err=" % err
+            raise CalcException(errStr)
+
+
+    def _calcSymbolRunTransOrders(self):
+        self._logger.debug(
+            "src.core.calc.calc.Calc._calcSymbolRunTransOrders:")
+        try:
+            pass
+        except (BinanceException, HuobiException, OkexException, Exception) as err:
+            errStr = "src.core.calc.calc.Calc._calcSymbolRunTransOrders: exception err=" % err
+            raise CalcException(errStr)
+
+    def _calcSymbolAfterTransOrders(self):
+        self._logger.debug(
+            "src.core.calc.calc.Calc._calcSymbolAfterTransOrders:")
+        try:
+            pass
+        except (BinanceException, HuobiException, OkexException, Exception) as err:
+            errStr = "src.core.calc.calc.Calc._calcSymbolAfterTransOrders: exception err=" % err
+            raise CalcException(errStr)
+
+    def calcSignalPreTransOrders(self, signal, resInfoSymbol, baseCoin):
+        self._logger.debug(
+            "src.core.calc.calc.Calc.calcSignalPreTransOrders: {signal=%s, resInfoSymbol=%s, baseCoin=%s}"
+            % (signal, 'resInfoSymbol', baseCoin))
         try:
             res = []
             type = signal['type']
             if type == TYPE_DIS:
-                bid_server = signal['bid_server']
-                ask_server = signal['ask_server']
-                fSymbol = signal['fSymbol']
-                tSymbol = signal['tSymbol']
-                base_start = signal['base_start']
+                bid_order = self._calcSymbolPreTransOrders(
+                    signal['bid_server'], signal['fSymbol'], signal['tSymbol'],
+                    signal['base_start'], 0, resInfoSymbol, baseCoin)
+                ask_order = self._calcSymbolPreTransOrders(
+                    signal['ask_server'], signal['fSymbol'], signal['tSymbol'],
+                    0, signal['base_start'], resInfoSymbol, baseCoin)
+                res.append(bid_server)
+                res.append(ask_server)
 
-            if server == self._Okex_exchange:
-                self._Okex.getMarketOrderbookDepth(fSymbol, tSymbol)
-            if fSymbol_base > 0:
-                if tSymbol == baseCoin:
-                    pass
-
-
-        except (DBException, Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcSignalPreTrans: {self, signal=%s, baseCoin=%s, resInfoSymbol=%s}, exception err=" % (
-                 signal, baseCoin, 'resInfoSymbol', err)
+            return res
+        except (BinanceException, HuobiException, OkexException, Exception) as err:
+            errStr = "src.core.calc.calc.Calc.calcSignalPreTransOrders: {self, signal=%s, resInfoSymbol=%s, baseCoin=%s}, exception err=" % (
+                signal, 'resInfoSymbol', baseCoin, err)
             raise CalcException(errStr)
 
     def calcStatisticSignalTickerDis(self, exchange, timeWindow):
@@ -152,7 +229,7 @@ class Calc(object):
                         # update statistic
                         statistic.append(sta)
             return statistic
-        except (DBException, Exception) as err:
+        except (BinanceException, HuobiException, OkexException, Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcStatisticSignalTickerDis: {exchange=%s, timeWindow=%s}, exception err=%s" % (
                 exchange, timeWindow, err)
             raise CalcException(errStr)
@@ -239,7 +316,7 @@ class Calc(object):
                     # update statistic
                     statistic.append(sta)
             return statistic
-        except (DBException, Exception) as err:
+        except (BinanceException, HuobiException, OkexException, Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcStatisticSignalTickerTra: {exchange=%s, timeWindow=%s}, exception err=%s" % (
                 exchange, timeWindow, err)
             raise CalcException(errStr)
@@ -329,7 +406,7 @@ class Calc(object):
                         # update statistic
                         statistic.append(sta)
             return statistic
-        except (DBException, Exception) as err:
+        except (BinanceException, HuobiException, OkexException, Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcStatisticSignalTickerPair: {exchange=%s, timeWindow=%s}, exception err=%s" % (
                 exchange, timeWindow, err)
             raise CalcException(errStr)
@@ -350,20 +427,24 @@ class Calc(object):
                     if not r['bid_price'] > r['ask_price']:
                         continue
                     # calc fees
-                    r['bid_fee'] = resInfoSymbol[
+                    r['bid_fee'] = 0
+                    bid_fee = resInfoSymbol[
                         (resInfoSymbol['server'] == r['bid_server'])
                         & (resInfoSymbol['fSymbol'] == r['fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['tSymbol']
-                           )]['fee_taker'].values[0]
-                    r['ask_fee'] = resInfoSymbol[
+                           )]['fee_taker']
+                    r['ask_fee'] = 0
+                    ask_fee = resInfoSymbol[
                         (resInfoSymbol['server'] == r['ask_server'])
                         & (resInfoSymbol['fSymbol'] == r['fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['tSymbol']
-                           )]['fee_taker'].values[0]
-                    if r['bid_fee'] == 'NULL':
-                        r['bid_fee'] = 0
-                    if r['ask_fee'] == 'NULL':
-                        r['ask_fee'] = 0
+                           )]['fee_taker']
+                    if not bid_fee.empty:
+                        if not bid_fee.values[0] == 'NULL':
+                            r['bid_fee'] = bid_fee.values[0]
+                    if not ask_fee.empty:
+                        if not ask_fee.values[0] == 'NULL':
+                            r['ask_fee'] = ask_fee.values[0]
                     # calc size
                     r['bid_size'] = min(r['bid_size'], r['ask_size'])
                     r['ask_size'] = min(r['bid_size'], r['ask_size'])
@@ -387,7 +468,7 @@ class Calc(object):
                         signal.append(r)
             # return signal
             return signal
-        except (DBException, Exception) as err:
+        except (BinanceException, HuobiException, OkexException, Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerDis: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
                 exchange, threshold, 'resInfoSymbol', err)
             raise CalcException(errStr)
@@ -458,27 +539,33 @@ class Calc(object):
                 if not C1_C2_one_price * C2_C3_one_price * C3_C1_one_price > 1:
                     continue
                 # calc fees
-                r['V1_fee'] = resInfoSymbol[
+                r['V1_fee'] = 0
+                V1_fee = resInfoSymbol[
                     (resInfoSymbol['server'] == r['server'])
                     & (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
                     & (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                       )]['fee_taker'].values[0]
-                r['V2_fee'] = resInfoSymbol[
+                       )]['fee_taker']
+                r['V2_fee'] = 0
+                V2_fee = resInfoSymbol[
                     (resInfoSymbol['server'] == r['server'])
                     & (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
                     & (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                       )]['fee_taker'].values[0]
-                r['V3_fee'] = resInfoSymbol[
+                       )]['fee_taker']
+                r['V3_fee'] = 0
+                V3_fee = resInfoSymbol[
                     (resInfoSymbol['server'] == r['server'])
                     & (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
                     & (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                       )]['fee_taker'].values[0]
-                if r['V1_fee'] == 'NULL':
-                    r['V1_fee'] = 0
-                if r['V2_fee'] == 'NULL':
-                    r['V2_fee'] = 0
-                if r['V3_fee'] == 'NULL':
-                    r['V3_fee'] = 0
+                       )]['fee_taker']
+                if not V1_fee.empty:
+                    if not V1_fee.values[0] == 'NULL':
+                        r['V1_fee'] = V1_fee.values[0]
+                if not V2_fee.empty:
+                    if not V2_fee.values[0] == 'NULL':
+                        r['V2_fee'] = V2_fee.values[0]
+                if not V3_fee.empty:
+                    if not V3_fee.values[0] == 'NULL':
+                        r['V3_fee'] = V3_fee.values[0]
                 # calc symbol base
                 V1_tSymbol_base_price = (
                     r['V1_bid_one_price_base'] / r['V1_bid_one_price'] +
@@ -538,7 +625,7 @@ class Calc(object):
                     signal.append(r)
             # return signal
             return signal
-        except (DBException, Exception) as err:
+        except (BinanceException, HuobiException, OkexException, Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerTra: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
                 exchange, threshold, 'resInfoSymbol', err)
             raise CalcException(errStr)
@@ -639,48 +726,60 @@ class Calc(object):
                     if not J1_C1_C2_one_price * J1_C2_C3_one_price * J1_C3_C1_one_price > J2_C1_C2_one_price * J2_C2_C3_one_price * J2_C3_C1_one_price:
                         continue
                     # calc fees
-                    r['J1_V1_fee'] = resInfoSymbol[
+                    r['J1_V1_fee'] = 0
+                    J1_V1_fee = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J1_server'])
                         & (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                           )]['fee_taker'].values[0]
-                    r['J1_V2_fee'] = resInfoSymbol[
+                           )]['fee_taker']
+                    r['J1_V2_fee'] = 0
+                    J1_V2_fee = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J1_server'])
                         & (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                           )]['fee_taker'].values[0]
-                    r['J1_V3_fee'] = resInfoSymbol[
+                           )]['fee_taker']
+                    r['J1_V3_fee'] = 0
+                    J1_V3_fee = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J1_server'])
                         & (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                           )]['fee_taker'].values[0]
-                    r['J2_V1_fee'] = resInfoSymbol[
+                           )]['fee_taker']
+                    r['J2_V1_fee'] = 0
+                    J2_V1_fee = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J2_server'])
                         & (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
                            )]['fee_taker'].values[0]
-                    r['J2_V2_fee'] = resInfoSymbol[
+                    r['J2_V2_fee'] = 0
+                    J2_V2_fee = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J2_server'])
                         & (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
                            )]['fee_taker'].values[0]
-                    r['J2_V3_fee'] = resInfoSymbol[
+                    r['J2_V3_fee'] = 0
+                    J2_V3_fee = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J2_server'])
                         & (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
                            )]['fee_taker'].values[0]
-                    if r['J1_V1_fee'] == 'NULL':
-                        r['J1_V1_fee'] = 0
-                    if r['J1_V2_fee'] == 'NULL':
-                        r['J1_V2_fee'] = 0
-                    if r['J1_V3_fee'] == 'NULL':
-                        r['J1_V3_fee'] = 0
-                    if r['J2_V1_fee'] == 'NULL':
-                        r['J2_V1_fee'] = 0
-                    if r['J2_V2_fee'] == 'NULL':
-                        r['J2_V2_fee'] = 0
-                    if r['J2_V3_fee'] == 'NULL':
-                        r['J2_V3_fee'] = 0
+                    if not J1_V1_fee.empty:
+                        if not J1_V1_fee.values[0] == 'NULL':
+                            r['J1_V1_fee'] = J1_V1_fee.values[0]
+                    if not J1_V2_fee.empty:
+                        if not J1_V2_fee.values[0] == 'NULL':
+                            r['J1_V2_fee'] = J1_V2_fee.values[0]
+                    if not J1_V3_fee.empty:
+                        if not J1_V3_fee.values[0] == 'NULL':
+                            r['J1_V3_fee'] = J1_V3_fee.values[0]
+                     if not J2_V1_fee.empty:
+                         if not J2_V1_fee.values[0] == 'NULL':
+                             r['J2_V1_fee'] = J2_V1_fee.values[0]
+                     if not J2_V2_fee.empty:
+                         if not J2_V2_fee.values[0] == 'NULL':
+                             r['J2_V2_fee'] = J2_V2_fee.values[0]
+                     if not J2_V3_fee.empty:
+                         if not J2_V3_fee.values[0] == 'NULL':
+                             r['J2_V3_fee'] = J2_V3_fee.values[0]
                     # calc symbol size
                     if r['C3_symbol'] == r['V3_fSymbol']:
                         # Type J1 = clockwise: sell->buy->sell, J2 = anti-clockwise: sell->buy->buy
@@ -801,7 +900,7 @@ class Calc(object):
                         signal.append(r)
             # return signal
             return signal
-        except (DBException, Exception) as err:
+        except (BinanceException, HuobiException, OkexException, Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerPair: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
                 exchange, threshold, 'resInfoSymbol', err)
             raise CalcException(errStr)

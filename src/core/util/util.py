@@ -147,7 +147,8 @@ class Util(object):
                 if not time.time(
                 ) - startTime < timeout and not timeout == 0 and not async:
                     self._logger.error(
-                        "src.core.util.util.Util.updateDBAccountBalance: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout." % (async, timeout))
+                        "src.core.util.util.Util.updateDBAccountBalance: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                        % (async, timeout))
                     break
                 epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "info_second"])
@@ -158,17 +159,19 @@ class Util(object):
                 st = QUEUE_STATUS_EVENT
                 for id in ids:
                     st = self._engine.getEventStatus(id)
-                    while st != DONE_STATUS_EVENT and (time.time(
-                    ) - startTime < timeout or timeout == 0):
+                    while st != DONE_STATUS_EVENT and (
+                            time.time() - startTime < timeout or timeout == 0):
                         st = self._engine.getEventStatus(id)
                         time.sleep(self._apiResultEpoch)
                 if st != DONE_STATUS_EVENT:
                     self._logger.error(
-                        "src.core.util.util.Util.updateDBAccountBalance: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, waiting result from event handler timeout." % (async, timeout))
+                        "src.core.util.util.Util.updateDBAccountBalance: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, waiting result from event handler timeout."
+                        % (async, timeout))
                     for id in ids:
                         if not self._engine.killEvent(id):
                             self._logger.error(
-                                "src.core.util.util.Util.updateDBAccountBalance: {async: % s, timeout: % s}, exception err=KILL EVENT ERROR, kill timeout event handler error." % (async, timeout))
+                                "src.core.util.util.Util.updateDBAccountBalance: {async: % s, timeout: % s}, exception err=KILL EVENT ERROR, kill timeout event handler error."
+                                % (async, timeout))
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBAccountBalance: {async: %s, timeout: %s}, exception err=%s" % (
                 async, timeout, UtilException(err))
@@ -191,15 +194,15 @@ class Util(object):
             if not r['can_deposit'] == 'False' and not r[
                     'can_withdraw'] == 'False':
                 time.sleep(epoch)
-                id = self._sender.sendListenAccountWithdrawEvent(
-                    [r["server"]], r["asset"])
+                id = self._sender.sendListenAccountWithdrawEvent([r["server"]],
+                                                                 r["asset"])
                 ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
             for id in ids:
                 st = self._engine.getEventStatus(id)
-                while st != DONE_STATUS_EVENT and (time.time(
-                ) - startTime < timeout or timeout == 0):
+                while st != DONE_STATUS_EVENT and (
+                        time.time() - startTime < timeout or timeout == 0):
                     st = self._engine.getEventStatus(id)
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
@@ -209,7 +212,9 @@ class Util(object):
                 for id in ids:
                     if not self._engine.killEvent(id):
                         self._logger.error(
-                            "src.core.util.util.Util..threadSendListenAccountWithdrawEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error." % (current_thread().name, 'res', epoch, async, timeout))
+                            "src.core.util.util.Util..threadSendListenAccountWithdrawEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error."
+                            % (current_thread().name, 'res', epoch, async,
+                               timeout))
 
     def updateDBAccountWithdraw(self, async=True, timeout=30):
         self._logger.debug(
@@ -223,7 +228,8 @@ class Util(object):
                 if not time.time(
                 ) - startTime < timeout and not timeout == 0 and not async:
                     self._logger.error(
-                        "src.core.util.util.Util.updateDBAccountWithdraw: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout." % (async, timeout))
+                        "src.core.util.util.Util.updateDBAccountWithdraw: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                        % (async, timeout))
                     break
                 epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "info_second"])
@@ -273,8 +279,8 @@ class Util(object):
             st = QUEUE_STATUS_EVENT
             for id in ids:
                 st = self._engine.getEventStatus(id)
-                while st != DONE_STATUS_EVENT and (time.time(
-                ) - startTime < timeout or timeout == 0):
+                while st != DONE_STATUS_EVENT and (
+                        time.time() - startTime < timeout or timeout == 0):
                     st = self._engine.getEventStatus(id)
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
@@ -284,7 +290,9 @@ class Util(object):
                 for id in ids:
                     if not self._engine.killEvent(id):
                         self._logger.error(
-                            "src.core.util.util.Util.threadSendListenMarketDepthEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error." % (current_thread().name, 'res', epoch, async, timeout))
+                            "src.core.util.util.Util.threadSendListenMarketDepthEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error."
+                            % (current_thread().name, 'res', epoch, async,
+                               timeout))
 
     def updateDBMarketDepth(self, async=True, timeout=30):
         self._logger.debug(
@@ -299,7 +307,8 @@ class Util(object):
                 if not time.time(
                 ) - startTime < timeout and not timeout == 0 and not async:
                     self._logger.error(
-                        "src.core.util.util.Util.updateDBMarketDepth: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout." % (async, timeout))
+                        "src.core.util.util.Util.updateDBMarketDepth: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                        % (async, timeout))
                     break
                 epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "market_second"])
@@ -322,8 +331,8 @@ class Util(object):
                                          epoch, async, timeout):
         self._logger.debug(
             "src.core.util.util.Util.threadSendListenMarketKlineEvent: {thread: %s, res: %s, start: %s, interval: %s, end: %s, epoch: %s, async: %s, timeout: %s}"
-            % (current_thread().name, 'res', start, end, interval, epoch, async,
-               timeout))
+            % (current_thread().name, 'res', start, end, interval, epoch,
+               async, timeout))
         ids = []
         startTime = time.time()
         for r in res:
@@ -331,32 +340,33 @@ class Util(object):
             ) - startTime < timeout and not timeout == 0 and not async:
                 self._logger.error(
                     "src.core.util.util.Util.threadSendListenMarketKlineEvent: {thread: %s, res: %s, start: %s, interval: %s, end: %s, epoch: %s, async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
-                    % (current_thread().name, 'res', start, end, interval, epoch, async,
-                       timeout))
+                    % (current_thread().name, 'res', start, end, interval,
+                       epoch, async, timeout))
                 break
             time.sleep(epoch)
             id = self._sender.sendListenMarketKlineEvent(
-                [r["server"]], r["fSymbol"], r["tSymbol"], interval, start, end)
+                [r["server"]], r["fSymbol"], r["tSymbol"], interval, start,
+                end)
             ids.append(id)
         if not async:
             st = QUEUE_STATUS_EVENT
             for id in ids:
                 st = self._engine.getEventStatus(id)
-                while st != DONE_STATUS_EVENT and (time.time(
-                ) - startTime < timeout or timeout == 0):
+                while st != DONE_STATUS_EVENT and (
+                        time.time() - startTime < timeout or timeout == 0):
                     st = self._engine.getEventStatus(id)
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.error(
                     "src.core.util.util.Util.threadSendListenMarketKlineEvent: {thread: %s, res: %s, start: %s, end: %s, interval: %s, epoch: %s, async: %s, timeout: %s}, exception err=TIMEOUT ERROR, waiting result from event handler timeout."
-                    % (current_thread().name, 'res', start, end, interval, epoch,
-                       async, timeout))
+                    % (current_thread().name, 'res', start, end, interval,
+                       epoch, async, timeout))
                 for id in ids:
                     if not self._engine.killEvent(id):
                         self._logger.error(
                             "src.core.util.util.Util.threadSendListenMarketKlineEvent: {thread: %s, res: %s, start: %s, end: %s, interval: %s, epoch: %s, async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error."
-                            % (current_thread().name, 'res', start, end, interval, epoch,
-                               async, timeout))
+                            % (current_thread().name, 'res', start, end,
+                               interval, epoch, async, timeout))
 
     def updateDBMarketKline(self, async=True, timeout=30):
         self._logger.debug(
@@ -374,7 +384,8 @@ class Util(object):
                 if not time.time(
                 ) - startTime < timeout and not timeout == 0 and not async:
                     self._logger.error(
-                        "src.core.util.util.Util.updateDBMarketKline: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout." % (async, timeout))
+                        "src.core.util.util.Util.updateDBMarketKline: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                        % (async, timeout))
                     break
                 epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "market_second"])
@@ -410,8 +421,7 @@ class Util(object):
                     % (current_thread().name, 'res', epoch, async, timeout))
                 break
             aggDepth = db.getViewMarketSymbolPairsAggDepth(
-                self._exchanges, r["fSymbol"],
-                r["tSymbol"])[0]["aggDepth"]
+                self._exchanges, r["fSymbol"], r["tSymbol"])[0]["aggDepth"]
             aggDepth = float(aggDepth) * self._marketTickerAggStep
             time.sleep(epoch)
             id = self._sender.sendListenMarketTickerEvent(
@@ -421,8 +431,8 @@ class Util(object):
             st = QUEUE_STATUS_EVENT
             for id in ids:
                 st = self._engine.getEventStatus(id)
-                while st != DONE_STATUS_EVENT and (time.time(
-                ) - startTime < timeout or timeout == 0):
+                while st != DONE_STATUS_EVENT and (
+                        time.time() - startTime < timeout or timeout == 0):
                     st = self._engine.getEventStatus(id)
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
@@ -433,7 +443,8 @@ class Util(object):
                     if not self._engine.killEvent(id):
                         self._logger.error(
                             "src.core.util.util.Util.threadSendListenMarketTickerEvent: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error."
-                            % (current_thread().name, 'res', epoch, async, timeout))
+                            % (current_thread().name, 'res', epoch, async,
+                               timeout))
 
     def updateDBMarketTicker(self, async=True, timeout=30):
         self._logger.debug(
@@ -448,7 +459,8 @@ class Util(object):
                 if not time.time(
                 ) - startTime < timeout and not timeout == 0 and not async:
                     self._logger.error(
-                        "src.core.util.util.Util.updateDBMarketTicker: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout." % (async, timeout))
+                        "src.core.util.util.Util.updateDBMarketTicker: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                        % (async, timeout))
                     break
                 epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "market_second"])
@@ -488,7 +500,8 @@ class Util(object):
                 if not time.time(
                 ) - startTime < timeout and not timeout == 0 and not async:
                     self._logger.error(
-                        "src.core.util.util.Util.updateDBJudgeMarketTicker: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout." % (async, timeout))
+                        "src.core.util.util.Util.updateDBJudgeMarketTicker: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                        % (async, timeout))
                     break
                 id = self._sender.sendJudgeMarketTickerEvent(
                     self._exchanges, [type])
@@ -497,8 +510,8 @@ class Util(object):
                 st = QUEUE_STATUS_EVENT
                 for id in ids:
                     st = self._engine.getEventStatus(id)
-                    while st != DONE_STATUS_EVENT and (time.time(
-                    ) - startTime < timeout or timeout == 0):
+                    while st != DONE_STATUS_EVENT and (
+                            time.time() - startTime < timeout or timeout == 0):
                         st = self._engine.getEventStatus(id)
                         time.sleep(self._apiResultEpoch)
                 if st != DONE_STATUS_EVENT:
@@ -528,33 +541,44 @@ class Util(object):
                 if not time.time(
                 ) - startTime < timeout and not timeout == 0 and not async:
                     self._logger.error(
-                        "src.core.util.util.Util.updateDBBacktestHistoryCreat: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout." % (async, timeout))
+                        "src.core.util.util.Util.updateDBBacktestHistoryCreat: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                        % (async, timeout))
                     break
                 # calc signals
                 signals = sgn.signals(self._exchanges, [type])
                 if not signals == []:
                     df = pd.DataFrame(signals)
                     if type == TYPE_DIS:
-                        for group_key, group in df.groupby(['fSymbol', 'tSymbol']):
+                        for group_key, group in df.groupby(
+                            ['fSymbol', 'tSymbol']):
                             id = self._sender.sendBacktestHistoryCreatEvent(
-                                group.to_dict('records'), timeout)
+                                self._exchanges, group.to_dict('records'),
+                                timeout)
                             ids.append(id)
                     if type == TYPE_TRA:
-                        for group_key, group in df.groupby(['V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol', 'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol']):
+                        for group_key, group in df.groupby([
+                                'V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol',
+                                'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol'
+                        ]):
                             id = self._sender.sendBacktestHistoryCreatEvent(
-                                group.to_dict('records'), timeout)
+                                self._exchanges, group.to_dict('records'),
+                                timeout)
                             ids.append(id)
                     if type == TYPE_PAIR:
-                        for group_key, group in df.groupby(['V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol', 'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol']):
+                        for group_key, group in df.groupby([
+                                'V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol',
+                                'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol'
+                        ]):
                             id = self._sender.sendBacktestHistoryCreatEvent(
-                                group.to_dict('records'), timeout)
+                                self._exchanges, group.to_dict('records'),
+                                timeout)
                             ids.append(id)
             if not async:
                 st = QUEUE_STATUS_EVENT
                 for id in ids:
                     st = self._engine.getEventStatus(id)
-                    while st != DONE_STATUS_EVENT and (time.time(
-                    ) - startTime < timeout or timeout == 0):
+                    while st != DONE_STATUS_EVENT and (
+                            time.time() - startTime < timeout or timeout == 0):
                         st = self._engine.getEventStatus(id)
                         time.sleep(self._apiResultEpoch)
                 if st != DONE_STATUS_EVENT:
@@ -594,8 +618,8 @@ class Util(object):
             st = QUEUE_STATUS_EVENT
             for id in ids:
                 st = self._engine.getEventStatus(id)
-                while st != DONE_STATUS_EVENT and (time.time(
-                ) - startTime < timeout or timeout == 0):
+                while st != DONE_STATUS_EVENT and (
+                        time.time() - startTime < timeout or timeout == 0):
                     st = self._engine.getEventStatus(id)
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
@@ -606,7 +630,8 @@ class Util(object):
                     if not self._engine.killEvent(id):
                         self._logger.error(
                             "src.core.util.util.Util.threadSendInsertDBOrderHistory: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error."
-                            % (current_thread().name, 'res', epoch, async, timeout))
+                            % (current_thread().name, 'res', epoch, async,
+                               timeout))
 
     def updateDBOrderHistoryInsert(self, async=True, timeout=30):
         self._logger.debug(
@@ -620,7 +645,8 @@ class Util(object):
                 if not time.time(
                 ) - startTime < timeout and not timeout == 0 and not async:
                     self._logger.error(
-                        "src.core.util.util.Util.updateDBOrderHistoryInsert: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout." % (async, timeout))
+                        "src.core.util.util.Util.updateDBOrderHistoryInsert: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                        % (async, timeout))
                     break
                 epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "info_second"])
@@ -657,7 +683,8 @@ class Util(object):
                 if not time.time(
                 ) - startTime < timeout and not timeout == 0 and not async:
                     self._logger.error(
-                        "src.core.util.util.Util.updateDBStatisticJudge: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout." % (async, timeout))
+                        "src.core.util.util.Util.updateDBStatisticJudge: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                        % (async, timeout))
                     break
                 id = self._sender.sendStatiscJudgeEvent(
                     self._exchanges, [type])
@@ -666,8 +693,8 @@ class Util(object):
                 st = QUEUE_STATUS_EVENT
                 for id in ids:
                     st = self._engine.getEventStatus(id)
-                    while st != DONE_STATUS_EVENT and (time.time(
-                    ) - startTime < timeout or timeout == 0):
+                    while st != DONE_STATUS_EVENT and (
+                            time.time() - startTime < timeout or timeout == 0):
                         st = self._engine.getEventStatus(id)
                         time.sleep(self._apiResultEpoch)
                 if st != DONE_STATUS_EVENT:
@@ -678,7 +705,8 @@ class Util(object):
                         if not self._engine.killEvent(id):
                             self._logger.error(
                                 "src.core.util.util.Util.updateDBJudgeMarketTicker: {async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error."
-                                % (current_thread().name, 'res', epoch, async, timeout))
+                                % (current_thread().name, 'res', epoch, async,
+                                   timeout))
         except (DBException, EngineException, Exception) as err:
             errStr = "src.core.util.util.Util.updateDBJudgeMarketTicker: {async: %s, timeout: %s}, exception err=%s" % (
                 async, timeout, UtilException(err))
@@ -700,7 +728,8 @@ class Util(object):
             db = DB()
             res = False
             start = time.time()
-            while (res == False and ((time.time() - start) < timeout or timeout == 0)):
+            while (res == False
+                   and ((time.time() - start) < timeout or timeout == 0)):
                 time.sleep(epoch)
                 res = db.oneClickCancleOrders(server)
             if not res:
@@ -718,10 +747,10 @@ class Util(object):
             tds = []
             start = time.time()
             for server in self._exchanges:
-                if not time.time(
-                ) - start < timeout and not timeout == 0:
+                if not time.time() - start < timeout and not timeout == 0:
                     self._logger.error(
-                        "src.core.util.util.Util.oneClickCancleOrders: {timeout: %s}, exception err=TIMEOUT ERROR." % timeout)
+                        "src.core.util.util.Util.oneClickCancleOrders: {timeout: %s}, exception err=TIMEOUT ERROR."
+                        % timeout)
                     break
                 epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "orders_second"])
@@ -747,7 +776,8 @@ class Util(object):
             db = DB()
             res = False
             start = time.time()
-            while (res == False and ((time.time() - start) < timeout or timeout == 0)):
+            while (res == False
+                   and ((time.time() - start) < timeout or timeout == 0)):
                 time.sleep(epoch)
                 res = db.oneClickTransToBaseCoin(server, baseCoin)
             if not res:
@@ -768,10 +798,10 @@ class Util(object):
             tds = []
             start = time.time()
             for server in self._exchanges:
-                if not time.time(
-                ) - start < timeout and not timeout == 0:
+                if not time.time() - start < timeout and not timeout == 0:
                     self._logger.error(
-                        "src.core.util.util.Util.oneClickTransToBaseCoin: {baseCoin: %s, timeout: %s}, exception err=TIMEOUT ERROR." % (baseCoin, timeout))
+                        "src.core.util.util.Util.oneClickTransToBaseCoin: {baseCoin: %s, timeout: %s}, exception err=TIMEOUT ERROR."
+                        % (baseCoin, timeout))
                     break
                 epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "orders_second"])

@@ -123,7 +123,7 @@ BACKTEST_HISTORY_CREAT_EVENT = MyTemplate("""
     "type": "BACKTEST_HISTORY_CREAT_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
-    "args": ["$signals", "$timeout"]
+    "args": ["$exchange", "$signals", "$timeout"]
 }
 """)
 

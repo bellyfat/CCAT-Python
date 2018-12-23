@@ -110,15 +110,16 @@ class DB(object):
                 basePriceVolume=self._basePriceVolume,
                 basePriceTimeout=self._basePriceTimeout,
                 baseJudgeTimeout=self._baseJudgeTimeout,
-                baseStatisticTimeout=self._baseStatisticTimeout).replace('[', '(').replace(
-                    ']', ')')
+                baseStatisticTimeout=self._baseStatisticTimeout).replace(
+                    '[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.executescript(TEMP_SQL)
             curs.close()
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getViewStatisticSignalTickerPairCurrentServer(self, server, server_pair):
+    def getViewStatisticSignalTickerPairCurrentServer(self, server,
+                                                      server_pair):
         self._logger.debug(
             "src.core.db.db.DB.getViewStatisticSignalTickerPairCurrentServer")
         try:
@@ -176,7 +177,8 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getViewStatisticSignalTickerDisCurrentServer(self, server, server_pair):
+    def getViewStatisticSignalTickerDisCurrentServer(self, server,
+                                                     server_pair):
         self._logger.debug(
             "src.core.db.db.DB.getViewStatisticSignalTickerDisCurrentServer")
         try:

@@ -2,8 +2,8 @@
 from itertools import combinations
 
 import pandas as pd
-from src.core.calc.signal import Signal
 from src.core.calc.calc import Calc
+from src.core.calc.signal import Signal
 from src.core.db.db import DB
 from src.core.engine.enums import *
 from src.core.util.exceptions import (CalcException, DBException,
@@ -22,7 +22,8 @@ class Handler(object):
         # 接收事件
         self._logger.debug(
             "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         [exchange] = event.args
         exchange = str_to_list(exchange)
         try:
@@ -39,7 +40,8 @@ class Handler(object):
         # 接收事件
         self._logger.debug(
             "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         [exchange, asset] = event.args
         exchange = str_to_list(exchange)
         try:
@@ -56,7 +58,8 @@ class Handler(object):
         # 接收事件
         self._logger.debug(
             "src.core.engine.handler.Handler.handleListenMarketDepthEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         [exchange, fSymbol, tSymbol, limit] = event.args
         exchange = str_to_list(exchange)
         try:
@@ -73,7 +76,8 @@ class Handler(object):
         # 接收事件
         self._logger.debug(
             "src.core.engine.handler.Handler.handleListenMarketKlineEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         [exchange, fSymbol, tSymbol, interval, start, end] = event.args
         exchange = str_to_list(exchange)
         try:
@@ -90,7 +94,8 @@ class Handler(object):
     def handleListenMarketTickerEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleListenMarketTickerEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         # 接收事件
         [exchange, fSymbol, tSymbol, aggDepth] = event.args
         exchange = str_to_list(exchange)
@@ -107,7 +112,8 @@ class Handler(object):
     def handleJudgeMarketDepthEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleJudgeMarketDepthEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         # 接收事件
         [args] = event.args
         try:
@@ -121,7 +127,8 @@ class Handler(object):
     def handleJudgeMarketKlineEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         # 接收事件
         [args] = event.args
         try:
@@ -134,8 +141,8 @@ class Handler(object):
 
     def handleJudgeMarketTickerEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleJudgeMarketTickerEvent: "
-            + event.type)
+            "src.core.engine.handler.Handler.handleJudgeMarketTickerEvent: " +
+            event.type)
         # 接收事件
         [exchange, types] = event.args
         exchange = str_to_list(exchange)
@@ -147,14 +154,14 @@ class Handler(object):
             prs = []
             # calc dis type
             if TYPE_DIS in types:
-                signalDis = calc.calcJudgeSignalTickerDis(exchange, TYPE_DIS_THRESHOLD,
-                                                          resInfoSymbol)
+                signalDis = calc.calcJudgeSignalTickerDis(
+                    exchange, TYPE_DIS_THRESHOLD, resInfoSymbol)
                 if not signalDis == []:
                     db.insertJudgeSignalTickerDis(signalDis)
             # calc tra type
             if TYPE_TRA in types:
-                signalTra = calc.calcJudgeSignalTickerTra(exchange, TYPE_TRA_THRESHOLD,
-                                                          resInfoSymbol)
+                signalTra = calc.calcJudgeSignalTickerTra(
+                    exchange, TYPE_TRA_THRESHOLD, resInfoSymbol)
                 if not signalTra == []:
                     db.insertJudgeSignalTickerTra(signalTra)
             # calc pair type
@@ -173,16 +180,18 @@ class Handler(object):
     def handleBacktestHistoryCreatEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         # 接收事件
-        [signals, timeout] = event.args
+        [exchange, signals, timeout] = event.args
+        exchange = str_to_list(exchange)
         signals = str_to_list(signals)
         try:
             db = DB()
             sgn = Signal(signals)
             resInfoSymbol = pd.DataFrame(db.getViewMarketSymbolPairs(exchange))
             # pre trans
-            res = sgn.backtestSignalsPreTrans(resInfoSymbol, timeout)
+            res = sgn.backtestSignals(resInfoSymbol, timeout)
 
             pass
         except (DBException, CalcException, EngineException, Exception) as err:
@@ -195,7 +204,8 @@ class Handler(object):
     def handleOrderHistoryInsertEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleOrderHistoryInsertEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         # 接收事件
         [exchange, fSymbol, tSymbol, limit, ratio] = event.args
         exchange = str_to_list(exchange)
@@ -212,21 +222,24 @@ class Handler(object):
     def handleOrderHistoryCreatEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleOrderHistoryCreatEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         # 接收事件
         pass
 
     def handleOrderHistoryCheckEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleOrderHistoryCheckEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         # 接收事件
         pass
 
     def handleOrderHistoryCancelEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleOrderHistoryCancelEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         # 接收事件
         pass
 
@@ -234,7 +247,8 @@ class Handler(object):
     def handleStatisticJudgeEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleStatisticJudgeEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         # 接收事件
         [exchange, types] = event.args
         exchange = str_to_list(exchange)
@@ -270,13 +284,15 @@ class Handler(object):
     def handleStatisticBacktestEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleStatisticBacktestEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         # 接收事件
         pass
 
     def handleStatisticOrderEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleStatisticOrderEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp, event.args))
+            % (event.id, event.type, event.priority, event.timeStamp,
+               event.args))
         # 接收事件
         pass
