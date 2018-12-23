@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from decimal import ROUND_DOWN, ROUND_HALF_UP, ROUND_UP
 from itertools import combinations
 
 import pandas as pd
+
 from src.core.coin.binance import Binance
-from src.core.coin.enums import CCAT_ORDER_SIDE_BUY, CCAT_ORDER_SIDE_SELL, CCAT_ORDER_TYPE_LIMIT
+from src.core.coin.enums import (CCAT_ORDER_SIDE_BUY, CCAT_ORDER_SIDE_SELL,
+                                 CCAT_ORDER_TYPE_LIMIT)
 from src.core.coin.huobi import Huobi
 from src.core.coin.okex import Okex
 from src.core.config import Config
@@ -12,7 +15,7 @@ from src.core.db.db import DB
 from src.core.engine.enums import TYPE_DIS, TYPE_PAIR, TYPE_TRA
 from src.core.util.exceptions import (BinanceException, CalcException,
                                       HuobiException, OkexException)
-from src.core.util.helper import utcnow_timestamp
+from src.core.util.helper import num_to_precision, utcnow_timestamp
 from src.core.util.log import Logger
 
 
@@ -67,11 +70,13 @@ class Calc(object):
             size_precision = 0
             size_min = 0
             fee_ratio = 0
+            # type I
             # handle fSymbol
             if fSymbol_base > 0:
                 # de: direct trans
                 isDe = resInfoSymbol[(resInfoSymbol['server'] == server) & (resInfoSymbol['fSymbol']==fSymbol) & (resInfoSymbol['tSymbol']== baseCoin)]
                 if not isDe.empty:
+                    # baseCoin -> fSymbol
                     if not isDe['limit_price_precision'].values[0] == 'NULL':
                         price_precision =  isDe['limit_price_precision'].values[0]
                     if not isDe['limit_size_precision'].values[0] == 'NULL':
@@ -81,31 +86,181 @@ class Calc(object):
                     if not isDe['fee_taker'].values[0] == 'NULL':
                         fee_ratio = isDe['fee_taker'].values[0]
                     if sever == self._Okex_exchange:
-                        res = self._Okex.getMarketOrderbookDepth(fSymbol, tSymbol)
+                        res = self._Okex.getMarketOrderbookDepth(fSymbol, baseCoin)
                     if sever == self._Binance_exchange:
-                        res = self._Binance.getMarketOrderbookDepth(fSymbol, tSymbol)
+                        res = self._Binance.getMarketOrderbookDepth(fSymbol, baseCoin)
                     if sever == self._Huobi_exchange:
-                        res = self._Huobi.getMarketOrderbookDepth(fSymbol, tSymbol)
+                        res = self._Huobi.getMarketOrderbookDepth(fSymbol, baseCoin)
                     # calc orders
-                    sum = 0
                     nowPrice = float(res['bid_price_size'][0][0])
-                    deSize = fSymbol_base/nowPrice
+                    deTradeSize = fSymbol_base/nowPrice
+                    sum = 0
+                    deTrade = []
                     for r in res['ask_price_size']:
                         rprice = float(r[0])
                         rSize = float(r[1])
-                        if sum < deSize:
-
-
-                    order = {"exchange":server, "fSymbol":fSymbol, "tSymbol":baseCoin, "ask_or_bid":CCAT_ORDER_SIDE_BUY, "price":price, "quantity":quantity, "ratio":fee_ratio, "type":CCAT_ORDER_TYPE_LIMIT}
+                        if not sum < deTradeSize:
+                            break
+                        deSize = min(deTradeSize-sum, rSize)
+                        if deSize > 0:
+                            if deSize >= size_min:
+                                sum = sum + deSize
+                                deTrade.append({'price': rprice, 'size': deSize})
+                    for trade in deTrade:
+                        price = num_to_precision(
+                            trade['price'],
+                            price_precision,
+                            rounding=ROUND_HALF_UP)
+                        quantity = num_to_precision(
+                            trade['size'],
+                            size_precision,
+                            rounding=ROUND_DOWN)
+                        orders.append({"exchange":server, "fSymbol":fSymbol, "tSymbol":baseCoin, "ask_or_bid":CCAT_ORDER_SIDE_BUY, "price":price, "quantity":quantity, "ratio":fee_ratio, "type":CCAT_ORDER_TYPE_LIMIT})
+                    # return
+                    return orders
                 # tra: trangle trans
-
+                if isDe.empty:
+                isDe = resInfoSymbol[(resInfoSymbol['server'] == server) & (resInfoSymbol['fSymbol']==fSymbol) & (resInfoSymbol['tSymbol']==tSymbol)]
+                isTra = resInfoSymbol[(resInfoSymbol['server'] == server) & (resInfoSymbol['fSymbol']==tSymbol) & (resInfoSymbol['tSymbol']== baseCoin)]
+                    if not isDe.empty and not isTra.empty:
+                        # baseCoin -> tSymbol
+                        if not isTra['limit_price_precision'].values[0] == 'NULL':
+                            price_precision =  isTra['limit_price_precision'].values[0]
+                        if not isTra['limit_size_precision'].values[0] == 'NULL':
+                            size_precision =  isTra['limit_size_precision'].values[0]
+                        if not isTra['limit_size_min'].values[0] == 'NULL':
+                            size_min =  isTra['limit_size_min'].values[0]
+                        if not isTra['fee_taker'].values[0] == 'NULL':
+                            fee_ratio = isTra['fee_taker'].values[0]
+                        if sever == self._Okex_exchange:
+                            res = self._Okex.getMarketOrderbookDepth(tSymbol, baseCoin)
+                        if sever == self._Binance_exchange:
+                            res = self._Binance.getMarketOrderbookDepth(tSymbol, baseCoin)
+                        if sever == self._Huobi_exchange:
+                            res = self._Huobi.getMarketOrderbookDepth(tSymbol, baseCoin)
+                        # calc orders
+                        nowPrice = float(res['bid_price_size'][0][0])
+                        traTradeSize = fSymbol_base/nowPrice
+                        sum = 0
+                        traTrade = []
+                        for r in res['ask_price_size']:
+                            rprice = float(r[0])
+                            rSize = float(r[1])
+                            if not sum < traTradeSize:
+                                break
+                            traSize = min(traTradeSize-sum, rSize)
+                            if traSize > 0:
+                                if traSize >= size_min:
+                                    sum = sum + traSize
+                                    traTrade.append({'price': rprice, 'size': traSize})
+                        for trade in traTrade:
+                            price = num_to_precision(
+                                trade['price'],
+                                price_precision,
+                                rounding=ROUND_HALF_UP)
+                            quantity = num_to_precision(
+                                trade['size'],
+                                size_precision,
+                                rounding=ROUND_DOWN)
+                            orders.append({"exchange":server, "fSymbol":fSymbol, "tSymbol":baseCoin, "ask_or_bid":CCAT_ORDER_SIDE_BUY, "price":price, "quantity":quantity, "ratio":fee_ratio, "type":CCAT_ORDER_TYPE_LIMIT})
+                        # tSymbol -> fSymbol
+                        sum_base = sum*(1-fee_ratio)
+                        if not isDe['limit_price_precision'].values[0] == 'NULL':
+                            price_precision =  isDe['limit_price_precision'].values[0]
+                        if not isDe['limit_size_precision'].values[0] == 'NULL':
+                            size_precision =  isDe['limit_size_precision'].values[0]
+                        if not isDe['limit_size_min'].values[0] == 'NULL':
+                            size_min =  isDe['limit_size_min'].values[0]
+                        if not isDe['fee_taker'].values[0] == 'NULL':
+                            fee_ratio = isDe['fee_taker'].values[0]
+                        if sever == self._Okex_exchange:
+                            res = self._Okex.getMarketOrderbookDepth(fSymbol, tSymbol)
+                        if sever == self._Binance_exchange:
+                            res = self._Binance.getMarketOrderbookDepth(fSymbol, tSymbol)
+                        if sever == self._Huobi_exchange:
+                            res = self._Huobi.getMarketOrderbookDepth(fSymbol, tSymbol)
+                        # calc orders
+                        nowPrice = float(res['bid_price_size'][0][0])
+                        deTradeSize = sum_base/nowPrice
+                        sum = 0
+                        deTrade = []
+                        for r in res['ask_price_size']:
+                            rprice = float(r[0])
+                            rSize = float(r[1])
+                            if not sum < deTradeSize:
+                                break
+                            deSize = min(deTradeSize-sum, rSize)
+                            if deSize > 0:
+                                if deSize >= size_min:
+                                    sum = sum + deSize
+                                    deTrade.append({'price': rprice, 'size': deSize})
+                        for trade in deTrade:
+                            price = num_to_precision(
+                                trade['price'],
+                                price_precision,
+                                rounding=ROUND_HALF_UP)
+                            quantity = num_to_precision(
+                                trade['size'],
+                                size_precision,
+                                rounding=ROUND_DOWN)
+                            orders.append({"exchange":server, "fSymbol":fSymbol, "tSymbol":baseCoin, "ask_or_bid":CCAT_ORDER_SIDE_BUY, "price":price, "quantity":quantity, "ratio":fee_ratio, "type":CCAT_ORDER_TYPE_LIMIT})
+                        # return
+                        return orders
+            # type II
             # handle tSymbol
             if tSymbol_base >0:
                 # need no trans
                 if tSymbol == baseCoin:
-                    pass
+                    # return []
+                    return orders
                 # direct trans
-
+                isDe = resInfoSymbol[(resInfoSymbol['server'] == server) & (resInfoSymbol['tSymbol']==fSymbol) & (resInfoSymbol['tSymbol']== baseCoin)]
+                if not isDe.empty:
+                    # baseCoin -> tSymbol
+                    if not isDe['limit_price_precision'].values[0] == 'NULL':
+                        price_precision =  isDe['limit_price_precision'].values[0]
+                    if not isDe['limit_size_precision'].values[0] == 'NULL':
+                        size_precision =  isDe['limit_size_precision'].values[0]
+                    if not isDe['limit_size_min'].values[0] == 'NULL':
+                        size_min =  isDe['limit_size_min'].values[0]
+                    if not isDe['fee_taker'].values[0] == 'NULL':
+                        fee_ratio = isDe['fee_taker'].values[0]
+                    if sever == self._Okex_exchange:
+                        res = self._Okex.getMarketOrderbookDepth(tSymbol, baseCoin)
+                    if sever == self._Binance_exchange:
+                        res = self._Binance.getMarketOrderbookDepth(tSymbol, baseCoin)
+                    if sever == self._Huobi_exchange:
+                        res = self._Huobi.getMarketOrderbookDepth(tSymbol, baseCoin)
+                    # calc orders
+                    nowPrice = float(res['bid_price_size'][0][0])
+                    deTradeSize = tSymbol_base/nowPrice
+                    sum = 0
+                    deTrade = []
+                    for r in res['ask_price_size']:
+                        rprice = float(r[0])
+                        rSize = float(r[1])
+                        if not sum < deTradeSize:
+                            break
+                        deSize = min(deTradeSize-sum, rSize)
+                        if deSize > 0:
+                            if deSize >= size_min:
+                                sum = sum + deSize
+                                deTrade.append({'price': rprice, 'size': deSize})
+                    for trade in deTrade:
+                        price = num_to_precision(
+                            trade['price'],
+                            price_precision,
+                            rounding=ROUND_HALF_UP)
+                        quantity = num_to_precision(
+                            trade['size'],
+                            size_precision,
+                            rounding=ROUND_DOWN)
+                        orders.append({"exchange":server, "fSymbol":fSymbol, "tSymbol":baseCoin, "ask_or_bid":CCAT_ORDER_SIDE_BUY, "price":price, "quantity":quantity, "ratio":fee_ratio, "type":CCAT_ORDER_TYPE_LIMIT})
+                    # return
+                    return orders
+            # type III
+            # not found, return []
+            return orders
         except (BinanceException, HuobiException, OkexException, Exception) as err:
             errStr = "src.core.calc.calc.Calc._calcSymbolPreTransOrders: exception err=" % err
             raise CalcException(errStr)
