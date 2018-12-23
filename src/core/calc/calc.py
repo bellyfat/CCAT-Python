@@ -676,10 +676,10 @@ class Calc(object):
                         "count_total":
                         group.shape[0],
                         "count_forward":
-                        group[(group['C3_symbol'] == group['V3_fSymbol']
+                        group[(group['V2_fSymbol'] == group['V3_fSymbol']
                                )].shape[0],
                         "count_backward":
-                        group[(group['C3_symbol'] == group['V3_tSymbol']
+                        group[(group['V2_fSymbol'] == group['V3_tSymbol']
                                )].shape[0],
                         "gain_base_max":
                         group['gain_base'].max(),
@@ -767,10 +767,10 @@ class Calc(object):
                             "count_total":
                             group.shape[0],
                             "count_forward":
-                            group[(group['C3_symbol'] == group['V3_fSymbol']
+                            group[(group['V2_fSymbol'] == group['V3_fSymbol']
                                    )].shape[0],
                             "count_backward":
-                            group[(group['C3_symbol'] == group['V3_tSymbol']
+                            group[(group['V2_fSymbol'] == group['V3_tSymbol']
                                    )].shape[0],
                             "gain_base_max":
                             group['gain_base'].max(),
