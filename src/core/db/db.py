@@ -1428,9 +1428,7 @@ class DB(object):
                                        float(s['V3_ask_one_size']),
                                        float(s['V3_ask_one_price_base']),
                                        float(s['V1_fee']), float(s['V2_fee']),
-                                       float(s['V3_fee']), str(s['C1_symbol']),
-                                       str(s['C2_symbol']),
-                                       str(s['C3_symbol']),
+                                       float(s['V3_fee']),
                                        float(s['V1_one_price']),
                                        str(s['V1_one_side']),
                                        float(s['V1_one_size']),
@@ -1461,62 +1459,75 @@ class DB(object):
             TEMP_SQL_TITLE = INSERT_JUDGE_SIGNAL_TICKER_PAIR_SQL
             TEMP_SQL_VALUE = []
             for s in signal:
-                TEMP_SQL_VALUE.append(
-                    (int(s['timeStamp']), str(s['J1_server']),
-                     str(s['J2_server']), str(s['V1_fSymbol']),
-                     str(s['V1_tSymbol']), str(s['V2_fSymbol']),
-                     str(s['V2_tSymbol']), str(s['V3_fSymbol']),
-                     str(s['V3_tSymbol']), float(s['J1_V1_bid_one_price']),
-                     float(s['J1_V1_bid_one_size']),
-                     float(s['J1_V1_bid_one_price_base']),
-                     float(s['J1_V1_ask_one_price']),
-                     float(s['J1_V1_ask_one_size']),
-                     float(s['J1_V1_ask_one_price_base']),
-                     float(s['J1_V2_bid_one_price']),
-                     float(s['J1_V2_bid_one_size']),
-                     float(s['J1_V2_bid_one_price_base']),
-                     float(s['J1_V2_ask_one_price']),
-                     float(s['J1_V2_ask_one_size']),
-                     float(s['J1_V2_ask_one_price_base']),
-                     float(s['J1_V3_bid_one_price']),
-                     float(s['J1_V3_bid_one_size']),
-                     float(s['J1_V3_bid_one_price_base']),
-                     float(s['J1_V3_ask_one_price']),
-                     float(s['J1_V3_ask_one_size']),
-                     float(s['J1_V3_ask_one_price_base']),
-                     float(s['J2_V1_bid_one_price']),
-                     float(s['J2_V1_bid_one_size']),
-                     float(s['J2_V1_bid_one_price_base']),
-                     float(s['J2_V1_ask_one_price']),
-                     float(s['J2_V1_ask_one_size']),
-                     float(s['J2_V1_ask_one_price_base']),
-                     float(s['J2_V2_bid_one_price']),
-                     float(s['J2_V2_bid_one_size']),
-                     float(s['J2_V2_bid_one_price_base']),
-                     float(s['J2_V2_ask_one_price']),
-                     float(s['J2_V2_ask_one_size']),
-                     float(s['J2_V2_ask_one_price_base']),
-                     float(s['J2_V3_bid_one_price']),
-                     float(s['J2_V3_bid_one_size']),
-                     float(s['J2_V3_bid_one_price_base']),
-                     float(s['J2_V3_ask_one_price']),
-                     float(s['J2_V3_ask_one_size']),
-                     float(s['J2_V3_ask_one_price_base']),
-                     float(s['J1_V1_fee']), float(s['J1_V2_fee']),
-                     float(s['J1_V3_fee']), float(s['J2_V1_fee']),
-                     float(s['J2_V2_fee']), float(s['J2_V3_fee']),
-                     str(s['C1_symbol']), str(s['C2_symbol']),
-                     str(s['C3_symbol']), float(s['J1_V1_one_price']),
-                     str(s['J1_V1_one_side']), float(s['J1_V1_one_size']),
-                     float(s['J2_V1_one_price']), str(s['J2_V1_one_side']),
-                     float(s['J2_V1_one_size']), float(s['J1_V2_one_price']),
-                     str(s['J1_V2_one_side']), float(s['J1_V2_one_size']),
-                     float(s['J2_V2_one_price']), str(s['J2_V2_one_side']),
-                     float(s['J2_V2_one_size']), float(s['J1_V3_one_price']),
-                     str(s['J1_V3_one_side']), float(s['J1_V3_one_size']),
-                     float(s['J2_V3_one_price']), str(s['J2_V3_one_side']),
-                     float(s['J2_V3_one_size']), float(s['gain_base']),
-                     float(s['gain_ratio'])))
+                TEMP_SQL_VALUE.append((int(s['timeStamp']), str(
+                    s['J1_server']), str(s['J2_server']), str(s['V1_fSymbol']),
+                                       str(s['V1_tSymbol']),
+                                       str(s['V2_fSymbol']),
+                                       str(s['V2_tSymbol']),
+                                       str(s['V3_fSymbol']),
+                                       str(s['V3_tSymbol']),
+                                       float(s['J1_V1_bid_one_price']),
+                                       float(s['J1_V1_bid_one_size']),
+                                       float(s['J1_V1_bid_one_price_base']),
+                                       float(s['J1_V1_ask_one_price']),
+                                       float(s['J1_V1_ask_one_size']),
+                                       float(s['J1_V1_ask_one_price_base']),
+                                       float(s['J1_V2_bid_one_price']),
+                                       float(s['J1_V2_bid_one_size']),
+                                       float(s['J1_V2_bid_one_price_base']),
+                                       float(s['J1_V2_ask_one_price']),
+                                       float(s['J1_V2_ask_one_size']),
+                                       float(s['J1_V2_ask_one_price_base']),
+                                       float(s['J1_V3_bid_one_price']),
+                                       float(s['J1_V3_bid_one_size']),
+                                       float(s['J1_V3_bid_one_price_base']),
+                                       float(s['J1_V3_ask_one_price']),
+                                       float(s['J1_V3_ask_one_size']),
+                                       float(s['J1_V3_ask_one_price_base']),
+                                       float(s['J2_V1_bid_one_price']),
+                                       float(s['J2_V1_bid_one_size']),
+                                       float(s['J2_V1_bid_one_price_base']),
+                                       float(s['J2_V1_ask_one_price']),
+                                       float(s['J2_V1_ask_one_size']),
+                                       float(s['J2_V1_ask_one_price_base']),
+                                       float(s['J2_V2_bid_one_price']),
+                                       float(s['J2_V2_bid_one_size']),
+                                       float(s['J2_V2_bid_one_price_base']),
+                                       float(s['J2_V2_ask_one_price']),
+                                       float(s['J2_V2_ask_one_size']),
+                                       float(s['J2_V2_ask_one_price_base']),
+                                       float(s['J2_V3_bid_one_price']),
+                                       float(s['J2_V3_bid_one_size']),
+                                       float(s['J2_V3_bid_one_price_base']),
+                                       float(s['J2_V3_ask_one_price']),
+                                       float(s['J2_V3_ask_one_size']),
+                                       float(s['J2_V3_ask_one_price_base']),
+                                       float(s['J1_V1_fee']),
+                                       float(s['J1_V2_fee']),
+                                       float(s['J1_V3_fee']),
+                                       float(s['J2_V1_fee']),
+                                       float(s['J2_V2_fee']),
+                                       float(s['J2_V3_fee']),
+                                       float(s['J1_V1_one_price']),
+                                       str(s['J1_V1_one_side']),
+                                       float(s['J1_V1_one_size']),
+                                       float(s['J2_V1_one_price']),
+                                       str(s['J2_V1_one_side']),
+                                       float(s['J2_V1_one_size']),
+                                       float(s['J1_V2_one_price']),
+                                       str(s['J1_V2_one_side']),
+                                       float(s['J1_V2_one_size']),
+                                       float(s['J2_V2_one_price']),
+                                       str(s['J2_V2_one_side']),
+                                       float(s['J2_V2_one_size']),
+                                       float(s['J1_V3_one_price']),
+                                       str(s['J1_V3_one_side']),
+                                       float(s['J1_V3_one_size']),
+                                       float(s['J2_V3_one_price']),
+                                       str(s['J2_V3_one_side']),
+                                       float(s['J2_V3_one_size']),
+                                       float(s['gain_base']),
+                                       float(s['gain_ratio'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
@@ -1536,17 +1547,19 @@ class DB(object):
                                    price,
                                    quantity,
                                    ratio='',
-                                   type=CCAT_ORDER_TYPE_LIMIT):
+                                   type=CCAT_ORDER_TYPE_LIMIT,
+                                   group_id='NULL'):
         self._logger.debug(
-            "src.core.db.db.DB.insertTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }"
-            % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
+            "src.core.db.db.DB.insertTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s, group_id=%s }"
+            % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type,
+               group_id))
         try:
             TEMP_SQL_TITLE = INSERT_TRADE_BACKTEST_HISTORY_SQL
             TEMP_SQL_VALUE = []
             # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 timeStamp = utcnow_timestamp()
-                order_id = '0x01' + str(timeStamp)
+                order_id = '0x1a' + str(timeStamp)
                 status = 'filled'
                 if ratio == '':
                     ratio = self._Okex.getTradeFees()[0]["taker"]
@@ -1555,11 +1568,11 @@ class DB(object):
                     (str(self._Okex_exchange), int(timeStamp), str(order_id),
                      str(status), str(type), str(fSymbol), str(tSymbol),
                      str(ask_or_bid), float(price), float(quantity),
-                     float(price), float(quantity), float(fee)))
+                     float(price), float(quantity), float(fee), str(group_id)))
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 timeStamp = utcnow_timestamp()
-                order_id = '0x02' + str(timeStamp)
+                order_id = '0x2a' + str(timeStamp)
                 status = 'filled'
                 if ratio == '':
                     ratio = self._Binance.getTradeFees()[0]["taker"]
@@ -1570,11 +1583,11 @@ class DB(object):
                                        str(tSymbol), str(ask_or_bid),
                                        float(price), float(quantity),
                                        float(price), float(quantity),
-                                       float(fee)))
+                                       float(fee), str(group_id)))
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
                 timeStamp = utcnow_timestamp()
-                order_id = '0x03' + str(timeStamp)
+                order_id = '0x3a' + str(timeStamp)
                 status = 'filled'
                 if ratio == '':
                     ratio = self._Huobi.getTradeFees()[0]["taker"]
@@ -1583,7 +1596,7 @@ class DB(object):
                     (str(self._Huobi_exchange), int(timeStamp), str(order_id),
                      str(status), str(type), str(fSymbol), str(tSymbol),
                      str(ask_or_bid), float(price), float(quantity),
-                     float(price), float(quantity), float(fee)))
+                     float(price), float(quantity), float(fee), str(group_id)))
             # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
@@ -1602,8 +1615,11 @@ class DB(object):
                                 fSymbol,
                                 tSymbol,
                                 limit='100',
-                                ratio=''):
-        self._logger.debug("src.core.db.db.DB.insertTradeOrderHistory")
+                                ratio='',
+                                group_id='NULL'):
+        self._logger.debug(
+            "src.core.db.db.DB.insertTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s, group_id=%s }"
+            % (exchange, fSymbol, tSymbol, limit, ratio, group_id))
         try:
             TEMP_SQL_TITLE = INSERT_TRADE_ORDER_HISTORY_SQL
             TEMP_SQL_VALUE = []
@@ -1625,7 +1641,8 @@ class DB(object):
                                                float(base["ask_bid_size"]),
                                                float(base["filled_price"]),
                                                float(base["filled_size"]),
-                                               float(base["fee"])))
+                                               float(base["fee"]),
+                                               str(group_id)))
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 res = self._Binance.getTradeHistory(fSymbol, tSymbol, limit,
@@ -1644,7 +1661,8 @@ class DB(object):
                                                float(base["ask_bid_size"]),
                                                float(base["filled_price"]),
                                                float(base["filled_size"]),
-                                               float(base["fee"])))
+                                               float(base["fee"]),
+                                               str(group_id)))
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
                 res = self._Huobi.getTradeHistory(fSymbol, tSymbol, limit,
@@ -1663,7 +1681,8 @@ class DB(object):
                                                float(base["ask_bid_size"]),
                                                float(base["filled_price"]),
                                                float(base["filled_size"]),
-                                               float(base["fee"])))
+                                               float(base["fee"]),
+                                               str(group_id)))
             # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
@@ -1685,10 +1704,12 @@ class DB(object):
                                      price,
                                      quantity,
                                      ratio='',
-                                     type=CCAT_ORDER_TYPE_LIMIT):
+                                     type=CCAT_ORDER_TYPE_LIMIT,
+                                     group_id='NULL'):
         self._logger.debug(
-            "src.core.db.db.DB.updateCreatTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s }"
-            % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type))
+            "src.core.db.db.DB.updateCreatTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s, group_id=%s }"
+            % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type,
+               group_id))
         try:
             TEMP_SQL_TITLE = UPDATE_CREAT_TRADE_ORDER_HISTORY_SQL
             TEMP_SQL_VALUE = []
@@ -1707,7 +1728,7 @@ class DB(object):
                                        float(base["ask_bid_size"]),
                                        float(base["filled_price"]),
                                        float(base["filled_size"]),
-                                       float(base["fee"])))
+                                       float(base["fee"]), str(group_id)))
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 base = self._Binance.createOrder(fSymbol, tSymbol, ask_or_bid,
@@ -1723,7 +1744,7 @@ class DB(object):
                                        float(base["ask_bid_size"]),
                                        float(base["filled_price"]),
                                        float(base["filled_size"]),
-                                       float(base["fee"])))
+                                       float(base["fee"]), str(group_id)))
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
                 base = self._Huobi.createOrder(fSymbol, tSymbol, ask_or_bid,
@@ -1739,7 +1760,7 @@ class DB(object):
                                        float(base["ask_bid_size"]),
                                        float(base["filled_price"]),
                                        float(base["filled_size"]),
-                                       float(base["fee"])))
+                                       float(base["fee"]), str(group_id)))
             # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:

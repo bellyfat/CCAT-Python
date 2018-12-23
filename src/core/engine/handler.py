@@ -8,7 +8,7 @@ from src.core.db.db import DB
 from src.core.engine.enums import *
 from src.core.util.exceptions import (CalcException, DBException,
                                       EngineException)
-from src.core.util.helper import str_to_list
+from src.core.util.helper import str_to_list, utcnow_timestamp
 from src.core.util.log import Logger
 
 
@@ -190,9 +190,13 @@ class Handler(object):
             db = DB()
             sgn = Signal(signals)
             resInfoSymbol = pd.DataFrame(db.getViewMarketSymbolPairs(exchange))
-            # pre trans
-            res = sgn.backtestSignals(resInfoSymbol, timeout)
-
+            # pre trade
+            preOrders = sgn.backtestSignalsPreTrade(resInfoSymbol)
+            for orders in preOrders:
+                for order in orders:
+                    db.insertTradeBacktestHistory(order['exchange'], order['fSymbol'], order['tSymbol'], order['ask_or_bid'], order['price'], order['quantity'], order['ratio'], order['type'], order['group_id'])
+            # run trade
+            # after trade
             pass
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }, err=%s" % (

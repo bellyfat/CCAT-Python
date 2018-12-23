@@ -5,7 +5,6 @@ import json
 
 from src.core.calc.calc import Calc
 from src.core.calc.enums import SIGNAL_AUTO, SIGNAL_BASECOIN, SIGNAL_SIGNALS
-from src.core.db.db import DB
 from src.core.engine.enums import TYPE_DIS, TYPE_PAIR, TYPE_TRA
 from src.core.util.exceptions import CalcException
 from src.core.util.helper import tuple_str_to_list
@@ -105,48 +104,38 @@ class Signal(object):
             errStr = "src.core.calc.signal.Signal.signals, exception err=%s" % err
             raise CalcException(errStr)
 
-    def backtestSignals(self, resInfoSymbol, timeout=30):
-        self._logger.debug("src.core.calc.signal.Signal.backtestSignals: {resInfoSymbol=%s, timeout=%s}" % ('resInfoSymbol', timeout))
+    def backtestSignalsPreTrade(self, resInfoSymbol):
+        self._logger.debug("src.core.calc.signal.Signal.backtestSignalsPreTrade: {resInfoSymbol=%s}" % 'resInfoSymbol')
         try:
             if not self._signals:
                 raise Exception("NO SIGNAL ERROR, signals empty.")
-            # pre trans
-            self._backtestSignalsPreTrans(self._signals, resInfoSymbol, timeout)
-            # run trans
-            self._backtestSignalsRunTrans(self._signals, resInfoSymbol, timeout)
-            # after trans
-            self._backtestSignalsAfterTrans(self._signals, resInfoSymbol, timeout)
-        except Exception as err:
-            errStr = "src.core.calc.signal.Signal.backtestSignals: {resInfoSymbol=%s, timeout=%s}, exception err=%s" % ('resInfoSymbol', timeout, err)
-            raise CalcException(errStr)
-
-    def _backtestSignalsPreTrans(self, signals, resInfoSymbol, timeout=30):
-        self._logger.debug("src.core.calc.signal.Signal._backtestSignalsPreTrans: {resInfoSymbol=%s, timeout=%s}" % ('resInfoSymbol', timeout))
-        try:
             calc = Calc()
-            orders = []
-            for signal in signals:
-                order = calc.calcSignalPreTransOrders(signal, resInfoSymbol, SIGNAL_BASECOIN)
-                orders.append(order)
-            # print(orders)
-            # do orders
-
+            res = []
+            for signal in self._signals:
+                orders = calc.calcSignalPreTradeOrders(signal, resInfoSymbol, SIGNAL_BASECOIN)
+                if not orders==[]:                    
+                    res.append(orders)
+            return res
         except Exception as err:
-            errStr = "src.core.calc.signal.Signal._backtestSignalsPreTrans: {resInfoSymbol=%s, timeout=%s}, exception err=%s" % ('resInfoSymbol', timeout, err)
+            errStr = "src.core.calc.signal.Signal.backtestSignalsPreTrade: {resInfoSymbol=%s}, exception err=%s" % ('resInfoSymbol', err)
             raise CalcException(errStr)
 
-    def _backtestSignalsRunTrans(self, signals, resInfoSymbol, timeout=30):
-        self._logger.debug("src.core.calc.signal.Signal._backtestSignalsRunTrans: {resInfoSymbol=%s, timeout=%s}" % ('resInfoSymbol', timeout))
+    def backtestSignalsRunTrade(self, signals, resInfoSymbol, timeout=30):
+        self._logger.debug("src.core.calc.signal.Signal.backtestSignalsRunTrade: {resInfoSymbol=%s, timeout=%s}" % ('resInfoSymbol', timeout))
         try:
+            if not self._signals:
+                raise Exception("NO SIGNAL ERROR, signals empty.")
             pass
         except Exception as err:
-            errStr = "src.core.calc.signal.Signal._backtestSignalsRunTrans: {resInfoSymbol=%s, timeout=%s}, exception err=%s" % ('resInfoSymbol', timeout, err)
+            errStr = "src.core.calc.signal.Signal.backtestSignalsRunTrade: {resInfoSymbol=%s, timeout=%s}, exception err=%s" % ('resInfoSymbol', timeout, err)
             raise CalcException(errStr)
 
-    def _backtestSignalsAfterTrans(self, signals, resInfoSymbol, timeout=30):
-        self._logger.debug("src.core.calc.signal.Signal._backtestSignalsAfterTrans: {resInfoSymbol=%s, timeout=%s}" % ('resInfoSymbol', timeout))
+    def backtestSignalsAfterTrade(self, resInfoSymbol):
+        self._logger.debug("src.core.calc.signal.Signal.backtestSignalsAfterTrade: {resInfoSymbol=%s}" % 'resInfoSymbol')
         try:
+            if not self._signals:
+                raise Exception("NO SIGNAL ERROR, signals empty.")
             pass
         except Exception as err:
-            errStr = "src.core.calc.signal.Signal._backtestSignalsAfterTrans: {resInfoSymbol=%s, timeout=%s}, exception err=%s" % ('resInfoSymbol', timeout, err)
+            errStr = "src.core.calc.signal.Signal.backtestSignalsAfterTrade: {resInfoSymbol=%s}, exception err=%s" % ('resInfoSymbol', err)
             raise CalcException(errStr)

@@ -8,6 +8,7 @@ from decimal import ROUND_DOWN, ROUND_HALF_UP, ROUND_UP, Decimal
 import requests
 from requests.exceptions import ConnectionError, ReadTimeout
 
+import pandas as pd
 from src.core.coin.coin import Coin
 from src.core.coin.enums import *
 from src.core.coin.lib.huobipro_api.HuobiService import Huobi as HuobiAPI
@@ -127,6 +128,1480 @@ class Huobi(Coin):
 
     # buy or sell a specific symbol's rate limits
     def getSymbolsLimits(self):
+        '''
+        BTC Pair
+        Trading Pair	Minimum Amount of Limit Order	Maximum Amount of Limit Order	Minimum Buy of Market Order	Maximum Buy of Market Order	Minimum Sell of Market Order	Maximum Sell of Market Order
+        AST/BTC	1	1,000,000	0.0001	100	1	100,000
+        ACT/BTC	0.1	500,000	0.0001	100	0.1	50,000
+        ADX/BTC	0.01	100,000	0.0001	100	0.01	10,000
+        ABT/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        APPC/BTC	0.01	100,000	0.0001	100	0.01	10,000
+        AIDOC/BTC	1	5,000,000	0.0001	100	1	1,000,000
+        BAT/BTC	1	5,000,000	0.0001	100	1	500,000
+        BCH/BTC	0.001	10,000	0.001	1000	0.001	10000
+        BCX/BTC	1	100,000,000	0.0001	100	1	1000000
+        BTG/BTC	0.001	10,000	0.0001	100	0.001	1,000
+        BCD/BTC	0.001	10,000	0.0001	100	0.001	100
+        BTM/BTC	1	1,000,000	0.0001	100	1	100,000
+        BIFI/BTC	0.01	50,000	0.0001	50	0.01	5,000
+        BLZ/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        CMT/BTC	0.1	10,000,000	0.0001	100	0.1	1,000,000
+        CVC/BTC	0.1	2,000,000	0.0001	100	0.1	200,000
+        CHAT/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        DASH/BTC	0.001	10,000	0.0001	100	0.001	1000
+        DGD/BTC	0.001	10,000	0.0001	100	0.001	1000
+        DBC/BTC	0.1	1,000,000	0.0001	100	0.1	100000
+        DAT/BTC	1	5,000,000	0.0001	100	1	500000
+        DTA/BTC	1	100,000,000	0.0001	100	1	10000000
+        ETC/BTC	0.01	10,000	0.0001	1000	0.01	10000
+        ETH/BTC	0.001	10,000	0.001	1000	0.001	10000
+        ELF/BTC	1	1,000,000	0.0001	100	1	100000
+        EOS/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        EKO/BTC	1	10,000,000	0.0001	100	1	10,000,000
+        EVX/BTC	0.01	100,000	0.0001	100	0.01	10,000
+        ELA/BTC	0.01	50,000	0.0001	100	0.01	5,000
+        ENG/BTC	0.001	200,000	0.0001	100	0.01	20,000
+        EDU/BTC	1	100,000,000	0.0001	100	1	10,000,000
+        GNT/BTC	0.1	5,000,000	0.0001	100	0.1	500,000
+        GNX/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        GAS/BTC	0.001	10,000	0.0001	100	0.001	1,000
+        HT/BTC	0.1	1,000,000	0.0001	1000	0.1	100,000
+        HSR/BTC	0.01	20,000	0.0001	100	0.01	2,000
+        ITC/BTC	0.1	5,000,000	0.0001	100	0.1	500,000
+        ICX/BTC	0.1	100,000	0.0001	100	0.1	10,000
+        IOST/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        KNC/BTC	0.1	2,000,000	0.0001	100	0.1	200,000
+        LTC/BTC	0.01	10,000	0.0001	1000	0.01	10000
+        LET/BTC	1	10,000,000	0.0001	100	1	1000000
+        LUN/BTC	0.001	20,000	0.0001	100	0.001	2000
+        LSK/BTC	0.001	50,000	0.0001	100	0.001	5000
+        LINK/BTC	0.1	1,000,000	0.0001	100	0.1	100000
+        MANA/BTC	1	10,000,000	0.0001	100	1	500,000
+        MTL/BTC	0.01	300,000	0.0001	100	0.01	30,000
+        MCO/BTC	0.01	100,000	0.0001	100	0.01	10,000
+        MDS/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        MEE/BTC	1	5,000,000	0.0001	100	1	500,000
+        MTN/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        MTX/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        NEO/BTC	0.001	10,000	0.0001	100	0.001	1,000
+        NAS/BTC	0.01	100,000	0.0001	50	0.01	10,000
+        OMG/BTC	0.01	200,000	0.0001	100	0.01	20,000
+        OST/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        OCN/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        ONT/BTC	0.01	100,000	0.0001	50	0.01	10,000
+        PAY/BTC	0.1	500,000	0.0001	100	0.1	50,000
+        POWR/BTC	0.1	500,000	0.0001	100	0.1	50,000
+        PROPY/BTC	0.01	100,000	0.0001	100	0.01	10,000
+        QASH/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        QSP/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        QTUM/BTC	0.01	100,000	0.0001	100	0.01	10,000
+        QUN/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        RDN/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        RCN/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        REQ/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        RPX/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        RUFF/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        SALT/BTC	0.1	100,000	0.0001	100	0.1	10,000
+        SBTC/BTC	0.0001	10,000	0.0001	100	0.0001	100
+        SMT/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        SNT/BTC	0.1	2,000,000	0.0001	100	0.1	200,000
+        STORJ/BTC	0.1	2,000,000	0.0001	100	0.1	2,000,000
+        SWFTC/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        SOC/BTC	1	5,000,000	0.0001	100	1	500,000
+        STK/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        SRN/BTC	0.01	300,000	0.0001	100	0.01	30,000
+        SNC/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        TNB/BTC	1	50,000,000	0.0001	100	1	10,000,000
+        TNT/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        TRX/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        TOPC/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        THETA/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        UTK/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        VEN/BTC	0.1	500,000	0.0001	100	0.1	50,000
+        WAX/BTC	0.001	1,000,000	0.0001	100	0.01	100,000
+        WPR/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        WICC/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        XRP/BTC	1	5,000,000	0.0001	100	1	500,000
+        XEM/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        YEE/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        ZEC/BTC	0.001	5,000	0.0001	100	0.001	500
+        ZRX/BTC	1	1,000,000	0.0001	100	1	100,000
+        ZIL/BTC	1	10,000,000	0.0001	100	1	1,000,000
+        ZLA/BTC	0.1	1,000,000	0.0001	100	0.1	100,000
+        CTXC/BTC	0.1	1,000,000　	0.0001　	50	0.1	100000　
+
+        USDT Pair	　	　	　
+        Trading Pair	Minimum Amount of Limit Order	Maximum Amount of Limit Order	Minimum Buy of Market Order	Maximum Buy of Market Order	Minimum Sell of Market Order	Maximum Sell of Market Order
+        BTC/USDT	0.001	1000	1	1,000,000	0.001	100
+        BCH/USDT	0.001	10,000	1	1,000,000	0.001	1,000
+        CVC/USDT	0.1	1,000,000	0.1	1,000,000	0.1	100,000
+        DTA/USDT	1	20,000,000	0.1	100,000	1	2,000,000
+        DASH/USDT	0.001	10,000	1	1,000,000	0.001	1,000
+        DBC/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        ETH/USDT 	0.001	1,000	1	100	0.001	100
+        ETC/USDT 	0.01	200,000	1	1,000,000	0.01	20,000
+        EOS/USDT	0.01	1,000,000	0.1	1,000,000	0.01	100,000
+        ELF/USDT	0.1	500,000	0.1	100,000	0.1	50,000
+        ELA/USDT	0.001	10,000	0.1	100,000	0.001	1,000
+        GNT/USDT	0.1	1,000,000	0.1	100,000	0.1	100,000
+        HT/USDT	0.1	1,000,000	0.1	100,000	0.1	100,000
+        HSR/USDT	0.01	20,000	1	1,000,000	0.01	2,000
+        ITC/USDT	0.01	500,000	0.1	100,000	0.01	100,000
+        IOST/USDT	1	20,000,000	0.1	100,000	1	2,000,000
+        LET/USDT	1	10,000,000	0.1	100,000	1	1,000,000
+        LTC/USDT	0.001	100,000	1	1,000,000	0.001	10,000
+        MDS/USDT	0.1	5,000,000	0.1	100,000	0.1	500,000
+        NEO/USDT	0.001	10,000	0.1	50,000	0.001	1,000
+        NAS/USDT	0.01	100,000	0.1	100,000	0.01	10,000
+        OMG/USDT	0.01	1,000,000	0.1	1,000,000	0.01	100,000
+        QTUM/USDT	0.01	1,000,000	0.1	200,000	0.01	10,000
+        RUFF/USDT	1	5,000,000	0.1	100,000	1	500,000
+        SNT/USDT	0.1	1,000,000	0.1	100,000	0.1	100,000
+        STORJ/USDT	0.01	100,000	0.1	100,000	0.01	10,000
+        SMT/USDT	1	10,000,000	0.1	100,000	1	1,000,000
+        TRX/USDT	1	10,000,000	0.1	100,000	1	1,000,000
+        THETA/USDT	0.1	3,000,000	0.1	100,000	0.1	300,000
+        VEN/USDT	0.1	500,000	0.1	50,000	0.1	50,000
+        XRP/USDT	1	5,000,000	1	100,000	1	500,000
+        XEM/USDT	0.1	1,000,000	0.1	100,000	0.1	100,000
+        ZEC/USDT	0.001	5,000	0.1	10,000,000	0.001	500
+        ZIL/USDT	1	10,000,000	0.1	100,000	1	1,000,000
+        　	　	　	 	　	　	　
+        ETH Pair	　	　	　
+        Trading Pair	Minimum Amount of Limit Order	Maximum Amount of Limit Order	Minimum Buy of Market Order	Maximum Buy of Market Order	Minimum Sell of Market Order	Maximum Sell of Market Order
+        ACT/ETH	0.1	500,000	0.001	500	0.1	5,000
+        ADX/ETH	0.01	100,000	0.001	500	0.01	10,000
+        ABT/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        APPC/ETH	0.1	100,000	0.001	500	0.01	100,000
+        AIDOC/ETH	1	5,000,000	0.001	500	1	500,000
+        BAT/ETH	1	5,000,000	0.001	1,000	1	500,000
+        BTM/ETH	1	1,000,000	0.001	500	1	100,000
+        BLZ/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        CMT/ETH	0.1	10,000,000	0.001	1,000	0.1	1,000,000
+        CVC/ETH	0.1	2,000,000	0.001	100	0.1	200,000
+        CHAT/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        DGD/ETH	0.001	10,000	0.0001	1,000	0.001	1,000
+        DBC/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        DAT/ETH	1	5,000,000	0.001	500	1	500,000
+        DTA/ETH	1	100,000,000	0.001	500	1	10,000,000
+        EOS/ETH	0.1	1,000,000	0.001	1,000	0.1	100,000
+        ELF/ETH	1	1,000,000	0.001	500	1	100,000
+        EVX/ETH	0.01	100,000	0.001	500	0.01	10,000
+        EKO/ETH	1	10,000,000	0.001	500	1	10,000,000
+        ELA/ETH	0.01	50,000	0.001	500	0.01	5,000
+        ENG/ETH	0.01	200,000	0.001	500	0.01	20,000
+        EDU/ETH	1	100,000,000	0.001	500	1	10,000,000
+        GNT/ETH	0.1	5,000,000	0.001	1,000	0.1	500,000
+        GAS/ETH	0.001	10,000	0.001	500	0.001	1,000
+        GNX/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        HT/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        HSR/ETH	0.01	20,000	0.001	500	0.01	2,000
+        ITC/ETH	0.1	5,000,000	0.001	1,000	1	500,000
+        ICX/ETH	0.1	100,000	0.001	500	0.1	10,000
+        IOST/ETH	1	1,000,000	0.001	500	1	1,000,000
+        LET/ETH	1	10,000,000	0.001	500	1	1,000,000
+        LUN/ETH	0.001	20,000	0.001	500	0.001	2,000
+        LSK/ETH	0.001	50,000	0.001	500	0.001	5,000
+        LINK/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        MANA/ETH	1	10,000,000	0.001	100	1	500,000
+        MCO/ETH	0.01	100,000	0.001	1,000	0.01	10,000
+        MDS/ETH	1	10,000,000	0.001	500	1	1,000,000
+        MEE/ETH	1	5,000,000	0.001	500	1	500,000
+        MTN/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        MTX/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        NAS/ETH	0.01	100,000	0.001	500	0.01	10,000
+        OMG/ETH	0.01	200,000	0.001	1,000	0.01	20,000
+        OST/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        OCN/ETH	1	10,000,000	0.001	500	1	1,000,000
+        ONT/ETH	0.01	100,000	0.001	500	0.01	10,000
+        PAY/ETH	0.1	500,000	0.001	1,000	0.1	50,000
+        POWR/ETH	0.1	500,000	0.001	500	0.1	50,000
+        PROPY/ETH	0.01	100,000	0.001	500	0.01	10,000
+        QASH/ETH	0.1	1,000,000	0.001	1,000	0.1	100,000
+        QSP/ETH	1	10,000,000	0.001	1,000	1	1,000,000
+        QTUM/ETH	0.01	100,000	0.0001	100	0.01	10,000
+        QUN/ETH	1	10,000,000	0.001	500	1	1,000,000
+        RDN/ETH	0.1	1,000,000	0.001	1,000	0.1	100,000
+        RCN/ETH	1	10,000,000	0.001	1,000	1	1,000,000
+        REQ/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        RUFF/ETH	1	10,000,000	0.001	500	1	1,000,000
+        SALT/ETH	0.1	100,000	0.001	500	0.1	10,000
+        SMT/ETH	1	10,000,000	0.001	1,000	1	1,000,000
+        SWFTC/ETH	1	10,000,000	0.001	500	1	1,000,000
+        SOC/ETH	1	5,000,000	0.001	500	1	500,000
+        STK/ETH	1	10,000,000	0.001	500	1	1,000,000
+        SRN/ETH	0.01	300,000	0.001	500	0.01	30,000
+        SNC/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        TNT/ETH	1	10,000,000	0.001	1,000	1	1,000,000
+        TNB/ETH	1	50,000,000	0.001	1,000	1	10,000,000
+        TRX/ETH	1	10,000,000	0.001	500	1	1,000,000
+        TOPC/ETH	1	10,000,000	0.001	500	1	1,000,000
+        THETA/ETH	1	10,000,000	0.001	500	1	1,000,000
+        UTK/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        VEN/ETH	0.1	500,000	0.001	500	0.1	50,000
+        WICC/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        WPR/ETH	0.01	1,000,000	0.001	500	0.1	100,000
+        WAX/ETH	0.01	1,000,000	0.001	100	0.1	5,000
+        YEE/ETH	1	10,000,000	0.001	500	1	1,000,000
+        ZIL/ETH	1	10000000	0.001	500	1	1000000
+        ZLA/ETH	0.1	1000000	0.001	500	0.1	100000
+        CTXC/ETH	0.1	1,000,000	0.001	500	0.1	100,000
+        '''
+        dataTable = pd.DataFrame([{
+                                      "fSymbol": "AST",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ACT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 500000.00
+                                  },
+                                  {
+                                      "fSymbol": "ADX",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "ABT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "APPC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "AIDOC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "BAT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "BCH",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "BCX",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 100000000.00
+                                  },
+                                  {
+                                      "fSymbol": "BTG",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "BCD",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "BTM",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "BIFI",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 50000.00
+                                  },
+                                  {
+                                      "fSymbol": "BLZ",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "CMT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "CVC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 2000000.00
+                                  },
+                                  {
+                                      "fSymbol": "CHAT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "DASH",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "DGD",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "DBC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "DAT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "DTA",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 100000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ETC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "ETH",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "ELF",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "EOS",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "EKO",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "EVX",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "ELA",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 50000.00
+                                  },
+                                  {
+                                      "fSymbol": "ENG",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 200000.00
+                                  },
+                                  {
+                                      "fSymbol": "EDU",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 100000000.00
+                                  },
+                                  {
+                                      "fSymbol": "GNT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "GNX",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "GAS",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "HT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "HSR",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 20000.00
+                                  },
+                                  {
+                                      "fSymbol": "ITC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ICX",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "IOST",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "KNC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 2000000.00
+                                  },
+                                  {
+                                      "fSymbol": "LTC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "LET",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "LUN",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 20000.00
+                                  },
+                                  {
+                                      "fSymbol": "LSK",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 50000.00
+                                  },
+                                  {
+                                      "fSymbol": "LINK",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "MANA",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "MTL",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 300000.00
+                                  },
+                                  {
+                                      "fSymbol": "MCO",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "MDS",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "MEE",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "MTN",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "MTX",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "NEO",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "NAS",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "OMG",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 200000.00
+                                  },
+                                  {
+                                      "fSymbol": "OST",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "OCN",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ONT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "PAY",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 500000.00
+                                  },
+                                  {
+                                      "fSymbol": "POWR",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 500000.00
+                                  },
+                                  {
+                                      "fSymbol": "PROPY",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "QASH",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "QSP",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "QTUM",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "QUN",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "RDN",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "RCN",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "REQ",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "RPX",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "RUFF",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "SALT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "SBTC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "SMT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "SNT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 2000000.00
+                                  },
+                                  {
+                                      "fSymbol": "STORJ",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 2000000.00
+                                  },
+                                  {
+                                      "fSymbol": "SWFTC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "SOC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "STK",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "SRN",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.01,
+                                      "size_max": 300000.00
+                                  },
+                                  {
+                                      "fSymbol": "SNC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "TNB",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 50000000.00
+                                  },
+                                  {
+                                      "fSymbol": "TNT",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "TRX",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "TOPC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "THETA",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "UTK",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "VEN",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 500000.00
+                                  },
+                                  {
+                                      "fSymbol": "WAX",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "WPR",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "WICC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "XRP",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "XEM",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "YEE",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ZEC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.00,
+                                      "size_max": 5000.00
+                                  },
+                                  {
+                                      "fSymbol": "ZRX",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ZIL",
+                                      "tSymbol": "BTC",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ZLA",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "CTXC",
+                                      "tSymbol": "BTC",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ACT",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 500000.00
+                                  },
+                                  {
+                                      "fSymbol": "ADX",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "ABT",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "APPC",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "AIDOC",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "BAT",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "BTM",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "BLZ",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "CMT",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "CVC",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 2000000.00
+                                  },
+                                  {
+                                      "fSymbol": "CHAT",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "DGD",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "DBC",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "DAT",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "DTA",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 100000000.00
+                                  },
+                                  {
+                                      "fSymbol": "EOS",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ELF",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "EVX",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "EKO",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ELA",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 50000.00
+                                  },
+                                  {
+                                      "fSymbol": "ENG",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 200000.00
+                                  },
+                                  {
+                                      "fSymbol": "EDU",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 100000000.00
+                                  },
+                                  {
+                                      "fSymbol": "GNT",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "GAS",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "GNX",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "HT",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "HSR",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 20000.00
+                                  },
+                                  {
+                                      "fSymbol": "ITC",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ICX",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "IOST",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "LET",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "LUN",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.00,
+                                      "size_max": 20000.00
+                                  },
+                                  {
+                                      "fSymbol": "LSK",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.00,
+                                      "size_max": 50000.00
+                                  },
+                                  {
+                                      "fSymbol": "LINK",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "MANA",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "MCO",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "MDS",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "MEE",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "MTN",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "MTX",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "NAS",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "OMG",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 200000.00
+                                  },
+                                  {
+                                      "fSymbol": "OST",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "OCN",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ONT",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "PAY",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 500000.00
+                                  },
+                                  {
+                                      "fSymbol": "POWR",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 500000.00
+                                  },
+                                  {
+                                      "fSymbol": "PROPY",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "QASH",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "QSP",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "QTUM",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "QUN",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "RDN",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "RCN",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "REQ",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "RUFF",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "SALT",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "SMT",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "SWFTC",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "SOC",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "STK",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "SRN",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 300000.00
+                                  },
+                                  {
+                                      "fSymbol": "SNC",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "TNT",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "TNB",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 50000000.00
+                                  },
+                                  {
+                                      "fSymbol": "TRX",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "TOPC",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "THETA",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "UTK",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "VEN",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 500000.00
+                                  },
+                                  {
+                                      "fSymbol": "WICC",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "WPR",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "WAX",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.01,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "YEE",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ZIL",
+                                      "tSymbol": "ETH",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ZLA",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "CTXC",
+                                      "tSymbol": "ETH",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "BTC",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.00,
+                                      "size_max": 1000.00
+                                  },
+                                  {
+                                      "fSymbol": "BCH",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "CVC",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "DTA",
+                                      "tSymbol": "USDT",
+                                      "size_min": 1.00,
+                                      "size_max": 20000000.00
+                                  },
+                                  {
+                                      "fSymbol": "DASH",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "DBC",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ETH",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.00,
+                                      "size_max": 1000.00
+                                  },
+                                  {
+                                      "fSymbol": "ETC",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.01,
+                                      "size_max": 200000.00
+                                  },
+                                  {
+                                      "fSymbol": "EOS",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.01,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ELF",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.10,
+                                      "size_max": 500000.00
+                                  },
+                                  {
+                                      "fSymbol": "ELA",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "GNT",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "HT",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "HSR",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.01,
+                                      "size_max": 20000.00
+                                  },
+                                  {
+                                      "fSymbol": "ITC",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.01,
+                                      "size_max": 500000.00
+                                  },
+                                  {
+                                      "fSymbol": "IOST",
+                                      "tSymbol": "USDT",
+                                      "size_min": 1.00,
+                                      "size_max": 20000000.00
+                                  },
+                                  {
+                                      "fSymbol": "LET",
+                                      "tSymbol": "USDT",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "LTC",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.00,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "MDS",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.10,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "NEO",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.00,
+                                      "size_max": 10000.00
+                                  },
+                                  {
+                                      "fSymbol": "NAS",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "OMG",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.01,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "QTUM",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.01,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "RUFF",
+                                      "tSymbol": "USDT",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "SNT",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "STORJ",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.01,
+                                      "size_max": 100000.00
+                                  },
+                                  {
+                                      "fSymbol": "SMT",
+                                      "tSymbol": "USDT",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "TRX",
+                                      "tSymbol": "USDT",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  },
+                                  {
+                                      "fSymbol": "THETA",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.10,
+                                      "size_max": 3000000.00
+                                  },
+                                  {
+                                      "fSymbol": "VEN",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.10,
+                                      "size_max": 500000.00
+                                  },
+                                  {
+                                      "fSymbol": "XRP",
+                                      "tSymbol": "USDT",
+                                      "size_min": 1.00,
+                                      "size_max": 5000000.00
+                                  },
+                                  {
+                                      "fSymbol": "XEM",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.10,
+                                      "size_max": 1000000.00
+                                  },
+                                  {
+                                      "fSymbol": "ZEC",
+                                      "tSymbol": "USDT",
+                                      "size_min": 0.00,
+                                      "size_max": 5000.00
+                                  },
+                                  {
+                                      "fSymbol": "ZIL",
+                                      "tSymbol": "USDT",
+                                      "size_min": 1.00,
+                                      "size_max": 10000000.00
+                                  }])
+
         try:
             base = self._huobiAPI.get_symbols()
             if not base['status'] == 'ok':
@@ -145,10 +1620,14 @@ class Huobi(Coin):
                 fSymbol_size_precision = math.pow(10,
                                                   -int(b["amount-precision"]))
                 fSymbol_size_max = ''
-                fSymbol_size_min = 100 * math.pow(10,
-                                                  -int(b["amount-precision"]))
+                fSymbol_size_min = math.pow(10, -int(b["amount-precision"]))
                 fSymbol_size_step = math.pow(10, -int(b["amount-precision"]))
                 min_notional = tSymbol_price_min * fSymbol_size_min
+                isIn = dataTable[(dataTable['fSymbol']==fSymbol)
+                                &(dataTable['tSymbol']==tSymbol)]
+                if not isIn.empty:
+                    fSymbol_size_min = isIn['size_min'].values[0]
+                    fSymbol_size_max = isIn['size_max'].values[0]
                 res.append({
                     "fSymbol": fSymbol,
                     "tSymbol": tSymbol,
@@ -192,7 +1671,10 @@ class Huobi(Coin):
                 }
             else:
                 # calc bids
-                aggPrice =  num_to_precision(float(base['tick']["bids"][0][0]), float(aggDepth), rounding=ROUND_DOWN)
+                aggPrice = num_to_precision(
+                    float(base['tick']["bids"][0][0]),
+                    float(aggDepth),
+                    rounding=ROUND_DOWN)
                 bid_one_price = float(aggPrice)
                 bid_one_size = 0.0
                 for bid in base['tick']["bids"]:
@@ -200,7 +1682,10 @@ class Huobi(Coin):
                         break
                     bid_one_size = bid_one_size + float(bid[1])
                 # calc asks
-                aggPrice =  num_to_precision(float(base['tick']["asks"][0][0]), float(aggDepth), rounding=ROUND_UP)
+                aggPrice = num_to_precision(
+                    float(base['tick']["asks"][0][0]),
+                    float(aggDepth),
+                    rounding=ROUND_UP)
                 ask_one_price = float(aggPrice)
                 ask_one_size = 0.0
                 for ask in base['tick']["asks"]:

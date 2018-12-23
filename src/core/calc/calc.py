@@ -4,7 +4,6 @@ from decimal import ROUND_DOWN, ROUND_HALF_UP, ROUND_UP
 from itertools import combinations
 
 import pandas as pd
-
 from src.core.coin.binance import Binance
 from src.core.coin.enums import (CCAT_ORDER_SIDE_BUY, CCAT_ORDER_SIDE_SELL,
                                  CCAT_ORDER_TYPE_LIMIT)
@@ -51,108 +50,172 @@ class Calc(object):
         # logger
         self._logger = Logger()
 
-    def _calcSymbolTransOrders(self):
-        self._logger.debug("src.core.calc.calc.Calc._calcSymbolTransOrders:")
+    def _calcSymbolTradeOrders(self):
+        self._logger.debug("src.core.calc.calc.Calc._calcSymbolTradeOrders:")
         try:
             pass
-        except (BinanceException, HuobiException, OkexException, Exception) as err:
-            errStr = "src.core.calc.calc.Calc._calcSymbolTransOrders: exception err=" % err
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc._calcSymbolTradeOrders: exception err=%s" % err
             raise CalcException(errStr)
 
-    def _calcSymbolPreTransOrders(self, server, fSymbol, tSymbol, fSymbol_base,
-                                  tSymbol_base, resInfoSymbol, baseCoin):
+    def _calcSymbolPreTradeOrders(self, server, fSymbol, tSymbol, fSymbol_base,
+                                  tSymbol_base, resInfoSymbol, baseCoin, signal_id):
         self._logger.debug(
-            "src.core.calc.calc.Calc._calcSymbolPreTransOrders:")
+            "src.core.calc.calc.Calc._calcSymbolPreTradeOrders:")
         try:
-            print('in here')
             orders = []
             price_precision = 0
             size_precision = 0
             size_min = 0
+            min_notional = 0
             fee_ratio = 0
             # type I
             # handle fSymbol
             if fSymbol_base > 0:
+                # print('in type I')
                 # de: direct trans
-                isDe = resInfoSymbol[(resInfoSymbol['server'] == server) & (resInfoSymbol['fSymbol']==fSymbol) & (resInfoSymbol['tSymbol']== baseCoin)]
+                isDe = resInfoSymbol[(resInfoSymbol['server'] == server)
+                                     & (resInfoSymbol['fSymbol'] == fSymbol) &
+                                     (resInfoSymbol['tSymbol'] == baseCoin)]
                 if not isDe.empty:
+                    # print('in Type I: de')
                     # baseCoin -> fSymbol
                     if not isDe['limit_price_precision'].values[0] == 'NULL':
-                        price_precision =  isDe['limit_price_precision'].values[0]
+                        price_precision = isDe['limit_price_precision'].values[
+                            0]
                     if not isDe['limit_size_precision'].values[0] == 'NULL':
-                        size_precision =  isDe['limit_size_precision'].values[0]
+                        size_precision = isDe['limit_size_precision'].values[0]
                     if not isDe['limit_size_min'].values[0] == 'NULL':
-                        size_min =  isDe['limit_size_min'].values[0]
+                        size_min = isDe['limit_size_min'].values[0]
+                    if not isDe['limit_min_notional'].values[0] == 'NULL':
+                        min_notional = isDe['limit_min_notional'].values[0]
                     if not isDe['fee_taker'].values[0] == 'NULL':
                         fee_ratio = isDe['fee_taker'].values[0]
-                    if sever == self._Okex_exchange:
-                        res = self._Okex.getMarketOrderbookDepth(fSymbol, baseCoin)
-                    if sever == self._Binance_exchange:
-                        res = self._Binance.getMarketOrderbookDepth(fSymbol, baseCoin)
-                    if sever == self._Huobi_exchange:
-                        res = self._Huobi.getMarketOrderbookDepth(fSymbol, baseCoin)
+                    if server == self._Okex_exchange:
+                        res = self._Okex.getMarketOrderbookDepth(
+                            fSymbol, baseCoin)
+                    if server == self._Binance_exchange:
+                        res = self._Binance.getMarketOrderbookDepth(
+                            fSymbol, baseCoin)
+                    if server == self._Huobi_exchange:
+                        res = self._Huobi.getMarketOrderbookDepth(
+                            fSymbol, baseCoin)
                     # calc orders
                     nowPrice = float(res['bid_price_size'][0][0])
-                    deTradeSize = fSymbol_base/nowPrice
+                    deTradeSize = fSymbol_base / nowPrice
+                    if deTradeSize < size_min:
+                        raise Exception(
+                            "TRANS TOO SMALL ERROR, amount is smaller than the min size."
+                        )
                     sum = 0
                     deTrade = []
-                    for r in res['ask_price_size']:
-                        rprice = float(r[0])
+                    for r in res['ask_price_size'][
+                            0:10]:  # ask 1 to ask 10, no more
+                        rPrice = float(r[0])
                         rSize = float(r[1])
                         if not sum < deTradeSize:
                             break
-                        deSize = min(deTradeSize-sum, rSize)
+                        deSize = min(deTradeSize - sum, rSize)
                         if deSize > 0:
                             if deSize >= size_min:
+                                if not deSize * rPrice >= min_notional:
+                                    deSize = min_notional / rPrice
                                 sum = sum + deSize
-                                deTrade.append({'price': rprice, 'size': deSize})
+                                deTrade.append({
+                                    'price': rPrice,
+                                    'size': deSize
+                                })
+                    if sum < deTradeSize:
+                        raise Exception(
+                            "TRANS TOO MUCH ERROR，amount is not enough with ask 1 to ask 10."
+                        )
                     for trade in deTrade:
                         price = num_to_precision(
                             trade['price'],
                             price_precision,
                             rounding=ROUND_HALF_UP)
                         quantity = num_to_precision(
-                            trade['size'],
-                            size_precision,
-                            rounding=ROUND_DOWN)
-                        orders.append({"exchange":server, "fSymbol":fSymbol, "tSymbol":baseCoin, "ask_or_bid":CCAT_ORDER_SIDE_BUY, "price":price, "quantity":quantity, "ratio":fee_ratio, "type":CCAT_ORDER_TYPE_LIMIT})
-                    # return
-                    return orders
+                            trade['size'], size_precision, rounding=ROUND_DOWN)
+                        orders.append({
+                            "exchange": server,
+                            "fSymbol": fSymbol,
+                            "tSymbol": baseCoin,
+                            "ask_or_bid": CCAT_ORDER_SIDE_BUY,
+                            "price": price,
+                            "quantity": quantity,
+                            "ratio": fee_ratio,
+                            "type": CCAT_ORDER_TYPE_LIMIT,
+                            "group_id": signal_id
+                        })
+                    # type I: de done
+                    # print('out type I: de done')
                 # tra: trangle trans
                 if isDe.empty:
-                isDe = resInfoSymbol[(resInfoSymbol['server'] == server) & (resInfoSymbol['fSymbol']==fSymbol) & (resInfoSymbol['tSymbol']==tSymbol)]
-                isTra = resInfoSymbol[(resInfoSymbol['server'] == server) & (resInfoSymbol['fSymbol']==tSymbol) & (resInfoSymbol['tSymbol']== baseCoin)]
+                    # print('in type I: tra')
+                    isDe = resInfoSymbol[(resInfoSymbol['server'] == server) &
+                                         (resInfoSymbol['fSymbol'] == fSymbol)
+                                         &
+                                         (resInfoSymbol['tSymbol'] == tSymbol)]
+                    isTra = resInfoSymbol[
+                        (resInfoSymbol['server'] == server)
+                        & (resInfoSymbol['fSymbol'] == tSymbol) &
+                        (resInfoSymbol['tSymbol'] == baseCoin)]
                     if not isDe.empty and not isTra.empty:
                         # baseCoin -> tSymbol
-                        if not isTra['limit_price_precision'].values[0] == 'NULL':
-                            price_precision =  isTra['limit_price_precision'].values[0]
-                        if not isTra['limit_size_precision'].values[0] == 'NULL':
-                            size_precision =  isTra['limit_size_precision'].values[0]
+                        if not isTra['limit_price_precision'].values[
+                                0] == 'NULL':
+                            price_precision = isTra[
+                                'limit_price_precision'].values[0]
+                        if not isTra['limit_size_precision'].values[
+                                0] == 'NULL':
+                            size_precision = isTra[
+                                'limit_size_precision'].values[0]
                         if not isTra['limit_size_min'].values[0] == 'NULL':
-                            size_min =  isTra['limit_size_min'].values[0]
+                            size_min = isTra['limit_size_min'].values[0]
+                        if not isTra['limit_min_notional'].values[0] == 'NULL':
+                            min_notional = isTra['limit_min_notional'].values[
+                                0]
                         if not isTra['fee_taker'].values[0] == 'NULL':
                             fee_ratio = isTra['fee_taker'].values[0]
-                        if sever == self._Okex_exchange:
-                            res = self._Okex.getMarketOrderbookDepth(tSymbol, baseCoin)
-                        if sever == self._Binance_exchange:
-                            res = self._Binance.getMarketOrderbookDepth(tSymbol, baseCoin)
-                        if sever == self._Huobi_exchange:
-                            res = self._Huobi.getMarketOrderbookDepth(tSymbol, baseCoin)
+                        if server == self._Okex_exchange:
+                            res = self._Okex.getMarketOrderbookDepth(
+                                tSymbol, baseCoin)
+                        if server == self._Binance_exchange:
+                            res = self._Binance.getMarketOrderbookDepth(
+                                tSymbol, baseCoin)
+                        if server == self._Huobi_exchange:
+                            res = self._Huobi.getMarketOrderbookDepth(
+                                tSymbol, baseCoin)
                         # calc orders
                         nowPrice = float(res['bid_price_size'][0][0])
-                        traTradeSize = fSymbol_base/nowPrice
+                        traTradeSize = fSymbol_base / nowPrice
+                        if traTradeSize < size_min:
+                            raise Exception(
+                                "TRANS TOO SMALL ERROR, amount is smaller than the min size."
+                            )
                         sum = 0
                         traTrade = []
-                        for r in res['ask_price_size']:
-                            rprice = float(r[0])
+                        for r in res['ask_price_size'][
+                                0:10]:  # ask 1 to ask 10, no more
+                            rPrice = float(r[0])
                             rSize = float(r[1])
                             if not sum < traTradeSize:
                                 break
-                            traSize = min(traTradeSize-sum, rSize)
+                            traSize = min(traTradeSize - sum, rSize)
                             if traSize > 0:
                                 if traSize >= size_min:
+                                    if not traSize * rPrice >= min_notional:
+                                        traSize = min_notional / rPrice
                                     sum = sum + traSize
-                                    traTrade.append({'price': rprice, 'size': traSize})
+                                    traTrade.append({
+                                        'price': rPrice,
+                                        'size': traSize
+                                    })
+                        if sum < traTradeSize:
+                            raise Exception(
+                                "TRANS TOO MUCH ERROR，amount is not enough with ask 1 to ask 10."
+                            )
                         for trade in traTrade:
                             price = num_to_precision(
                                 trade['price'],
@@ -162,38 +225,70 @@ class Calc(object):
                                 trade['size'],
                                 size_precision,
                                 rounding=ROUND_DOWN)
-                            orders.append({"exchange":server, "fSymbol":fSymbol, "tSymbol":baseCoin, "ask_or_bid":CCAT_ORDER_SIDE_BUY, "price":price, "quantity":quantity, "ratio":fee_ratio, "type":CCAT_ORDER_TYPE_LIMIT})
+                            orders.append({
+                                "exchange": server,
+                                "fSymbol": tSymbol,
+                                "tSymbol": baseCoin,
+                                "ask_or_bid": CCAT_ORDER_SIDE_BUY,
+                                "price": price,
+                                "quantity": quantity,
+                                "ratio": fee_ratio,
+                                "type": CCAT_ORDER_TYPE_LIMIT,
+                                "group_id": signal_id
+                            })
                         # tSymbol -> fSymbol
-                        sum_base = sum*(1-fee_ratio)
-                        if not isDe['limit_price_precision'].values[0] == 'NULL':
-                            price_precision =  isDe['limit_price_precision'].values[0]
+                        sum_base = sum * (1 - fee_ratio)
+                        if not isDe['limit_price_precision'].values[
+                                0] == 'NULL':
+                            price_precision = isDe[
+                                'limit_price_precision'].values[0]
                         if not isDe['limit_size_precision'].values[0] == 'NULL':
-                            size_precision =  isDe['limit_size_precision'].values[0]
+                            size_precision = isDe[
+                                'limit_size_precision'].values[0]
                         if not isDe['limit_size_min'].values[0] == 'NULL':
-                            size_min =  isDe['limit_size_min'].values[0]
+                            size_min = isDe['limit_size_min'].values[0]
+                        if not isDe['limit_min_notional'].values[0] == 'NULL':
+                            min_notional = isDe['limit_min_notional'].values[0]
                         if not isDe['fee_taker'].values[0] == 'NULL':
                             fee_ratio = isDe['fee_taker'].values[0]
-                        if sever == self._Okex_exchange:
-                            res = self._Okex.getMarketOrderbookDepth(fSymbol, tSymbol)
-                        if sever == self._Binance_exchange:
-                            res = self._Binance.getMarketOrderbookDepth(fSymbol, tSymbol)
-                        if sever == self._Huobi_exchange:
-                            res = self._Huobi.getMarketOrderbookDepth(fSymbol, tSymbol)
+                        if server == self._Okex_exchange:
+                            res = self._Okex.getMarketOrderbookDepth(
+                                fSymbol, tSymbol)
+                        if server == self._Binance_exchange:
+                            res = self._Binance.getMarketOrderbookDepth(
+                                fSymbol, tSymbol)
+                        if server == self._Huobi_exchange:
+                            res = self._Huobi.getMarketOrderbookDepth(
+                                fSymbol, tSymbol)
                         # calc orders
                         nowPrice = float(res['bid_price_size'][0][0])
-                        deTradeSize = sum_base/nowPrice
+                        deTradeSize = sum_base / nowPrice
+                        if deTradeSize < size_min:
+                            raise Exception(
+                                "TRANS TOO SMALL ERROR, amount is smaller than the min size."
+                            )
                         sum = 0
                         deTrade = []
-                        for r in res['ask_price_size']:
-                            rprice = float(r[0])
+                        for r in res['ask_price_size'][
+                                0:10]:  # ask 1 to ask 10, no more
+                            rPrice = float(r[0])
                             rSize = float(r[1])
                             if not sum < deTradeSize:
                                 break
-                            deSize = min(deTradeSize-sum, rSize)
+                            deSize = min(deTradeSize - sum, rSize)
                             if deSize > 0:
                                 if deSize >= size_min:
+                                    if not deSize * rPrice >= min_notional:
+                                        deSize = min_notional / rPrice
                                     sum = sum + deSize
-                                    deTrade.append({'price': rprice, 'size': deSize})
+                                    deTrade.append({
+                                        'price': rPrice,
+                                        'size': deSize
+                                    })
+                        if sum < deTradeSize:
+                            raise Exception(
+                                "TRANS TOO MUCH ERROR，amount is not enough with ask 1 to ask 10."
+                            )
                         for trade in deTrade:
                             price = num_to_precision(
                                 trade['price'],
@@ -203,107 +298,241 @@ class Calc(object):
                                 trade['size'],
                                 size_precision,
                                 rounding=ROUND_DOWN)
-                            orders.append({"exchange":server, "fSymbol":fSymbol, "tSymbol":baseCoin, "ask_or_bid":CCAT_ORDER_SIDE_BUY, "price":price, "quantity":quantity, "ratio":fee_ratio, "type":CCAT_ORDER_TYPE_LIMIT})
-                        # return
-                        return orders
+                            orders.append({
+                                "exchange": server,
+                                "fSymbol": fSymbol,
+                                "tSymbol": tSymbol,
+                                "ask_or_bid": CCAT_ORDER_SIDE_BUY,
+                                "price": price,
+                                "quantity": quantity,
+                                "ratio": fee_ratio,
+                                "type": CCAT_ORDER_TYPE_LIMIT,
+                                "group_id": signal_id
+                            })
+                        # done type I: tra
+                        # print('out type I: tra done')
             # type II
             # handle tSymbol
-            if tSymbol_base >0:
+            if tSymbol_base > 0:
+                # print('in type II')
                 # need no trans
                 if tSymbol == baseCoin:
-                    # return []
-                    return orders
+                    # print('in type II: de')
+                    # done type II: de
+                    pass
+                    # print('out type II: de done')
                 # direct trans
-                isDe = resInfoSymbol[(resInfoSymbol['server'] == server) & (resInfoSymbol['tSymbol']==fSymbol) & (resInfoSymbol['tSymbol']== baseCoin)]
+                isDe = resInfoSymbol[(resInfoSymbol['server'] == server)
+                                     & (resInfoSymbol['fSymbol'] == tSymbol) &
+                                     (resInfoSymbol['tSymbol'] == baseCoin)]
                 if not isDe.empty:
+                    # print('in type II: tra')
                     # baseCoin -> tSymbol
                     if not isDe['limit_price_precision'].values[0] == 'NULL':
-                        price_precision =  isDe['limit_price_precision'].values[0]
+                        price_precision = isDe['limit_price_precision'].values[
+                            0]
                     if not isDe['limit_size_precision'].values[0] == 'NULL':
-                        size_precision =  isDe['limit_size_precision'].values[0]
+                        size_precision = isDe['limit_size_precision'].values[0]
                     if not isDe['limit_size_min'].values[0] == 'NULL':
-                        size_min =  isDe['limit_size_min'].values[0]
+                        size_min = isDe['limit_size_min'].values[0]
+                    if not isDe['limit_min_notional'].values[0] == 'NULL':
+                        min_notional = isDe['limit_min_notional'].values[0]
                     if not isDe['fee_taker'].values[0] == 'NULL':
                         fee_ratio = isDe['fee_taker'].values[0]
-                    if sever == self._Okex_exchange:
-                        res = self._Okex.getMarketOrderbookDepth(tSymbol, baseCoin)
-                    if sever == self._Binance_exchange:
-                        res = self._Binance.getMarketOrderbookDepth(tSymbol, baseCoin)
-                    if sever == self._Huobi_exchange:
-                        res = self._Huobi.getMarketOrderbookDepth(tSymbol, baseCoin)
+                    if server == self._Okex_exchange:
+                        res = self._Okex.getMarketOrderbookDepth(
+                            tSymbol, baseCoin)
+                    if server == self._Binance_exchange:
+                        res = self._Binance.getMarketOrderbookDepth(
+                            tSymbol, baseCoin)
+                    if server == self._Huobi_exchange:
+                        res = self._Huobi.getMarketOrderbookDepth(
+                            tSymbol, baseCoin)
                     # calc orders
                     nowPrice = float(res['bid_price_size'][0][0])
-                    deTradeSize = tSymbol_base/nowPrice
+                    deTradeSize = tSymbol_base / nowPrice
+                    if deTradeSize < size_min:
+                        raise Exception(
+                            "TRANS TOO SMALL ERROR, amount is smaller than the min size."
+                        )
                     sum = 0
                     deTrade = []
-                    for r in res['ask_price_size']:
-                        rprice = float(r[0])
+                    for r in res['ask_price_size'][
+                            0:10]:  # ask 1 to ask 10, no more
+                        rPrice = float(r[0])
                         rSize = float(r[1])
                         if not sum < deTradeSize:
                             break
-                        deSize = min(deTradeSize-sum, rSize)
+                        deSize = min(deTradeSize - sum, rSize)
                         if deSize > 0:
                             if deSize >= size_min:
+                                if not deSize * rPrice >= min_notional:
+                                    deSize = min_notional / rPrice
                                 sum = sum + deSize
-                                deTrade.append({'price': rprice, 'size': deSize})
+                                deTrade.append({
+                                    'price': rPrice,
+                                    'size': deSize
+                                })
+                    if sum < deTradeSize:
+                        raise Exception(
+                            "TRANS TOO MUCH ERROR，amount is not enough with ask 1 to ask 10."
+                        )
                     for trade in deTrade:
                         price = num_to_precision(
                             trade['price'],
                             price_precision,
                             rounding=ROUND_HALF_UP)
                         quantity = num_to_precision(
-                            trade['size'],
-                            size_precision,
-                            rounding=ROUND_DOWN)
-                        orders.append({"exchange":server, "fSymbol":fSymbol, "tSymbol":baseCoin, "ask_or_bid":CCAT_ORDER_SIDE_BUY, "price":price, "quantity":quantity, "ratio":fee_ratio, "type":CCAT_ORDER_TYPE_LIMIT})
-                    # return
-                    return orders
-            # type III
-            # not found, return []
+                            trade['size'], size_precision, rounding=ROUND_DOWN)
+                        orders.append({
+                            "exchange": server,
+                            "fSymbol": tSymbol,
+                            "tSymbol": baseCoin,
+                            "ask_or_bid": CCAT_ORDER_SIDE_BUY,
+                            "price": price,
+                            "quantity": quantity,
+                            "ratio": fee_ratio,
+                            "type": CCAT_ORDER_TYPE_LIMIT,
+                            "group_id": signal_id
+                        })
+                    # done type II: tra
+                    # print('out type II: tra done')
+            # return
             return orders
-        except (BinanceException, HuobiException, OkexException, Exception) as err:
-            errStr = "src.core.calc.calc.Calc._calcSymbolPreTransOrders: exception err=" % err
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc._calcSymbolPreTradeOrders: exception err=%s" % err
             raise CalcException(errStr)
 
-
-    def _calcSymbolRunTransOrders(self):
+    def _calcSymbolRunTradeOrders(self):
         self._logger.debug(
-            "src.core.calc.calc.Calc._calcSymbolRunTransOrders:")
+            "src.core.calc.calc.Calc._calcSymbolRunTradeOrders:")
         try:
             pass
-        except (BinanceException, HuobiException, OkexException, Exception) as err:
-            errStr = "src.core.calc.calc.Calc._calcSymbolRunTransOrders: exception err=" % err
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc._calcSymbolRunTradeOrders: exception err=%s" % err
             raise CalcException(errStr)
 
-    def _calcSymbolAfterTransOrders(self):
+    def _calcSymbolAfterTradeOrders(self):
         self._logger.debug(
-            "src.core.calc.calc.Calc._calcSymbolAfterTransOrders:")
+            "src.core.calc.calc.Calc._calcSymbolAfterTradeOrders:")
         try:
             pass
-        except (BinanceException, HuobiException, OkexException, Exception) as err:
-            errStr = "src.core.calc.calc.Calc._calcSymbolAfterTransOrders: exception err=" % err
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc._calcSymbolAfterTradeOrders: exception err=%s" % err
             raise CalcException(errStr)
 
-    def calcSignalPreTransOrders(self, signal, resInfoSymbol, baseCoin):
+    def calcSignalPreTradeOrders(self, signal, resInfoSymbol, baseCoin):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcSignalPreTransOrders: {signal=%s, resInfoSymbol=%s, baseCoin=%s}"
+            "src.core.calc.calc.Calc.calcSignalPreTradeOrders: {signal=%s, resInfoSymbol=%s, baseCoin=%s}"
             % (signal, 'resInfoSymbol', baseCoin))
         try:
+            if not signal['base_start'] > 0:
+                return []
             res = []
             type = signal['type']
             if type == TYPE_DIS:
-                bid_order = self._calcSymbolPreTransOrders(
+                # add signal id
+                signal_id = '0x1b' + str(utcnow_timestamp())
+                orders = self._calcSymbolPreTradeOrders(
                     signal['bid_server'], signal['fSymbol'], signal['tSymbol'],
-                    signal['base_start'], 0, resInfoSymbol, baseCoin)
-                ask_order = self._calcSymbolPreTransOrders(
+                    signal['base_start'] / 2, 0, resInfoSymbol, baseCoin, signal_id)
+                if not orders == []:
+                    res.extend(orders)
+                orders = self._calcSymbolPreTradeOrders(
                     signal['ask_server'], signal['fSymbol'], signal['tSymbol'],
-                    0, signal['base_start'], resInfoSymbol, baseCoin)
-                res.append(bid_server)
-                res.append(ask_server)
-
+                    0, signal['base_start'] / 2, resInfoSymbol, baseCoin, signal_id)
+                if not orders == []:
+                    res.extend(orders)
+            if type == TYPE_TRA:
+                # add signal id
+                signal_id = '0x2b' + str(utcnow_timestamp())
+                # find target unique tSymbol
+                isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol']
+                        and signal['V1_tSymbol'] != signal['V3_tSymbol'])
+                isV2 = (signal['V2_tSymbol'] != signal['V1_tSymbol']
+                        and signal['V2_tSymbol'] != signal['V3_tSymbol'])
+                isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol']
+                        and signal['V3_tSymbol'] != signal['V2_tSymbol'])
+                # print(isV1, isV2, isV3)
+                if isV1:
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['server'], signal['V1_fSymbol'],
+                        signal['V1_tSymbol'], 0, signal['base_start'],
+                        resInfoSymbol, baseCoin, signal_id)
+                    if not orders == []:
+                        res.extend(orders)
+                if isV2:
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['server'], signal['V2_fSymbol'],
+                        signal['V2_tSymbol'], 0, signal['base_start'],
+                        resInfoSymbol, baseCoin, signal_id)
+                    if not orders == []:
+                        res.extend(orders)
+                if isV3:
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['server'], signal['V3_fSymbol'],
+                        signal['V3_tSymbol'], 0, signal['base_start'],
+                        resInfoSymbol, baseCoin, signal_id)
+                    if not orders == []:
+                        res.extend(orders)
+            if type == TYPE_PAIR:
+                # add signal id
+                signal_id = '0x3b' + str(utcnow_timestamp())
+                # find target unique tSymbol
+                isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol']
+                        and signal['V1_tSymbol'] != signal['V3_tSymbol'])
+                isV2 = (signal['V2_tSymbol'] != signal['V1_tSymbol']
+                        and signal['V2_tSymbol'] != signal['V3_tSymbol'])
+                isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol']
+                        and signal['V3_tSymbol'] != signal['V2_tSymbol'])
+                # print(isV1, isV2, isV3)
+                if isV1:
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['J1_server'], signal['V1_fSymbol'],
+                        signal['V1_tSymbol'], 0, signal['base_start'],
+                        resInfoSymbol, baseCoin, signal_id)
+                    if not orders == []:
+                        res.extend(orders)
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['J2_server'], signal['V1_fSymbol'],
+                        signal['V1_tSymbol'], 0, signal['base_start'],
+                        resInfoSymbol, baseCoin, signal_id)
+                    if not orders == []:
+                        res.extend(orders)
+                if isV2:
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['J1_server'], signal['V2_fSymbol'],
+                        signal['V2_tSymbol'], 0, signal['base_start'],
+                        resInfoSymbol, baseCoin, signal_id)
+                    if not orders == []:
+                        res.extend(orders)
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['J2_server'], signal['V2_fSymbol'],
+                        signal['V2_tSymbol'], 0, signal['base_start'],
+                        resInfoSymbol, baseCoin, signal_id)
+                    if not orders == []:
+                        res.extend(orders)
+                if isV3:
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['J1_server'], signal['V3_fSymbol'],
+                        signal['V3_tSymbol'], 0, signal['base_start'],
+                        resInfoSymbol, baseCoin, signal_id)
+                    if not orders == []:
+                        res.extend(orders)
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['J2_server'], signal['V3_fSymbol'],
+                        signal['V3_tSymbol'], 0, signal['base_start'],
+                        resInfoSymbol, baseCoin, signal_id)
+                    if not orders == []:
+                        res.extend(orders)
+            # return
             return res
-        except (BinanceException, HuobiException, OkexException, Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcSignalPreTransOrders: {self, signal=%s, resInfoSymbol=%s, baseCoin=%s}, exception err=" % (
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc.calcSignalPreTradeOrders: {signal=%s, resInfoSymbol=%s, baseCoin=%s}, exception err=%s" % (
                 signal, 'resInfoSymbol', baseCoin, err)
             raise CalcException(errStr)
 
@@ -384,7 +613,8 @@ class Calc(object):
                         # update statistic
                         statistic.append(sta)
             return statistic
-        except (BinanceException, HuobiException, OkexException, Exception) as err:
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcStatisticSignalTickerDis: {exchange=%s, timeWindow=%s}, exception err=%s" % (
                 exchange, timeWindow, err)
             raise CalcException(errStr)
@@ -471,7 +701,8 @@ class Calc(object):
                     # update statistic
                     statistic.append(sta)
             return statistic
-        except (BinanceException, HuobiException, OkexException, Exception) as err:
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcStatisticSignalTickerTra: {exchange=%s, timeWindow=%s}, exception err=%s" % (
                 exchange, timeWindow, err)
             raise CalcException(errStr)
@@ -561,7 +792,8 @@ class Calc(object):
                         # update statistic
                         statistic.append(sta)
             return statistic
-        except (BinanceException, HuobiException, OkexException, Exception) as err:
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcStatisticSignalTickerPair: {exchange=%s, timeWindow=%s}, exception err=%s" % (
                 exchange, timeWindow, err)
             raise CalcException(errStr)
@@ -623,7 +855,8 @@ class Calc(object):
                         signal.append(r)
             # return signal
             return signal
-        except (BinanceException, HuobiException, OkexException, Exception) as err:
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerDis: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
                 exchange, threshold, 'resInfoSymbol', err)
             raise CalcException(errStr)
@@ -640,20 +873,20 @@ class Calc(object):
             # calc gains with fee
             for r in res:
                 # calc common symbol
-                r['C1_symbol'] = [
+                C1_symbol = [
                     i for i in [r['V1_fSymbol'], r['V1_tSymbol']]
                     if i in [r['V3_fSymbol'], r['V3_tSymbol']]
                 ][0]
-                r['C2_symbol'] = [
+                C2_symbol = [
                     i for i in [r['V1_fSymbol'], r['V1_tSymbol']]
                     if i in [r['V2_fSymbol'], r['V2_tSymbol']]
                 ][0]
-                r['C3_symbol'] = [
+                C3_symbol = [
                     i for i in [r['V2_fSymbol'], r['V2_tSymbol']]
                     if i in [r['V3_fSymbol'], r['V3_tSymbol']]
                 ][0]
                 # calc V1
-                if r['C1_symbol'] == r['V1_fSymbol']:  # fSymbol -> tSymbol
+                if C1_symbol == r['V1_fSymbol']:  # fSymbol -> tSymbol
                     r['V1_one_price'] = r['V1_bid_one_price']
                     r['V1_one_side'] = CCAT_ORDER_SIDE_SELL
                     r['V1_one_size'] = r['V1_bid_one_size']
@@ -662,7 +895,7 @@ class Calc(object):
                     r['V1_one_side'] = CCAT_ORDER_SIDE_BUY
                     r['V1_one_size'] = r['V1_ask_one_size']
                 # calc V2
-                if r['C2_symbol'] == r['V2_fSymbol']:  # fSymbol -> tSymbol
+                if C2_symbol == r['V2_fSymbol']:  # fSymbol -> tSymbol
                     r['V2_one_price'] = r['V2_bid_one_price']
                     r['V2_one_side'] = CCAT_ORDER_SIDE_SELL
                     r['V2_one_size'] = r['V2_bid_one_size']
@@ -671,7 +904,7 @@ class Calc(object):
                     r['V2_one_side'] = CCAT_ORDER_SIDE_BUY
                     r['V2_one_size'] = r['V2_ask_one_size']
                 # calc V3
-                if r['C3_symbol'] == r['V3_fSymbol']:  # fSymbol -> tSymbol
+                if C3_symbol == r['V3_fSymbol']:  # fSymbol -> tSymbol
                     r['V3_one_price'] = r['V3_bid_one_price']
                     r['V3_one_side'] = CCAT_ORDER_SIDE_SELL
                     r['V3_one_size'] = r['V3_bid_one_size']
@@ -680,7 +913,7 @@ class Calc(object):
                     r['V3_one_side'] = CCAT_ORDER_SIDE_BUY
                     r['V3_one_size'] = r['V3_ask_one_size']
                 # calc symbol one price ratio
-                if r['C3_symbol'] == r['V3_fSymbol']:
+                if C3_symbol == r['V3_fSymbol']:
                     # Type clockwise
                     C1_C2_one_price = r['V1_one_price']
                     C2_C3_one_price = 1 / r['V2_one_price']
@@ -698,20 +931,20 @@ class Calc(object):
                 V1_fee = resInfoSymbol[
                     (resInfoSymbol['server'] == r['server'])
                     & (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
-                    & (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                       )]['fee_taker']
+                    &
+                    (resInfoSymbol['tSymbol'] == r['V1_tSymbol'])]['fee_taker']
                 r['V2_fee'] = 0
                 V2_fee = resInfoSymbol[
                     (resInfoSymbol['server'] == r['server'])
                     & (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
-                    & (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                       )]['fee_taker']
+                    &
+                    (resInfoSymbol['tSymbol'] == r['V2_tSymbol'])]['fee_taker']
                 r['V3_fee'] = 0
                 V3_fee = resInfoSymbol[
                     (resInfoSymbol['server'] == r['server'])
                     & (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
-                    & (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                       )]['fee_taker']
+                    &
+                    (resInfoSymbol['tSymbol'] == r['V3_tSymbol'])]['fee_taker']
                 if not V1_fee.empty:
                     if not V1_fee.values[0] == 'NULL':
                         r['V1_fee'] = V1_fee.values[0]
@@ -732,7 +965,7 @@ class Calc(object):
                     r['V3_bid_one_price_base'] / r['V3_bid_one_price'] +
                     r['V3_ask_one_price_base'] / r['V3_ask_one_price']) / 2
                 # Begin Calc Gain
-                if r['C3_symbol'] == r['V3_fSymbol']:
+                if C3_symbol == r['V3_fSymbol']:
                     # Type clockwise: sell->buy->sell
                     # calc symbol size
                     temp = min(r['V3_one_size'],
@@ -780,7 +1013,8 @@ class Calc(object):
                     signal.append(r)
             # return signal
             return signal
-        except (BinanceException, HuobiException, OkexException, Exception) as err:
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerTra: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
                 exchange, threshold, 'resInfoSymbol', err)
             raise CalcException(errStr)
@@ -799,20 +1033,20 @@ class Calc(object):
                 # calc gains with fee
                 for r in res:
                     # calc common symbol
-                    r['C1_symbol'] = [
+                    C1_symbol = [
                         i for i in [r['V1_fSymbol'], r['V1_tSymbol']]
                         if i in [r['V3_fSymbol'], r['V3_tSymbol']]
                     ][0]
-                    r['C2_symbol'] = [
+                    C2_symbol = [
                         i for i in [r['V1_fSymbol'], r['V1_tSymbol']]
                         if i in [r['V2_fSymbol'], r['V2_tSymbol']]
                     ][0]
-                    r['C3_symbol'] = [
+                    C3_symbol = [
                         i for i in [r['V2_fSymbol'], r['V2_tSymbol']]
                         if i in [r['V3_fSymbol'], r['V3_tSymbol']]
                     ][0]
                     # calc J1_V1, J2_V1
-                    if r['C1_symbol'] == r['V1_fSymbol']:  # fSymbol -> tSymbol
+                    if C1_symbol == r['V1_fSymbol']:  # fSymbol -> tSymbol
                         r['J1_V1_one_price'] = r['J1_V1_bid_one_price']
                         r['J1_V1_one_side'] = CCAT_ORDER_SIDE_SELL
                         r['J1_V1_one_size'] = r['J1_V1_bid_one_size']
@@ -827,7 +1061,7 @@ class Calc(object):
                         r['J2_V1_one_side'] = CCAT_ORDER_SIDE_SELL
                         r['J2_V1_one_size'] = r['J2_V1_bid_one_size']
                     # calc J1_V2, J2_V2
-                    if r['C2_symbol'] == r['V2_fSymbol']:  # fSymbol -> tSymbol
+                    if C2_symbol == r['V2_fSymbol']:  # fSymbol -> tSymbol
                         r['J1_V2_one_price'] = r['J1_V2_bid_one_price']
                         r['J1_V2_one_side'] = CCAT_ORDER_SIDE_SELL
                         r['J1_V2_one_size'] = r['J1_V2_bid_one_size']
@@ -842,7 +1076,7 @@ class Calc(object):
                         r['J2_V2_one_side'] = CCAT_ORDER_SIDE_SELL
                         r['J2_V2_one_size'] = r['J2_V2_bid_one_size']
                     # calc J1_V3, J2_V3
-                    if r['C3_symbol'] == r['V3_fSymbol']:  # fSymbol -> tSymbol
+                    if C3_symbol == r['V3_fSymbol']:  # fSymbol -> tSymbol
                         r['J1_V3_one_price'] = r['J1_V3_bid_one_price']
                         r['J1_V3_one_side'] = CCAT_ORDER_SIDE_SELL
                         r['J1_V3_one_size'] = r['J1_V3_bid_one_size']
@@ -857,7 +1091,7 @@ class Calc(object):
                         r['J2_V3_one_side'] = CCAT_ORDER_SIDE_SELL
                         r['J2_V3_one_size'] = r['J2_V3_bid_one_size']
                     # calc symbol one price ratio
-                    if r['C3_symbol'] == r['V3_fSymbol']:
+                    if C3_symbol == r['V3_fSymbol']:
                         # Type J1 = clockwise, J2 = anti-clockwise
                         # calc J1
                         J1_C1_C2_one_price = r['J1_V1_one_price']
@@ -904,19 +1138,19 @@ class Calc(object):
                         (resInfoSymbol['server'] == r['J2_server'])
                         & (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                           )]['fee_taker'].values[0]
+                           )]['fee_taker']
                     r['J2_V2_fee'] = 0
                     J2_V2_fee = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J2_server'])
                         & (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                           )]['fee_taker'].values[0]
+                           )]['fee_taker']
                     r['J2_V3_fee'] = 0
                     J2_V3_fee = resInfoSymbol[
                         (resInfoSymbol['server'] == r['J2_server'])
                         & (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
                         & (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                           )]['fee_taker'].values[0]
+                           )]['fee_taker']
                     if not J1_V1_fee.empty:
                         if not J1_V1_fee.values[0] == 'NULL':
                             r['J1_V1_fee'] = J1_V1_fee.values[0]
@@ -926,17 +1160,17 @@ class Calc(object):
                     if not J1_V3_fee.empty:
                         if not J1_V3_fee.values[0] == 'NULL':
                             r['J1_V3_fee'] = J1_V3_fee.values[0]
-                     if not J2_V1_fee.empty:
-                         if not J2_V1_fee.values[0] == 'NULL':
-                             r['J2_V1_fee'] = J2_V1_fee.values[0]
-                     if not J2_V2_fee.empty:
-                         if not J2_V2_fee.values[0] == 'NULL':
-                             r['J2_V2_fee'] = J2_V2_fee.values[0]
-                     if not J2_V3_fee.empty:
-                         if not J2_V3_fee.values[0] == 'NULL':
-                             r['J2_V3_fee'] = J2_V3_fee.values[0]
+                    if not J2_V1_fee.empty:
+                        if not J2_V1_fee.values[0] == 'NULL':
+                            r['J2_V1_fee'] = J2_V1_fee.values[0]
+                    if not J2_V2_fee.empty:
+                        if not J2_V2_fee.values[0] == 'NULL':
+                            r['J2_V2_fee'] = J2_V2_fee.values[0]
+                    if not J2_V3_fee.empty:
+                        if not J2_V3_fee.values[0] == 'NULL':
+                            r['J2_V3_fee'] = J2_V3_fee.values[0]
                     # calc symbol size
-                    if r['C3_symbol'] == r['V3_fSymbol']:
+                    if C3_symbol == r['V3_fSymbol']:
                         # Type J1 = clockwise: sell->buy->sell, J2 = anti-clockwise: sell->buy->buy
                         # calc J1 symbol size
                         temp = min(r['J1_V3_one_size'],
@@ -1055,7 +1289,8 @@ class Calc(object):
                         signal.append(r)
             # return signal
             return signal
-        except (BinanceException, HuobiException, OkexException, Exception) as err:
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerPair: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
                 exchange, threshold, 'resInfoSymbol', err)
             raise CalcException(errStr)
