@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import time
 from itertools import combinations
 
 import pandas as pd
+
 from src.core.calc.calc import Calc
 from src.core.calc.signal import Signal
 from src.core.db.db import DB
@@ -186,6 +188,7 @@ class Handler(object):
         [exchange, signals, timeout] = event.args
         exchange = str_to_list(exchange)
         signals = str_to_list(signals)
+        timeout = float(timeout)
         try:
             db = DB()
             sgn = Signal(signals)
@@ -194,10 +197,31 @@ class Handler(object):
             preOrders = sgn.backtestSignalsPreTrade(resInfoSymbol)
             for orders in preOrders:
                 for order in orders:
-                    db.insertTradeBacktestHistory(order['exchange'], order['fSymbol'], order['tSymbol'], order['ask_or_bid'], order['price'], order['quantity'], order['ratio'], order['type'], order['group_id'])
+                    db.insertTradeBacktestHistory(
+                        order['exchange'], order['fSymbol'], order['tSymbol'],
+                        order['ask_or_bid'], order['price'], order['quantity'],
+                        order['ratio'], order['type'], order['group_id'])
             # run trade
+            isDone = False
+            startTime = time.time()
+            while (time.time() - startTime < timeout
+                   or timeout == 0) and isDone == False:
+                (runOrders, isDone)= sgn.backtestSignalsRunTrade(resInfoSymbol)
+                for orders in runOrders:
+                    for order in orders:
+                        db.insertTradeBacktestHistory(
+                            order['exchange'], order['fSymbol'],
+                            order['tSymbol'], order['ask_or_bid'],
+                            order['price'], order['quantity'], order['ratio'],
+                            order['type'], order['group_id'])
             # after trade
-            pass
+            afterOrders = sgn.backtestSignalsAfterTrade(resInfoSymbol)
+            for orders in afterOrders:
+                for order in orders:
+                    db.insertTradeBacktestHistory(
+                        order['exchange'], order['fSymbol'], order['tSymbol'],
+                        order['ask_or_bid'], order['price'], order['quantity'],
+                        order['ratio'], order['type'], order['group_id'])
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))

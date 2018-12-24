@@ -131,13 +131,11 @@
 [Signal]
   auto = False
   signals = [
-    {"type": "dis", "bid_server": "binance", "ask_server": "huobi", "fSymbol": "ICX", "tSymbol": "ETH", "forward_ratio": 0.065338, "backward_ratio":0.057862, "base_start":20, "base_gain": 0.01, "base_timeout": 300},
-    {"type": "dis", "bid_server": "okex", "ask_server": "huobi", "fSymbol": "ICX", "tSymbol": "ETH", "forward_ratio": 0.065338, "backward_ratio":0.057862, "base_start":20, "base_gain": 0.01, "base_timeout": 300},
-    {"type": "dis", "bid_server": "okex", "ask_server": "huobi", "fSymbol": "ICX", "tSymbol": "BTC", "forward_ratio": 0.065338, "backward_ratio":0.057862, "base_start":20, "base_gain": 0.01, "base_timeout": 300},
-    {"type": "tra", "server": "okex", "symbol_pair": "[('CTXC', 'ETH'), ('CTXC', 'USDT'), ('ETH', 'USDT')]", "base_start":20, "base_gain": 0.01, "base_timeout": 300},
-    {"type": "tra", "server": "huobi", "symbol_pair": "[('BLZ', 'BTC'), ('BLZ', 'ETH'), ('ETH', 'BTC')]", "base_start":20, "base_gain": 0.01, "base_timeout": 300},
-    {"type": "tra", "server": "huobi", "symbol_pair": "[('CTXC', 'ETH'), ('CTXC', 'USDT'), ('ETH', 'USDT')]", "base_start":20, "base_gain": 0.01, "base_timeout": 300},
-    {"type": "pair", "J1_server": "okex", "J2_server": "binance", "symbol_pair": "[('ETH', 'BTC'), ('ZEC', 'BTC'), ('ZEC', 'ETH')]", "base_start":20, "base_gain": 0.01, "base_timeout": 300}]
+    {"type": "dis", "bid_server": "binance", "ask_server": "huobi", "fSymbol": "ICX", "tSymbol": "ETH", "group_id":"0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a", "forward_ratio": 0.065338, "backward_ratio":0.057862, "base_start":20, "base_gain": 0.01, "base_timeout": 300},
+    {"type": "dis", "bid_server": "okex", "ask_server": "binance", "fSymbol": "ICX", "tSymbol": "BTC", "group_id":"0x1b-ad457aff-cc16-3a44-b98c-3bfa920a5426", "forward_ratio": 0.065338, "backward_ratio":0.057862, "base_start":20, "base_gain": 0.01, "base_timeout": 300},
+    {"type": "dis", "bid_server": "binance", "ask_server": "huobi", "fSymbol": "ICX", "tSymbol": "BTC", "group_id":"0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5", "forward_ratio": 0.065338, "backward_ratio":0.057862, "base_start":20, "base_gain": 0.01, "base_timeout": 300},
+    {"type": "tra", "server": "huobi", "symbol_pair": "[('CTXC', 'ETH'), ('CTXC', 'USDT'), ('ETH', 'USDT')]", "group_id":"0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65", "base_start":20, "base_gain": 0.01, "base_timeout": 300},
+    {"type": "pair", "J1_server": "okex", "J2_server": "binance", "symbol_pair": "[('EOS', 'BTC'), ('EOS', 'ETH'), ('ETH', 'BTC')]", "group_id":"0x3b-b15eaa6a-3bac-3422-b54a-9391b639465b", "base_start":20, "base_gain": 0.01, "base_timeout": 300}]
 
 ################################################################################
 # Router Settings

@@ -349,18 +349,18 @@ UPDATE_CANCLE_TRADE_ORDER_HISTORY_SQL = Template('''
 
 # insert db statistic signal ticker dis sql
 INSERT_STATISTIC_SIGNAL_TICKER_DIS_SQL = '''
-    INSERT OR REPLACE INTO STATISTIC_SIGNAL_TICKER_DIS (timeStamp, bid_server, ask_server, fSymbol, tSymbol, timeStamp_start, timeStamp_end, timeStamp_times, timeStamp_period_times, timeStamp_period_longest, count_total, count_forward, count_backward, gain_base_max, gain_base_min, gain_base_mean, gain_base_std, gain_ratio_max, gain_ratio_min, gain_ratio_mean, gain_ratio_std)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+    INSERT OR REPLACE INTO STATISTIC_SIGNAL_TICKER_DIS (timeStamp, bid_server, ask_server, fSymbol, tSymbol, timeStamp_start, timeStamp_end, timeStamp_times, timeStamp_period_times, timeStamp_period_longest, count_total, count_forward, count_backward, gain_base_max, gain_base_min, gain_base_mean, gain_base_std, gain_ratio_max, gain_ratio_min, gain_ratio_mean, gain_ratio_std, group_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # insert db statistic signal ticker tra sql
 INSERT_STATISTIC_SIGNAL_TICKER_TRA_SQL = '''
-    INSERT OR REPLACE INTO STATISTIC_SIGNAL_TICKER_TRA (timeStamp, server, symbol_pair, timeStamp_start, timeStamp_end, timeStamp_times, timeStamp_period_times, timeStamp_period_longest, count_total, count_forward, count_backward, gain_base_max, gain_base_min, gain_base_mean, gain_base_std, gain_ratio_max, gain_ratio_min, gain_ratio_mean, gain_ratio_std)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+    INSERT OR REPLACE INTO STATISTIC_SIGNAL_TICKER_TRA (timeStamp, server, symbol_pair, timeStamp_start, timeStamp_end, timeStamp_times, timeStamp_period_times, timeStamp_period_longest, count_total, count_forward, count_backward, gain_base_max, gain_base_min, gain_base_mean, gain_base_std, gain_ratio_max, gain_ratio_min, gain_ratio_mean, gain_ratio_std, group_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # insert db statistic signal ticker pair sql
 INSERT_STATISTIC_SIGNAL_TICKER_PAIR_SQL = '''
-    INSERT OR REPLACE INTO STATISTIC_SIGNAL_TICKER_PAIR (timeStamp, J1_server, J2_server, symbol_pair, timeStamp_start, timeStamp_end, timeStamp_times, timeStamp_period_times, timeStamp_period_longest, count_total, count_forward, count_backward, gain_base_max, gain_base_min, gain_base_mean, gain_base_std, gain_ratio_max, gain_ratio_min, gain_ratio_mean, gain_ratio_std)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+    INSERT OR REPLACE INTO STATISTIC_SIGNAL_TICKER_PAIR (timeStamp, J1_server, J2_server, symbol_pair, timeStamp_start, timeStamp_end, timeStamp_times, timeStamp_period_times, timeStamp_period_longest, count_total, count_forward, count_backward, gain_base_max, gain_base_min, gain_base_mean, gain_base_std, gain_ratio_max, gain_ratio_min, gain_ratio_mean, gain_ratio_std, group_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # get db talbes sql
 GET_TABLES_SQL = '''
@@ -392,6 +392,7 @@ CREATE_TABELS_SQL = '''
     	`gain_ratio_min`	REAL,
     	`gain_ratio_mean`	REAL,
     	`gain_ratio_std`	REAL,
+        `group_id`  TEXT,
         PRIMARY KEY (timeStamp, J1_server, J2_server, symbol_pair)
     );
     CREATE TABLE IF NOT EXISTS `STATISTIC_SIGNAL_TICKER_TRA` (
@@ -414,6 +415,7 @@ CREATE_TABELS_SQL = '''
     	`gain_ratio_min`	REAL,
     	`gain_ratio_mean`	REAL,
     	`gain_ratio_std`	REAL,
+        `group_id`  TEXT,
         PRIMARY KEY (timeStamp, server, symbol_pair)
     );
     CREATE TABLE IF NOT EXISTS `STATISTIC_SIGNAL_TICKER_DIS` (
@@ -438,6 +440,7 @@ CREATE_TABELS_SQL = '''
     	`gain_ratio_min`	REAL,
     	`gain_ratio_mean`	REAL,
     	`gain_ratio_std`	REAL,
+        `group_id`  TEXT,
         PRIMARY KEY (timeStamp, bid_server, ask_server, fSymbol, tSymbol)
     );
     CREATE TABLE IF NOT EXISTS `TRADE_ORDER_HISTORY` (

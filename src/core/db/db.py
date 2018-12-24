@@ -3,6 +3,7 @@
 import json
 import os
 import sqlite3
+import uuid
 
 from src.core.coin.binance import Binance
 from src.core.coin.enums import *
@@ -1556,10 +1557,12 @@ class DB(object):
         try:
             TEMP_SQL_TITLE = INSERT_TRADE_BACKTEST_HISTORY_SQL
             TEMP_SQL_VALUE = []
+            pid = os.getpid()
             # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 timeStamp = utcnow_timestamp()
-                order_id = '0x1a' + str(timeStamp)
+                id_str = 'Okex' + str(pid) + str(timeStamp)
+                order_id = '0x1a' + str(uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                 status = 'filled'
                 if ratio == '':
                     ratio = self._Okex.getTradeFees()[0]["taker"]
@@ -1572,7 +1575,8 @@ class DB(object):
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 timeStamp = utcnow_timestamp()
-                order_id = '0x2a' + str(timeStamp)
+                id_str = 'Binance' + str(pid) + str(timeStamp)
+                order_id = '0x2a' + str(uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                 status = 'filled'
                 if ratio == '':
                     ratio = self._Binance.getTradeFees()[0]["taker"]
@@ -1587,7 +1591,8 @@ class DB(object):
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
                 timeStamp = utcnow_timestamp()
-                order_id = '0x3a' + str(timeStamp)
+                id_str = 'Huobi' + str(pid) + str(timeStamp)
+                order_id = '0x3a' + str(uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                 status = 'filled'
                 if ratio == '':
                     ratio = self._Huobi.getTradeFees()[0]["taker"]
@@ -1934,7 +1939,8 @@ class DB(object):
                                        float(s['gain_ratio_max']),
                                        float(s['gain_ratio_min']),
                                        float(s['gain_ratio_mean']),
-                                       float(s['gain_ratio_std'])))
+                                       float(s['gain_ratio_std']),
+                                       str(s['group_id'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
@@ -1971,7 +1977,8 @@ class DB(object):
                                        float(s['gain_ratio_max']),
                                        float(s['gain_ratio_min']),
                                        float(s['gain_ratio_mean']),
-                                       float(s['gain_ratio_std'])))
+                                       float(s['gain_ratio_std']),
+                                       str(s['group_id'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
@@ -2003,7 +2010,7 @@ class DB(object):
                      float(s['gain_base_min']), float(s['gain_base_mean']),
                      float(s['gain_base_std']), float(s['gain_ratio_max']),
                      float(s['gain_ratio_min']), float(s['gain_ratio_mean']),
-                     float(s['gain_ratio_std'])))
+                     float(s['gain_ratio_std']), str(s['group_id'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)

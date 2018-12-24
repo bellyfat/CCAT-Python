@@ -3,6 +3,7 @@
 from decimal import ROUND_DOWN, ROUND_HALF_UP, ROUND_UP
 from itertools import combinations
 
+import uuid
 import pandas as pd
 from src.core.coin.binance import Binance
 from src.core.coin.enums import (CCAT_ORDER_SIDE_BUY, CCAT_ORDER_SIDE_SELL,
@@ -545,6 +546,10 @@ class Calc(object):
                     df = pd.DataFrame(signal)
                     for (fSymbol,
                          tSymbol), group in df.groupby(['fSymbol', 'tSymbol']):
+                        # calc group_id
+                        id_str = TYPE_DIS + str(server) + str(server_pair) + str(fSymbol) + str(tSymbol)
+                        group_id = '0x1b-'+str(
+                            uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                         # calc timeStamp
                         period = []
                         periodTime = 0
@@ -602,7 +607,9 @@ class Calc(object):
                             "gain_ratio_mean":
                             group['gain_ratio'].mean(),
                             "gain_ratio_std":
-                            group['gain_ratio'].values.std()
+                            group['gain_ratio'].values.std(),
+                            "group_id":
+                            group_id
                         }
                         # update statistic
                         statistic.append(sta)
@@ -636,6 +643,10 @@ class Calc(object):
                 # calc
                 for (server, symbol_pair), group in df.groupby(
                     ['server', 'symbol_pair']):
+                    # calc group_id
+                    id_str = TYPE_TRA + str(server) + str(symbol_pair)
+                    group_id = '0x2b-'+str(
+                       uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                     # calc timeStamp
                     period = []
                     periodTime = 0
@@ -690,7 +701,9 @@ class Calc(object):
                         "gain_ratio_mean":
                         group['gain_ratio'].mean(),
                         "gain_ratio_std":
-                        group['gain_ratio'].values.std()
+                        group['gain_ratio'].values.std(),
+                        "group_id":
+                        group_id
                     }
                     # update statistic
                     statistic.append(sta)
@@ -725,6 +738,10 @@ class Calc(object):
                     df = pd.DataFrame(signal)
                     # calc
                     for symbol_pair, group in df.groupby(['symbol_pair']):
+                        # calc group_id
+                        id_str = TYPE_PAIR + str(server) + str(server_pair) + str(symbol_pair)
+                        group_id = '0x3b-'+str(
+                           uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                         # calc timeStamp
                         period = []
                         periodTime = 0
@@ -781,7 +798,9 @@ class Calc(object):
                             "gain_ratio_mean":
                             group['gain_ratio'].mean(),
                             "gain_ratio_std":
-                            group['gain_ratio'].values.std()
+                            group['gain_ratio'].values.std(),
+                            "group_id":
+                            group_id
                         }
                         # update statistic
                         statistic.append(sta)
