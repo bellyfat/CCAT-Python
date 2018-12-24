@@ -65,6 +65,18 @@ class Signal(object):
                         signal['base_start'] = float(s['base_start'])
                         signal['base_gain'] = float(s['base_gain'])
                         signal['base_timeout'] = float(s['base_timeout'])
+                        signal['status_done'] = False
+                        signal['status_assets'] = [{
+                            "asset":
+                            SIGNAL_BASECOIN,
+                            "balance":
+                            float(s['base_start']),
+                            "free":
+                            float(s['base_start']),
+                            "locked":
+                            0.0
+                        }]
+                        signal['status_gain'] = 0.0
                 if s['type'] == TYPE_TRA:
                     if (types == 'all' or TYPE_TRA in types) and (
                             exchange == 'all' or s['server'] in exchange):
@@ -81,6 +93,18 @@ class Signal(object):
                         signal['base_start'] = float(s['base_start'])
                         signal['base_gain'] = float(s['base_gain'])
                         signal['base_timeout'] = float(s['base_timeout'])
+                        signal['status_done'] = False
+                        signal['status_assets'] = [{
+                            "asset":
+                            SIGNAL_BASECOIN,
+                            "balance":
+                            float(s['base_start']),
+                            "free":
+                            float(s['base_start']),
+                            "locked":
+                            0.0
+                        }]
+                        signal['status_gain'] = 0.0
                 if s['type'] == TYPE_PAIR:
                     if (types == 'all' or TYPE_PAIR in types) and (
                             exchange == 'all' or
@@ -100,6 +124,18 @@ class Signal(object):
                         signal['base_start'] = float(s['base_start'])
                         signal['base_gain'] = float(s['base_gain'])
                         signal['base_timeout'] = float(s['base_timeout'])
+                        signal['status_done'] = False
+                        signal['status_assets'] = [{
+                            "asset":
+                            SIGNAL_BASECOIN,
+                            "balance":
+                            float(s['base_start']),
+                            "free":
+                            float(s['base_start']),
+                            "locked":
+                            0.0
+                        }]
+                        signal['status_gain'] = 0.0
                 if not signal == {}:
                     signals.append(signal)
             # return signals
@@ -107,6 +143,12 @@ class Signal(object):
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.signals, exception err=%s" % err
             raise CalcException(errStr)
+
+    def _updateSignalsStatusByOrders(self, orders):
+        pass
+
+    def backtestUpdateSignalStatusByOrders(self, orders):
+        pass
 
     def backtestSignalsPreTrade(self, resInfoSymbol):
         self._logger.debug(
@@ -121,7 +163,7 @@ class Signal(object):
                 orders = calc.calcSignalPreTradeOrders(
                     signal['group_id'], signal, resInfoSymbol, SIGNAL_BASECOIN)
                 if not orders == []:
-                    res.append(orders)
+                    res.extend(orders)
             return res
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.backtestSignalsPreTrade: {resInfoSymbol=%s}, exception err=%s" % (

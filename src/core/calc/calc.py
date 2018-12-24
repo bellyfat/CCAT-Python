@@ -51,6 +51,26 @@ class Calc(object):
         # logger
         self._logger = Logger()
 
+
+    def _calcStatusAssetByBaseCoin(self, asset):
+        self._logger.debug("src.core.calc.calc.Calc._calcStatusAssetByBaseCoin:")
+        try:
+            pass
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc._calcStatusAssetByBaseCoin: exception err=%s" % err
+            raise CalcException(errStr)
+
+
+    def calcSignalStatusByOrders(self, orders):
+        self._logger.debug("src.core.calc.calc.Calc.calcSignalStatusByOrders:")
+        try:
+            pass
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc.calcSignalStatusByOrders: exception err=%s" % err
+            raise CalcException(errStr)
+
     def _calcSymbolTradeOrders(self):
         self._logger.debug("src.core.calc.calc.Calc._calcSymbolTradeOrders:")
         try:
