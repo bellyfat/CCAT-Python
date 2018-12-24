@@ -2,6 +2,8 @@
 
 import ast
 import json
+import os
+import uuid
 
 from src.core.calc.calc import Calc
 from src.core.calc.enums import SIGNAL_AUTO, SIGNAL_BASECOIN, SIGNAL_SIGNALS
@@ -13,19 +15,55 @@ from src.core.util.log import Logger
 
 class Signal(object):
     def __init__(self, signals=[]):
-        self._signals = signals
+        # signal init
+        self._signals = []
         self._signals_str = SIGNAL_SIGNALS
+        # signal_id init
+        if not signals == []:
+            id = 0
+            pid = os.getpid()
+            for signal in signals:
+                id = id + 1
+                id_str = 'CCAT' + str(pid) + str(id)
+                if signal['type'] == TYPE_DIS:
+                    signal_id = '0x1b-' + str(
+                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
+                    self._signals.append({
+                        "signal_id": signal_id,
+                        "signal": signal
+                    })
+                if signal['type'] == TYPE_TRA:
+                    signal_id = '0x2b-' + str(
+                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
+                    self._signals.append({
+                        "signal_id": signal_id,
+                        "signal": signal
+                    })
+                if signal['type'] == TYPE_PAIR:
+                    signal_id = '0x3b-' + str(
+                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
+                    self._signals.append({
+                        "signal_id": signal_id,
+                        "signal": signal
+                    })
+        # logger
         self._logger = Logger()
 
     def signals(self, exchange='all', types='all', auto=SIGNAL_AUTO):
         self._logger.debug("src.core.calc.signal.Signal.signals")
         try:
             if not self._signals == []:
-                return self._signals
+                return [signal['signal'] for signal in self._signals]
             if auto:
-                return self._autoSignals(exchange, types)
+                return [
+                    signal['signal']
+                    for signal in self._autoSignals(exchange, types)
+                ]
             if not auto:
-                return self._configSignals(exchange, types)
+                return [
+                    signal['signal']
+                    for signal in self._configSignals(exchange, types)
+                ]
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.signals, exception err=%s" % err
             raise CalcException(errStr)
@@ -33,10 +71,10 @@ class Signal(object):
     def _autoSignals(self, exchange, types):
         self._logger.debug("src.core.calc.signal.Signal._autoSignals")
         try:
-            db = db()
             signals = []
-            # return signals
-            return signals
+            _signals = []
+            # return _signals
+            return _signals
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.signals, exception err=%s" % err
             raise CalcException(errStr)
@@ -98,44 +136,74 @@ class Signal(object):
                         signal['base_timeout'] = float(s['base_timeout'])
                 if not signal == {}:
                     signals.append(signal)
-            # return signals
-            return signals
+            # calc signal id
+            id = 0
+            pid = os.getpid()
+            _signals = []
+            for signal in signals:
+                id = id + 1
+                id_str = 'CCAT' + str(pid) + str(id)
+                if signal['type'] == TYPE_DIS:
+                    signal_id = '0x1b-' + str(
+                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
+                    _signals.append({"signal_id": signal_id, "signal": signal})
+                if signal['type'] == TYPE_TRA:
+                    signal_id = '0x2b-' + str(
+                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
+                    _signals.append({"signal_id": signal_id, "signal": signal})
+                if signal['type'] == TYPE_PAIR:
+                    signal_id = '0x3b-' + str(
+                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
+                    _signals.append({"signal_id": signal_id, "signal": signal})
+            # return _signals
+            return _signals
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.signals, exception err=%s" % err
             raise CalcException(errStr)
 
     def backtestSignalsPreTrade(self, resInfoSymbol):
-        self._logger.debug("src.core.calc.signal.Signal.backtestSignalsPreTrade: {resInfoSymbol=%s}" % 'resInfoSymbol')
+        self._logger.debug(
+            "src.core.calc.signal.Signal.backtestSignalsPreTrade: {resInfoSymbol=%s}"
+            % 'resInfoSymbol')
         try:
             if not self._signals:
                 raise Exception("NO SIGNAL ERROR, signals empty.")
             calc = Calc()
             res = []
             for signal in self._signals:
-                orders = calc.calcSignalPreTradeOrders(signal, resInfoSymbol, SIGNAL_BASECOIN)
-                if not orders==[]:                    
+                orders = calc.calcSignalPreTradeOrders(
+                    signal['signal_id'], signal['signal'], resInfoSymbol,
+                    SIGNAL_BASECOIN)
+                if not orders == []:
                     res.append(orders)
             return res
         except Exception as err:
-            errStr = "src.core.calc.signal.Signal.backtestSignalsPreTrade: {resInfoSymbol=%s}, exception err=%s" % ('resInfoSymbol', err)
+            errStr = "src.core.calc.signal.Signal.backtestSignalsPreTrade: {resInfoSymbol=%s}, exception err=%s" % (
+                'resInfoSymbol', err)
             raise CalcException(errStr)
 
     def backtestSignalsRunTrade(self, signals, resInfoSymbol, timeout=30):
-        self._logger.debug("src.core.calc.signal.Signal.backtestSignalsRunTrade: {resInfoSymbol=%s, timeout=%s}" % ('resInfoSymbol', timeout))
+        self._logger.debug(
+            "src.core.calc.signal.Signal.backtestSignalsRunTrade: {resInfoSymbol=%s, timeout=%s}"
+            % ('resInfoSymbol', timeout))
         try:
             if not self._signals:
                 raise Exception("NO SIGNAL ERROR, signals empty.")
             pass
         except Exception as err:
-            errStr = "src.core.calc.signal.Signal.backtestSignalsRunTrade: {resInfoSymbol=%s, timeout=%s}, exception err=%s" % ('resInfoSymbol', timeout, err)
+            errStr = "src.core.calc.signal.Signal.backtestSignalsRunTrade: {resInfoSymbol=%s, timeout=%s}, exception err=%s" % (
+                'resInfoSymbol', timeout, err)
             raise CalcException(errStr)
 
     def backtestSignalsAfterTrade(self, resInfoSymbol):
-        self._logger.debug("src.core.calc.signal.Signal.backtestSignalsAfterTrade: {resInfoSymbol=%s}" % 'resInfoSymbol')
+        self._logger.debug(
+            "src.core.calc.signal.Signal.backtestSignalsAfterTrade: {resInfoSymbol=%s}"
+            % 'resInfoSymbol')
         try:
             if not self._signals:
                 raise Exception("NO SIGNAL ERROR, signals empty.")
             pass
         except Exception as err:
-            errStr = "src.core.calc.signal.Signal.backtestSignalsAfterTrade: {resInfoSymbol=%s}, exception err=%s" % ('resInfoSymbol', err)
+            errStr = "src.core.calc.signal.Signal.backtestSignalsAfterTrade: {resInfoSymbol=%s}, exception err=%s" % (
+                'resInfoSymbol', err)
             raise CalcException(errStr)

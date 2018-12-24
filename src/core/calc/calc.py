@@ -424,7 +424,7 @@ class Calc(object):
             errStr = "src.core.calc.calc.Calc._calcSymbolAfterTradeOrders: exception err=%s" % err
             raise CalcException(errStr)
 
-    def calcSignalPreTradeOrders(self, signal, resInfoSymbol, baseCoin):
+    def calcSignalPreTradeOrders(self, signal_id, signal, resInfoSymbol, baseCoin):
         self._logger.debug(
             "src.core.calc.calc.Calc.calcSignalPreTradeOrders: {signal=%s, resInfoSymbol=%s, baseCoin=%s}"
             % (signal, 'resInfoSymbol', baseCoin))
@@ -434,8 +434,6 @@ class Calc(object):
             res = []
             type = signal['type']
             if type == TYPE_DIS:
-                # add signal id
-                signal_id = '0x1b' + str(utcnow_timestamp())
                 orders = self._calcSymbolPreTradeOrders(
                     signal['bid_server'], signal['fSymbol'], signal['tSymbol'],
                     signal['base_start'] / 2, 0, resInfoSymbol, baseCoin, signal_id)
@@ -447,8 +445,6 @@ class Calc(object):
                 if not orders == []:
                     res.extend(orders)
             if type == TYPE_TRA:
-                # add signal id
-                signal_id = '0x2b' + str(utcnow_timestamp())
                 # find target unique tSymbol
                 isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol']
                         and signal['V1_tSymbol'] != signal['V3_tSymbol'])
@@ -479,8 +475,6 @@ class Calc(object):
                     if not orders == []:
                         res.extend(orders)
             if type == TYPE_PAIR:
-                # add signal id
-                signal_id = '0x3b' + str(utcnow_timestamp())
                 # find target unique tSymbol
                 isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol']
                         and signal['V1_tSymbol'] != signal['V3_tSymbol'])
