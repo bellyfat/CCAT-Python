@@ -1562,7 +1562,7 @@ class DB(object):
             if exchange == "all" or self._Okex_exchange in exchange:
                 timeStamp = utcnow_timestamp()
                 id_str = 'Okex' + str(pid) + str(timeStamp)
-                order_id = '0x1a' + str(uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
+                order_id = '0x1a-' + str(uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                 status = 'filled'
                 if ratio == '':
                     ratio = self._Okex.getTradeFees()[0]["taker"]
@@ -1576,7 +1576,7 @@ class DB(object):
             if exchange == "all" or self._Binance_exchange in exchange:
                 timeStamp = utcnow_timestamp()
                 id_str = 'Binance' + str(pid) + str(timeStamp)
-                order_id = '0x2a' + str(uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
+                order_id = '0x2a-' + str(uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                 status = 'filled'
                 if ratio == '':
                     ratio = self._Binance.getTradeFees()[0]["taker"]
@@ -1592,7 +1592,7 @@ class DB(object):
             if exchange == "all" or self._Huobi_exchange in exchange:
                 timeStamp = utcnow_timestamp()
                 id_str = 'Huobi' + str(pid) + str(timeStamp)
-                order_id = '0x3a' + str(uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
+                order_id = '0x3a-' + str(uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                 status = 'filled'
                 if ratio == '':
                     ratio = self._Huobi.getTradeFees()[0]["taker"]
