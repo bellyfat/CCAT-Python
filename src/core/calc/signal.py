@@ -20,7 +20,9 @@ class Signal(object):
         self._logger = Logger()
 
     def signals(self, exchange='all', types='all', auto=SIGNAL_AUTO):
-        self._logger.debug("src.core.calc.signal.Signal.signals")
+        self._logger.debug(
+            "src.core.calc.signal.Signal.signals: {exchange=%s, types=%s, auto=%s}"
+            % (exchange, types, auto))
         try:
             if not self._signals == []:
                 return self._signals
@@ -29,7 +31,7 @@ class Signal(object):
             if not auto:
                 return self._configSignals(exchange, types)
         except Exception as err:
-            errStr = "src.core.calc.signal.Signal.signals, exception err=%s" % err
+            errStr = "src.core.calc.signal.Signal.signals: {exchange=%s, types=%s, auto=%s}, exception err=%s" % (exchange, types, auto, err)
             raise CalcException(errStr)
 
     def _autoSignals(self, exchange, types):
@@ -66,16 +68,22 @@ class Signal(object):
                         signal['base_gain'] = float(s['base_gain'])
                         signal['base_timeout'] = float(s['base_timeout'])
                         signal['status_done'] = False
-                        signal['status_assets'] = [{
-                            "asset":
-                            SIGNAL_BASECOIN,
-                            "balance":
-                            float(s['base_start']),
-                            "free":
-                            float(s['base_start']),
-                            "locked":
-                            0.0
-                        }]
+                        signal['status_assets'] = [
+                            {
+                                "server": s['bid_server'],
+                                "asset": SIGNAL_BASECOIN,
+                                "balance": float(s['base_start']) / 2,
+                                "free": float(s['base_start']) / 2,
+                                "locked": 0.0
+                            },
+                            {
+                                "server": s['ask_server'],
+                                "asset": SIGNAL_BASECOIN,
+                                "balance": float(s['base_start']) / 2,
+                                "free": float(s['base_start']) / 2,
+                                "locked": 0.0
+                            }
+                        ]
                         signal['status_gain'] = 0.0
                 if s['type'] == TYPE_TRA:
                     if (types == 'all' or TYPE_TRA in types) and (
@@ -95,6 +103,8 @@ class Signal(object):
                         signal['base_timeout'] = float(s['base_timeout'])
                         signal['status_done'] = False
                         signal['status_assets'] = [{
+                            "server":
+                            s['server'],
                             "asset":
                             SIGNAL_BASECOIN,
                             "balance":
@@ -125,16 +135,22 @@ class Signal(object):
                         signal['base_gain'] = float(s['base_gain'])
                         signal['base_timeout'] = float(s['base_timeout'])
                         signal['status_done'] = False
-                        signal['status_assets'] = [{
-                            "asset":
-                            SIGNAL_BASECOIN,
-                            "balance":
-                            float(s['base_start']),
-                            "free":
-                            float(s['base_start']),
-                            "locked":
-                            0.0
-                        }]
+                        signal['status_assets'] = [
+                            {
+                                "server": s['J1_server'],
+                                "asset": SIGNAL_BASECOIN,
+                                "balance": float(s['base_start']) / 2,
+                                "free": float(s['base_start']) / 2,
+                                "locked": 0.0
+                            },
+                            {
+                                "server": s['J2_server'],
+                                "asset": SIGNAL_BASECOIN,
+                                "balance": float(s['base_start']) / 2,
+                                "free": float(s['base_start']) / 2,
+                                "locked": 0.0
+                            }
+                        ]
                         signal['status_gain'] = 0.0
                 if not signal == {}:
                     signals.append(signal)
@@ -144,11 +160,27 @@ class Signal(object):
             errStr = "src.core.calc.signal.Signal.signals, exception err=%s" % err
             raise CalcException(errStr)
 
-    def _updateSignalsStatusByOrders(self, orders):
-        pass
-
-    def backtestUpdateSignalStatusByOrders(self, orders):
-        pass
+    def backtestUpdateSignalStatusByOrders(self, infoOrders, resInfoSymbol):
+        self._logger.debug(
+            "src.core.calc.signal.Signal.backtestUpdateSignalStatusByOrders: {infoOrders=%s, resInfoSymbol=%s}"
+            % ('infoOrders', 'resInfoSymbol'))
+        try:
+            if not self._signals:
+                raise Exception("NO SIGNAL ERROR, signals empty.")
+            calc = Calc()
+            for signal in self._signals:
+                orders = infoOrders[(
+                    infoOrders['group_id'] == signal['group_id'])]
+                status = calc.calcSignalStatusByOrders(signal, orders,
+                                                       resInfoSymbol, SIGNAL_BASECOIN)
+                if not status == []:
+                    signal['status_done'] = status['status_done']
+                    signal['status_assets'] = status['status_assets']
+                    signal['status_gain'] = status['status_gain']
+        except Exception as err:
+            errStr = "src.core.calc.signal.Signal.backtestUpdateSignalStatusByOrders: {infoOrders=%s, resInfoSymbol=%s}, exception err=%s" % (
+                'infoOrders', 'resInfoSymbol', err)
+            raise CalcException(errStr)
 
     def backtestSignalsPreTrade(self, resInfoSymbol):
         self._logger.debug(
@@ -160,8 +192,8 @@ class Signal(object):
             calc = Calc()
             res = []
             for signal in self._signals:
-                orders = calc.calcSignalPreTradeOrders(
-                    signal['group_id'], signal, resInfoSymbol, SIGNAL_BASECOIN)
+                orders = calc.calcSignalPreTradeOrders(signal, resInfoSymbol,
+                                                       SIGNAL_BASECOIN)
                 if not orders == []:
                     res.extend(orders)
             return res

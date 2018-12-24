@@ -227,7 +227,6 @@ class EventEngine(object):
             raise EngineException(errStr)
 
     # 注销事件
-
     def unregister(self, type, handler):
         self.__logger.debug(
             "src.core.engine.engine.EventEngine.unregister: {type:%s, handler:%s}"

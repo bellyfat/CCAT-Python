@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import uuid
 from decimal import ROUND_DOWN, ROUND_HALF_UP, ROUND_UP
 from itertools import combinations
 
-import uuid
 import pandas as pd
+
 from src.core.coin.binance import Binance
-from src.core.coin.enums import (CCAT_ORDER_SIDE_BUY, CCAT_ORDER_SIDE_SELL,
-                                 CCAT_ORDER_TYPE_LIMIT)
+from src.core.coin.enums import *
 from src.core.coin.huobi import Huobi
 from src.core.coin.okex import Okex
 from src.core.config import Config
@@ -51,24 +51,199 @@ class Calc(object):
         # logger
         self._logger = Logger()
 
-
-    def _calcStatusAssetByBaseCoin(self, asset):
-        self._logger.debug("src.core.calc.calc.Calc._calcStatusAssetByBaseCoin:")
+    def _calcStatusAssetByBaseCoin(self, assets, resInfoSymbol, baseCoin):
+        self._logger.debug(
+            "src.core.calc.calc.Calc._calcStatusAssetByBaseCoin:")
         try:
-            pass
+            assets_base = 0
+            for asset in assets:
+                # base: do nothing
+                if asset['asset'] == baseCoin:
+                    assets_base = assets_base + asset['balance']
+                    continue
+                # de: direct trans: asset -> baseCoin
+                isDe = resInfoSymbol[
+                    (resInfoSymbol['server'] == asset['server'])
+                    & (resInfoSymbol['fSymbol'] == asset['asset']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                if not isDe.empty:
+                    if asset['server'] == self._Okex_exchange:
+                        ticker = self._Okex.getMarketOrderbookTicker(
+                            asset['asset'], baseCoin, aggDepth=0)
+                    if asset['server'] == self._Binance_exchange:
+                        ticker = self._Binance.getMarketOrderbookTicker(
+                            asset['asset'], baseCoin, aggDepth=0)
+                    if asset['server'] == self._Huobi_exchange:
+                        ticker = self._Huobi.getMarketOrderbookTicker(
+                            asset['asset'], baseCoin, aggDepth=0)
+                    assets_base = assets_base + ticker[
+                        'bid_one_price'] * asset['balance']
+                    continue
+                # tra: trangle trans: asset -> tSymbol -> baseCoin
+                if isDe.empty:
+                    isTra = resInfoSymbol[
+                        (resInfoSymbol['server'] == asset['server'])
+                        & (resInfoSymbol['fSymbol'] == asset['asset'])]
+                    if not isTra.empty:
+                        candy = False
+                        for i in range(isTra.shape[0]):
+                            tSymbol = isTra['tSymbol'].values[i]
+                            isTraDe = resInfoSymbol[
+                                (resInfoSymbol['server'] == asset['server'])
+                                & (resInfoSymbol['fSymbol'] == tSymbol) &
+                                (resInfoSymbol['tSymbol'] == baseCoin)]
+                            if not isTraDe.empty:
+                                candy = True
+                                break
+                        if not candy:
+                            raise Exception(
+                                "TRADE PAIRS NOT FOUND ERROR, asset to baseCoin trade router not found."
+                            )
+                        # asset -> tSymbol -> baseCoin
+                        if asset['server'] == self._Okex_exchange:
+                            ticker = self._Okex.getMarketOrderbookTicker(
+                                asset['asset'], tSymbol, aggDepth=0)
+                            ticker1 = self._Okex.getMarketOrderbookTicker(
+                                tSymbol, baseCoin, aggDepth=0)
+                        if asset['server'] == self._Binance_exchange:
+                            ticker = self._Binance.getMarketOrderbookTicker(
+                                asset['asset'], tSymbol, aggDepth=0)
+                            ticker1 = self._Binance.getMarketOrderbookTicker(
+                                tSymbol, baseCoin, aggDepth=0)
+                        if asset['server'] == self._Huobi_exchange:
+                            ticker = self._Huobi.getMarketOrderbookTicker(
+                                asset['asset'], tSymbol, aggDepth=0)
+                            ticker1 = self._Huobi.getMarketOrderbookTicker(
+                                tSymbol, baseCoin, aggDepth=0)
+                        assets_base = assets_base + ticker1[
+                            'bid_one_price'] * ticker['bid_one_price'] * asset[
+                                'balance']
+            # return
+            return assets_base
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
             errStr = "src.core.calc.calc.Calc._calcStatusAssetByBaseCoin: exception err=%s" % err
             raise CalcException(errStr)
 
-
-    def calcSignalStatusByOrders(self, orders):
-        self._logger.debug("src.core.calc.calc.Calc.calcSignalStatusByOrders:")
+    def calcSignalStatusByOrders(self, signal, infoOrders, resInfoSymbol,
+                                 baseCoin):
+        self._logger.debug(
+            "src.core.calc.calc.Calc.calcSignalStatusByOrders: {signal=%s, infoOrders=%s, resInfoSymbol=%s, baseCoin=%s}"
+            % (signal, 'infoOrders', 'resInfoSymbol', baseCoin))
         try:
-            pass
+            status = []
+            # check for sure
+            orders = infoOrders[(infoOrders['group_id'] == signal['group_id'])]
+            if not orders.empty:
+                # calc fee_ratio
+                for index, order in orders.iterrows():
+                    order['fee_ratio'] = 0
+                    fee_ratio = resInfoSymbol[
+                        (resInfoSymbol['server'] == order['server'])
+                        & (resInfoSymbol['fSymbol'] == order['fSymbol'])
+                        & (resInfoSymbol['tSymbol'] == order['tSymbol']
+                           )]['fee_taker']
+                    if not fee_ratio.empty:
+                        if not fee_ratio.values[0] == 'NULL':
+                            order['fee_ratio'] = fee_ratio.values[0]
+                # calc fSymbol, tSymbol
+                fSymbol_assets = []
+                tSymbol_assets = []
+                for (server, fSymbol, tSymbol), group in orders.groupby(
+                    ['server', 'fSymbol', 'tSymbol']):
+                    fBalance = 0
+                    fFree = 0
+                    fLocked = 0
+                    tBalance = 0
+                    tFree = 0
+                    tLocked = 0
+                    # type: buy
+                    g = group[(group['server'] == server)
+                              & (group['ask_or_bid'] == CCAT_ORDER_SIDE_BUY)]
+                    if not g.empty:
+                        # fSymbol
+                        print(g.to_dict())
+                        fBalance = fBalance + g['filled_size'].sum()
+                        fFree = fFree + g['filled_size'].sum()
+                        # tSymbol
+                        tBalance = tBalance - g.apply(
+                            lambda x: x['filled_price'] * x['filled_size'],
+                            axis=1).sum() - g['fee'].sum()
+                        tLocked = tLocked + g.apply(
+                            lambda x: x['ask_bid_price'] * x['ask_bid_size'] * (1 + x['fee_ratio']) - x['filled_price'] * x['filled_size'] - x['fee'],
+                            axis=1).sum()
+                        tFree = tFree - g.apply(
+                            lambda x: x['ask_bid_price'] * x['ask_bid_size'] * (1 + x['fee_ratio']) - x['filled_price'] * x['filled_size'] - x['fee'],
+                            axis=1).sum() - g.apply(
+                                lambda x: x['filled_price'] * x['filled_size'],
+                                axis=1).sum() - g['fee'].sum()
+                    # type sell
+                    g = group[(group['server'] == server)
+                              & (group['ask_or_bid'] == CCAT_ORDER_SIDE_SELL)]
+                    if not g.empty:
+                        # fSymbol
+                        fBalance = fBalance - g['filled_size'].sum()
+                        fLocked = fLocked + g.apply(
+                            lambda x: x['ask_bid_size'] - x['filled_size']
+                        ).sum()
+                        fFree = fFree - g.apply(
+                            lambda x: x['ask_bid_size'] - x['filled_size']
+                        ).sum() - g['filled_size'].sum()
+                        # tSymbol
+                        tBalance = tBalance + g.apply(
+                            lambda x: x['filled_price'] * x['filled_size'],
+                            axis=1).sum() - g['fee'].sum()
+                        tFree = tFree + g.apply(
+                            lambda x: x['filled_price'] * x['filled_size'],
+                            axis=1).sum() - g['fee'].sum()
+                    fSymbol_assets.append({
+                        "server": server,
+                        "asset": fSymbol,
+                        "balance": fBalance,
+                        "free": fFree,
+                        "locked": fLocked
+                    })
+                    tSymbol_assets.append({
+                        "server": server,
+                        "asset": tSymbol,
+                        "balance": tBalance,
+                        "free": tFree,
+                        "locked": tLocked
+                    })
+                # update status_asset
+                status_assets = []
+                signal_assets = pd.DataFrame(signal['status_assets'])
+                fSymbol_assets = pd.DataFrame(fSymbol_assets)
+                tSymbol_assets = pd.DataFrame(tSymbol_assets)
+                assets = signal_assets.append(fSymbol_assets).append(
+                    tSymbol_assets)
+                for (server,
+                     asset), group in assets.groupby(['server', 'asset']):
+                    status_assets.append({
+                        "server": server,
+                        "asset": asset,
+                        "balance": group['balance'].sum(),
+                        "free": group["free"].sum(),
+                        "locked": group['locked'].sum()
+                    })
+                # update status_gain
+                status_assets_base = self._calcStatusAssetByBaseCoin(
+                    status_assets, resInfoSymbol, baseCoin)
+                status_gain = (status_assets_base -
+                               signal['base_start']) / signal['base_start']
+                # udpate status_done
+                status_done = status_gain >= signal['base_gain']
+                status = {
+                    "status_done": status_done,
+                    "status_assets": status_assets,
+                    "status_gain": status_gain
+                }
+            # return
+            return status
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcSignalStatusByOrders: exception err=%s" % err
+            errStr = "src.core.calc.calc.Calc.calcSignalStatusByOrders: {signal=%s, infoOrders=%s, resInfoSymbol=%s, baseCoin=%s}, exception err=%s" % (
+                signal, 'infoOrders', 'resInfoSymbol', baseCoin, err)
             raise CalcException(errStr)
 
     def _calcSymbolTradeOrders(self):
@@ -81,7 +256,8 @@ class Calc(object):
             raise CalcException(errStr)
 
     def _calcSymbolPreTradeOrders(self, server, fSymbol, tSymbol, fSymbol_base,
-                                  tSymbol_base, resInfoSymbol, baseCoin, signal_id):
+                                  tSymbol_base, resInfoSymbol, baseCoin,
+                                  signal_id):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolPreTradeOrders:")
         try:
@@ -159,7 +335,7 @@ class Calc(object):
                         quantity = num_to_precision(
                             trade['size'], size_precision, rounding=ROUND_DOWN)
                         orders.append({
-                            "exchange": server,
+                            "server": server,
                             "fSymbol": fSymbol,
                             "tSymbol": baseCoin,
                             "ask_or_bid": CCAT_ORDER_SIDE_BUY,
@@ -247,7 +423,7 @@ class Calc(object):
                                 size_precision,
                                 rounding=ROUND_DOWN)
                             orders.append({
-                                "exchange": server,
+                                "server": server,
                                 "fSymbol": tSymbol,
                                 "tSymbol": baseCoin,
                                 "ask_or_bid": CCAT_ORDER_SIDE_BUY,
@@ -320,7 +496,7 @@ class Calc(object):
                                 size_precision,
                                 rounding=ROUND_DOWN)
                             orders.append({
-                                "exchange": server,
+                                "server": server,
                                 "fSymbol": fSymbol,
                                 "tSymbol": tSymbol,
                                 "ask_or_bid": CCAT_ORDER_SIDE_BUY,
@@ -406,7 +582,7 @@ class Calc(object):
                         quantity = num_to_precision(
                             trade['size'], size_precision, rounding=ROUND_DOWN)
                         orders.append({
-                            "exchange": server,
+                            "server": server,
                             "fSymbol": tSymbol,
                             "tSymbol": baseCoin,
                             "ask_or_bid": CCAT_ORDER_SIDE_BUY,
@@ -445,7 +621,7 @@ class Calc(object):
             errStr = "src.core.calc.calc.Calc._calcSymbolAfterTradeOrders: exception err=%s" % err
             raise CalcException(errStr)
 
-    def calcSignalPreTradeOrders(self, signal_id, signal, resInfoSymbol, baseCoin):
+    def calcSignalPreTradeOrders(self, signal, resInfoSymbol, baseCoin):
         self._logger.debug(
             "src.core.calc.calc.Calc.calcSignalPreTradeOrders: {signal=%s, resInfoSymbol=%s, baseCoin=%s}"
             % (signal, 'resInfoSymbol', baseCoin))
@@ -457,12 +633,14 @@ class Calc(object):
             if type == TYPE_DIS:
                 orders = self._calcSymbolPreTradeOrders(
                     signal['bid_server'], signal['fSymbol'], signal['tSymbol'],
-                    signal['base_start'] / 2, 0, resInfoSymbol, baseCoin, signal_id)
+                    signal['base_start'] / 2, 0, resInfoSymbol, baseCoin,
+                    signal['group_id'])
                 if not orders == []:
                     res.extend(orders)
                 orders = self._calcSymbolPreTradeOrders(
                     signal['ask_server'], signal['fSymbol'], signal['tSymbol'],
-                    0, signal['base_start'] / 2, resInfoSymbol, baseCoin, signal_id)
+                    0, signal['base_start'] / 2, resInfoSymbol, baseCoin,
+                    signal['group_id'])
                 if not orders == []:
                     res.extend(orders)
             if type == TYPE_TRA:
@@ -478,21 +656,21 @@ class Calc(object):
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], 0, signal['base_start'],
-                        resInfoSymbol, baseCoin, signal_id)
+                        resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
                 if isV2:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], 0, signal['base_start'],
-                        resInfoSymbol, baseCoin, signal_id)
+                        resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
                 if isV3:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], 0, signal['base_start'],
-                        resInfoSymbol, baseCoin, signal_id)
+                        resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
             if type == TYPE_PAIR:
@@ -508,39 +686,39 @@ class Calc(object):
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], 0, signal['base_start'],
-                        resInfoSymbol, baseCoin, signal_id)
+                        resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], 0, signal['base_start'],
-                        resInfoSymbol, baseCoin, signal_id)
+                        resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
                 if isV2:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], 0, signal['base_start'],
-                        resInfoSymbol, baseCoin, signal_id)
+                        resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], 0, signal['base_start'],
-                        resInfoSymbol, baseCoin, signal_id)
+                        resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
                 if isV3:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], 0, signal['base_start'],
-                        resInfoSymbol, baseCoin, signal_id)
+                        resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], 0, signal['base_start'],
-                        resInfoSymbol, baseCoin, signal_id)
+                        resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
             # return
@@ -567,8 +745,9 @@ class Calc(object):
                     for (fSymbol,
                          tSymbol), group in df.groupby(['fSymbol', 'tSymbol']):
                         # calc group_id
-                        id_str = TYPE_DIS + str(server) + str(server_pair) + str(fSymbol) + str(tSymbol)
-                        group_id = '0x1b-'+str(
+                        id_str = TYPE_DIS + str(server) + str(
+                            server_pair) + str(fSymbol) + str(tSymbol)
+                        group_id = '0x1b-' + str(
                             uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                         # calc timeStamp
                         period = []
@@ -665,8 +844,8 @@ class Calc(object):
                     ['server', 'symbol_pair']):
                     # calc group_id
                     id_str = TYPE_TRA + str(server) + str(symbol_pair)
-                    group_id = '0x2b-'+str(
-                       uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
+                    group_id = '0x2b-' + str(
+                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                     # calc timeStamp
                     period = []
                     periodTime = 0
@@ -759,9 +938,10 @@ class Calc(object):
                     # calc
                     for symbol_pair, group in df.groupby(['symbol_pair']):
                         # calc group_id
-                        id_str = TYPE_PAIR + str(server) + str(server_pair) + str(symbol_pair)
-                        group_id = '0x3b-'+str(
-                           uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
+                        id_str = TYPE_PAIR + str(server) + str(
+                            server_pair) + str(symbol_pair)
+                        group_id = '0x3b-' + str(
+                            uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                         # calc timeStamp
                         period = []
                         periodTime = 0
