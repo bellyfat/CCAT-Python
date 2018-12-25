@@ -33,7 +33,7 @@ class Handler(object):
             db.insertAccountBalanceHistory(exchange)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleListenAccountBalanceEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
-                event.type, event.priority, event.args, EngineException(err))
+                event.type, event.priority, event.args, err)
             self._logger.error(errStr)
         callback(event.id)
 
@@ -51,7 +51,7 @@ class Handler(object):
             db.insertAccountWithdrawHistoryAsset(exchange, asset)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleListenAccountWithdrawEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
-                event.type, event.priority, event.args, EngineException(err))
+                event.type, event.priority, event.args, err)
             self._logger.error(errStr)
         callback(event.id)
 
@@ -69,7 +69,7 @@ class Handler(object):
             db.insertMarketDepth(exchange, fSymbol, tSymbol, limit)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleListenDepthEvent { type=%s, priority=%s, args=%s }, err=%s" % (
-                event.type, event.priority, event.args, EngineException(err))
+                event.type, event.priority, event.args, err)
             self._logger.error(errStr)
         callback(event.id)
 
@@ -88,7 +88,7 @@ class Handler(object):
                                  end)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleListenKlineEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
-                event.type, event.priority, event.args, EngineException(err))
+                event.type, event.priority, event.args, err)
             self._logger.error(errStr)
         callback(event.id)
 
@@ -106,7 +106,7 @@ class Handler(object):
             db.insertMarketTicker(exchange, fSymbol, tSymbol, aggDepth)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleListenTickerEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
-                event.type, event.priority, event.args, EngineException(err))
+                event.type, event.priority, event.args, err)
             self._logger.error(errStr)
         callback(event.id)
 
@@ -122,7 +122,7 @@ class Handler(object):
             pass
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleJudgeMarketDepthEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
-                event.type, event.priority, event.args, EngineException(err))
+                event.type, event.priority, event.args, err)
             self._logger.error(errStr)
         callback(event.id)
 
@@ -137,7 +137,7 @@ class Handler(object):
             pass
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleJudgeMarketKlineEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
-                event.type, event.priority, event.args, EngineException(err))
+                event.type, event.priority, event.args, err)
             self._logger.error(errStr)
         callback(event.id)
 
@@ -174,7 +174,7 @@ class Handler(object):
                     db.insertJudgeSignalTickerPair(signalPair)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleJudgeMarketTickerEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
-                event.type, event.priority, event.args, EngineException(err))
+                event.type, event.priority, event.args, err)
             self._logger.error(errStr)
         callback(event.id)
 
@@ -190,37 +190,44 @@ class Handler(object):
         signals = str_to_list(signals)
         timeout = float(timeout)
         try:
+            startTime = time.time()
             db = DB()
             sgn = Signal(signals)
             resInfoSymbol = pd.DataFrame(db.getViewMarketSymbolPairs(exchange))
             ########################################
             # 1. pre trade
-            # 1.1 calc pre orders
-            preOrders = sgn.backtestSignalsPreTrade(resInfoSymbol)
-            preInfoOrders = []
-            if not preOrders == []:
-                # 1.2 excute pre orders and calc info orders
-                resOrders = []
-                for order in preOrders:
-                    res = db.insertCreatTradeBacktestHistory(
-                        order['server'], order['fSymbol'], order['tSymbol'],
-                        order['ask_or_bid'], order['price'], order['quantity'],
-                        order['ratio'], order['type'], order['group_id'])
-                    if not res == []:
-                        resOrders.extend(res)
-                resOrders = pd.DataFrame(resOrders)
-                for server in exchange:
-                    orderIDs = resOrders[(resOrders['server']==server)]['order_id'].tolist()
-                    res = db.getTradeBacktestHistoryServerOrder([server], orderIDs)
-                    if not res == []:
-                        preInfoOrders.extend(res)
-                # 1.3 update signals status according to orders
-                print('preOrders:\n%s' % preOrders)
-                print('preInfoOrders:\n%s' % preInfoOrders)
-                preInfoOrders = pd.DataFrame(preInfoOrders)
-                print(sgn.signals())
-                sgn.backtestUpdateSignalStatusByOrders(preInfoOrders, resInfoSymbol)
-                print(sgn.signals())
+            isError = True
+            while isError and time.time() - startTime < timeout:
+                try:
+                    # 1.1 calc pre orders
+                    preOrders = sgn.backtestSignalsPreTrade(resInfoSymbol)
+                    preInfoOrders = []
+                    if not preOrders == []:
+                        # 1.2 excute pre orders and calc info orders
+                        resOrders = []
+                        for order in preOrders:
+                            res = db.insertCreatTradeBacktestHistory(
+                                order['server'], order['fSymbol'], order['tSymbol'],
+                                order['ask_or_bid'], order['price'], order['quantity'],
+                                order['ratio'], order['type'], order['group_id'])
+                            if not res == []:
+                                resOrders.extend(res)
+                        resOrders = pd.DataFrame(resOrders)
+                        for server in exchange:
+                            orderIDs = resOrders[(resOrders['server']==server)]['order_id'].tolist()
+                            res = db.getTradeBacktestHistoryServerOrder([server], orderIDs)
+                            if not res == []:
+                                preInfoOrders.extend(res)
+                        # 1.3 update signals status according to orders
+                        preInfoOrders = pd.DataFrame(preInfoOrders)
+                        sgn.backtestUpdateSignalStatusByOrders(preInfoOrders, resInfoSymbol)
+                        print('pre signals after update:\n%s' % sgn.signals())
+                    isError = False
+                except Exception as err:
+                    errStr = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }, err=%s, pre Trade Filed, will try again..." % (event.type, event.priority, event.args, err)
+                    self._logger.warn(errStr)
+            if isError:
+                raise Exception("PRE TRADE ERROR. pre trade failed after try many times.")
             ########################################
             # # run trade
             # isDone = False
@@ -244,7 +251,7 @@ class Handler(object):
             #         order['ratio'], order['type'], order['group_id'])
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
-                event.type, event.priority, event.args, EngineException(err))
+                event.type, event.priority, event.args, err)
             self._logger.error(errStr)
         callback(event.id)
 
@@ -263,7 +270,7 @@ class Handler(object):
                                        ratio)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleOrderHistoryInsertEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
-                event.type, event.priority, event.args, EngineException(err))
+                event.type, event.priority, event.args, err)
             self._logger.error(errStr)
         callback(event.id)
 
@@ -325,7 +332,7 @@ class Handler(object):
                     db.insertStatisticSignalTickerPair(statisticPair)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleStatisticJudgeEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
-                event.type, event.priority, event.args, EngineException(err))
+                event.type, event.priority, event.args, err)
             self._logger.error(errStr)
         callback(event.id)
 
