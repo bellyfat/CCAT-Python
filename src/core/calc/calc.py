@@ -5,7 +5,7 @@ from decimal import ROUND_DOWN
 from itertools import combinations
 
 import pandas as pd
-
+from src.core.calc.enums import CALC_ZERO_NUMBER
 from src.core.coin.binance import Binance
 from src.core.coin.enums import *
 from src.core.coin.huobi import Huobi
@@ -67,6 +67,10 @@ class Calc(object):
                     & (resInfoSymbol['fSymbol'] == asset['asset']) &
                     (resInfoSymbol['tSymbol'] == baseCoin)]
                 if not isDe.empty:
+                    # asset -> baseCoin
+                    fee_ratio = 0
+                    if not isDe['fee_taker'].values[0] == 'NULL':
+                        fee_ratio = isDe['fee_taker'].values[0]
                     if asset['server'] == self._Okex_exchange:
                         ticker = self._Okex.getMarketOrderbookTicker(
                             asset['asset'], baseCoin, aggDepth=0)
@@ -77,7 +81,7 @@ class Calc(object):
                         ticker = self._Huobi.getMarketOrderbookTicker(
                             asset['asset'], baseCoin, aggDepth=0)
                     assets_base = assets_base + ticker[
-                        'bid_one_price'] * asset['balance']
+                        'bid_one_price'] * (1 - fee_ratio) * asset['balance']
                     continue
                 # tra: trangle trans: asset -> tSymbol -> baseCoin
                 if isDe.empty:
@@ -99,6 +103,13 @@ class Calc(object):
                             raise Exception(
                                 "TRADE PAIRS NOT FOUND ERROR, asset to baseCoin trade pairs not found."
                             )
+                        fee_ratio = 0
+                        fee1_ratio = 0
+                        if not isTra['fee_taker'].values[0] == 'NULL':
+                            fee_ratio = isTra['fee_taker'].values[0]
+                        if not isTraDe['fee_taker'].values[0] == 'NULL':
+                            fee1_ratio = isTraDe['fee_taker'].values[0]
+
                         # asset -> tSymbol -> baseCoin
                         if asset['server'] == self._Okex_exchange:
                             ticker = self._Okex.getMarketOrderbookTicker(
@@ -115,9 +126,9 @@ class Calc(object):
                                 asset['asset'], tSymbol, aggDepth=0)
                             ticker1 = self._Huobi.getMarketOrderbookTicker(
                                 tSymbol, baseCoin, aggDepth=0)
-                        assets_base = assets_base + ticker1[
-                            'bid_one_price'] * ticker['bid_one_price'] * asset[
-                                'balance']
+                        assets_base = assets_base + ticker1['bid_one_price'] * (
+                            1 - fee1_ratio) * ticker['bid_one_price'] * (
+                                1 - fee_ratio) * asset['balance']
             # return
             return assets_base
         except (BinanceException, HuobiException, OkexException,
@@ -265,13 +276,13 @@ class Calc(object):
             # type I
             # handle fSymbol
             if fSymbol_base > 0:
-                print('in type I')
+                # print('in type I')
                 # de: direct trans
                 isDe = resInfoSymbol[(resInfoSymbol['server'] == server)
                                      & (resInfoSymbol['fSymbol'] == fSymbol) &
                                      (resInfoSymbol['tSymbol'] == baseCoin)]
                 if not isDe.empty:
-                    print('in Type I: de')
+                    # print('in Type I: de')
                     # baseCoin -> fSymbol
                     price_precision = 0
                     size_precision = 0
@@ -302,9 +313,11 @@ class Calc(object):
                     deTradeNotional = fSymbol_base * (1 - fee_ratio)
                     deTradeSize = deTradeNotional / float(
                         res['ask_price_size'][0][0])
-                    if deTradeNotional < min_notional or deTradeSize < size_min:
+                    # print('in Type I: de, deTradeNotional=%s, min_notional=%s' % (deTradeNotional, min_notional))
+                    # print('in Type I: de, deTradeSize=%s, size_min=%s' %  (deTradeSize, size_min))
+                    if deTradeNotional < min_notional - CALC_ZERO_NUMBER or deTradeSize < size_min - CALC_ZERO_NUMBER:
                         raise Exception(
-                            "TRANS TOO SMALL ERROR, amount is smaller than the min size."
+                            "TRANS TOO SMALL ERROR, amount is smaller than the min limit."
                         )
                     sum = 0
                     deTrade = []
@@ -319,14 +332,17 @@ class Calc(object):
                         if deSize > 0:
                             if deSize >= size_min:
                                 if not deSize * rPrice >= min_notional:
-                                    deSize = min_notional / rPrice
+                                    continue
                                 sum = sum + deSize * rPrice
-                                if sum <= deTradeNotional:
+                                if sum <= deTradeNotional + CALC_ZERO_NUMBER:
                                     deTrade.append({
                                         'price': rPrice,
                                         'size': deSize
                                     })
-                    if sum < deTradeNotional:
+                    # print('in Type I: de, server=%s, res=%s' % (server, res['ask_price_size'][0:10]))
+                    # print('in Type I: de, deTradeNotional=%s' % deTradeNotional)
+                    # print('in Type I: de, sum=%s' % sum)
+                    if sum < deTradeNotional - min_notional - CALC_ZERO_NUMBER:
                         raise Exception(
                             "TRANS TOO MUCH ERROR，amount is not enough with ask 1 to ask 10."
                         )
@@ -349,10 +365,10 @@ class Calc(object):
                             "group_id": signal_id
                         })
                     # type I: de done
-                    print('out type I: de done')
+                    # print('out type I: de done')
                 # tra: trangle trans
                 if isDe.empty:
-                    print('in type I: tra')
+                    # print('in type I: tra')
                     isDe = resInfoSymbol[(resInfoSymbol['server'] == server) &
                                          (resInfoSymbol['fSymbol'] == fSymbol)
                                          &
@@ -400,9 +416,11 @@ class Calc(object):
                         traTradeNotional = fSymbol_base * (1 - fee_ratio)
                         traTradeSize = traTradeNotional / float(
                             res['ask_price_size'][0][0])
-                        if traTradeNotional < min_notional or traTradeSize < size_min:
+                        # print('in type I: tra, traTradeNotional=%s, min_notional=%s' % (traTradeNotional, min_notional))
+                        # print('in type I: tra, traTradeSize=%s, size_min=%s' % (traTradeSize, size_min))
+                        if traTradeNotional < min_notional - CALC_ZERO_NUMBER or traTradeSize < size_min - CALC_ZERO_NUMBER:
                             raise Exception(
-                                "TRANS TOO SMALL ERROR, amount is smaller than the min size."
+                                "TRANS TOO SMALL ERROR, amount is smaller than the min limit."
                             )
                         sum = 0
                         traTrade = []
@@ -417,14 +435,17 @@ class Calc(object):
                             if traSize > 0:
                                 if traSize >= size_min:
                                     if not traSize * rPrice >= min_notional:
-                                        traSize = min_notional / rPrice
+                                        continue
                                     sum = sum + traSize * rPrice
-                                    if sum <= traTradeNotional:
+                                    if sum <= traTradeNotional + CALC_ZERO_NUMBER:
                                         traTrade.append({
                                             'price': rPrice,
                                             'size': traSize
                                         })
-                        if sum < traTradeNotional:
+                        # print('in type I: tra, server=%s, res=%s' % (server, res['ask_price_size'][0:10]))
+                        # print('in type I: tra, traTradeNotional=%s' % traTradeNotional)
+                        # print('in type I: tra, sum=%s' % sum)
+                        if sum < traTradeNotional - min_notional - CALC_ZERO_NUMBER:
                             raise Exception(
                                 "TRANS TOO MUCH ERROR，amount is not enough with ask 1 to ask 10."
                             )
@@ -449,7 +470,10 @@ class Calc(object):
                                 "group_id": signal_id
                             })
                         # tSymbol -> fSymbol
-                        sum_base = sum - traSize * rPrice
+                        # print('in type I: tra, traTrade=%s' % traTrade)
+                        sum_base = 0
+                        for trade in traTrade:
+                            sum_base = sum_base + trade['size']
                         price_precision = 0
                         size_precision = 0
                         size_min = 0
@@ -481,9 +505,11 @@ class Calc(object):
                         deTradeNotional = sum_base * (1 - fee_ratio)
                         deTradeSize = deTradeNotional / float(
                             res['ask_price_size'][0][0])
-                        if deTradeNotional < min_notional or deTradeSize < size_min:
+                        # print('in type I: tra, deTradeNotional=%s, min_notional=%s' % (deTradeNotional, min_notional))
+                        # print('in type I: tra, deTradeSize=%s, size_min=%s' % (deTradeSize, size_min))
+                        if deTradeNotional < min_notional - CALC_ZERO_NUMBER or deTradeSize < size_min - CALC_ZERO_NUMBER:
                             raise Exception(
-                                "TRANS TOO SMALL ERROR, amount is smaller than the min size."
+                                "TRANS TOO SMALL ERROR, amount is smaller than the min limit."
                             )
                         sum = 0
                         deTrade = []
@@ -498,14 +524,17 @@ class Calc(object):
                             if deSize > 0:
                                 if deSize >= size_min:
                                     if not deSize * rPrice >= min_notional:
-                                        deSize = min_notional / rPrice
+                                        continue
                                     sum = sum + deSize * rPrice
-                                    if sum <= deTradeNotional:
+                                    if sum <= deTradeNotional + CALC_ZERO_NUMBER:
                                         deTrade.append({
                                             'price': rPrice,
                                             'size': deSize
                                         })
-                        if sum < deTradeNotional:
+                        # print('in type I: tra, server=%s, res=%s' % (server, res['ask_price_size'][0:10]))
+                        # print('in type I: tra, deTradeNotional=%s' % deTradeNotional)
+                        # print('in type I: tra, sum=%s' % sum)
+                        if sum < deTradeNotional - min_notional - CALC_ZERO_NUMBER:
                             raise Exception(
                                 "TRANS TOO MUCH ERROR，amount is not enough with ask 1 to ask 10."
                             )
@@ -530,23 +559,23 @@ class Calc(object):
                                 "group_id": signal_id
                             })
                         # done type I: tra
-                        print('out type I: tra done')
+                        # print('out type I: tra done')
             # type II
             # handle tSymbol
             if tSymbol_base > 0:
-                print('in type II')
+                # print('in type II')
                 # need no trans
                 if tSymbol == baseCoin:
-                    print('in type II: need no trans')
+                    # print('in type II: need no trans')
                     # done type II: need no trans
                     pass
-                    print('out type II: need no trans done')
+                    # print('out type II: need no trans done')
                 # direct trans
                 isDe = resInfoSymbol[(resInfoSymbol['server'] == server)
                                      & (resInfoSymbol['fSymbol'] == tSymbol) &
                                      (resInfoSymbol['tSymbol'] == baseCoin)]
                 if not isDe.empty:
-                    print('in type II: de')
+                    # print('in type II: de')
                     # baseCoin -> tSymbol
                     price_precision = 0
                     size_precision = 0
@@ -574,12 +603,15 @@ class Calc(object):
                         res = self._Huobi.getMarketOrderbookDepth(
                             tSymbol, baseCoin)
                     # calc orders
+                    # print('in type II: de, tSymbol_base=%s, fee_ratio=%s' % (tSymbol_base, fee_ratio))
                     deTradeNotional = tSymbol_base * (1 - fee_ratio)
                     deTradeSize = deTradeNotional / float(
                         res['ask_price_size'][0][0])
-                    if deTradeNotional < min_notional or deTradeSize < size_min:
+                    # print('in type II: de, deTradeNotional=%s, min_notional=%s' % (deTradeNotional, min_notional))
+                    # print('in type II: de, deTradeSize=%s, size_min=%s' % (deTradeSize, size_min))
+                    if deTradeNotional < min_notional - CALC_ZERO_NUMBER or deTradeSize < size_min - CALC_ZERO_NUMBER:
                         raise Exception(
-                            "TRANS TOO SMALL ERROR, amount is smaller than the min size."
+                            "TRANS TOO SMALL ERROR, amount is smaller than the min limit."
                         )
                     sum = 0
                     deTrade = []
@@ -594,14 +626,17 @@ class Calc(object):
                         if deSize > 0:
                             if deSize >= size_min:
                                 if not deSize * rPrice >= min_notional:
-                                    deSize = min_notional / rPrice
+                                    continue
                                 sum = sum + deSize * rPrice
-                                if sum <= deTradeNotional:
+                                if sum <= deTradeNotional + CALC_ZERO_NUMBER:
                                     deTrade.append({
                                         'price': rPrice,
                                         'size': deSize
                                     })
-                    if sum < deTradeNotional:
+                    # print('in type II: de, server=%s, res=%s' % (server, res['ask_price_size'][0:10]))
+                    # print('in type II: de, deTradeNotional=%s' % deTradeNotional)
+                    # print('in type II: de, sum=%s' % sum)
+                    if sum < deTradeNotional - min_notional - CALC_ZERO_NUMBER:
                         raise Exception(
                             "TRANS TOO MUCH ERROR，amount is not enough with ask 1 to ask 10."
                         )
@@ -624,9 +659,9 @@ class Calc(object):
                             "group_id": signal_id
                         })
                     # done type II: de
-                    print('out type II: de done')
+                    # print('out type II: de done')
             # return
-            print('return:%s' % orders)
+            # print('return orders:%s' % orders)
             return orders
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
@@ -683,7 +718,7 @@ class Calc(object):
                         and signal['V2_tSymbol'] != signal['V3_tSymbol'])
                 isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol']
                         and signal['V3_tSymbol'] != signal['V2_tSymbol'])
-                print(isV1, isV2, isV3)
+                # print(isV1, isV2, isV3)
                 if isV1:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V1_fSymbol'],
@@ -713,7 +748,7 @@ class Calc(object):
                         and signal['V2_tSymbol'] != signal['V3_tSymbol'])
                 isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol']
                         and signal['V3_tSymbol'] != signal['V2_tSymbol'])
-                print(isV1, isV2, isV3)
+                # print(isV1, isV2, isV3)
                 if isV1:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V1_fSymbol'],

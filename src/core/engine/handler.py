@@ -215,8 +215,8 @@ class Handler(object):
                     if not res == []:
                         preInfoOrders.extend(res)
                 # 1.3 update signals status according to orders
-                print('oders:\n%s' % preOrders)
-                print('infoOders:\n%s' % preInfoOrders)
+                print('preOrders:\n%s' % preOrders)
+                print('preInfoOrders:\n%s' % preInfoOrders)
                 preInfoOrders = pd.DataFrame(preInfoOrders)
                 print(sgn.signals())
                 sgn.backtestUpdateSignalStatusByOrders(preInfoOrders, resInfoSymbol)
