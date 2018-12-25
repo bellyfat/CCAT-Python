@@ -158,9 +158,9 @@ GET_VIEW_ACCOUNT_WITHDRAW_CURRENT_SQL = '''
 '''
 
 # get db account info sql
-GET_ACCOUNT_BALANCE_HISTORY_SQL = Template('''
-    SELECT DISTINCT server, asset FROM ACCOUNT_BALANCE_HISTORY WHERE server IN $server;
-''')
+GET_ACCOUNT_BALANCE_HISTORY_SQL = '''
+    SELECT * FROM ACCOUNT_BALANCE_HISTORY;
+'''
 # get db withdraw history sql
 GET_ACCOUNT_WITHDRAW_HISTORY_SQL = '''
     SELECT * FROM ACCOUNT_WITHDRAW_HISTORY;
@@ -227,6 +227,16 @@ GET_JUDGE_SIGNAL_TICKER_PAIR_SQL = '''
 # delete db judge signal ticker pair sql
 DEL_JUDGE_SIGNAL_TICKER_PAIR_SQL = Template('''
     DELETE FROM JUDGE_SIGNAL_TICKER_PAIR WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
+
+
+# get db trade backtest history server orders sql
+GET_TRADE_BACKTEST_HISTORY_SERVER_ORDER_SQL = Template('''
+    SELECT * FROM TRADE_BACKTEST_HISTORY WHERE server in $server and order_id in $order_id;
+''')
+# get db trade order history sql
+GET_TRADE_ORDER_HISTORY_SERVER_ORDER_SQL = Template('''
+    SELECT * FROM TRADE_ORDER_HISTORY WHERE server in $server and order_id in $order_id;
 ''')
 
 # get db trade backtest history sql
@@ -458,7 +468,7 @@ CREATE_TABELS_SQL = '''
     	`filled_size`	REAL,
     	`fee`	REAL,
         `group_id`  TEXT,
-        PRIMARY KEY (order_id)
+        PRIMARY KEY (server, order_id)
     );
     CREATE TABLE IF NOT EXISTS `TRADE_BACKTEST_HISTORY` (
     	`server`	TEXT NOT NULL,
@@ -475,7 +485,7 @@ CREATE_TABELS_SQL = '''
     	`filled_size`	REAL,
     	`fee`	REAL,
         `group_id`  TEXT,
-        PRIMARY KEY (order_id)
+        PRIMARY KEY (server, order_id)
     );
     CREATE TABLE IF NOT EXISTS `JUDGE_SIGNAL_TICKER_PAIR` (
     	`timeStamp`	INTEGER NOT NULL,

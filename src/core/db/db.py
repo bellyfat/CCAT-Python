@@ -498,12 +498,11 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getAccountBalanceHistory(self, exchange):
+    def getAccountBalanceHistory(self):
         self._logger.debug("src.core.db.db.DB.getAccountBalanceHistory")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_ACCOUNT_BALANCE_HISTORY_SQL.substitute(
-                server=exchange).replace('[', '(').replace(']', ')')
+            TEMP_SQL = GET_ACCOUNT_BALANCE_HISTORY_SQL
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -815,6 +814,36 @@ class DB(object):
         try:
             curs = self._conn.cursor()
             TEMP_SQL = GET_TRADE_ORDER_HISTORY_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getTradeBacktestHistoryServerOrder(self, exchange, orderIDs):
+        self._logger.debug("src.core.db.db.DB.getTradeBacktestHistoryServerOrder")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_TRADE_BACKTEST_HISTORY_SERVER_ORDER_SQL.substitute(
+                server=exchange,
+                order_id=orderIDs).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getTradeOrderHistoryServerOrder(self, exchange, orderIDs):
+        self._logger.debug("src.core.db.db.DB.getTradeOrderHistoryServerOrder")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_TRADE_ORDER_HISTORY_SERVER_ORDER_SQL.substitute(
+                server=exchange,
+                order_id=orderIDs).replace('[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -1540,7 +1569,7 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertTradeBacktestHistory(self,
+    def insertCreatTradeBacktestHistory(self,
                                    exchange,
                                    fSymbol,
                                    tSymbol,
@@ -1551,10 +1580,11 @@ class DB(object):
                                    type=CCAT_ORDER_TYPE_LIMIT,
                                    group_id='NULL'):
         self._logger.debug(
-            "src.core.db.db.DB.insertTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s, group_id=%s }"
+            "src.core.db.db.DB.insertCreatTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s, group_id=%s }"
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type,
                group_id))
         try:
+            result = []
             TEMP_SQL_TITLE = INSERT_TRADE_BACKTEST_HISTORY_SQL
             TEMP_SQL_VALUE = []
             pid = os.getpid()
@@ -1572,6 +1602,7 @@ class DB(object):
                      str(status), str(type), str(fSymbol), str(tSymbol),
                      str(ask_or_bid), float(price), float(quantity),
                      float(price), float(quantity), float(fee), str(group_id)))
+                result.append({"server":str(self._Okex_exchange), "order_id":str(order_id), "status": str(status)})
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 timeStamp = utcnow_timestamp()
@@ -1588,6 +1619,7 @@ class DB(object):
                                        float(price), float(quantity),
                                        float(price), float(quantity),
                                        float(fee), str(group_id)))
+                result.append({"server":str(self._Binance_exchange), "order_id":str(order_id), "status": str(status)})
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
                 timeStamp = utcnow_timestamp()
@@ -1602,6 +1634,7 @@ class DB(object):
                      str(status), str(type), str(fSymbol), str(tSymbol),
                      str(ask_or_bid), float(price), float(quantity),
                      float(price), float(quantity), float(fee), str(group_id)))
+                result.append({"server":str(self._Huobi_exchange), "order_id":str(order_id), "status": str(status)})
             # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
@@ -1611,11 +1644,13 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
+            # return
+            return result
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
-    def insertTradeOrderHistory(self,
+    def insertSyncTradeOrderHistory(self,
                                 exchange,
                                 fSymbol,
                                 tSymbol,
@@ -1623,9 +1658,10 @@ class DB(object):
                                 ratio='',
                                 group_id='NULL'):
         self._logger.debug(
-            "src.core.db.db.DB.insertTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s, group_id=%s }"
+            "src.core.db.db.DB.insertSyncTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s, group_id=%s }"
             % (exchange, fSymbol, tSymbol, limit, ratio, group_id))
         try:
+            result = []
             TEMP_SQL_TITLE = INSERT_TRADE_ORDER_HISTORY_SQL
             TEMP_SQL_VALUE = []
             # Okex
@@ -1648,6 +1684,7 @@ class DB(object):
                                                float(base["filled_size"]),
                                                float(base["fee"]),
                                                str(group_id)))
+                        result.append({"server":str(self._Okex_exchange), "order_id":str(base["order_id"]), "status":str(base["status"])})
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 res = self._Binance.getTradeHistory(fSymbol, tSymbol, limit,
@@ -1668,6 +1705,7 @@ class DB(object):
                                                float(base["filled_size"]),
                                                float(base["fee"]),
                                                str(group_id)))
+                        result.append({"server":str(self._Binance_exchange), "order_id":str(base["order_id"]), "status": str(base["status"])})
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
                 res = self._Huobi.getTradeHistory(fSymbol, tSymbol, limit,
@@ -1688,6 +1726,7 @@ class DB(object):
                                                float(base["filled_size"]),
                                                float(base["fee"]),
                                                str(group_id)))
+                        result.append({"server":str(self._Huobi_exchange), "order_id":str(base["order_id"]), "status": str(base["status"])})
             # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
@@ -1697,11 +1736,13 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
+            # return
+            return result
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
-    def updateCreatTradeOrderHistory(self,
+    def insertCreatTradeOrderHistory(self,
                                      exchange,
                                      fSymbol,
                                      tSymbol,
@@ -1712,10 +1753,11 @@ class DB(object):
                                      type=CCAT_ORDER_TYPE_LIMIT,
                                      group_id='NULL'):
         self._logger.debug(
-            "src.core.db.db.DB.updateCreatTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s, group_id=%s }"
+            "src.core.db.db.DB.insertCreatTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s, group_id=%s }"
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type,
                group_id))
         try:
+            result = []
             TEMP_SQL_TITLE = UPDATE_CREAT_TRADE_ORDER_HISTORY_SQL
             TEMP_SQL_VALUE = []
             # Okex
@@ -1734,6 +1776,7 @@ class DB(object):
                                        float(base["filled_price"]),
                                        float(base["filled_size"]),
                                        float(base["fee"]), str(group_id)))
+                result.append({"server":str(self._Okex_exchange), "order_id":str(base["order_id"]), "status": str(base["status"])})
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 base = self._Binance.createOrder(fSymbol, tSymbol, ask_or_bid,
@@ -1750,6 +1793,7 @@ class DB(object):
                                        float(base["filled_price"]),
                                        float(base["filled_size"]),
                                        float(base["fee"]), str(group_id)))
+                result.append({"server":str(self._Binance_exchange), "order_id":str(base["order_id"]), "status": str(base["status"])})
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
                 base = self._Huobi.createOrder(fSymbol, tSymbol, ask_or_bid,
@@ -1766,6 +1810,7 @@ class DB(object):
                                        float(base["filled_price"]),
                                        float(base["filled_size"]),
                                        float(base["fee"]), str(group_id)))
+                result.append({"server":str(self._Huobi_exchange), "order_id":str(base["order_id"]), "status": str(base["status"])})
             # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
@@ -1775,18 +1820,21 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
+            # return
+            return result
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
-    def updateCheckTradeOrderHistory(self,
+    def insertCheckTradeOrderHistory(self,
                                      exchange,
                                      orderIDs,
                                      fSymbol,
                                      tSymbol,
                                      ratio=''):
-        self._logger.debug("src.core.db.db.DB.updateCheckTradeOrderHistory")
+        self._logger.debug("src.core.db.db.DB.insertCheckTradeOrderHistory")
         try:
+            result = []
             TEMP_SQL_TITLE = UPDATE_CHECK_TRADE_ORDER_HISTORY_SQL
             TEMP_SQL_VALUE = []
             # Okex
@@ -1807,6 +1855,7 @@ class DB(object):
                                            float(base["filled_price"]),
                                            float(base["filled_size"]),
                                            float(base["fee"])))
+                    result.append({"server":str(self._Okex_exchange), "order_id":str(base["order_id"]), "status": str(base["status"])})
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 for orderID in orderIDs:
@@ -1825,6 +1874,7 @@ class DB(object):
                                            float(base["filled_price"]),
                                            float(base["filled_size"]),
                                            float(base["fee"])))
+                    result.append({"server":str(self._Binance_exchange), "order_id":str(base["order_id"]), "status": str(base["status"])})
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
                 for orderID in orderIDs:
@@ -1843,6 +1893,7 @@ class DB(object):
                                            float(base["filled_price"]),
                                            float(base["filled_size"]),
                                            float(base["fee"])))
+                    result.append({"server":str(self._Huobi_exchange), "order_id":str(base["order_id"]), "status": str(base["status"])})
             # Others
             # to_be_continue
             if not TEMP_SQL_VALUE == []:
@@ -1852,18 +1903,21 @@ class DB(object):
                 curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
                 self._conn.commit()
                 curs.close()
+            # return
+            return result
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)
 
-    def updateCancleTradeOrderHistory(self,
+    def insertCancleTradeOrderHistory(self,
                                       exchange,
                                       orderIDs,
                                       fSymbol,
                                       tSymbol,
                                       ratio=''):
-        self._logger.debug("src.core.db.db.DB.updateCheckTradeOrderHistory")
+        self._logger.debug("src.core.db.db.DB.insertCheckTradeOrderHistory")
         try:
+            result = []
             TEMP_SQL = []
             # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
@@ -1876,6 +1930,7 @@ class DB(object):
                                 substitute(
                                     order_id=base['order_id'],
                                     status=base['status']))
+                        result.append({"server":str(self._Okex_exchange), "order_id":str(base["order_id"]), "status": str(base["status"])})
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 res = self._Binance.cancelBatchOrder(orderIDs, fSymbol,
@@ -1888,6 +1943,7 @@ class DB(object):
                                 substitute(
                                     order_id=base['order_id'],
                                     status=base['status']))
+                        result.append({"server":str(self._Binance_exchange), "order_id":str(base["order_id"]), "status": str(base["status"])})
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
                 res = self._Huobi.cancelBatchOrder(orderIDs, fSymbol, tSymbol)
@@ -1899,6 +1955,7 @@ class DB(object):
                                 substitute(
                                     order_id=base['order_id'],
                                     status=base['status']))
+                        result.append({"server":str(self._Huobi_exchange), "order_id":str(base["order_id"]), "status": str(base["status"])})
             # Others
             # to_be_continue
             if not TEMP_SQL == []:
@@ -1908,6 +1965,8 @@ class DB(object):
                     curs.execute(TEMP)
                 self._conn.commit()
                 curs.close()
+            # return
+            return result
         except (OkexException, BinanceException, HuobiException, sqlite3.Error,
                 Exception) as err:
             raise DBException(err)

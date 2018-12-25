@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import uuid
-from decimal import ROUND_DOWN, ROUND_HALF_UP, ROUND_UP
+from decimal import ROUND_DOWN
 from itertools import combinations
 
 import pandas as pd
@@ -97,7 +97,7 @@ class Calc(object):
                                 break
                         if not candy:
                             raise Exception(
-                                "TRADE PAIRS NOT FOUND ERROR, asset to baseCoin trade router not found."
+                                "TRADE PAIRS NOT FOUND ERROR, asset to baseCoin trade pairs not found."
                             )
                         # asset -> tSymbol -> baseCoin
                         if asset['server'] == self._Okex_exchange:
@@ -137,7 +137,7 @@ class Calc(object):
             if not orders.empty:
                 # calc fee_ratio
                 for index, order in orders.iterrows():
-                    order['fee_ratio'] = 0
+                    orders.loc[index, 'fee_ratio'] = 0
                     fee_ratio = resInfoSymbol[
                         (resInfoSymbol['server'] == order['server'])
                         & (resInfoSymbol['fSymbol'] == order['fSymbol'])
@@ -145,7 +145,8 @@ class Calc(object):
                            )]['fee_taker']
                     if not fee_ratio.empty:
                         if not fee_ratio.values[0] == 'NULL':
-                            order['fee_ratio'] = fee_ratio.values[0]
+                            orders.loc[index, 'fee_ratio'] = fee_ratio.values[
+                                0]
                 # calc fSymbol, tSymbol
                 fSymbol_assets = []
                 tSymbol_assets = []
@@ -162,7 +163,6 @@ class Calc(object):
                               & (group['ask_or_bid'] == CCAT_ORDER_SIDE_BUY)]
                     if not g.empty:
                         # fSymbol
-                        print(g.to_dict())
                         fBalance = fBalance + g['filled_size'].sum()
                         fFree = fFree + g['filled_size'].sum()
                         # tSymbol
@@ -262,22 +262,22 @@ class Calc(object):
             "src.core.calc.calc.Calc._calcSymbolPreTradeOrders:")
         try:
             orders = []
-            price_precision = 0
-            size_precision = 0
-            size_min = 0
-            min_notional = 0
-            fee_ratio = 0
             # type I
             # handle fSymbol
             if fSymbol_base > 0:
-                # print('in type I')
+                print('in type I')
                 # de: direct trans
                 isDe = resInfoSymbol[(resInfoSymbol['server'] == server)
                                      & (resInfoSymbol['fSymbol'] == fSymbol) &
                                      (resInfoSymbol['tSymbol'] == baseCoin)]
                 if not isDe.empty:
-                    # print('in Type I: de')
+                    print('in Type I: de')
                     # baseCoin -> fSymbol
+                    price_precision = 0
+                    size_precision = 0
+                    size_min = 0
+                    min_notional = 0
+                    fee_ratio = 0
                     if not isDe['limit_price_precision'].values[0] == 'NULL':
                         price_precision = isDe['limit_price_precision'].values[
                             0]
@@ -299,9 +299,10 @@ class Calc(object):
                         res = self._Huobi.getMarketOrderbookDepth(
                             fSymbol, baseCoin)
                     # calc orders
-                    nowPrice = float(res['bid_price_size'][0][0])
-                    deTradeSize = fSymbol_base / nowPrice
-                    if deTradeSize < size_min:
+                    deTradeNotional = fSymbol_base * (1 - fee_ratio)
+                    deTradeSize = deTradeNotional / float(
+                        res['ask_price_size'][0][0])
+                    if deTradeNotional < min_notional or deTradeSize < size_min:
                         raise Exception(
                             "TRANS TOO SMALL ERROR, amount is smaller than the min size."
                         )
@@ -309,21 +310,23 @@ class Calc(object):
                     deTrade = []
                     for r in res['ask_price_size'][
                             0:10]:  # ask 1 to ask 10, no more
+                        if not sum < deTradeNotional:
+                            break
                         rPrice = float(r[0])
                         rSize = float(r[1])
-                        if not sum < deTradeSize:
-                            break
-                        deSize = min(deTradeSize - sum, rSize)
+                        deTradeSize = (deTradeNotional - sum) / rPrice
+                        deSize = min(deTradeSize, rSize)
                         if deSize > 0:
                             if deSize >= size_min:
                                 if not deSize * rPrice >= min_notional:
                                     deSize = min_notional / rPrice
-                                sum = sum + deSize
-                                deTrade.append({
-                                    'price': rPrice,
-                                    'size': deSize
-                                })
-                    if sum < deTradeSize:
+                                sum = sum + deSize * rPrice
+                                if sum <= deTradeNotional:
+                                    deTrade.append({
+                                        'price': rPrice,
+                                        'size': deSize
+                                    })
+                    if sum < deTradeNotional:
                         raise Exception(
                             "TRANS TOO MUCH ERROR，amount is not enough with ask 1 to ask 10."
                         )
@@ -331,7 +334,7 @@ class Calc(object):
                         price = num_to_precision(
                             trade['price'],
                             price_precision,
-                            rounding=ROUND_HALF_UP)
+                            rounding=ROUND_DOWN)
                         quantity = num_to_precision(
                             trade['size'], size_precision, rounding=ROUND_DOWN)
                         orders.append({
@@ -346,10 +349,10 @@ class Calc(object):
                             "group_id": signal_id
                         })
                     # type I: de done
-                    # print('out type I: de done')
+                    print('out type I: de done')
                 # tra: trangle trans
                 if isDe.empty:
-                    # print('in type I: tra')
+                    print('in type I: tra')
                     isDe = resInfoSymbol[(resInfoSymbol['server'] == server) &
                                          (resInfoSymbol['fSymbol'] == fSymbol)
                                          &
@@ -358,8 +361,17 @@ class Calc(object):
                         (resInfoSymbol['server'] == server)
                         & (resInfoSymbol['fSymbol'] == tSymbol) &
                         (resInfoSymbol['tSymbol'] == baseCoin)]
-                    if not isDe.empty and not isTra.empty:
+                    if isDe.empty or isTra.empty:
+                        raise Exception(
+                            "TRADE PAIRS NOT FOUND ERROR, tSymbol to fSymbol trade pairs not found."
+                        )
+                    if not isTra.empty:
                         # baseCoin -> tSymbol
+                        price_precision = 0
+                        size_precision = 0
+                        size_min = 0
+                        min_notional = 0
+                        fee_ratio = 0
                         if not isTra['limit_price_precision'].values[
                                 0] == 'NULL':
                             price_precision = isTra[
@@ -385,9 +397,10 @@ class Calc(object):
                             res = self._Huobi.getMarketOrderbookDepth(
                                 tSymbol, baseCoin)
                         # calc orders
-                        nowPrice = float(res['bid_price_size'][0][0])
-                        traTradeSize = fSymbol_base / nowPrice
-                        if traTradeSize < size_min:
+                        traTradeNotional = fSymbol_base * (1 - fee_ratio)
+                        traTradeSize = traTradeNotional / float(
+                            res['ask_price_size'][0][0])
+                        if traTradeNotional < min_notional or traTradeSize < size_min:
                             raise Exception(
                                 "TRANS TOO SMALL ERROR, amount is smaller than the min size."
                             )
@@ -395,21 +408,23 @@ class Calc(object):
                         traTrade = []
                         for r in res['ask_price_size'][
                                 0:10]:  # ask 1 to ask 10, no more
+                            if not sum < traTradeNotional:
+                                break
                             rPrice = float(r[0])
                             rSize = float(r[1])
-                            if not sum < traTradeSize:
-                                break
-                            traSize = min(traTradeSize - sum, rSize)
+                            traTradeSize = (traTradeNotional - sum) / rPrice
+                            traSize = min(traTradeSize, rSize)
                             if traSize > 0:
                                 if traSize >= size_min:
                                     if not traSize * rPrice >= min_notional:
                                         traSize = min_notional / rPrice
-                                    sum = sum + traSize
-                                    traTrade.append({
-                                        'price': rPrice,
-                                        'size': traSize
-                                    })
-                        if sum < traTradeSize:
+                                    sum = sum + traSize * rPrice
+                                    if sum <= traTradeNotional:
+                                        traTrade.append({
+                                            'price': rPrice,
+                                            'size': traSize
+                                        })
+                        if sum < traTradeNotional:
                             raise Exception(
                                 "TRANS TOO MUCH ERROR，amount is not enough with ask 1 to ask 10."
                             )
@@ -417,7 +432,7 @@ class Calc(object):
                             price = num_to_precision(
                                 trade['price'],
                                 price_precision,
-                                rounding=ROUND_HALF_UP)
+                                rounding=ROUND_DOWN)
                             quantity = num_to_precision(
                                 trade['size'],
                                 size_precision,
@@ -434,7 +449,12 @@ class Calc(object):
                                 "group_id": signal_id
                             })
                         # tSymbol -> fSymbol
-                        sum_base = sum * (1 - fee_ratio)
+                        sum_base = sum - traSize * rPrice
+                        price_precision = 0
+                        size_precision = 0
+                        size_min = 0
+                        min_notional = 0
+                        fee_ratio = 0
                         if not isDe['limit_price_precision'].values[
                                 0] == 'NULL':
                             price_precision = isDe[
@@ -458,9 +478,10 @@ class Calc(object):
                             res = self._Huobi.getMarketOrderbookDepth(
                                 fSymbol, tSymbol)
                         # calc orders
-                        nowPrice = float(res['bid_price_size'][0][0])
-                        deTradeSize = sum_base / nowPrice
-                        if deTradeSize < size_min:
+                        deTradeNotional = sum_base * (1 - fee_ratio)
+                        deTradeSize = deTradeNotional / float(
+                            res['ask_price_size'][0][0])
+                        if deTradeNotional < min_notional or deTradeSize < size_min:
                             raise Exception(
                                 "TRANS TOO SMALL ERROR, amount is smaller than the min size."
                             )
@@ -468,21 +489,23 @@ class Calc(object):
                         deTrade = []
                         for r in res['ask_price_size'][
                                 0:10]:  # ask 1 to ask 10, no more
+                            if not sum < deTradeNotional:
+                                break
                             rPrice = float(r[0])
                             rSize = float(r[1])
-                            if not sum < deTradeSize:
-                                break
-                            deSize = min(deTradeSize - sum, rSize)
+                            deTradeSize = (deTradeNotional - sum) / rPrice
+                            deSize = min(deTradeSize, rSize)
                             if deSize > 0:
                                 if deSize >= size_min:
                                     if not deSize * rPrice >= min_notional:
                                         deSize = min_notional / rPrice
-                                    sum = sum + deSize
-                                    deTrade.append({
-                                        'price': rPrice,
-                                        'size': deSize
-                                    })
-                        if sum < deTradeSize:
+                                    sum = sum + deSize * rPrice
+                                    if sum <= deTradeNotional:
+                                        deTrade.append({
+                                            'price': rPrice,
+                                            'size': deSize
+                                        })
+                        if sum < deTradeNotional:
                             raise Exception(
                                 "TRANS TOO MUCH ERROR，amount is not enough with ask 1 to ask 10."
                             )
@@ -490,7 +513,7 @@ class Calc(object):
                             price = num_to_precision(
                                 trade['price'],
                                 price_precision,
-                                rounding=ROUND_HALF_UP)
+                                rounding=ROUND_DOWN)
                             quantity = num_to_precision(
                                 trade['size'],
                                 size_precision,
@@ -507,24 +530,29 @@ class Calc(object):
                                 "group_id": signal_id
                             })
                         # done type I: tra
-                        # print('out type I: tra done')
+                        print('out type I: tra done')
             # type II
             # handle tSymbol
             if tSymbol_base > 0:
-                # print('in type II')
+                print('in type II')
                 # need no trans
                 if tSymbol == baseCoin:
-                    # print('in type II: de')
-                    # done type II: de
+                    print('in type II: need no trans')
+                    # done type II: need no trans
                     pass
-                    # print('out type II: de done')
+                    print('out type II: need no trans done')
                 # direct trans
                 isDe = resInfoSymbol[(resInfoSymbol['server'] == server)
                                      & (resInfoSymbol['fSymbol'] == tSymbol) &
                                      (resInfoSymbol['tSymbol'] == baseCoin)]
                 if not isDe.empty:
-                    # print('in type II: tra')
+                    print('in type II: de')
                     # baseCoin -> tSymbol
+                    price_precision = 0
+                    size_precision = 0
+                    size_min = 0
+                    min_notional = 0
+                    fee_ratio = 0
                     if not isDe['limit_price_precision'].values[0] == 'NULL':
                         price_precision = isDe['limit_price_precision'].values[
                             0]
@@ -546,9 +574,10 @@ class Calc(object):
                         res = self._Huobi.getMarketOrderbookDepth(
                             tSymbol, baseCoin)
                     # calc orders
-                    nowPrice = float(res['bid_price_size'][0][0])
-                    deTradeSize = tSymbol_base / nowPrice
-                    if deTradeSize < size_min:
+                    deTradeNotional = tSymbol_base * (1 - fee_ratio)
+                    deTradeSize = deTradeNotional / float(
+                        res['ask_price_size'][0][0])
+                    if deTradeNotional < min_notional or deTradeSize < size_min:
                         raise Exception(
                             "TRANS TOO SMALL ERROR, amount is smaller than the min size."
                         )
@@ -556,21 +585,23 @@ class Calc(object):
                     deTrade = []
                     for r in res['ask_price_size'][
                             0:10]:  # ask 1 to ask 10, no more
+                        if not sum < deTradeNotional:
+                            break
                         rPrice = float(r[0])
                         rSize = float(r[1])
-                        if not sum < deTradeSize:
-                            break
-                        deSize = min(deTradeSize - sum, rSize)
+                        deTradeSize = (deTradeNotional - sum) / rPrice
+                        deSize = min(deTradeSize, rSize)
                         if deSize > 0:
                             if deSize >= size_min:
                                 if not deSize * rPrice >= min_notional:
                                     deSize = min_notional / rPrice
-                                sum = sum + deSize
-                                deTrade.append({
-                                    'price': rPrice,
-                                    'size': deSize
-                                })
-                    if sum < deTradeSize:
+                                sum = sum + deSize * rPrice
+                                if sum <= deTradeNotional:
+                                    deTrade.append({
+                                        'price': rPrice,
+                                        'size': deSize
+                                    })
+                    if sum < deTradeNotional:
                         raise Exception(
                             "TRANS TOO MUCH ERROR，amount is not enough with ask 1 to ask 10."
                         )
@@ -578,7 +609,7 @@ class Calc(object):
                         price = num_to_precision(
                             trade['price'],
                             price_precision,
-                            rounding=ROUND_HALF_UP)
+                            rounding=ROUND_DOWN)
                         quantity = num_to_precision(
                             trade['size'], size_precision, rounding=ROUND_DOWN)
                         orders.append({
@@ -592,9 +623,10 @@ class Calc(object):
                             "type": CCAT_ORDER_TYPE_LIMIT,
                             "group_id": signal_id
                         })
-                    # done type II: tra
-                    # print('out type II: tra done')
+                    # done type II: de
+                    print('out type II: de done')
             # return
+            print('return:%s' % orders)
             return orders
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
@@ -651,7 +683,7 @@ class Calc(object):
                         and signal['V2_tSymbol'] != signal['V3_tSymbol'])
                 isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol']
                         and signal['V3_tSymbol'] != signal['V2_tSymbol'])
-                # print(isV1, isV2, isV3)
+                print(isV1, isV2, isV3)
                 if isV1:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V1_fSymbol'],
@@ -681,43 +713,43 @@ class Calc(object):
                         and signal['V2_tSymbol'] != signal['V3_tSymbol'])
                 isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol']
                         and signal['V3_tSymbol'] != signal['V2_tSymbol'])
-                # print(isV1, isV2, isV3)
+                print(isV1, isV2, isV3)
                 if isV1:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V1_fSymbol'],
-                        signal['V1_tSymbol'], 0, signal['base_start'],
+                        signal['V1_tSymbol'], 0, signal['base_start'] / 2,
                         resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V1_fSymbol'],
-                        signal['V1_tSymbol'], 0, signal['base_start'],
+                        signal['V1_tSymbol'], 0, signal['base_start'] / 2,
                         resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
                 if isV2:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V2_fSymbol'],
-                        signal['V2_tSymbol'], 0, signal['base_start'],
+                        signal['V2_tSymbol'], 0, signal['base_start'] / 2,
                         resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V2_fSymbol'],
-                        signal['V2_tSymbol'], 0, signal['base_start'],
+                        signal['V2_tSymbol'], 0, signal['base_start'] / 2,
                         resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
                 if isV3:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V3_fSymbol'],
-                        signal['V3_tSymbol'], 0, signal['base_start'],
+                        signal['V3_tSymbol'], 0, signal['base_start'] / 2,
                         resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V3_fSymbol'],
-                        signal['V3_tSymbol'], 0, signal['base_start'],
+                        signal['V3_tSymbol'], 0, signal['base_start'] / 2,
                         resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)

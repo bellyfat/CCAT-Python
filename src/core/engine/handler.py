@@ -195,39 +195,53 @@ class Handler(object):
             resInfoSymbol = pd.DataFrame(db.getViewMarketSymbolPairs(exchange))
             ########################################
             # 1. pre trade
-            #     1.1 calc pre orders
+            # 1.1 calc pre orders
             preOrders = sgn.backtestSignalsPreTrade(resInfoSymbol)
-            #     1.2 excute pre orders
-            for order in preOrders:
-                db.insertTradeBacktestHistory(
-                    order['server'], order['fSymbol'], order['tSymbol'],
-                    order['ask_or_bid'], order['price'], order['quantity'],
-                    order['ratio'], order['type'], order['group_id'])
-            #     1.3 update signals status according to orders
-            preInfoOrders = pd.DataFrame(preOrders)
-            print(sgn.signals())
-            sgn.backtestUpdateSignalStatusByOrders(preInfoOrders, resInfoSymbol)
-            print(sgn.signals())
-            ########################################
-            # run trade
-            isDone = False
-            startTime = time.time()
-            while (time.time() - startTime < timeout
-                   or timeout == 0) and isDone == False:
-                (runOrders,
-                 isDone) = sgn.backtestSignalsRunTrade(resInfoSymbol)
-                for order in runOrders:
-                    db.insertTradeBacktestHistory(
+            preInfoOrders = []
+            if not preOrders == []:
+                # 1.2 excute pre orders and calc info orders
+                resOrders = []
+                for order in preOrders:
+                    res = db.insertCreatTradeBacktestHistory(
                         order['server'], order['fSymbol'], order['tSymbol'],
                         order['ask_or_bid'], order['price'], order['quantity'],
                         order['ratio'], order['type'], order['group_id'])
-            # after trade
-            afterOrders = sgn.backtestSignalsAfterTrade(resInfoSymbol)
-            for order in afterOrders:
-                db.insertTradeBacktestHistory(
-                    order['server'], order['fSymbol'], order['tSymbol'],
-                    order['ask_or_bid'], order['price'], order['quantity'],
-                    order['ratio'], order['type'], order['group_id'])
+                    if not res == []:
+                        resOrders.extend(res)
+                resOrders = pd.DataFrame(resOrders)
+                for server in exchange:
+                    orderIDs = resOrders[(resOrders['server']==server)]['order_id'].tolist()
+                    res = db.getTradeBacktestHistoryServerOrder([server], orderIDs)
+                    if not res == []:
+                        preInfoOrders.extend(res)
+                # 1.3 update signals status according to orders
+                print('oders:\n%s' % preOrders)
+                print('infoOders:\n%s' % preInfoOrders)
+                preInfoOrders = pd.DataFrame(preInfoOrders)
+                print(sgn.signals())
+                sgn.backtestUpdateSignalStatusByOrders(preInfoOrders, resInfoSymbol)
+                print(sgn.signals())
+            ########################################
+            # # run trade
+            # isDone = False
+            # startTime = time.time()
+            # while (time.time() - startTime < timeout
+            #        or timeout == 0) and isDone == False:
+            #     (runOrders,
+            #      isDone) = sgn.backtestSignalsRunTrade(resInfoSymbol)
+            #     for order in runOrders:
+            #         db.insertCreatTradeBacktestHistory(
+            #             order['server'], order['fSymbol'], order['tSymbol'],
+            #             order['ask_or_bid'], order['price'], order['quantity'],
+            #             order['ratio'], order['type'], order['group_id'])
+            ########################################
+            # # after trade
+            # afterOrders = sgn.backtestSignalsAfterTrade(resInfoSymbol)
+            # for order in afterOrders:
+            #     db.insertCreatTradeBacktestHistory(
+            #         order['server'], order['fSymbol'], order['tSymbol'],
+            #         order['ask_or_bid'], order['price'], order['quantity'],
+            #         order['ratio'], order['type'], order['group_id'])
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, EngineException(err))
@@ -245,7 +259,7 @@ class Handler(object):
         exchange = str_to_list(exchange)
         try:
             db = DB()
-            db.insertTradeOrderHistory(exchange, fSymbol, tSymbol, limit,
+            db.insertSyncTradeOrderHistory(exchange, fSymbol, tSymbol, limit,
                                        ratio)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleOrderHistoryInsertEvent: { type=%s, priority=%s, args=%s }, err=%s" % (

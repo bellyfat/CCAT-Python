@@ -22,6 +22,8 @@ def float_to_str(f):
 
 
 def num_to_precision(num, precision, rounding=ROUND_HALF_UP):
+    if precision == 0:
+        return str(num)
     if '.' in float_to_str(precision):
         numStr = Decimal(float_to_str(num)).quantize(
             Decimal(float_to_str(precision)), rounding=rounding)

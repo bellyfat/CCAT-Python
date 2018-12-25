@@ -175,7 +175,7 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getAccountBalanceHistory(self):
-        res = db.getAccountBalanceHistory(["okex", "binance", "huobi"])
+        res = db.getAccountBalanceHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -211,6 +211,16 @@ class TestDB(unittest.TestCase):
 
     def test_getTradeOrderHistory(self):
         res = db.getTradeOrderHistory()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getTradeBacktestHistoryServerOrder(self):
+        res = db.getTradeBacktestHistoryServerOrder(['okex'],[1974405445330944, 1974402275218432])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getTradeOrderHistoryServerOrder(self):
+        res = db.getTradeOrderHistoryServerOrder(['okex'],[1974405445330944, 1974402275218432])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -292,7 +302,7 @@ class TestDB(unittest.TestCase):
 
     def test_insertAccountBalanceHistory(self):
         db.insertAccountBalanceHistory("all")
-        res = db.getAccountBalanceHistory(["okex"])
+        res = db.getAccountBalanceHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -328,34 +338,34 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertTradeBacktestHistory(self):
-        db.insertTradeBacktestHistory("all", "ETH", "USDT", "bid", 70, 0.1)
+    def test_insertCreatTradeBacktestHistory(self):
+        db.insertCreatTradeBacktestHistory("all", "ETH", "USDT", "bid", 70, 0.1)
         res = db.getTradeBacktestHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertTradeOrderHistory(self):
-        db.insertTradeOrderHistory("all", "ETH", "USDT")
+    def test_insertSyncTradeOrderHistory(self):
+        db.insertSyncTradeOrderHistory("all", "ETH", "USDT")
         res = db.getTradeOrderHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_updateCreatTradeOrderHistory(self):
-        db.updateCreatTradeOrderHistory("all", "ETH", "USDT", "bid", 70, 0.15)
+    def test_insertCreatTradeOrderHistory(self):
+        db.insertCreatTradeOrderHistory("all", "ETH", "USDT", "bid", 70, 0.15)
         res = db.getTradeOrderHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_updateCheckTradeOrderHistory(self):
-        db.updateCheckTradeOrderHistory(["okex"], [1974405445330944, 1974402275218432], "ETH", "USDT")
+    def test_insertCheckTradeOrderHistory(self):
+        db.insertCheckTradeOrderHistory(["okex"], [1974405445330944, 1974402275218432], "ETH", "USDT")
         res = db.getTradeOrderHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_updateCancleTradeOrderHistory(self):
-        db.updateCancleTradeOrderHistory(["okex"], [1974718040778752, 1974776653094912], "ETH", "USDT")
-        db.updateCancleTradeOrderHistory(["binance"], [151350838, 151356632], "ETH", "USDT")
-        db.updateCancleTradeOrderHistory(["huobi"], [19369194055, 19369969707], "ETH", "USDT")
+    def test_insertCancleTradeOrderHistory(self):
+        db.insertCancleTradeOrderHistory(["okex"], [1974718040778752, 1974776653094912], "ETH", "USDT")
+        db.insertCancleTradeOrderHistory(["binance"], [151350838, 151356632], "ETH", "USDT")
+        db.insertCancleTradeOrderHistory(["huobi"], [19369194055, 19369969707], "ETH", "USDT")
         res = db.getTradeOrderHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
@@ -439,11 +449,11 @@ test_db = [
     TestDB("test_insertJudgeSignalTickerDis"),
     TestDB("test_insertJudgeSignalTickerTra"),
     TestDB("test_insertJudgeSignalTickerPair"),
-    TestDB("test_insertTradeBacktestHistory"),
-    TestDB("test_insertTradeOrderHistory"),
-    # # TestDB("test_updateCreatTradeOrderHistory"),
-    # # TestDB("test_updateCheckTradeOrderHistory"),
-    # # TestDB("test_updateCancleTradeOrderHistory"),
+    TestDB("test_insertCreatTradeBacktestHistory"),
+    TestDB("test_insertSyncTradeOrderHistory"),
+    # # TestDB("test_insertCreatTradeOrderHistory"),
+    # # TestDB("test_insertCheckTradeOrderHistory"),
+    # # TestDB("test_insertCancleTradeOrderHistory"),
     TestDB("test_insertStatisticSignalTickerDis"),
     TestDB("test_insertStatisticSignalTickerTra"),
     TestDB("test_insertStatisticSignalTickerPair"),
@@ -460,6 +470,8 @@ test_db = [
     TestDB("test_getInfoWithdraw"),
     TestDB("test_getTradeBacktestHistory"),
     TestDB("test_getTradeOrderHistory"),
+    TestDB("test_getTradeBacktestHistoryServerOrder"),
+    TestDB("test_getTradeOrderHistoryServerOrder"),
     TestDB("test_getJudgeSignalTickerDis"),
     TestDB("test_getJudgeSignalTickerTra"),
     TestDB("test_getJudgeSignalTickerPair"),
