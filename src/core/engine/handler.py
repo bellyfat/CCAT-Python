@@ -3,6 +3,7 @@ import time
 from itertools import combinations
 
 import pandas as pd
+from string import Template
 
 from src.core.calc.calc import Calc
 from src.core.calc.signal import Signal
@@ -189,45 +190,73 @@ class Handler(object):
         exchange = str_to_list(exchange)
         signals = str_to_list(signals)
         timeout = float(timeout)
+        # 处理事件
         try:
-            startTime = time.time()
             db = DB()
             sgn = Signal(signals)
             resInfoSymbol = pd.DataFrame(db.getViewMarketSymbolPairs(exchange))
+            # 0. start
+            startTime = time.time()
+            str = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }" % (event.type, event.priority, event.args)
+            warnStr = Template(", err=$err, backtest trade filed at $here, will try again..." )
+            errStr = Template("BACKTEST TRADE ERROR. pre trade failed at $here.")
             ########################################
             # 1. pre trade
+            # 1.1 calc pre orders
+            preOrders = []
             isError = True
             while isError and time.time() - startTime < timeout:
                 try:
-                    # 1.1 calc pre orders
                     preOrders = sgn.backtestSignalsPreTrade(resInfoSymbol)
-                    preInfoOrders = []
-                    if not preOrders == []:
-                        # 1.2 excute pre orders and calc info orders
-                        resOrders = []
-                        for order in preOrders:
+                    isError = False
+                except Exception as err:
+                    self._logger.warn(warnStr.substitute(err=err))
+            if isError:
+                raise Exception(errStr)
+            # 1.2 excute preOrders
+            preExecOrders = []
+            if not preOrders == []:
+                for order in preOrders:
+                    isError = True
+                    while isError and time.time() - startTime < timeout:
+                        try:
                             res = db.insertCreatTradeBacktestHistory(
                                 order['server'], order['fSymbol'], order['tSymbol'],
                                 order['ask_or_bid'], order['price'], order['quantity'],
                                 order['ratio'], order['type'], order['group_id'])
-                            if not res == []:
-                                resOrders.extend(res)
-                        resOrders = pd.DataFrame(resOrders)
-                        for server in exchange:
-                            orderIDs = resOrders[(resOrders['server']==server)]['order_id'].tolist()
-                            res = db.getTradeBacktestHistoryServerOrder([server], orderIDs)
-                            if not res == []:
-                                preInfoOrders.extend(res)
-                        # 1.3 update signals status according to orders
-                        preInfoOrders = pd.DataFrame(preInfoOrders)
+                            isError = False
+                        except Exception as err:
+                            self._logger.warn(str + warnStr.substitute(err=err, here='1.2 excute preOrders'))
+                    if not res == []:
+                        preExecOrders.extend(res)
+                if isError:
+                    # rollback: use preExecOrders
+
+                    raise Exception(errStr.substitute(here='1.2 excute preOrders'))
+            # 1.3 calc preExecOrders
+            preInfoOrders = []
+            if not preExecOrders == []:
+                preExecOrders = pd.DataFrame(preExecOrders)
+                for server in exchange:
+                    orderIDs = preExecOrders[(preExecOrders['server']==server)]['order_id'].tolist()
+                    res = db.getTradeBacktestHistoryServerOrder([server], orderIDs)
+                    if not res == []:
+                        preInfoOrders.extend(res)
+            # 1.3 update signals status according to orders
+            if not preInfoOrders == []:
+                preInfoOrders = pd.DataFrame(preInfoOrders)
+                isError = True
+                while isError and time.time() - startTime < timeout:
+                    try:
                         sgn.backtestUpdateSignalStatusByOrders(preInfoOrders, resInfoSymbol)
-                        print('pre signals after update:\n%s' % sgn.signals())
-                    isError = False
-                except Exception as err:
-                    errStr = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }, err=%s, pre Trade Filed, will try again..." % (event.type, event.priority, event.args, err)
-                    self._logger.warn(errStr)
-            if isError:
-                raise Exception("PRE TRADE ERROR. pre trade failed after try many times.")
+                        isError = False
+                    except Exception as err:
+                        self._logger.warn(str + warnStr.substitute(err=err, here='1.3 update signal status'))
+                if isError:
+                    # rollback: use preExecOrders
+
+                    raise Exception(errStr.substitute(here='1.3 update signal status'))
+                print('pre signals after update:\n%s' % sgn.signals())
             ########################################
             # # run trade
             # isDone = False
