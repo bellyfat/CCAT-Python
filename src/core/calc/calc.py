@@ -665,7 +665,7 @@ class Calc(object):
         try:
             for status in status_assets:
 
-            pass
+                pass
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
             errStr = "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeDis: exception err=%s" % err
