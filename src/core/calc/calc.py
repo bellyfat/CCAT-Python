@@ -80,8 +80,8 @@ class Calc(object):
                     if asset['server'] == self._Huobi_exchange:
                         ticker = self._Huobi.getMarketOrderbookTicker(
                             asset['asset'], baseCoin, aggDepth=0)
-                    assets_base = assets_base + ticker[
-                        'bid_one_price'] * (1 - fee_ratio) * asset['balance']
+                    assets_base = assets_base + ticker['bid_one_price'] * (
+                        1 - fee_ratio) * asset['balance']
                     continue
                 # tra: trangle trans: asset -> tSymbol -> baseCoin
                 if isDe.empty:
@@ -258,8 +258,8 @@ class Calc(object):
             raise CalcException(errStr)
 
     def _calcSymbolPreTradeOrders(self, server, fSymbol, tSymbol, fSymbol_base,
-                                  tSymbol_base, resInfoSymbol, baseCoin,
-                                  group_id):
+                                  tSymbol_base, group_id, resInfoSymbol,
+                                  baseCoin):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolPreTradeOrders:")
         try:
@@ -659,19 +659,206 @@ class Calc(object):
             errStr = "src.core.calc.calc.Calc._calcSymbolPreTradeOrders: exception err=%s" % err
             raise CalcException(errStr)
 
-    def _calcSymbolRunTradeOrdersTypeDis(self, bid_server, ask_server, fSymbol, tSymbol, status_assets, forward_ratio, backward_ratio, group_id):
+    def _calcSymbolRunTradeOrdersTypeDis(
+            self, bid_server, ask_server, fSymbol, tSymbol, status_assets,
+            forward_ratio, backward_ratio, group_id, resInfoSymbol):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeDis:")
         try:
+            orders = []
+            # calc symbol pair info
+            isBid = resInfoSymbol[(resInfoSymbol['server'] == bid_server)
+                                  & (resInfoSymbol['fSymbol'] == fSymbol) &
+                                  (resInfoSymbol['tSymbol'] == tSymbol)]
+            isAsk = resInfoSymbol[(resInfoSymbol['server'] == ask_server)
+                                  & (resInfoSymbol['fSymbol'] == fSymbol) &
+                                  (resInfoSymbol['tSymbol'] == tSymbol)]
+            if isBid.empty or isAsk.empty:
+                return orders
+            # bid server limit and fee
+            bid_price_precision = 0
+            bid_price_step = 0
+            bid_size_precision = 0
+            bid_size_min = 0
+            bid_min_notional = 0
+            bid_fee_ratio = 0
+            if not isBid['limit_price_precision'].values[0] == 'NULL':
+                bid_price_precision = isBid['limit_price_precision'].values[0]
+            if not isBid['limit_price_step'].values[0] == 'NULL':
+                bid_price_step = isBid['limit_price_step'].values[0]
+            if not isBid['limit_size_precision'].values[0] == 'NULL':
+                bid_size_precision = isBid['limit_size_precision'].values[0]
+            if not isBid['limit_size_min'].values[0] == 'NULL':
+                bid_size_min = isBid['limit_size_min'].values[0]
+            if not isBid['limit_min_notional'].values[0] == 'NULL':
+                bid_min_notional = isBid['limit_min_notional'].values[0]
+            if not isBid['fee_taker'].values[0] == 'NULL':
+                bid_fee_ratio = isBid['fee_taker'].values[0]
+            # ask server limit and fee
+            ask_price_precision = 0
+            ask_price_step = 0
+            ask_size_precision = 0
+            ask_size_min = 0
+            ask_min_notional = 0
+            ask_fee_ratio = 0
+            if not isAsk['limit_price_precision'].values[0] == 'NULL':
+                ask_price_precision = isAsk['limit_price_precision'].values[0]
+            if not isAsk['limit_price_step'].values[0] == 'NULL':
+                ask_price_step = isAsk['limit_price_step'].values[0]
+            if not isAsk['limit_size_precision'].values[0] == 'NULL':
+                ask_size_precision = isAsk['limit_size_precision'].values[0]
+            if not isAsk['limit_size_min'].values[0] == 'NULL':
+                ask_size_min = isAsk['limit_size_min'].values[0]
+            if not isAsk['limit_min_notional'].values[0] == 'NULL':
+                ask_min_notional = isAsk['limit_min_notional'].values[0]
+            if not isAsk['fee_taker'].values[0] == 'NULL':
+                ask_fee_ratio = isAsk['fee_taker'].values[0]
+            # aggDepth
+            aggDepth = max(bid_price_step, ask_price_step)
+            # calc balance
+            bid_fSymbol_free = 0
+            bid_tSymbol_free = 0
+            ask_fSymbol_free = 0
+            ask_tSymbol_free = 0
             for status in status_assets:
-
-                pass
+                if status['server'] == bid_server:
+                    if status['asset'] == fSymbol:
+                        bid_fSymbol_free = status['free']
+                    if status['asset'] == tSymbol:
+                        bid_tSymbol_free = status['free']
+                if status['server'] == ask_server:
+                    if status['asset'] == fSymbol:
+                        ask_fSymbol_free = status['free']
+                    if status['asset'] == tSymbol:
+                        ask_tSymbol_free = status['free']
+            # bid server market order book ticker
+            if bid_server == self._Okex_exchange:
+                bid_res = self._Okex.getMarketOrderbookTicker(
+                    fSymbol, tSymbol, aggDepth)
+            if bid_server == self._Binance_exchange:
+                bid_res = self._Binance.getMarketOrderbookTicker(
+                    fSymbol, tSymbol, aggDepth)
+            if bid_server == self._Huobi_exchange:
+                bid_res = self._Huobi.getMarketOrderbookTicker(
+                    fSymbol, tSymbol, aggDepth)
+            # ask server market order book ticker
+            if ask_server == self._Okex_exchange:
+                ask_res = self._Okex.getMarketOrderbookTicker(
+                    fSymbol, tSymbol, aggDepth)
+            if ask_server == self._Binance_exchange:
+                ask_res = self._Binance.getMarketOrderbookTicker(
+                    fSymbol, tSymbol, aggDepth)
+            if ask_server == self._Huobi_exchange:
+                ask_res = self._Huobi.getMarketOrderbookTicker(
+                    fSymbol, tSymbol, aggDepth)
+            # calc type dis price and size
+            bid_price = float(bid_res['bid_one_price'])
+            ask_price = float(ask_res['ask_one_price'])
+            gain_ratio = (bid_price - ask_price - bid_price * bid_fee_ratio -
+                          ask_price * ask_fee_ratio) / ask_price
+            print(gain_ratio)
+            # forward
+            if gain_ratio > forward_ratio or True:
+                bid_size = bid_fSymbol_free/bid_price
+                ask_size = ask_tSymbol_free/ask_price
+                order_size = min(bid_size, ask_size)
+                if order_size > 0:
+                    if order_size >= bid_size_min and order_size >= ask_size_min:
+                        if bid_price * order_size > bid_min_notional and ask_price * order_size > ask_min_notional:
+                            price = num_to_precision(
+                                bid_price,
+                                bid_price_precision,
+                                rounding=ROUND_DOWN)
+                            quantity = num_to_precision(
+                                order_size,
+                                bid_size_precision,
+                                rounding=ROUND_DOWN)
+                            orders.append({
+                                "server": bid_server,
+                                "fSymbol": fSymbol,
+                                "tSymbol": tSymbol,
+                                "ask_or_bid": CCAT_ORDER_SIDE_SELL,
+                                "price": price,
+                                "quantity": quantity,
+                                "ratio": bid_fee_ratio,
+                                "type": CCAT_ORDER_TYPE_LIMIT,
+                                "group_id": group_id
+                            })
+                            price = num_to_precision(
+                                ask_price,
+                                ask_price_precision,
+                                rounding=ROUND_DOWN)
+                            quantity = num_to_precision(
+                                order_size,
+                                ask_size_precision,
+                                rounding=ROUND_DOWN)
+                            orders.append({
+                                "server": ask_server,
+                                "fSymbol": fSymbol,
+                                "tSymbol": tSymbol,
+                                "ask_or_bid": CCAT_ORDER_SIDE_BUY,
+                                "price": price,
+                                "quantity": quantity,
+                                "ratio": ask_fee_ratio,
+                                "type": CCAT_ORDER_TYPE_LIMIT,
+                                "group_id": group_id
+                            })
+            # backward
+            if gain_ratio < backward_ratio:
+                bid_size = bid_tSymbol_free/bid_price
+                ask_size = ask_fSymbol_free/ask_price
+                order_size = min(bid_size, ask_size)
+                if order_size > 0:
+                    if order_size >= bid_size_min and order_size >= ask_size_min:
+                        if bid_price * order_size > bid_min_notional and ask_price * order_size > ask_min_notional:
+                            price = num_to_precision(
+                                bid_price,
+                                bid_price_precision,
+                                rounding=ROUND_DOWN)
+                            quantity = num_to_precision(
+                                order_size,
+                                bid_size_precision,
+                                rounding=ROUND_DOWN)
+                            orders.append({
+                                "server": bid_server,
+                                "fSymbol": fSymbol,
+                                "tSymbol": tSymbol,
+                                "ask_or_bid": CCAT_ORDER_SIDE_BUY,
+                                "price": price,
+                                "quantity": quantity,
+                                "ratio": bid_fee_ratio,
+                                "type": CCAT_ORDER_TYPE_LIMIT,
+                                "group_id": group_id
+                            })
+                            price = num_to_precision(
+                                ask_price,
+                                ask_price_precision,
+                                rounding=ROUND_DOWN)
+                            quantity = num_to_precision(
+                                order_size,
+                                ask_size_precision,
+                                rounding=ROUND_DOWN)
+                            orders.append({
+                                "server": ask_server,
+                                "fSymbol": fSymbol,
+                                "tSymbol": tSymbol,
+                                "ask_or_bid": CCAT_ORDER_SIDE_SELL,
+                                "price": price,
+                                "quantity": quantity,
+                                "ratio": ask_fee_ratio,
+                                "type": CCAT_ORDER_TYPE_LIMIT,
+                                "group_id": group_id
+                            })
+            # return
+            return orders
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
             errStr = "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeDis: exception err=%s" % err
             raise CalcException(errStr)
 
-    def _calcSymbolRunTradeOrdersTypeTra(self, server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, status_assets, forward_ratio, group_id):
+    def _calcSymbolRunTradeOrdersTypeTra(
+            self, server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol,
+            V3_fSymbol, V3_tSymbol, status_assets, forward_ratio, group_id):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeTra:")
         try:
@@ -681,7 +868,10 @@ class Calc(object):
             errStr = "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeTra: exception err=%s" % err
             raise CalcException(errStr)
 
-    def _calcSymbolRunTradeOrdersTypePair(self, J1_server, J2_server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, status_assets, forward_ratio, group_id):
+    def _calcSymbolRunTradeOrdersTypePair(
+            self, J1_server, J2_server, V1_fSymbol, V1_tSymbol, V2_fSymbol,
+            V2_tSymbol, V3_fSymbol, V3_tSymbol, status_assets, forward_ratio,
+            group_id):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypePair:")
         try:
@@ -733,14 +923,14 @@ class Calc(object):
             if signal['type'] == TYPE_DIS:
                 orders = self._calcSymbolPreTradeOrders(
                     signal['bid_server'], signal['fSymbol'], signal['tSymbol'],
-                    signal['base_start'] / 2, 0, resInfoSymbol, baseCoin,
-                    signal['group_id'])
+                    signal['base_start'] / 2, 0, signal['group_id'],
+                    resInfoSymbol, baseCoin)
                 if not orders == []:
                     res.extend(orders)
                 orders = self._calcSymbolPreTradeOrders(
                     signal['ask_server'], signal['fSymbol'], signal['tSymbol'],
-                    0, signal['base_start'] / 2, resInfoSymbol, baseCoin,
-                    signal['group_id'])
+                    0, signal['base_start'] / 2, signal['group_id'],
+                    resInfoSymbol, baseCoin)
                 if not orders == []:
                     res.extend(orders)
             if signal['type'] == TYPE_TRA:
@@ -756,7 +946,7 @@ class Calc(object):
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], 0, signal['base_start'],
-                        resInfoSymbol, baseCoin, signal['group_id'])
+                        signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 if isV2:
@@ -770,7 +960,7 @@ class Calc(object):
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], 0, signal['base_start'],
-                        resInfoSymbol, baseCoin, signal['group_id'])
+                        signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
             if signal['type'] == TYPE_PAIR:
@@ -786,39 +976,39 @@ class Calc(object):
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], 0, signal['base_start'] / 2,
-                        resInfoSymbol, baseCoin, signal['group_id'])
+                        signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], 0, signal['base_start'] / 2,
-                        resInfoSymbol, baseCoin, signal['group_id'])
+                        signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 if isV2:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], 0, signal['base_start'] / 2,
-                        resInfoSymbol, baseCoin, signal['group_id'])
+                        signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], 0, signal['base_start'] / 2,
-                        resInfoSymbol, baseCoin, signal['group_id'])
+                        signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 if isV3:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], 0, signal['base_start'] / 2,
-                        resInfoSymbol, baseCoin, signal['group_id'])
+                        signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], 0, signal['base_start'] / 2,
-                        resInfoSymbol, baseCoin, signal['group_id'])
+                        signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
             # return
@@ -837,16 +1027,32 @@ class Calc(object):
             res = []
             # calc orders
             if signal['type'] == TYPE_DIS:
-                orders = self._calcSymbolRunTradeOrdersTypeDis(signal['bid_server'], signal['ask_server'], signal['fSymbol'], signal['tSymbol'], signal['status_assets'], signal['forward_ratio'], signal['backward_ratio'], signal['group_id'])
-                if not orders==[]:
+                orders = self._calcSymbolRunTradeOrdersTypeDis(
+                    signal['bid_server'], signal['ask_server'],
+                    signal['fSymbol'], signal['tSymbol'],
+                    signal['status_assets'], signal['forward_ratio'],
+                    signal['backward_ratio'], signal['group_id'],
+                    resInfoSymbol)
+                if not orders == []:
                     res.extend(orders)
             if signal['type'] == TYPE_TRA:
-                orders = self._calcSymbolRunTradeOrdersTypeTra(signal['server'], signal['V1_fSymbol'], signal['V1_tSymbol'], signal['V2_fSymbol'], signal['V2_tSymbol'], signal['V3_fSymbol'], signal['V3_tSymbol'], signal['status_assets'], signal['forward_ratio'], signal['group_id'])
-                if not orders==[]:
+                orders = self._calcSymbolRunTradeOrdersTypeTra(
+                    signal['server'], signal['V1_fSymbol'],
+                    signal['V1_tSymbol'], signal['V2_fSymbol'],
+                    signal['V2_tSymbol'], signal['V3_fSymbol'],
+                    signal['V3_tSymbol'], signal['status_assets'],
+                    signal['forward_ratio'], signal['group_id'], resInfoSymbol)
+                if not orders == []:
                     res.extend(orders)
             if signal['type'] == TYPE_PAIR:
-                orders = self._calcSymbolRunTradeOrdersTypePair(signal['J1_server'], signal['J2_server'], signal['V1_fSymbol'], signal['V1_tSymbol'], signal['V2_fSymbol'], signal['V2_tSymbol'], signal['V3_fSymbol'], signal['V3_tSymbol'], signal['status_assets'], signal['forward_ratio'], signal['group_id'])
-                if not orders==[]:
+                orders = self._calcSymbolRunTradeOrdersTypePair(
+                    signal['J1_server'], signal['J2_server'],
+                    signal['V1_fSymbol'], signal['V1_tSymbol'],
+                    signal['V2_fSymbol'], signal['V2_tSymbol'],
+                    signal['V3_fSymbol'], signal['V3_tSymbol'],
+                    signal['status_assets'], signal['forward_ratio'],
+                    signal['group_id'], resInfoSymbol)
+                if not orders == []:
                     res.extend(orders)
             # return
             return res

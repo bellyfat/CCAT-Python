@@ -210,7 +210,7 @@ class Handler(object):
                     preOrders = sgn.backtestSignalsPreTrade(resInfoSymbol)
                     isError = False
                 except Exception as err:
-                    self._logger.warn(warnStr.substitute(err=err))
+                    self._logger.warn(str + warnStr.substitute(err=err, here='1.1 calc pre orders'))
             if isError:
                 raise Exception(errStr.substitute(here='1.1 calc pre orders'))
             # 1.2 calc preExecOrders
@@ -265,6 +265,7 @@ class Handler(object):
             while isSubError and time.time() - startTime < timeout:
                 try:
                     runOrders = sgn.backtestSignalsRunTrade(resInfoSymbol)
+                    print(runOrders)
                     isSubError = False
                 except Exception as err:
                     self._logger.warn(str + warnStr.substitute(err=err, here='2.1 calc run orders'))
