@@ -157,13 +157,13 @@ class Signal(object):
                             signal['ask_server'] = s['ask_server']
                             signal['fSymbol'] = s['fSymbol']
                             signal['tSymbol'] = s['tSymbol']
-                            signal['group_id'] = str(s['group_id'])
                             signal['forward_ratio'] = float(s['forward_ratio'])
                             signal['backward_ratio'] = float(
                                 s['backward_ratio'])
                             signal['base_start'] = float(s['base_start'])
                             signal['base_gain'] = float(s['base_gain'])
                             signal['base_timeout'] = float(s['base_timeout'])
+                            signal['group_id'] = str(s['group_id'])
                             signal['status_done'] = False
                             signal['status_assets'] = [
                                 {
@@ -197,10 +197,11 @@ class Signal(object):
                             signal['V2_tSymbol'] = tuple[1][1]
                             signal['V3_fSymbol'] = tuple[2][0]
                             signal['V3_tSymbol'] = tuple[2][1]
-                            signal['group_id'] = str(s['group_id'])
+                            signal['forward_ratio'] = float(s['forward_ratio'])
                             signal['base_start'] = float(s['base_start'])
                             signal['base_gain'] = float(s['base_gain'])
                             signal['base_timeout'] = float(s['base_timeout'])
+                            signal['group_id'] = str(s['group_id'])
                             signal['status_done'] = False
                             signal['status_assets'] = [{
                                 "server":
@@ -233,10 +234,11 @@ class Signal(object):
                             signal['V2_tSymbol'] = tuple[1][1]
                             signal['V3_fSymbol'] = tuple[2][0]
                             signal['V3_tSymbol'] = tuple[2][1]
-                            signal['group_id'] = str(s['group_id'])
+                            signal['forward_ratio'] = float(s['forward_ratio'])
                             signal['base_start'] = float(s['base_start'])
                             signal['base_gain'] = float(s['base_gain'])
                             signal['base_timeout'] = float(s['base_timeout'])
+                            signal['group_id'] = str(s['group_id'])
                             signal['status_done'] = False
                             signal['status_assets'] = [
                                 {
@@ -330,8 +332,11 @@ class Signal(object):
                 raise Exception("NO SIGNAL ERROR, signals empty.")
             calc = Calc()
             res = []
-            isDone = True
-            return (res, isDone)
+            for signal in self._signals:
+                orders = calc.calcSignalRunTradeOrders(signal, resInfoSymbol)
+                if not orders == []:
+                    res.extend(orders)
+            return res
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.backtestSignalsRunTrade: {resInfoSymbol=%s}, exception err=%s" % (
                 'resInfoSymbol', err)

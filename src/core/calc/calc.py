@@ -257,18 +257,9 @@ class Calc(object):
                 signal, 'infoOrders', 'resInfoSymbol', baseCoin, err)
             raise CalcException(errStr)
 
-    def _calcSymbolTradeOrders(self):
-        self._logger.debug("src.core.calc.calc.Calc._calcSymbolTradeOrders:")
-        try:
-            pass
-        except (BinanceException, HuobiException, OkexException,
-                Exception) as err:
-            errStr = "src.core.calc.calc.Calc._calcSymbolTradeOrders: exception err=%s" % err
-            raise CalcException(errStr)
-
     def _calcSymbolPreTradeOrders(self, server, fSymbol, tSymbol, fSymbol_base,
                                   tSymbol_base, resInfoSymbol, baseCoin,
-                                  signal_id):
+                                  group_id):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolPreTradeOrders:")
         try:
@@ -362,7 +353,7 @@ class Calc(object):
                             "quantity": quantity,
                             "ratio": fee_ratio,
                             "type": CCAT_ORDER_TYPE_LIMIT,
-                            "group_id": signal_id
+                            "group_id": group_id
                         })
                     # type I: de done
                     # print('out type I: de done')
@@ -467,7 +458,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
-                                "group_id": signal_id
+                                "group_id": group_id
                             })
                         # tSymbol -> fSymbol
                         # print('in type I: tra, traTrade=%s' % traTrade)
@@ -556,7 +547,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
-                                "group_id": signal_id
+                                "group_id": group_id
                             })
                         # done type I: tra
                         # print('out type I: tra done')
@@ -656,7 +647,7 @@ class Calc(object):
                             "quantity": quantity,
                             "ratio": fee_ratio,
                             "type": CCAT_ORDER_TYPE_LIMIT,
-                            "group_id": signal_id
+                            "group_id": group_id
                         })
                     # done type II: de
                     # print('out type II: de done')
@@ -668,14 +659,56 @@ class Calc(object):
             errStr = "src.core.calc.calc.Calc._calcSymbolPreTradeOrders: exception err=%s" % err
             raise CalcException(errStr)
 
-    def _calcSymbolRunTradeOrders(self):
+    def _calcSymbolRunTradeOrdersTypeDis(self, bid_server, ask_server, fSymbol, tSymbol, status_assets, forward_ratio, backward_ratio, group_id):
         self._logger.debug(
-            "src.core.calc.calc.Calc._calcSymbolRunTradeOrders:")
+            "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeDis:")
+        try:
+            for status in status_assets:
+
+            pass
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeDis: exception err=%s" % err
+            raise CalcException(errStr)
+
+    def _calcSymbolRunTradeOrdersTypeTra(self, server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, status_assets, forward_ratio, group_id):
+        self._logger.debug(
+            "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeTra:")
         try:
             pass
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
-            errStr = "src.core.calc.calc.Calc._calcSymbolRunTradeOrders: exception err=%s" % err
+            errStr = "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeTra: exception err=%s" % err
+            raise CalcException(errStr)
+
+    def _calcSymbolRunTradeOrdersTypePair(self, J1_server, J2_server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, status_assets, forward_ratio, group_id):
+        self._logger.debug(
+            "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypePair:")
+        try:
+
+            C1_symbol = [
+                i for i in [signal['V1_fSymbol'], signal['V1_tSymbol']]
+                if i in [signal['V3_fSymbol'], signal['V3_tSymbol']]
+            ][0]
+            C2_symbol = [
+                i for i in [signal['V1_fSymbol'], signal['V1_tSymbol']]
+                if i in [signal['V2_fSymbol'], signal['V2_tSymbol']]
+            ][0]
+            C3_symbol = [
+                i for i in [signal['V2_fSymbol'], signal['V2_tSymbol']]
+                if i in [signal['V3_fSymbol'], signal['V3_tSymbol']]
+            ][0]
+            for sa in signal['status_assets']:
+                if sa['asset'] == C1_symbol:
+                    C1_symbol_balance = sa['free']
+                if sa['asset'] == C2_symbol:
+                    C2_symbol_balance = sa['free']
+                if sa['asset'] == C3_symbol:
+                    C3_symbol_balance = sa['free']
+            pass
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypePair: exception err=%s" % err
             raise CalcException(errStr)
 
     def _calcSymbolAfterTradeOrders(self):
@@ -696,8 +729,8 @@ class Calc(object):
             if not signal['base_start'] > 0:
                 return []
             res = []
-            type = signal['type']
-            if type == TYPE_DIS:
+            # calc orders
+            if signal['type'] == TYPE_DIS:
                 orders = self._calcSymbolPreTradeOrders(
                     signal['bid_server'], signal['fSymbol'], signal['tSymbol'],
                     signal['base_start'] / 2, 0, resInfoSymbol, baseCoin,
@@ -710,7 +743,7 @@ class Calc(object):
                     signal['group_id'])
                 if not orders == []:
                     res.extend(orders)
-            if type == TYPE_TRA:
+            if signal['type'] == TYPE_TRA:
                 # find target unique tSymbol
                 isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol']
                         and signal['V1_tSymbol'] != signal['V3_tSymbol'])
@@ -740,7 +773,7 @@ class Calc(object):
                         resInfoSymbol, baseCoin, signal['group_id'])
                     if not orders == []:
                         res.extend(orders)
-            if type == TYPE_PAIR:
+            if signal['type'] == TYPE_PAIR:
                 # find target unique tSymbol
                 isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol']
                         and signal['V1_tSymbol'] != signal['V3_tSymbol'])
@@ -794,6 +827,33 @@ class Calc(object):
                 Exception) as err:
             errStr = "src.core.calc.calc.Calc.calcSignalPreTradeOrders: {signal=%s, resInfoSymbol=%s, baseCoin=%s}, exception err=%s" % (
                 signal, 'resInfoSymbol', baseCoin, err)
+            raise CalcException(errStr)
+
+    def calcSignalRunTradeOrders(self, signal, resInfoSymbol):
+        self._logger.debug(
+            "src.core.calc.calc.Calc.calcSignalRunTradeOrders: {signal=%s, resInfoSymbol=%s}"
+            % (signal, 'resInfoSymbol'))
+        try:
+            res = []
+            # calc orders
+            if signal['type'] == TYPE_DIS:
+                orders = self._calcSymbolRunTradeOrdersTypeDis(signal['bid_server'], signal['ask_server'], signal['fSymbol'], signal['tSymbol'], signal['status_assets'], signal['forward_ratio'], signal['backward_ratio'], signal['group_id'])
+                if not orders==[]:
+                    res.extend(orders)
+            if signal['type'] == TYPE_TRA:
+                orders = self._calcSymbolRunTradeOrdersTypeTra(signal['server'], signal['V1_fSymbol'], signal['V1_tSymbol'], signal['V2_fSymbol'], signal['V2_tSymbol'], signal['V3_fSymbol'], signal['V3_tSymbol'], signal['status_assets'], signal['forward_ratio'], signal['group_id'])
+                if not orders==[]:
+                    res.extend(orders)
+            if signal['type'] == TYPE_PAIR:
+                orders = self._calcSymbolRunTradeOrdersTypePair(signal['J1_server'], signal['J2_server'], signal['V1_fSymbol'], signal['V1_tSymbol'], signal['V2_fSymbol'], signal['V2_tSymbol'], signal['V3_fSymbol'], signal['V3_tSymbol'], signal['status_assets'], signal['forward_ratio'], signal['group_id'])
+                if not orders==[]:
+                    res.extend(orders)
+            # return
+            return res
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc.calcSignalRunTradeOrders: {signal=%s, resInfoSymbol=%s}, exception err=%s" % (
+                signal, 'resInfoSymbol', err)
             raise CalcException(errStr)
 
     def calcStatisticJudgeMarketTickerDis(self, exchange, timeWindow):
