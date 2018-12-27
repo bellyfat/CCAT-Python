@@ -48,11 +48,11 @@
 # apiResultEpoch: control api event async=False timeout
 # marketKlineInterval: market kline interval param
 # marketTickerInterval: market ticker interval param
-# statisticJudgeInterval: statistic judge interval param
+# statisticJudgeMarketTickerInterval: statistic judge interval param
 # marketDepthLimit: market depth limit param
 # marketTickerAggStep: market ticker aggregate param
-# judgeSignalTickerCycle: judge signal ticker valid period
-# statisticSignalTickerCycle: statistic signal ticker valid period
+# judgeMarketTickerCycle: judge signal ticker valid period
+# statisticJudgeMarketTickerCycle: statistic signal ticker valid period
 # asyncAccount: async account switch
 # syncAccountTimeout: sync account timeout
 # asyncMarketKline: async market kline switch
@@ -95,11 +95,11 @@
   apiResultEpoch = 0.5
   marketKlineInterval = 86400
   marketTickerInterval = 60
-  statisticJudgeInterval = 300
+  statisticJudgeMarketTickerInterval = 300
   marketDepthLimit = 20
   marketTickerAggStep = 1
-  judgeSignalTickerCycle = 604800
-  statisticSignalTickerCycle = 604800
+  judgeMarketTickerCycle = 604800
+  statisticJudgeMarketTickerCycle = 604800
   asyncAccount = True
   syncAccountTimeout = 90
   asyncMarketKline = False
