@@ -796,16 +796,16 @@ class Calc(object):
                 signal, 'resInfoSymbol', baseCoin, err)
             raise CalcException(errStr)
 
-    def calcStatisticSignalTickerDis(self, exchange, timeWindow):
+    def calcStatisticJudgeMarketTickerDis(self, exchange, timeWindow):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcStatisticSignalTickerDis: {exchange=%s, timeWindow=%s}"
+            "src.core.calc.calc.Calc.calcStatisticJudgeMarketTickerDis: {exchange=%s, timeWindow=%s}"
             % (exchange, timeWindow))
         try:
             statistic = []
             db = DB()
             # statistic dis type
             for server, server_pair in combinations(exchange, 2):
-                signal = db.getViewJudgeSignalTickerDisCurrentServer(
+                signal = db.getViewJudgeMarketTickerDisCurrentServer(
                     server, server_pair)
                 if not signal == []:
                     df = pd.DataFrame(signal)
@@ -882,19 +882,19 @@ class Calc(object):
             return statistic
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcStatisticSignalTickerDis: {exchange=%s, timeWindow=%s}, exception err=%s" % (
+            errStr = "src.core.calc.calc.Calc.calcStatisticJudgeMarketTickerDis: {exchange=%s, timeWindow=%s}, exception err=%s" % (
                 exchange, timeWindow, err)
             raise CalcException(errStr)
 
-    def calcStatisticSignalTickerTra(self, exchange, timeWindow):
+    def calcStatisticJudgeMarketTickerTra(self, exchange, timeWindow):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcStatisticSignalTickerTra: {exchange=%s, timeWindow=%s}"
+            "src.core.calc.calc.Calc.calcStatisticJudgeMarketTickerTra: {exchange=%s, timeWindow=%s}"
             % (exchange, timeWindow))
         try:
             statistic = []
             db = DB()
             # statistic dis type
-            signal = db.getViewJudgeSignalTickerTraCurrentServer(exchange)
+            signal = db.getViewJudgeMarketTickerTraCurrentServer(exchange)
             if not signal == []:
                 df = []
                 # calc sort df
@@ -976,20 +976,20 @@ class Calc(object):
             return statistic
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcStatisticSignalTickerTra: {exchange=%s, timeWindow=%s}, exception err=%s" % (
+            errStr = "src.core.calc.calc.Calc.calcStatisticJudgeMarketTickerTra: {exchange=%s, timeWindow=%s}, exception err=%s" % (
                 exchange, timeWindow, err)
             raise CalcException(errStr)
 
-    def calcStatisticSignalTickerPair(self, exchange, timeWindow):
+    def calcStatisticJudgeMarketTickerPair(self, exchange, timeWindow):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcStatisticSignalTickerPair: {exchange=%s, timeWindow=%s}"
+            "src.core.calc.calc.Calc.calcStatisticJudgeMarketTickerPair: {exchange=%s, timeWindow=%s}"
             % (exchange, timeWindow))
         try:
             statistic = []
             db = DB()
             # statistic dis type
             for server, server_pair in combinations(exchange, 2):
-                signal = db.getViewJudgeSignalTickerPairCurrentServer(
+                signal = db.getViewJudgeMarketTickerPairCurrentServer(
                     server, server_pair)
                 if not signal == []:
                     df = []
@@ -1074,13 +1074,13 @@ class Calc(object):
             return statistic
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcStatisticSignalTickerPair: {exchange=%s, timeWindow=%s}, exception err=%s" % (
+            errStr = "src.core.calc.calc.Calc.calcStatisticJudgeMarketTickerPair: {exchange=%s, timeWindow=%s}, exception err=%s" % (
                 exchange, timeWindow, err)
             raise CalcException(errStr)
 
-    def calcJudgeSignalTickerDis(self, exchange, threshold, resInfoSymbol):
+    def calcJudgeMarketTickerDis(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcJudgeSignalTickerDis: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            "src.core.calc.calc.Calc.calcJudgeMarketTickerDis: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
             % (exchange, threshold, 'resInfoSymbol'))
         try:
             db = DB()
@@ -1137,13 +1137,13 @@ class Calc(object):
             return signal
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerDis: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
+            errStr = "src.core.calc.calc.Calc.calcJudgeMarketTickerDis: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
                 exchange, threshold, 'resInfoSymbol', err)
             raise CalcException(errStr)
 
-    def calcJudgeSignalTickerTra(self, exchange, threshold, resInfoSymbol):
+    def calcJudgeMarketTickerTra(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcJudgeSignalTickerTra: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            "src.core.calc.calc.Calc.calcJudgeMarketTickerTra: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
             % (exchange, threshold, 'resInfoSymbol'))
         try:
             db = DB()
@@ -1295,13 +1295,13 @@ class Calc(object):
             return signal
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerTra: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
+            errStr = "src.core.calc.calc.Calc.calcJudgeMarketTickerTra: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
                 exchange, threshold, 'resInfoSymbol', err)
             raise CalcException(errStr)
 
-    def calcJudgeSignalTickerPair(self, exchange, threshold, resInfoSymbol):
+    def calcJudgeMarketTickerPair(self, exchange, threshold, resInfoSymbol):
         self._logger.debug(
-            "src.core.calc.calc.Calc.calcJudgeSignalTickerPair: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
+            "src.core.calc.calc.Calc.calcJudgeMarketTickerPair: {exchange=%s, threshold=%s, resInfoSymbol=%s}"
             % (exchange, threshold, 'resInfoSymbol'))
         try:
             db = DB()
@@ -1571,6 +1571,6 @@ class Calc(object):
             return signal
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
-            errStr = "src.core.calc.calc.Calc.calcJudgeSignalTickerPair: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
+            errStr = "src.core.calc.calc.Calc.calcJudgeMarketTickerPair: {exchange=%s, threshold=%s, resInfoSymbol=%s}, exception err=%s" % (
                 exchange, threshold, 'resInfoSymbol', err)
             raise CalcException(errStr)

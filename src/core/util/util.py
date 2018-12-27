@@ -491,9 +491,9 @@ class Util(object):
             % (async, timeout))
         try:
             db = DB()
-            db.delJudgeSignalTickerDis()
-            db.delJudgeSignalTickerTra()
-            db.delJudgeSignalTickerPair()
+            db.delJudgeMarketTickerDis()
+            db.delJudgeMarketTickerTra()
+            db.delJudgeMarketTickerPair()
             ids = []
             startTime = time.time()
             for type in self._types:
@@ -675,9 +675,9 @@ class Util(object):
         try:
             ids = []
             db = DB()
-            db.delStatisticSignalTickerDis()
-            db.delStatisticSignalTickerTra()
-            db.delStatisticSignalTickerPair()
+            db.delStatisticJudgeMarketTickerDis()
+            db.delStatisticJudgeMarketTickerTra()
+            db.delStatisticJudgeMarketTickerPair()
             startTime = time.time()
             for type in self._types:
                 if not time.time(

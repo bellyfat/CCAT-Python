@@ -263,6 +263,13 @@ class Signal(object):
             errStr = "src.core.calc.signal.Signal.signals, exception err=%s" % err
             raise CalcException(errStr)
 
+    def backtestRollbackSignalStatusByOrders(self, ):
+        pass
+
+    def backtestRollbackSignalsTradeByOrders(self, ):
+        pass
+
+
     def backtestUpdateSignalStatusByOrders(self, infoOrders, resInfoSymbol):
         self._logger.debug(
             "src.core.calc.signal.Signal.backtestUpdateSignalStatusByOrders: {infoOrders=%s, resInfoSymbol=%s}"
@@ -290,6 +297,9 @@ class Signal(object):
             errStr = "src.core.calc.signal.Signal.backtestUpdateSignalStatusByOrders: {infoOrders=%s, resInfoSymbol=%s}, exception err=%s" % (
                 'infoOrders', 'resInfoSymbol', err)
             raise CalcException(errStr)
+
+    def backtestRollbackTrade(self, ):
+        pass
 
     def backtestSignalsPreTrade(self, resInfoSymbol):
         self._logger.debug(

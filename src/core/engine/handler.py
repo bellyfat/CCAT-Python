@@ -157,22 +157,22 @@ class Handler(object):
             prs = []
             # calc dis type
             if TYPE_DIS in types:
-                signalDis = calc.calcJudgeSignalTickerDis(
+                signalDis = calc.calcJudgeMarketTickerDis(
                     exchange, TYPE_DIS_THRESHOLD, resInfoSymbol)
                 if not signalDis == []:
-                    db.insertJudgeSignalTickerDis(signalDis)
+                    db.insertJudgeMarketTickerDis(signalDis)
             # calc tra type
             if TYPE_TRA in types:
-                signalTra = calc.calcJudgeSignalTickerTra(
+                signalTra = calc.calcJudgeMarketTickerTra(
                     exchange, TYPE_TRA_THRESHOLD, resInfoSymbol)
                 if not signalTra == []:
-                    db.insertJudgeSignalTickerTra(signalTra)
+                    db.insertJudgeMarketTickerTra(signalTra)
             # calc pair type
             if TYPE_PAIR in types:
-                signalPair = calc.calcJudgeSignalTickerPair(
+                signalPair = calc.calcJudgeMarketTickerPair(
                     exchange, TYPE_PAIR_THRESHOLD, resInfoSymbol)
                 if not signalPair == []:
-                    db.insertJudgeSignalTickerPair(signalPair)
+                    db.insertJudgeMarketTickerPair(signalPair)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleJudgeMarketTickerEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, err)
@@ -343,22 +343,22 @@ class Handler(object):
             prs = []
             # calc dis type
             if TYPE_DIS in types:
-                statisticDis = calc.calcStatisticSignalTickerDis(
+                statisticDis = calc.calcStatisticJudgeMarketTickerDis(
                     exchange, TYPE_DIS_TIMEWINDOW)
                 if not statisticDis == []:
-                    db.insertStatisticSignalTickerDis(statisticDis)
+                    db.insertStatisticJudgeMarketTickerDis(statisticDis)
             # calc tra type
             if TYPE_TRA in types:
-                statisticTra = calc.calcStatisticSignalTickerTra(
+                statisticTra = calc.calcStatisticJudgeMarketTickerTra(
                     exchange, TYPE_TRA_TIMEWINDOW)
                 if not statisticTra == []:
-                    db.insertStatisticSignalTickerTra(statisticTra)
+                    db.insertStatisticJudgeMarketTickerTra(statisticTra)
             # calc pair type
             if TYPE_PAIR in types:
-                statisticPair = calc.calcStatisticSignalTickerPair(
+                statisticPair = calc.calcStatisticJudgeMarketTickerPair(
                     exchange, TYPE_PAIR_TIMEWINDOW)
                 if not statisticPair == []:
-                    db.insertStatisticSignalTickerPair(statisticPair)
+                    db.insertStatisticJudgeMarketTickerPair(statisticPair)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleStatisticJudgeEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, err)

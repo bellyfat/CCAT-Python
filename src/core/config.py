@@ -62,16 +62,16 @@ class Config(object):
                 'Main', 'marketKlineInterval')
             Config._Main_marketTickerInterval = cf.getint(
                 'Main', 'marketTickerInterval')
-            Config._Main_statisticJudgeInterval = cf.getint(
-                'Main', 'statisticJudgeInterval')
+            Config._Main_statisticJudgeMarketTickerInterval = cf.getint(
+                'Main', 'statisticJudgeMarketTickerInterval')
             Config._Main_marketDepthLimit = cf.getint('Main',
                                                       'marketDepthLimit')
             Config._Main_marketTickerAggStep = cf.getint(
                 'Main', 'marketTickerAggStep')
-            Config._Main_judgeSignalTickerCycle = cf.getint(
-                'Main', 'judgeSignalTickerCycle')
-            Config._Main_statisticSignalTickerCycle = cf.getint(
-                'Main', 'statisticSignalTickerCycle')
+            Config._Main_judgeMarketTickerCycle = cf.getint(
+                'Main', 'judgeMarketTickerCycle')
+            Config._Main_statisticJudgeMarketTickerCycle = cf.getint(
+                'Main', 'statisticJudgeMarketTickerCycle')
             Config._Main_asyncAccount = cf.getboolean(
                 'Main', 'asyncAccount', fallback=False)
             Config._Main_syncAccountTimeout = cf.getint(

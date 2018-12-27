@@ -37,63 +37,63 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
 
-    def test_getViewStatisticSignalTickerPairCurrentServer(self):
-        res = db.getViewStatisticSignalTickerPairCurrentServer('huobi', 'binance')
+    def test_getViewStatisticJudgeMarketTickerPairCurrentServer(self):
+        res = db.getViewStatisticJudgeMarketTickerPairCurrentServer('huobi', 'binance')
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewStatisticSignalTickerPairCurrent(self):
-        res = db.getViewStatisticSignalTickerPairCurrent()
+    def test_getViewStatisticJudgeMarketTickerPairCurrent(self):
+        res = db.getViewStatisticJudgeMarketTickerPairCurrent()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewStatisticSignalTickerTraCurrentServer(self):
-        res = db.getViewStatisticSignalTickerTraCurrentServer(['huobi'])
+    def test_getViewStatisticJudgeMarketTickerTraCurrentServer(self):
+        res = db.getViewStatisticJudgeMarketTickerTraCurrentServer(['huobi'])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewStatisticSignalTickerTraCurrent(self):
-        res = db.getViewStatisticSignalTickerTraCurrent()
+    def test_getViewStatisticJudgeMarketTickerTraCurrent(self):
+        res = db.getViewStatisticJudgeMarketTickerTraCurrent()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewStatisticSignalTickerDisCurrentServer(self):
-        res = db.getViewStatisticSignalTickerDisCurrentServer('huobi', 'binance')
+    def test_getViewStatisticJudgeMarketTickerDisCurrentServer(self):
+        res = db.getViewStatisticJudgeMarketTickerDisCurrentServer('huobi', 'binance')
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewStatisticSignalTickerDisCurrent(self):
-        res = db.getViewStatisticSignalTickerDisCurrent()
+    def test_getViewStatisticJudgeMarketTickerDisCurrent(self):
+        res = db.getViewStatisticJudgeMarketTickerDisCurrent()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewJudgeSignalTickerPairCurrentServer(self):
-        res = db.getViewJudgeSignalTickerPairCurrentServer('huobi', 'binance')
+    def test_getViewJudgeMarketTickerPairCurrentServer(self):
+        res = db.getViewJudgeMarketTickerPairCurrentServer('huobi', 'binance')
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewJudgeSignalTickerPairCurrent(self):
-        res = db.getViewJudgeSignalTickerPairCurrent()
+    def test_getViewJudgeMarketTickerPairCurrent(self):
+        res = db.getViewJudgeMarketTickerPairCurrent()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewJudgeSignalTickerTraCurrentServer(self):
-        res = db.getViewJudgeSignalTickerTraCurrentServer(['huobi'])
+    def test_getViewJudgeMarketTickerTraCurrentServer(self):
+        res = db.getViewJudgeMarketTickerTraCurrentServer(['huobi'])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewJudgeSignalTickerTraCurrent(self):
-        res = db.getViewJudgeSignalTickerTraCurrent()
+    def test_getViewJudgeMarketTickerTraCurrent(self):
+        res = db.getViewJudgeMarketTickerTraCurrent()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewJudgeSignalTickerDisCurrentServer(self):
-        res = db.getViewJudgeSignalTickerDisCurrentServer('huobi', 'binance')
+    def test_getViewJudgeMarketTickerDisCurrentServer(self):
+        res = db.getViewJudgeMarketTickerDisCurrentServer('huobi', 'binance')
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getViewJudgeSignalTickerDisCurrent(self):
-        res = db.getViewJudgeSignalTickerDisCurrent()
+    def test_getViewJudgeMarketTickerDisCurrent(self):
+        res = db.getViewJudgeMarketTickerDisCurrent()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -234,69 +234,69 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getJudgeSignalTickerDis(self):
-        res = db.getJudgeSignalTickerDis()
+    def test_getJudgeMarketTickerDis(self):
+        res = db.getJudgeMarketTickerDis()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_delJudgeSignalTickerDis(self):
-        db.delJudgeSignalTickerDis()
-        res = db.getJudgeSignalTickerDis()
+    def test_delJudgeMarketTickerDis(self):
+        db.delJudgeMarketTickerDis()
+        res = db.getJudgeMarketTickerDis()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getJudgeSignalTickerTra(self):
-        res = db.getJudgeSignalTickerTra()
+    def test_getJudgeMarketTickerTra(self):
+        res = db.getJudgeMarketTickerTra()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_delJudgeSignalTickerTra(self):
-        db.delJudgeSignalTickerTra()
-        res = db.getJudgeSignalTickerTra()
+    def test_delJudgeMarketTickerTra(self):
+        db.delJudgeMarketTickerTra()
+        res = db.getJudgeMarketTickerTra()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getJudgeSignalTickerPair(self):
-        res = db.getJudgeSignalTickerPair()
+    def test_getJudgeMarketTickerPair(self):
+        res = db.getJudgeMarketTickerPair()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_delJudgeSignalTickerPair(self):
-        db.delJudgeSignalTickerPair()
-        res = db.getJudgeSignalTickerPair()
+    def test_delJudgeMarketTickerPair(self):
+        db.delJudgeMarketTickerPair()
+        res = db.getJudgeMarketTickerPair()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getStatisticSignalTickerDis(self):
-        res = db.getStatisticSignalTickerDis()
+    def test_getStatisticJudgeMarketTickerDis(self):
+        res = db.getStatisticJudgeMarketTickerDis()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_delStatisticSignalTickerDis(self):
-        db.delStatisticSignalTickerDis()
-        res = db.getStatisticSignalTickerDis()
+    def test_delStatisticJudgeMarketTickerDis(self):
+        db.delStatisticJudgeMarketTickerDis()
+        res = db.getStatisticJudgeMarketTickerDis()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getStatisticSignalTickerTra(self):
-        res = db.getStatisticSignalTickerTra()
+    def test_getStatisticJudgeMarketTickerTra(self):
+        res = db.getStatisticJudgeMarketTickerTra()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_delStatisticSignalTickerTra(self):
-        db.delStatisticSignalTickerTra()
-        res = db.getStatisticSignalTickerTra()
+    def test_delStatisticJudgeMarketTickerTra(self):
+        db.delStatisticJudgeMarketTickerTra()
+        res = db.getStatisticJudgeMarketTickerTra()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_getStatisticSignalTickerPair(self):
-        res = db.getStatisticSignalTickerPair()
+    def test_getStatisticJudgeMarketTickerPair(self):
+        res = db.getStatisticJudgeMarketTickerPair()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_delStatisticSignalTickerPair(self):
-        db.delStatisticSignalTickerPair()
-        res = db.getStatisticSignalTickerPair()
+    def test_delStatisticJudgeMarketTickerPair(self):
+        db.delStatisticJudgeMarketTickerPair()
+        res = db.getStatisticJudgeMarketTickerPair()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -388,36 +388,36 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertJudgeSignalTickerDis(self):
-        res = calc.calcJudgeSignalTickerDis(["okex", "binance", "huobi"], 0.001,
+    def test_insertJudgeMarketTickerDis(self):
+        res = calc.calcJudgeMarketTickerDis(["okex", "binance", "huobi"], 0.001,
                                        resInfoSymbol)
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertJudgeSignalTickerTra(self):
-        res = calc.calcJudgeSignalTickerTra(["okex", "binance", "huobi"], 0.001,
+    def test_insertJudgeMarketTickerTra(self):
+        res = calc.calcJudgeMarketTickerTra(["okex", "binance", "huobi"], 0.001,
                                        resInfoSymbol)
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertJudgeSignalTickerPair(self):
-        res = calc.calcJudgeSignalTickerPair(["okex", "binance", "huobi"], 0.001,
+    def test_insertJudgeMarketTickerPair(self):
+        res = calc.calcJudgeMarketTickerPair(["okex", "binance", "huobi"], 0.001,
                                        resInfoSymbol)
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertStatisticSignalTickerDis(self):
-        res = calc.calcStatisticSignalTickerDis(["okex", "binance", "huobi"], 300)
+    def test_insertStatisticJudgeMarketTickerDis(self):
+        res = calc.calcStatisticJudgeMarketTickerDis(["okex", "binance", "huobi"], 300)
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertStatisticSignalTickerTra(self):
-        res = calc.calcStatisticSignalTickerTra(["okex", "binance", "huobi"], 300)
+    def test_insertStatisticJudgeMarketTickerTra(self):
+        res = calc.calcStatisticJudgeMarketTickerTra(["okex", "binance", "huobi"], 300)
         logger.debug(res)
         self.assertIsInstance(res, list)
 
-    def test_insertStatisticSignalTickerPair(self):
-        res = calc.calcStatisticSignalTickerPair(["okex", "binance", "huobi"], 300)
+    def test_insertStatisticJudgeMarketTickerPair(self):
+        res = calc.calcStatisticJudgeMarketTickerPair(["okex", "binance", "huobi"], 300)
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -446,17 +446,17 @@ test_db = [
     TestDB("test_insertMarketDepth"),
     TestDB("test_insertMarketKline"),
     TestDB("test_insertMarketTicker"),
-    TestDB("test_insertJudgeSignalTickerDis"),
-    TestDB("test_insertJudgeSignalTickerTra"),
-    TestDB("test_insertJudgeSignalTickerPair"),
+    TestDB("test_insertJudgeMarketTickerDis"),
+    TestDB("test_insertJudgeMarketTickerTra"),
+    TestDB("test_insertJudgeMarketTickerPair"),
     TestDB("test_insertCreatTradeBacktestHistory"),
     TestDB("test_insertSyncTradeOrderHistory"),
     # # TestDB("test_insertCreatTradeOrderHistory"),
     # # TestDB("test_insertCheckTradeOrderHistory"),
     # # TestDB("test_insertCancleTradeOrderHistory"),
-    TestDB("test_insertStatisticSignalTickerDis"),
-    TestDB("test_insertStatisticSignalTickerTra"),
-    TestDB("test_insertStatisticSignalTickerPair"),
+    TestDB("test_insertStatisticJudgeMarketTickerDis"),
+    TestDB("test_insertStatisticJudgeMarketTickerTra"),
+    TestDB("test_insertStatisticJudgeMarketTickerPair"),
     TestDB("test_oneClickCancleOrders"),
     # # TestDB("test_oneClickTransToBaseCoin"),
     TestDB("test_getTables"),
@@ -472,25 +472,25 @@ test_db = [
     TestDB("test_getTradeOrderHistory"),
     TestDB("test_getTradeBacktestHistoryServerOrder"),
     TestDB("test_getTradeOrderHistoryServerOrder"),
-    TestDB("test_getJudgeSignalTickerDis"),
-    TestDB("test_getJudgeSignalTickerTra"),
-    TestDB("test_getJudgeSignalTickerPair"),
-    TestDB("test_getStatisticSignalTickerDis"),
-    TestDB("test_getStatisticSignalTickerTra"),
-    TestDB("test_getStatisticSignalTickerPair"),
+    TestDB("test_getJudgeMarketTickerDis"),
+    TestDB("test_getJudgeMarketTickerTra"),
+    TestDB("test_getJudgeMarketTickerPair"),
+    TestDB("test_getStatisticJudgeMarketTickerDis"),
+    TestDB("test_getStatisticJudgeMarketTickerTra"),
+    TestDB("test_getStatisticJudgeMarketTickerPair"),
     TestDB("test_getViews"),
-    TestDB("test_getViewStatisticSignalTickerPairCurrentServer"),
-    TestDB("test_getViewStatisticSignalTickerPairCurrent"),
-    TestDB("test_getViewStatisticSignalTickerTraCurrentServer"),
-    TestDB("test_getViewStatisticSignalTickerTraCurrent"),
-    TestDB("test_getViewStatisticSignalTickerDisCurrentServer"),
-    TestDB("test_getViewStatisticSignalTickerDisCurrent"),
-    TestDB("test_getViewJudgeSignalTickerPairCurrentServer"),
-    TestDB("test_getViewJudgeSignalTickerPairCurrent"),
-    TestDB("test_getViewJudgeSignalTickerTraCurrentServer"),
-    TestDB("test_getViewJudgeSignalTickerTraCurrent"),
-    TestDB("test_getViewJudgeSignalTickerDisCurrentServer"),
-    TestDB("test_getViewJudgeSignalTickerDisCurrent"),
+    TestDB("test_getViewStatisticJudgeMarketTickerPairCurrentServer"),
+    TestDB("test_getViewStatisticJudgeMarketTickerPairCurrent"),
+    TestDB("test_getViewStatisticJudgeMarketTickerTraCurrentServer"),
+    TestDB("test_getViewStatisticJudgeMarketTickerTraCurrent"),
+    TestDB("test_getViewStatisticJudgeMarketTickerDisCurrentServer"),
+    TestDB("test_getViewStatisticJudgeMarketTickerDisCurrent"),
+    TestDB("test_getViewJudgeMarketTickerPairCurrentServer"),
+    TestDB("test_getViewJudgeMarketTickerPairCurrent"),
+    TestDB("test_getViewJudgeMarketTickerTraCurrentServer"),
+    TestDB("test_getViewJudgeMarketTickerTraCurrent"),
+    TestDB("test_getViewJudgeMarketTickerDisCurrentServer"),
+    TestDB("test_getViewJudgeMarketTickerDisCurrent"),
     TestDB("test_getViewMarketTickerCurrentPairServer"),
     TestDB("test_getViewMarketTickerCurrentPair"),
     TestDB("test_getViewMarketTickerCurrentTraServer"),
@@ -505,12 +505,12 @@ test_db = [
     TestDB("test_getViewMarketSymbolPairs"),
     TestDB("test_getViewAccountBalanceCurrent"),
     TestDB("test_getViewInfoSymbolPairs"),
-    TestDB("test_delJudgeSignalTickerDis"),
-    TestDB("test_delJudgeSignalTickerTra"),
-    TestDB("test_delJudgeSignalTickerPair"),
-    TestDB("test_delStatisticSignalTickerDis"),
-    TestDB("test_delStatisticSignalTickerTra"),
-    TestDB("test_delStatisticSignalTickerPair"),
+    TestDB("test_delJudgeMarketTickerDis"),
+    TestDB("test_delJudgeMarketTickerTra"),
+    TestDB("test_delJudgeMarketTickerPair"),
+    TestDB("test_delStatisticJudgeMarketTickerDis"),
+    TestDB("test_delStatisticJudgeMarketTickerTra"),
+    TestDB("test_delStatisticJudgeMarketTickerPair"),
 ]
 
 if __name__ == "__main__":

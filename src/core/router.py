@@ -20,7 +20,7 @@ class Router(object):
         self._timeout = Config()._Router_timeout
         self._marketKlineInterval = Config()._Main_marketKlineInterval
         self._marketTickerInterval = Config()._Main_marketTickerInterval
-        self._statisticJudgeInterval = Config()._Main_statisticJudgeInterval
+        self._statisticJudgeMarketTickerInterval = Config()._Main_statisticJudgeMarketTickerInterval
         self._asyncAccount = Config()._Main_asyncAccount
         self._syncAccountTimeout = Config()._Main_syncAccountTimeout
         self._asyncMarketKline = Config()._Main_asyncMarketKline
@@ -51,8 +51,8 @@ class Router(object):
         self._marketKlineUpdateTime = time.time()
         # self._marketKlineUpdateTime = time.time() - self._marketKlineInterval
         self._marketTickerUpdateTime = time.time() - self._marketTickerInterval
-        self._statisticJudgeUpdateTime = time.time(
-        ) - self._statisticJudgeInterval
+        self._statisticJudgeMarketTickerUpdateTime = time.time(
+        ) - self._statisticJudgeMarketTickerInterval
 
     def start(self):
         self._logger.info("src.core.router.Router.start")
@@ -158,11 +158,11 @@ class Router(object):
                     async=self._asyncJudge, timeout=self._syncJudgeTimeout)
             # update statistic after interval
             if time.time(
-            ) - self._statisticJudgeUpdateTime > self._statisticJudgeInterval:
+            ) - self._statisticJudgeMarketTickerUpdateTime > self._statisticJudgeMarketTickerInterval:
                 self._logger.info(
                     "src.core.router.Router.runMonitor: updateDBStatisticJudge"
                 )
-                self._statisticJudgeUpdateTime = time.time()
+                self._statisticJudgeMarketTickerUpdateTime = time.time()
                 # update db statistic judge, async false only on slow pc
                 self._util.updateDBStatisticJudge(
                     async=self._asyncStatistic,
