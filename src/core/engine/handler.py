@@ -265,7 +265,6 @@ class Handler(object):
             while isSubError and time.time() - startTime < timeout:
                 try:
                     runOrders = sgn.backtestSignalsRunTrade(resInfoSymbol)
-                    print(runOrders)
                     isSubError = False
                 except Exception as err:
                     self._logger.warn(str + warnStr.substitute(err=err, here='2.1 calc run orders'))
@@ -275,13 +274,19 @@ class Handler(object):
             # 2.2 calc runExecOrders
             runExecOrders = []
             if not runOrders==[]:
-                isSubError = True
-                while isSubError and time.time()-startTime < timeout:
-                    try:
-                        pass
-                        isSubError = False
-                    except Exception as err:
-                        self._logger.warn(str+warnStr.substitute(err=err, here='2.2 execute runOrders'))
+                for order in runOrders:
+                    isSubError = True
+                    while isSubError and time.time()-startTime < timeout:
+                        try:
+                            res = db.insertCreatTradeBacktestHistory(
+                                order['server'], order['fSymbol'], order['tSymbol'],
+                                order['ask_or_bid'], order['price'], order['quantity'],
+                                order['ratio'], order['type'], order['group_id'])
+                            isSubError = False
+                        except Exception as err:
+                            self._logger.warn(str+warnStr.substitute(err=err, here='2.2 execute runOrders'))
+                    if not res == []:
+                        runExecOrders.extend(res)
                 if isSubError:
                     # rollback:
                     raise Exception(errStr.substitute(here='2.2 execute runOrders'))
@@ -295,6 +300,7 @@ class Handler(object):
                     if not res == []:
                         runInfoOrders.extend(res)
             # 2.4 update signals status
+            print(runInfoOrders)
             if not runInfoOrders == []:
                 runInfoOrders = pd.DataFrame(runInfoOrders)
                 isSubError = True
@@ -307,6 +313,7 @@ class Handler(object):
                 if isSubError:
                     # rollback:
                     raise Exception(errStr.substitute(here='2.4 update signal status'))
+                print('run signals after update:\n%s' % sgn.signals())
 
             ########################################
             # after trade

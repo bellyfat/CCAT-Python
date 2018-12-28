@@ -5,6 +5,7 @@ from decimal import ROUND_DOWN
 from itertools import combinations
 
 import pandas as pd
+
 from src.core.calc.enums import CALC_ZERO_NUMBER
 from src.core.coin.binance import Binance
 from src.core.coin.enums import *
@@ -195,11 +196,11 @@ class Calc(object):
                         # fSymbol
                         fBalance = fBalance - g['filled_size'].sum()
                         fLocked = fLocked + g.apply(
-                            lambda x: x['ask_bid_size'] - x['filled_size']
-                        ).sum()
+                            lambda x: x['ask_bid_size'] - x['filled_size'],
+                            axis=1).sum()
                         fFree = fFree - g.apply(
-                            lambda x: x['ask_bid_size'] - x['filled_size']
-                        ).sum() - g['filled_size'].sum()
+                            lambda x: x['ask_bid_size'] - x['filled_size'],
+                            axis=1).sum() - g['filled_size'].sum()
                         # tSymbol
                         tBalance = tBalance + g.apply(
                             lambda x: x['filled_price'] * x['filled_size'],
@@ -759,8 +760,8 @@ class Calc(object):
             print(gain_ratio)
             # forward
             if gain_ratio > forward_ratio or True:
-                bid_size = bid_fSymbol_free/bid_price
-                ask_size = ask_tSymbol_free/ask_price
+                bid_size = bid_fSymbol_free / bid_price
+                ask_size = ask_tSymbol_free / ask_price
                 order_size = min(bid_size, ask_size)
                 if order_size > 0:
                     if order_size >= bid_size_min and order_size >= ask_size_min:
@@ -805,8 +806,8 @@ class Calc(object):
                             })
             # backward
             if gain_ratio < backward_ratio:
-                bid_size = bid_tSymbol_free/bid_price
-                ask_size = ask_fSymbol_free/ask_price
+                bid_size = bid_tSymbol_free / bid_price
+                ask_size = ask_fSymbol_free / ask_price
                 order_size = min(bid_size, ask_size)
                 if order_size > 0:
                     if order_size >= bid_size_min and order_size >= ask_size_min:
