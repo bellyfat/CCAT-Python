@@ -757,9 +757,8 @@ class Calc(object):
             ask_price = float(ask_res['ask_one_price'])
             gain_ratio = (bid_price - ask_price - bid_price * bid_fee_ratio -
                           ask_price * ask_fee_ratio) / ask_price
-            print(gain_ratio)
             # forward
-            if gain_ratio > forward_ratio or True:
+            if gain_ratio > forward_ratio:
                 bid_size = bid_fSymbol_free / bid_price
                 ask_size = ask_tSymbol_free / ask_price
                 order_size = min(bid_size, ask_size)
@@ -859,10 +858,168 @@ class Calc(object):
 
     def _calcSymbolRunTradeOrdersTypeTra(
             self, server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol,
-            V3_fSymbol, V3_tSymbol, status_assets, forward_ratio, group_id):
+            V3_fSymbol, V3_tSymbol, status_assets, forward_ratio, group_id,
+            resInfoSymbol):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeTra:")
         try:
+            orders = []
+            # calc symbol pair info
+            is_V1 = resInfoSymbol[(resInfoSymbol['server'] == server)
+                                  & (resInfoSymbol['fSymbol'] == V1_fSymbol) &
+                                  (resInfoSymbol['tSymbol'] == V1_tSymbol)]
+            is_V2 = resInfoSymbol[(resInfoSymbol['server'] == server)
+                                  & (resInfoSymbol['fSymbol'] == V2_fSymbol) &
+                                  (resInfoSymbol['tSymbol'] == V2_tSymbol)]
+            is_V3 = resInfoSymbol[(resInfoSymbol['server'] == server)
+                                  & (resInfoSymbol['fSymbol'] == V3_fSymbol) &
+                                  (resInfoSymbol['tSymbol'] == V3_tSymbol)]
+            if isIn.empty:
+                return orders
+            # server limit and fee
+            V1_price_precision = 0
+            V1_price_step = 0
+            V1_size_precision = 0
+            V1_size_min = 0
+            V1_min_notional = 0
+            V1_fee_ratio = 0
+            if not is_V1['limit_price_precision'].values[0] == 'NULL':
+                V1_price_precision = is_V1['limit_price_precision'].values[0]
+            if not is_V1['limit_price_step'].values[0] == 'NULL':
+                V1_price_step = is_V1['limit_price_step'].values[0]
+            if not is_V1['limit_size_precision'].values[0] == 'NULL':
+                V1_size_precision = is_V1['limit_size_precision'].values[0]
+            if not is_V1['limit_size_min'].values[0] == 'NULL':
+                V1_size_min = is_V1['limit_size_min'].values[0]
+            if not is_V1['limit_min_notional'].values[0] == 'NULL':
+                V1_min_notional = is_V1['limit_min_notional'].values[0]
+            if not is_V1['fee_taker'].values[0] == 'NULL':
+                V1_fee_ratio = is_V1['fee_taker'].values[0]
+            V2_price_precision = 0
+            V2_price_step = 0
+            V2_size_precision = 0
+            V2_size_min = 0
+            V2_min_notional = 0
+            V2_fee_ratio = 0
+            if not is_V2['limit_price_precision'].values[0] == 'NULL':
+                V2_price_precision = is_V2['limit_price_precision'].values[0]
+            if not is_V2['limit_price_step'].values[0] == 'NULL':
+                V2_price_step = is_V2['limit_price_step'].values[0]
+            if not is_V2['limit_size_precision'].values[0] == 'NULL':
+                V2_size_precision = is_V2['limit_size_precision'].values[0]
+            if not is_V2['limit_size_min'].values[0] == 'NULL':
+                V2_size_min = is_V2['limit_size_min'].values[0]
+            if not is_V2['limit_min_notional'].values[0] == 'NULL':
+                V2_min_notional = is_V2['limit_min_notional'].values[0]
+            if not is_V2['fee_taker'].values[0] == 'NULL':
+                V2_fee_ratio = is_V2['fee_taker'].values[0]
+            V3_price_precision = 0
+            V3_price_step = 0
+            V3_size_precision = 0
+            V3_size_min = 0
+            V3_min_notional = 0
+            V3_fee_ratio = 0
+            if not is_V3['limit_price_precision'].values[0] == 'NULL':
+                V3_price_precision = is_V3['limit_price_precision'].values[0]
+            if not is_V3['limit_price_step'].values[0] == 'NULL':
+                V3_price_step = is_V3['limit_price_step'].values[0]
+            if not is_V3['limit_size_precision'].values[0] == 'NULL':
+                V3_size_precision = is_V3['limit_size_precision'].values[0]
+            if not is_V3['limit_size_min'].values[0] == 'NULL':
+                V3_size_min = is_V3['limit_size_min'].values[0]
+            if not is_V3['limit_min_notional'].values[0] == 'NULL':
+                V3_min_notional = is_V3['limit_min_notional'].values[0]
+            if not is_V3['fee_taker'].values[0] == 'NULL':
+                V3_fee_ratio = is_V3['fee_taker'].values[0]
+            # aggDepth
+            aggDepth = max(V1_price_step, V2_price_step, V3_price_step)
+            # calc balance
+            C1_symbol = [
+                i for i in [V1_fSymbol, V1_tSymbol]
+                if i in [V3_fSymbol, V3_tSymbol]
+            ][0]
+            C2_symbol = [
+                i for i in [V1_fSymbol, V1_tSymbol]
+                if i in [V2_fSymbol, V2_tSymbol]
+            ][0]
+            C3_symbol = [
+                i for i in [V2_fSymbol, V2_tSymbol]
+                if i in [V3_fSymbol, V3_tSymbol]
+            ][0]
+            for sa in signal['status_assets']:
+                if status['server'] == server:
+                    if sa['asset'] == C1_symbol:
+                        C1_symbol_balance = sa['free']
+                    if sa['asset'] == C2_symbol:
+                        C2_symbol_balance = sa['free']
+                    if sa['asset'] == C3_symbol:
+                        C3_symbol_balance = sa['free']
+            # server market order book ticker
+            if server == self._Okex_exchange:
+                V1_res = self._Okex.getMarketOrderbookTicker(
+                    V1_fSymbol, V1_tSymbol, aggDepth)
+                V2_res = self._Okex.getMarketOrderbookTicker(
+                    V2_fSymbol, V2_tSymbol, aggDepth)
+                V3_res = self._Okex.getMarketOrderbookTicker(
+                    V3_fSymbol, V3_tSymbol, aggDepth)
+            if server == self._Binance_exchange:
+                V1_res = self._Binance.getMarketOrderbookTicker(
+                    V1_fSymbol, V1_tSymbol, aggDepth)
+                V2_res = self._Binance.getMarketOrderbookTicker(
+                    V2_fSymbol, V2_tSymbol, aggDepth)
+                V3_res = self._Binance.getMarketOrderbookTicker(
+                    V3_fSymbol, V3_tSymbol, aggDepth)
+            if server == self._Huobi_exchange:
+                V1_res = self._Huobi.getMarketOrderbookTicker(
+                    V1_fSymbol, V1_tSymbol, aggDepth)
+                V2_res = self._Huobi.getMarketOrderbookTicker(
+                    V2_fSymbol, V2_tSymbol, aggDepth)
+                V3_res = self._Huobi.getMarketOrderbookTicker(
+                    V3_fSymbol, V3_tSymbol, aggDepth)
+            # calc type tra price and size
+            # calc V1
+            if C1_symbol == V1_fSymbol:  # fSymbol -> tSymbol
+                V1_one_price = V1_res['bid_one_price']
+                V1_one_side = CCAT_ORDER_SIDE_SELL
+                V1_one_size = V1_res['bid_one_size']
+            else:  # tSymbol -> fSymbol
+                V1_one_price = V1_res['ask_one_price']
+                V1_one_side = CCAT_ORDER_SIDE_BUY
+                V1_one_size = V1_res['ask_one_size']
+            # calc V2
+            if C2_symbol == V2_fSymbol:  # fSymbol -> tSymbol
+                V2_one_price = V2_res['bid_one_price']
+                V2_one_side = CCAT_ORDER_SIDE_SELL
+                V2_one_size = V2_res['bid_one_size']
+            else:  # tSymbol -> fSymbol
+                V2_one_price = V2_res['ask_one_price']
+                V2_one_side = CCAT_ORDER_SIDE_BUY
+                V2_one_size = V2_res['ask_one_size']
+            # calc V3
+            if C3_symbol == V3_fSymbol:  # fSymbol -> tSymbol
+                V3_one_price = V3_res['bid_one_price']
+                V3_one_side = CCAT_ORDER_SIDE_SELL
+                V3_one_size = V3_res['bid_one_size']
+            else:  # tSymbol -> fSymbol
+                V3_one_price = V3_res['ask_one_price']
+                V3_one_side = CCAT_ORDER_SIDE_BUY
+                V3_one_size = V3_res['ask_one_size']
+
+            # type clockwise
+            if C1_symbol == V1_fSymbol:
+                C1_C2_one_price = V1_one_price
+            else:
+                C1_C2_one_price = 1 / V1_one_price
+            if C2_symbol == V2_fSymbol:
+                C2_C3_one_price = V2_one_price
+            else:
+                C2_C3_one_price = 1 / V2_one_price
+            if C3_symbol == V3_fSymbol:
+                C3_C1_one_price = V3_one_price
+            else:
+                C3_C1_one_price = 1 / V3_one_price
+
+
             pass
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
@@ -872,30 +1029,11 @@ class Calc(object):
     def _calcSymbolRunTradeOrdersTypePair(
             self, J1_server, J2_server, V1_fSymbol, V1_tSymbol, V2_fSymbol,
             V2_tSymbol, V3_fSymbol, V3_tSymbol, status_assets, forward_ratio,
-            group_id):
+            group_id, resInfoSymbol):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypePair:")
         try:
 
-            C1_symbol = [
-                i for i in [signal['V1_fSymbol'], signal['V1_tSymbol']]
-                if i in [signal['V3_fSymbol'], signal['V3_tSymbol']]
-            ][0]
-            C2_symbol = [
-                i for i in [signal['V1_fSymbol'], signal['V1_tSymbol']]
-                if i in [signal['V2_fSymbol'], signal['V2_tSymbol']]
-            ][0]
-            C3_symbol = [
-                i for i in [signal['V2_fSymbol'], signal['V2_tSymbol']]
-                if i in [signal['V3_fSymbol'], signal['V3_tSymbol']]
-            ][0]
-            for sa in signal['status_assets']:
-                if sa['asset'] == C1_symbol:
-                    C1_symbol_balance = sa['free']
-                if sa['asset'] == C2_symbol:
-                    C2_symbol_balance = sa['free']
-                if sa['asset'] == C3_symbol:
-                    C3_symbol_balance = sa['free']
             pass
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
