@@ -291,6 +291,7 @@ class Handler(object):
                 # rollback:
                 raise Exception(errStr.substitute(here='2.1 calc run orders'))
             # 2.2 calc runExecOrders
+            print('runOrders=%s' % runOrders)
             runExecOrders = []
             if not runOrders == []:
                 for order in runOrders:

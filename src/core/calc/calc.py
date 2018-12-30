@@ -994,37 +994,42 @@ class Calc(object):
             else:  # tSymbol -> fSymbol
                 V1_one_price = float(V1_res['ask_one_price'])
                 V1_one_side = CCAT_ORDER_SIDE_BUY
-                V1_one_size = min(float(V1_res['ask_one_size']),
-                                  C1_symbol_balance / V1_one_price)
+                V1_one_size = min(
+                    float(V1_res['ask_one_size']),
+                    C1_symbol_balance / V1_one_price)
             # calc V2
             if C2_symbol == V2_fSymbol:  # fSymbol -> tSymbol
                 V2_one_price = float(V2_res['bid_one_price'])
                 V2_one_side = CCAT_ORDER_SIDE_SELL
-                V2_one_size = min(float(V2_res['bid_one_size']),
-                                  C2_symbol_balance / V2_one_price)
+                V2_one_size = min(
+                    float(V2_res['bid_one_size']),
+                    C2_symbol_balance / V2_one_price)
             else:  # tSymbol -> fSymbol
                 V2_one_price = float(V2_res['ask_one_price'])
                 V2_one_side = CCAT_ORDER_SIDE_BUY
-                V2_one_size = min(float(V2_res['ask_one_size']),
-                                  C2_symbol_balance / V2_one_price)
+                V2_one_size = min(
+                    float(V2_res['ask_one_size']),
+                    C2_symbol_balance / V2_one_price)
             # calc V3
             if C3_symbol == V3_fSymbol:  # fSymbol -> tSymbol
                 V3_one_price = float(V3_res['bid_one_price'])
                 V3_one_side = CCAT_ORDER_SIDE_SELL
-                V3_one_size = min(float(V3_res['bid_one_size']),
-                                  C3_symbol_balance / V3_one_price)
+                V3_one_size = min(
+                    float(V3_res['bid_one_size']),
+                    C3_symbol_balance / V3_one_price)
             else:  # tSymbol -> fSymbol
                 V3_one_price = float(V3_res['ask_one_price'])
                 V3_one_side = CCAT_ORDER_SIDE_BUY
-                V3_one_size = min(float(V3_res['ask_one_size']),
-                                  C3_symbol_balance / V3_one_price)
+                V3_one_size = min(
+                    float(V3_res['ask_one_size']),
+                    C3_symbol_balance / V3_one_price)
             # calc symbol one price ratio
             # Type clockwise
             C1_C2_one_price = V1_one_price
             C2_C3_one_price = 1 / V2_one_price
             C3_C1_one_price = V3_one_price
             # calc tra result
-            if C1_C2_one_price * C2_C3_one_price * C3_C1_one_price > 1 or True:
+            if C1_C2_one_price * C2_C3_one_price * C3_C1_one_price > 1:
                 # Type clockwise: sell->buy->sell
                 # calc symbol size
                 temp = min(V3_one_size, V1_one_size / C3_C1_one_price)
@@ -1105,7 +1110,7 @@ class Calc(object):
             C2_C3_one_price = 1 / V2_one_price
             C3_C1_one_price = 1 / V3_one_price
             # calc tra result
-            if C1_C2_one_price * C2_C3_one_price * C3_C1_one_price > 1 or True:
+            if C1_C2_one_price * C2_C3_one_price * C3_C1_one_price > 1:
                 # Type anti-clockwise: sell->buy->buy
                 # calc symbol size
                 temp = min(V2_one_size, V3_one_size / C2_C3_one_price)
@@ -1238,79 +1243,149 @@ class Calc(object):
                     res.extend(orders)
             if signal['type'] == TYPE_TRA:
                 # find target unique tSymbol
-                isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol']
-                        and signal['V1_tSymbol'] != signal['V3_tSymbol'])
-                isV2 = (signal['V2_tSymbol'] != signal['V1_tSymbol']
-                        and signal['V2_tSymbol'] != signal['V3_tSymbol'])
-                isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol']
-                        and signal['V3_tSymbol'] != signal['V2_tSymbol'])
-                # print(isV1, isV2, isV3)
-                if isV1:
+                C1_symbol = [
+                    i for i in [signal['V1_fSymbol'], signal['V1_tSymbol']]
+                    if i in [signal['V3_fSymbol'], signal['V3_tSymbol']]
+                ][0]
+                C2_symbol = [
+                    i for i in [signal['V1_fSymbol'], signal['V1_tSymbol']]
+                    if i in [signal['V2_fSymbol'], signal['V2_tSymbol']]
+                ][0]
+                C3_symbol = [
+                    i for i in [signal['V2_fSymbol'], signal['V2_tSymbol']]
+                    if i in [signal['V3_fSymbol'], signal['V3_tSymbol']]
+                ][0]
+                if C1_symbol == signal['V1_fSymbol']:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V1_fSymbol'],
-                        signal['V1_tSymbol'], 0, signal['base_start'],
+                        signal['V1_tSymbol'], signal['base_start'] / 3, 0,
                         signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
-                if isV2:
+                else:
                     orders = self._calcSymbolPreTradeOrders(
-                        signal['server'], signal['V2_fSymbol'],
-                        signal['V2_tSymbol'], 0, signal['base_start'],
-                        resInfoSymbol, baseCoin, signal['group_id'])
+                        signal['server'], signal['V1_fSymbol'],
+                        signal['V1_tSymbol'], 0, signal['base_start'] / 3,
+                        signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
-                if isV3:
+                if C2_symbol == signal['V2_fSymbol']:
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['server'], signal['V2_fSymbol'],
+                        signal['V2_tSymbol'], signal['base_start'] / 3, 0,
+                        signal['group_id'], resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                else:
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['server'], signal['V2_fSymbol'],
+                        signal['V2_tSymbol'], 0, signal['base_start'] / 3,
+                        signal['group_id'], resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                if C3_symbol == signal['V3_fSymbol']:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V3_fSymbol'],
-                        signal['V3_tSymbol'], 0, signal['base_start'],
+                        signal['V3_tSymbol'], signal['base_start'] / 3, 0,
+                        signal['group_id'], resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                else:
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['server'], signal['V3_fSymbol'],
+                        signal['V3_tSymbol'], 0, signal['base_start'] / 3,
                         signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
             if signal['type'] == TYPE_PAIR:
                 # find target unique tSymbol
-                isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol']
-                        and signal['V1_tSymbol'] != signal['V3_tSymbol'])
-                isV2 = (signal['V2_tSymbol'] != signal['V1_tSymbol']
-                        and signal['V2_tSymbol'] != signal['V3_tSymbol'])
-                isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol']
-                        and signal['V3_tSymbol'] != signal['V2_tSymbol'])
-                # print(isV1, isV2, isV3)
-                if isV1:
+                C1_symbol = [
+                    i for i in [signal['V1_fSymbol'], signal['V1_tSymbol']]
+                    if i in [signal['V3_fSymbol'], signal['V3_tSymbol']]
+                ][0]
+                C2_symbol = [
+                    i for i in [signal['V1_fSymbol'], signal['V1_tSymbol']]
+                    if i in [signal['V2_fSymbol'], signal['V2_tSymbol']]
+                ][0]
+                C3_symbol = [
+                    i for i in [signal['V2_fSymbol'], signal['V2_tSymbol']]
+                    if i in [signal['V3_fSymbol'], signal['V3_tSymbol']]
+                ][0]
+                if C1_symbol == signal['V1_fSymbol']:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V1_fSymbol'],
-                        signal['V1_tSymbol'], 0, signal['base_start'] / 2,
+                        signal['V1_tSymbol'], signal['base_start'] / 6, 0,
                         signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V1_fSymbol'],
-                        signal['V1_tSymbol'], 0, signal['base_start'] / 2,
+                        signal['V1_tSymbol'], signal['base_start'] / 6, 0,
                         signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
-                if isV2:
+                else:
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['J1_server'], signal['V1_fSymbol'],
+                        signal['V1_tSymbol'], 0, signal['base_start'] / 6,
+                        signal['group_id'], resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['J2_server'], signal['V1_fSymbol'],
+                        signal['V1_tSymbol'], 0, signal['base_start'] / 6,
+                        signal['group_id'], resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                if C2_symbol == signal['V2_fSymbol']:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V2_fSymbol'],
-                        signal['V2_tSymbol'], 0, signal['base_start'] / 2,
+                        signal['V2_tSymbol'], signal['base_start'] / 6, 0,
                         signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V2_fSymbol'],
-                        signal['V2_tSymbol'], 0, signal['base_start'] / 2,
+                        signal['V2_tSymbol'], signal['base_start'] / 6, 0,
                         signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
-                if isV3:
+                else:
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['J1_server'], signal['V2_fSymbol'],
+                        signal['V2_tSymbol'], 0, signal['base_start'] / 6,
+                        signal['group_id'], resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['J2_server'], signal['V2_fSymbol'],
+                        signal['V2_tSymbol'], 0, signal['base_start'] / 6,
+                        signal['group_id'], resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                if C3_symbol == signal['V3_fSymbol']:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V3_fSymbol'],
-                        signal['V3_tSymbol'], 0, signal['base_start'] / 2,
+                        signal['V3_tSymbol'], signal['base_start'] / 6, 0,
                         signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V3_fSymbol'],
-                        signal['V3_tSymbol'], 0, signal['base_start'] / 2,
+                        signal['V3_tSymbol'], signal['base_start'] / 6, 0,
+                        signal['group_id'], resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                else:
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['J1_server'], signal['V3_fSymbol'],
+                        signal['V3_tSymbol'], 0, signal['base_start'] / 6,
+                        signal['group_id'], resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                    orders = self._calcSymbolPreTradeOrders(
+                        signal['J2_server'], signal['V3_fSymbol'],
+                        signal['V3_tSymbol'], 0, signal['base_start'] / 6,
                         signal['group_id'], resInfoSymbol, baseCoin)
                     if not orders == []:
                         res.extend(orders)
