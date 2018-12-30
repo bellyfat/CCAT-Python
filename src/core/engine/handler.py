@@ -217,7 +217,7 @@ class Handler(object):
                 except Exception as err:
                     self._logger.warn(str + warnStr.substitute(
                         err=err, here='1.1 calc pre orders'))
-            if isError:
+            if isError>0:
                 raise Exception(errStr.substitute(here='1.1 calc pre orders'))
             # 1.2 calc preExecOrders
             preExecOrders = []
@@ -239,7 +239,7 @@ class Handler(object):
                                 err=err, here='1.2 excute preOrders'))
                     if not res == []:
                         preExecOrders.extend(res)
-                if isError:
+                if isError>0:
                     # rollback:
                     raise Exception(
                         errStr.substitute(here='1.2 excute preOrders'))
@@ -267,7 +267,7 @@ class Handler(object):
                     except Exception as err:
                         self._logger.warn(str + warnStr.substitute(
                             err=err, here='1.4 update signal status'))
-                if isError:
+                if isError>0:
                     # rollback:
 
                     raise Exception(
@@ -287,7 +287,7 @@ class Handler(object):
                 except Exception as err:
                     self._logger.warn(str + warnStr.substitute(
                         err=err, here='2.1 calc run orders'))
-            if isSubError:
+            if isSubError>0:
                 # rollback:
                 raise Exception(errStr.substitute(here='2.1 calc run orders'))
             # 2.2 calc runExecOrders
@@ -311,7 +311,7 @@ class Handler(object):
                                 err=err, here='2.2 execute runOrders'))
                     if not res == []:
                         runExecOrders.extend(res)
-                if isSubError:
+                if isSubError>0:
                     # rollback:
                     raise Exception(
                         errStr.substitute(here='2.2 execute runOrders'))
@@ -340,7 +340,7 @@ class Handler(object):
                     except Exception as err:
                         self._logger.warn(str + warnStr.substitute(
                             err=err, here='2.4 update signal status'))
-                if isSubError:
+                if isSubError>0:
                     # rollback:
                     raise Exception(
                         errStr.substitute(here='2.4 update signal status'))
@@ -358,7 +358,7 @@ class Handler(object):
                 except Exception as err:
                     self._logger.warn(str + warnStr.substitute(
                         err=err, here='3.1 calc after orders'))
-            if isError:
+            if isError>0:
                 raise Exception(
                     errStr.substitute(here='3.1 calc after orders'))
             # 3.2 calc afterExecOrders
@@ -381,7 +381,7 @@ class Handler(object):
                                 err=err, here='3.2 excute preOrders'))
                     if not res == []:
                         preExecOrders.extend(res)
-                if isError:
+                if isError>0:
                     # rollback:
                     raise Exception(
                         errStr.substitute(here='3.2 excute preOrders'))
@@ -409,7 +409,7 @@ class Handler(object):
                     except Exception as err:
                         self._logger.warn(str + warnStr.substitute(
                             err=err, here='3.4 update signal status'))
-                if isError:
+                if isError>0:
                     # rollback:
 
                     raise Exception(

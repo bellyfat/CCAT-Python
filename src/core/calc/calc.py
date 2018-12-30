@@ -754,13 +754,16 @@ class Calc(object):
                     fSymbol, tSymbol, aggDepth)
             # calc type dis price and size
             bid_price = float(bid_res['bid_one_price'])
+            bid_size = float(bid_res['bid_one_size'])
             ask_price = float(ask_res['ask_one_price'])
+            ask_size = float(ask_res['ask_one_size'])
             gain_ratio = (bid_price - ask_price - bid_price * bid_fee_ratio -
                           ask_price * ask_fee_ratio) / ask_price
             # forward
+            print('dis forward gain_ratio: %s' % gain_ratio)
             if gain_ratio > forward_ratio:
-                bid_size = bid_fSymbol_free / bid_price
-                ask_size = ask_tSymbol_free / ask_price
+                bid_size = min(bid_fSymbol_free / bid_price, bid_size)
+                ask_size = min(ask_tSymbol_free / ask_price, ask_size)
                 order_size = min(bid_size, ask_size)
                 if order_size > 0:
                     if order_size >= bid_size_min and order_size >= ask_size_min:
@@ -804,9 +807,10 @@ class Calc(object):
                                 "group_id": group_id
                             })
             # backward
+            print('dis backward gain_ratio: %s' % gain_ratio)
             if gain_ratio < backward_ratio:
-                bid_size = bid_tSymbol_free / bid_price
-                ask_size = ask_fSymbol_free / ask_price
+                bid_size = min(bid_tSymbol_free / bid_price, bid_size)
+                ask_size = min(ask_fSymbol_free / ask_price, ask_size)
                 order_size = min(bid_size, ask_size)
                 if order_size > 0:
                     if order_size >= bid_size_min and order_size >= ask_size_min:
@@ -874,7 +878,7 @@ class Calc(object):
             is_V3 = resInfoSymbol[(resInfoSymbol['server'] == server)
                                   & (resInfoSymbol['fSymbol'] == V3_fSymbol) &
                                   (resInfoSymbol['tSymbol'] == V3_tSymbol)]
-            if isIn.empty:
+            if is_V1.empty or is_V2.empty or is_V3.empty:
                 return orders
             # server limit and fee
             V1_price_precision = 0
@@ -946,8 +950,11 @@ class Calc(object):
                 i for i in [V2_fSymbol, V2_tSymbol]
                 if i in [V3_fSymbol, V3_tSymbol]
             ][0]
-            for sa in signal['status_assets']:
-                if status['server'] == server:
+            C1_symbol_balance = 0
+            C2_symbol_balance = 0
+            C3_symbol_balance = 0
+            for sa in status_assets:
+                if sa['server'] == server:
                     if sa['asset'] == C1_symbol:
                         C1_symbol_balance = sa['free']
                     if sa['asset'] == C2_symbol:
@@ -979,48 +986,205 @@ class Calc(object):
             # calc type tra price and size
             # calc V1
             if C1_symbol == V1_fSymbol:  # fSymbol -> tSymbol
-                V1_one_price = V1_res['bid_one_price']
+                V1_one_price = float(V1_res['bid_one_price'])
                 V1_one_side = CCAT_ORDER_SIDE_SELL
-                V1_one_size = V1_res['bid_one_size']
+                V1_one_size = min(
+                    float(V1_res['bid_one_size']),
+                    C1_symbol_balance / V1_one_price)
             else:  # tSymbol -> fSymbol
-                V1_one_price = V1_res['ask_one_price']
+                V1_one_price = float(V1_res['ask_one_price'])
                 V1_one_side = CCAT_ORDER_SIDE_BUY
-                V1_one_size = V1_res['ask_one_size']
+                V1_one_size = min(float(V1_res['ask_one_size']),
+                                  C1_symbol_balance / V1_one_price)
             # calc V2
             if C2_symbol == V2_fSymbol:  # fSymbol -> tSymbol
-                V2_one_price = V2_res['bid_one_price']
+                V2_one_price = float(V2_res['bid_one_price'])
                 V2_one_side = CCAT_ORDER_SIDE_SELL
-                V2_one_size = V2_res['bid_one_size']
+                V2_one_size = min(float(V2_res['bid_one_size']),
+                                  C2_symbol_balance / V2_one_price)
             else:  # tSymbol -> fSymbol
-                V2_one_price = V2_res['ask_one_price']
+                V2_one_price = float(V2_res['ask_one_price'])
                 V2_one_side = CCAT_ORDER_SIDE_BUY
-                V2_one_size = V2_res['ask_one_size']
+                V2_one_size = min(float(V2_res['ask_one_size']),
+                                  C2_symbol_balance / V2_one_price)
             # calc V3
             if C3_symbol == V3_fSymbol:  # fSymbol -> tSymbol
-                V3_one_price = V3_res['bid_one_price']
+                V3_one_price = float(V3_res['bid_one_price'])
                 V3_one_side = CCAT_ORDER_SIDE_SELL
-                V3_one_size = V3_res['bid_one_size']
+                V3_one_size = min(float(V3_res['bid_one_size']),
+                                  C3_symbol_balance / V3_one_price)
             else:  # tSymbol -> fSymbol
-                V3_one_price = V3_res['ask_one_price']
+                V3_one_price = float(V3_res['ask_one_price'])
                 V3_one_side = CCAT_ORDER_SIDE_BUY
-                V3_one_size = V3_res['ask_one_size']
-
-            # type clockwise
-            if C1_symbol == V1_fSymbol:
-                C1_C2_one_price = V1_one_price
-            else:
-                C1_C2_one_price = 1 / V1_one_price
-            if C2_symbol == V2_fSymbol:
-                C2_C3_one_price = V2_one_price
-            else:
-                C2_C3_one_price = 1 / V2_one_price
-            if C3_symbol == V3_fSymbol:
-                C3_C1_one_price = V3_one_price
-            else:
-                C3_C1_one_price = 1 / V3_one_price
-
-
-            pass
+                V3_one_size = min(float(V3_res['ask_one_size']),
+                                  C3_symbol_balance / V3_one_price)
+            # calc symbol one price ratio
+            # Type clockwise
+            C1_C2_one_price = V1_one_price
+            C2_C3_one_price = 1 / V2_one_price
+            C3_C1_one_price = V3_one_price
+            # calc tra result
+            if C1_C2_one_price * C2_C3_one_price * C3_C1_one_price > 1 or True:
+                # Type clockwise: sell->buy->sell
+                # calc symbol size
+                temp = min(V3_one_size, V1_one_size / C3_C1_one_price)
+                temp_size = min(V2_one_size, temp)
+                V1_one_size = temp_size * C3_C1_one_price
+                V2_one_size = temp_size
+                V3_one_size = temp_size
+                # calc gain_ratio
+                gain_ratio = (
+                    C1_C2_one_price * C3_C1_one_price * (1 - V1_fee_ratio) *
+                    (1 - V3_fee_ratio) - 1 / C2_C3_one_price -
+                    1 / C2_C3_one_price * V2_fee_ratio) / (1 / C2_C3_one_price)
+                # forward
+                print('tra clockwise gain_ratio: %s' % gain_ratio)
+                if gain_ratio > forward_ratio:
+                    if V1_one_size > 0 and V2_one_size > 0 and V3_one_size > 0:
+                        if V1_one_size > V1_size_min and V2_one_size > V2_size_min and V3_one_size > V3_size_min:
+                            if V1_one_price * V1_one_size > V1_min_notional and V2_one_price * V2_one_size > V2_min_notional and V3_one_price * V3_one_size > V3_min_notional:
+                                price = num_to_precision(
+                                    V1_one_price,
+                                    V1_price_precision,
+                                    rounding=ROUND_DOWN)
+                                quantity = num_to_precision(
+                                    V1_one_size,
+                                    V1_size_precision,
+                                    rounding=ROUND_DOWN)
+                                orders.append({
+                                    "server": server,
+                                    "fSymbol": V1_fSymbol,
+                                    "tSymbol": V1_tSymbol,
+                                    "ask_or_bid": V1_one_side,
+                                    "price": price,
+                                    "quantity": quantity,
+                                    "ratio": V1_fee_ratio,
+                                    "type": CCAT_ORDER_TYPE_LIMIT,
+                                    "group_id": group_id
+                                })
+                                price = num_to_precision(
+                                    V2_one_price,
+                                    V2_price_precision,
+                                    rounding=ROUND_DOWN)
+                                quantity = num_to_precision(
+                                    V2_one_size,
+                                    V2_size_precision,
+                                    rounding=ROUND_DOWN)
+                                orders.append({
+                                    "server": server,
+                                    "fSymbol": V2_fSymbol,
+                                    "tSymbol": V2_tSymbol,
+                                    "ask_or_bid": V2_one_side,
+                                    "price": price,
+                                    "quantity": quantity,
+                                    "ratio": V2_fee_ratio,
+                                    "type": CCAT_ORDER_TYPE_LIMIT,
+                                    "group_id": group_id
+                                })
+                                price = num_to_precision(
+                                    V3_one_price,
+                                    V3_price_precision,
+                                    rounding=ROUND_DOWN)
+                                quantity = num_to_precision(
+                                    V3_one_size,
+                                    V3_size_precision,
+                                    rounding=ROUND_DOWN)
+                                orders.append({
+                                    "server": server,
+                                    "fSymbol": V3_fSymbol,
+                                    "tSymbol": V3_tSymbol,
+                                    "ask_or_bid": V3_one_side,
+                                    "price": price,
+                                    "quantity": quantity,
+                                    "ratio": V3_fee_ratio,
+                                    "type": CCAT_ORDER_TYPE_LIMIT,
+                                    "group_id": group_id
+                                })
+            # Type anti-clockwise
+            C1_C2_one_price = V1_one_price
+            C2_C3_one_price = 1 / V2_one_price
+            C3_C1_one_price = 1 / V3_one_price
+            # calc tra result
+            if C1_C2_one_price * C2_C3_one_price * C3_C1_one_price > 1 or True:
+                # Type anti-clockwise: sell->buy->buy
+                # calc symbol size
+                temp = min(V2_one_size, V3_one_size / C2_C3_one_price)
+                temp_size = min(V1_one_size, temp)
+                V1_one_size = temp_size
+                V2_one_size = temp_size
+                V3_one_size = temp_size * C2_C3_one_price
+                # calc gain_ratio
+                gain_ratio = (
+                    C1_C2_one_price * (1 - V1_fee_ratio) -
+                    (1 / (C2_C3_one_price * C3_C1_one_price)) -
+                    (1 / (C2_C3_one_price * C3_C1_one_price)) *
+                    (V2_fee_ratio + V3_fee_ratio - V2_fee_ratio * V3_fee_ratio)
+                ) / (1 / (C2_C3_one_price * C3_C1_one_price))
+                # forward
+                print('tra anti-clockwise gain_ratio: %s' % gain_ratio)
+                if gain_ratio > forward_ratio:
+                    if V1_one_size > 0 and V2_one_size > 0 and V3_one_size > 0:
+                        if V1_one_size > V1_size_min and V2_one_size > V2_size_min and V3_one_size > V3_size_min:
+                            if V1_one_price * V1_one_size > V1_min_notional and V2_one_price * V2_one_size > V2_min_notional and V3_one_price * V3_one_size > V3_min_notional:
+                                price = num_to_precision(
+                                    V1_one_price,
+                                    V1_price_precision,
+                                    rounding=ROUND_DOWN)
+                                quantity = num_to_precision(
+                                    V1_one_size,
+                                    V1_size_precision,
+                                    rounding=ROUND_DOWN)
+                                orders.append({
+                                    "server": server,
+                                    "fSymbol": V1_fSymbol,
+                                    "tSymbol": V1_tSymbol,
+                                    "ask_or_bid": V1_one_side,
+                                    "price": price,
+                                    "quantity": quantity,
+                                    "ratio": V1_fee_ratio,
+                                    "type": CCAT_ORDER_TYPE_LIMIT,
+                                    "group_id": group_id
+                                })
+                                price = num_to_precision(
+                                    V2_one_price,
+                                    V2_price_precision,
+                                    rounding=ROUND_DOWN)
+                                quantity = num_to_precision(
+                                    V2_one_size,
+                                    V2_size_precision,
+                                    rounding=ROUND_DOWN)
+                                orders.append({
+                                    "server": server,
+                                    "fSymbol": V2_fSymbol,
+                                    "tSymbol": V2_tSymbol,
+                                    "ask_or_bid": V2_one_side,
+                                    "price": price,
+                                    "quantity": quantity,
+                                    "ratio": V2_fee_ratio,
+                                    "type": CCAT_ORDER_TYPE_LIMIT,
+                                    "group_id": group_id
+                                })
+                                price = num_to_precision(
+                                    V3_one_price,
+                                    V3_price_precision,
+                                    rounding=ROUND_DOWN)
+                                quantity = num_to_precision(
+                                    V3_one_size,
+                                    V3_size_precision,
+                                    rounding=ROUND_DOWN)
+                                orders.append({
+                                    "server": server,
+                                    "fSymbol": V3_fSymbol,
+                                    "tSymbol": V3_tSymbol,
+                                    "ask_or_bid": V3_one_side,
+                                    "price": price,
+                                    "quantity": quantity,
+                                    "ratio": V3_fee_ratio,
+                                    "type": CCAT_ORDER_TYPE_LIMIT,
+                                    "group_id": group_id
+                                })
+            # return
+            return orders
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
             errStr = "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeTra: exception err=%s" % err
@@ -1175,12 +1339,38 @@ class Calc(object):
                 if not orders == []:
                     res.extend(orders)
             if signal['type'] == TYPE_TRA:
-                orders = self._calcSymbolRunTradeOrdersTypeTra(
-                    signal['server'], signal['V1_fSymbol'],
-                    signal['V1_tSymbol'], signal['V2_fSymbol'],
-                    signal['V2_tSymbol'], signal['V3_fSymbol'],
-                    signal['V3_tSymbol'], signal['status_assets'],
-                    signal['forward_ratio'], signal['group_id'], resInfoSymbol)
+                # find target unique tSymbol
+                isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol']
+                        and signal['V1_tSymbol'] != signal['V3_tSymbol'])
+                isV2 = (signal['V2_tSymbol'] != signal['V1_tSymbol']
+                        and signal['V2_tSymbol'] != signal['V3_tSymbol'])
+                isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol']
+                        and signal['V3_tSymbol'] != signal['V2_tSymbol'])
+                # print(isV1, isV2, isV3)
+                if isV1:
+                    orders = self._calcSymbolRunTradeOrdersTypeTra(
+                        signal['server'], signal['V2_fSymbol'],
+                        signal['V2_tSymbol'], signal['V3_fSymbol'],
+                        signal['V3_tSymbol'], signal['V1_fSymbol'],
+                        signal['V1_tSymbol'], signal['status_assets'],
+                        signal['forward_ratio'], signal['group_id'],
+                        resInfoSymbol)
+                if isV2:
+                    orders = self._calcSymbolRunTradeOrdersTypeTra(
+                        signal['server'], signal['V1_fSymbol'],
+                        signal['V1_tSymbol'], signal['V3_fSymbol'],
+                        signal['V3_tSymbol'], signal['V2_fSymbol'],
+                        signal['V2_tSymbol'], signal['status_assets'],
+                        signal['forward_ratio'], signal['group_id'],
+                        resInfoSymbol)
+                if isV3:
+                    orders = self._calcSymbolRunTradeOrdersTypeTra(
+                        signal['server'], signal['V1_fSymbol'],
+                        signal['V1_tSymbol'], signal['V2_fSymbol'],
+                        signal['V2_tSymbol'], signal['V3_fSymbol'],
+                        signal['V3_tSymbol'], signal['status_assets'],
+                        signal['forward_ratio'], signal['group_id'],
+                        resInfoSymbol)
                 if not orders == []:
                     res.extend(orders)
             if signal['type'] == TYPE_PAIR:
