@@ -814,7 +814,7 @@ class Calc(object):
                 order_size = min(bid_size, ask_size)
                 if order_size > 0:
                     if order_size >= bid_size_min and order_size >= ask_size_min:
-                        if bid_price * order_size > bid_min_notional and ask_price * order_size > ask_min_notional:
+                        if bid_price * order_size >= bid_min_notional and ask_price * order_size >= ask_min_notional:
                             price = num_to_precision(
                                 bid_price,
                                 bid_price_precision,
@@ -936,7 +936,7 @@ class Calc(object):
             if not is_V3['fee_taker'].values[0] == 'NULL':
                 V3_fee_ratio = is_V3['fee_taker'].values[0]
             # aggDepth
-            aggDepth = max(V1_price_step, V2_price_step, V3_price_step)
+            aggDepth = 0
             # calc common symbol
             C1_symbol = [
                 i for i in [V1_fSymbol, V1_tSymbol]
@@ -1060,11 +1060,11 @@ class Calc(object):
                     (V2_fee_ratio + V3_fee_ratio - V2_fee_ratio * V3_fee_ratio)
                 ) / (1 / (C2_C3_one_price * C3_C1_one_price))
             # forward
-            print('tra gain_ratio: %s' % gain_ratio)
+            print('tra froward gain_ratio: %s' % gain_ratio)
             if gain_ratio > forward_ratio:
                 if V1_one_size > 0 and V2_one_size > 0 and V3_one_size > 0:
-                    if V1_one_size > V1_size_min and V2_one_size > V2_size_min and V3_one_size > V3_size_min:
-                        if V1_one_price * V1_one_size > V1_min_notional and V2_one_price * V2_one_size > V2_min_notional and V3_one_price * V3_one_size > V3_min_notional:
+                    if V1_one_size >= V1_size_min and V2_one_size >= V2_size_min and V3_one_size >= V3_size_min:
+                        if V1_one_price * V1_one_size >= V1_min_notional and V2_one_price * V2_one_size >= V2_min_notional and V3_one_price * V3_one_size >= V3_min_notional:
                             price = num_to_precision(
                                 V1_one_price,
                                 V1_price_precision,
@@ -1136,7 +1136,502 @@ class Calc(object):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypePair:")
         try:
-            pass
+            orders = []
+            # calc symbol pair info
+            is_J1_V1 = resInfoSymbol[(resInfoSymbol['server'] == J1_server)
+                                     & (resInfoSymbol['fSymbol'] == V1_fSymbol)
+                                     &
+                                     (resInfoSymbol['tSymbol'] == V1_tSymbol)]
+            is_J1_V2 = resInfoSymbol[(resInfoSymbol['server'] == J1_server)
+                                     & (resInfoSymbol['fSymbol'] == V2_fSymbol)
+                                     &
+                                     (resInfoSymbol['tSymbol'] == V2_tSymbol)]
+            is_J1_V3 = resInfoSymbol[(resInfoSymbol['server'] == J1_server)
+                                     & (resInfoSymbol['fSymbol'] == V3_fSymbol)
+                                     &
+                                     (resInfoSymbol['tSymbol'] == V3_tSymbol)]
+            is_J2_V1 = resInfoSymbol[(resInfoSymbol['server'] == J2_server)
+                                     & (resInfoSymbol['fSymbol'] == V1_fSymbol)
+                                     &
+                                     (resInfoSymbol['tSymbol'] == V1_tSymbol)]
+            is_J2_V2 = resInfoSymbol[(resInfoSymbol['server'] == J2_server)
+                                     & (resInfoSymbol['fSymbol'] == V2_fSymbol)
+                                     &
+                                     (resInfoSymbol['tSymbol'] == V2_tSymbol)]
+            is_J2_V3 = resInfoSymbol[(resInfoSymbol['server'] == J2_server)
+                                     & (resInfoSymbol['fSymbol'] == V3_fSymbol)
+                                     &
+                                     (resInfoSymbol['tSymbol'] == V3_tSymbol)]
+            if is_J1_V1.empty or is_J1_V2.empty or is_J1_V3.empty or is_J2_V1.empty or is_J2_V2.empty or is_J2_V3.empty:
+                return orders
+            # server limit and fee
+            J1_V1_price_precision = 0
+            J1_V1_price_step = 0
+            J1_V1_size_precision = 0
+            J1_V1_size_min = 0
+            J1_V1_min_notional = 0
+            J1_V1_fee_ratio = 0
+            if not is_J1_V1['limit_price_precision'].values[0] == 'NULL':
+                J1_V1_price_precision = is_J1_V1[
+                    'limit_price_precision'].values[0]
+            if not is_J1_V1['limit_price_step'].values[0] == 'NULL':
+                J1_V1_price_step = is_J1_V1['limit_price_step'].values[0]
+            if not is_J1_V1['limit_size_precision'].values[0] == 'NULL':
+                J1_V1_size_precision = is_J1_V1['limit_size_precision'].values[
+                    0]
+            if not is_J1_V1['limit_size_min'].values[0] == 'NULL':
+                J1_V1_size_min = is_J1_V1['limit_size_min'].values[0]
+            if not is_J1_V1['limit_min_notional'].values[0] == 'NULL':
+                J1_V1_min_notional = is_J1_V1['limit_min_notional'].values[0]
+            if not is_J1_V1['fee_taker'].values[0] == 'NULL':
+                J1_V1_fee_ratio = is_J1_V1['fee_taker'].values[0]
+            J1_V2_price_precision = 0
+            J1_V2_price_step = 0
+            J1_V2_size_precision = 0
+            J1_V2_size_min = 0
+            J1_V2_min_notional = 0
+            J1_V2_fee_ratio = 0
+            if not is_J1_V2['limit_price_precision'].values[0] == 'NULL':
+                J1_V2_price_precision = is_J1_V2[
+                    'limit_price_precision'].values[0]
+            if not is_J1_V2['limit_price_step'].values[0] == 'NULL':
+                J1_V2_price_step = is_J1_V2['limit_price_step'].values[0]
+            if not is_J1_V2['limit_size_precision'].values[0] == 'NULL':
+                J1_V2_size_precision = is_J1_V2['limit_size_precision'].values[
+                    0]
+            if not is_J1_V2['limit_size_min'].values[0] == 'NULL':
+                J1_V2_size_min = is_J1_V2['limit_size_min'].values[0]
+            if not is_J1_V2['limit_min_notional'].values[0] == 'NULL':
+                J1_V2_min_notional = is_J1_V2['limit_min_notional'].values[0]
+            if not is_J1_V2['fee_taker'].values[0] == 'NULL':
+                J1_V2_fee_ratio = is_J1_V2['fee_taker'].values[0]
+            J1_V3_price_precision = 0
+            J1_V3_price_step = 0
+            J1_V3_size_precision = 0
+            J1_V3_size_min = 0
+            J1_V3_min_notional = 0
+            J1_V3_fee_ratio = 0
+            if not is_J1_V3['limit_price_precision'].values[0] == 'NULL':
+                J1_V3_price_precision = is_J1_V3[
+                    'limit_price_precision'].values[0]
+            if not is_J1_V3['limit_price_step'].values[0] == 'NULL':
+                J1_V3_price_step = is_J1_V3['limit_price_step'].values[0]
+            if not is_J1_V3['limit_size_precision'].values[0] == 'NULL':
+                J1_V3_size_precision = is_J1_V3['limit_size_precision'].values[
+                    0]
+            if not is_J1_V3['limit_size_min'].values[0] == 'NULL':
+                J1_V3_size_min = is_J1_V3['limit_size_min'].values[0]
+            if not is_J1_V3['limit_min_notional'].values[0] == 'NULL':
+                J1_V3_min_notional = is_J1_V3['limit_min_notional'].values[0]
+            if not is_J1_V3['fee_taker'].values[0] == 'NULL':
+                J1_V3_fee_ratio = is_J1_V3['fee_taker'].values[0]
+            J2_V1_price_precision = 0
+            J2_V1_price_step = 0
+            J2_V1_size_precision = 0
+            J2_V1_size_min = 0
+            J2_V1_min_notional = 0
+            J2_V1_fee_ratio = 0
+            if not is_J2_V1['limit_price_precision'].values[0] == 'NULL':
+                J2_V1_price_precision = is_J2_V1[
+                    'limit_price_precision'].values[0]
+            if not is_J2_V1['limit_price_step'].values[0] == 'NULL':
+                J2_V1_price_step = is_J2_V1['limit_price_step'].values[0]
+            if not is_J2_V1['limit_size_precision'].values[0] == 'NULL':
+                J2_V1_size_precision = is_J2_V1['limit_size_precision'].values[
+                    0]
+            if not is_J2_V1['limit_size_min'].values[0] == 'NULL':
+                J2_V1_size_min = is_J2_V1['limit_size_min'].values[0]
+            if not is_J2_V1['limit_min_notional'].values[0] == 'NULL':
+                J2_V1_min_notional = is_J2_V1['limit_min_notional'].values[0]
+            if not is_J2_V1['fee_taker'].values[0] == 'NULL':
+                J2_V1_fee_ratio = is_J2_V1['fee_taker'].values[0]
+            J2_V2_price_precision = 0
+            J2_V2_price_step = 0
+            J2_V2_size_precision = 0
+            J2_V2_size_min = 0
+            J2_V2_min_notional = 0
+            J2_V2_fee_ratio = 0
+            if not is_J2_V2['limit_price_precision'].values[0] == 'NULL':
+                J2_V2_price_precision = is_J2_V2[
+                    'limit_price_precision'].values[0]
+            if not is_J2_V2['limit_price_step'].values[0] == 'NULL':
+                J2_V2_price_step = is_J2_V2['limit_price_step'].values[0]
+            if not is_J2_V2['limit_size_precision'].values[0] == 'NULL':
+                J2_V2_size_precision = is_J2_V2['limit_size_precision'].values[
+                    0]
+            if not is_J2_V2['limit_size_min'].values[0] == 'NULL':
+                J2_V2_size_min = is_J2_V2['limit_size_min'].values[0]
+            if not is_J2_V2['limit_min_notional'].values[0] == 'NULL':
+                J2_V2_min_notional = is_J2_V2['limit_min_notional'].values[0]
+            if not is_J2_V2['fee_taker'].values[0] == 'NULL':
+                J2_V2_fee_ratio = is_J2_V2['fee_taker'].values[0]
+            J2_V3_price_precision = 0
+            J2_V3_price_step = 0
+            J2_V3_size_precision = 0
+            J2_V3_size_min = 0
+            J2_V3_min_notional = 0
+            J2_V3_fee_ratio = 0
+            if not is_J2_V3['limit_price_precision'].values[0] == 'NULL':
+                J2_V3_price_precision = is_J2_V3[
+                    'limit_price_precision'].values[0]
+            if not is_J2_V3['limit_price_step'].values[0] == 'NULL':
+                J2_V3_price_step = is_J2_V3['limit_price_step'].values[0]
+            if not is_J2_V3['limit_size_precision'].values[0] == 'NULL':
+                J2_V3_size_precision = is_J2_V3['limit_size_precision'].values[
+                    0]
+            if not is_J2_V3['limit_size_min'].values[0] == 'NULL':
+                J2_V3_size_min = is_J2_V3['limit_size_min'].values[0]
+            if not is_J2_V3['limit_min_notional'].values[0] == 'NULL':
+                J2_V3_min_notional = is_J2_V3['limit_min_notional'].values[0]
+            if not is_J2_V3['fee_taker'].values[0] == 'NULL':
+                J2_V3_fee_ratio = is_J2_V3['fee_taker'].values[0]
+            # aggDepth
+            V1_aggDepth = max(J1_V1_price_step, J2_V1_price_step)
+            V2_aggDepth = max(J1_V2_price_step, J2_V2_price_step)
+            V3_aggDepth = max(J1_V3_price_step, J2_V3_price_step)
+            # calc common symbol
+            C1_symbol = [
+                i for i in [V1_fSymbol, V1_tSymbol]
+                if i in [V3_fSymbol, V3_tSymbol]
+            ][0]
+            C2_symbol = [
+                i for i in [V1_fSymbol, V1_tSymbol]
+                if i in [V2_fSymbol, V2_tSymbol]
+            ][0]
+            C3_symbol = [
+                i for i in [V2_fSymbol, V2_tSymbol]
+                if i in [V3_fSymbol, V3_tSymbol]
+            ][0]
+            # calc balance
+            J1_C1_symbol_balance = 0
+            J1_C2_symbol_balance = 0
+            J1_C3_symbol_balance = 0
+            J2_C1_symbol_balance = 0
+            J2_C2_symbol_balance = 0
+            J2_C3_symbol_balance = 0
+            for sa in status_assets:
+                if sa['server'] == J1_server:
+                    if sa['asset'] == C1_symbol:
+                        J1_C1_symbol_balance = sa['free']
+                    if sa['asset'] == C2_symbol:
+                        J1_C2_symbol_balance = sa['free']
+                    if sa['asset'] == C3_symbol:
+                        J1_C3_symbol_balance = sa['free']
+                if sa['server'] == J2_server:
+                    if sa['asset'] == C1_symbol:
+                        J2_C1_symbol_balance = sa['free']
+                    if sa['asset'] == C2_symbol:
+                        J2_C2_symbol_balance = sa['free']
+                    if sa['asset'] == C3_symbol:
+                        J2_C3_symbol_balance = sa['free']
+            # server market order book ticker
+            if J1_server == self._Okex_exchange:
+                J1_V1_res = self._Okex.getMarketOrderbookTicker(
+                    V1_fSymbol, V1_tSymbol, V1_aggDepth)
+                J1_V2_res = self._Okex.getMarketOrderbookTicker(
+                    V2_fSymbol, V2_tSymbol, V2_aggDepth)
+                J1_V3_res = self._Okex.getMarketOrderbookTicker(
+                    V3_fSymbol, V3_tSymbol, V3_aggDepth)
+            if J1_server == self._Binance_exchange:
+                J1_V1_res = self._Binance.getMarketOrderbookTicker(
+                    V1_fSymbol, V1_tSymbol, V1_aggDepth)
+                J1_V2_res = self._Binance.getMarketOrderbookTicker(
+                    V2_fSymbol, V2_tSymbol, V2_aggDepth)
+                J1_V3_res = self._Binance.getMarketOrderbookTicker(
+                    V3_fSymbol, V3_tSymbol, V3_aggDepth)
+            if J1_server == self._Huobi_exchange:
+                J1_V1_res = self._Huobi.getMarketOrderbookTicker(
+                    V1_fSymbol, V1_tSymbol, V1_aggDepth)
+                J1_V2_res = self._Huobi.getMarketOrderbookTicker(
+                    V2_fSymbol, V2_tSymbol, V2_aggDepth)
+                J1_V3_res = self._Huobi.getMarketOrderbookTicker(
+                    V3_fSymbol, V3_tSymbol, V3_aggDepth)
+            if J2_server == self._Okex_exchange:
+                J2_V1_res = self._Okex.getMarketOrderbookTicker(
+                    V1_fSymbol, V1_tSymbol, V1_aggDepth)
+                J2_V2_res = self._Okex.getMarketOrderbookTicker(
+                    V2_fSymbol, V2_tSymbol, V2_aggDepth)
+                J2_V3_res = self._Okex.getMarketOrderbookTicker(
+                    V3_fSymbol, V3_tSymbol, V3_aggDepth)
+            if J2_server == self._Binance_exchange:
+                J2_V1_res = self._Binance.getMarketOrderbookTicker(
+                    V1_fSymbol, V1_tSymbol, V1_aggDepth)
+                J2_V2_res = self._Binance.getMarketOrderbookTicker(
+                    V2_fSymbol, V2_tSymbol, V2_aggDepth)
+                J2_V3_res = self._Binance.getMarketOrderbookTicker(
+                    V3_fSymbol, V3_tSymbol, V3_aggDepth)
+            if J2_server == self._Huobi_exchange:
+                J2_V1_res = self._Huobi.getMarketOrderbookTicker(
+                    V1_fSymbol, V1_tSymbol, V1_aggDepth)
+                J2_V2_res = self._Huobi.getMarketOrderbookTicker(
+                    V2_fSymbol, V2_tSymbol, V2_aggDepth)
+                J2_V3_res = self._Huobi.getMarketOrderbookTicker(
+                    V3_fSymbol, V3_tSymbol, V3_aggDepth)
+            # calc type tra price and size
+            # calc J1_V1, J2_V1
+            if C1_symbol == V1_fSymbol:  # fSymbol -> tSymbol
+                J1_V1_one_price = float(J1_V1_res['bid_one_price'])
+                J1_V1_one_side = CCAT_ORDER_SIDE_SELL
+                J1_V1_one_size = float(J1_V1_res['bid_one_size'])
+                J2_V1_one_price = float(J2_V1_res['ask_one_price'])
+                J2_V1_one_side = CCAT_ORDER_SIDE_BUY
+                J2_V1_one_size = float(J2_V1_res['ask_one_size'])
+            else:  # tSymbol -> fSymbol
+                J1_V1_one_price = float(J1_V1_res['ask_one_price'])
+                J1_V1_one_side = CCAT_ORDER_SIDE_BUY
+                J1_V1_one_size = float(J1_V1_res['ask_one_size'])
+                J2_V1_one_price = float(J1_V1_res['bid_one_price'])
+                J2_V1_one_side = CCAT_ORDER_SIDE_SELL
+                J2_V1_one_size = float(J1_V1_res['bid_one_size'])
+            # calc J1_V2, J2_V2
+            if C2_symbol == V2_fSymbol:  # fSymbol -> tSymbol
+                J1_V2_one_price = float(J1_V2_res['bid_one_price'])
+                J1_V2_one_side = CCAT_ORDER_SIDE_SELL
+                J1_V2_one_size = float(J1_V2_res['bid_one_size'])
+                J2_V2_one_price = float(J2_V2_res['ask_one_price'])
+                J2_V2_one_side = CCAT_ORDER_SIDE_BUY
+                J2_V2_one_size = float(J2_V2_res['ask_one_size'])
+            else:  # tSymbol -> fSymbol
+                J1_V2_one_price = float(J1_V2_res['ask_one_price'])
+                J1_V2_one_side = CCAT_ORDER_SIDE_BUY
+                J1_V2_one_size = float(J1_V2_res['ask_one_size'])
+                J2_V2_one_price = float(J2_V2_res['bid_one_price'])
+                J2_V2_one_side = CCAT_ORDER_SIDE_SELL
+                J2_V2_one_size = float(J2_V2_res['bid_one_size'])
+            # calc V3
+            if C3_symbol == V3_fSymbol:  # fSymbol -> tSymbol
+                J1_V3_one_price = float(J1_V3_res['bid_one_price'])
+                J1_V3_one_side = CCAT_ORDER_SIDE_SELL
+                J1_V3_one_size = float(J1_V3_res['bid_one_size'])
+                J2_V3_one_price = float(J2_V3_res['ask_one_price'])
+                J2_V3_one_side = CCAT_ORDER_SIDE_BUY
+                J2_V3_one_size = float(J2_V3_res['ask_one_size'])
+            else:  # tSymbol -> fSymbol
+                J1_V3_one_price = float(J1_V3_res['ask_one_price'])
+                J1_V3_one_side = CCAT_ORDER_SIDE_BUY
+                J1_V3_one_size = float(J1_V3_res['ask_one_size'])
+                J2_V3_one_price = float(J2_V3_res['bid_one_price'])
+                J2_V3_one_side = CCAT_ORDER_SIDE_SELL
+                J2_V3_one_size = float(J2_V3_res['bid_one_size'])
+            # calc one price ratio
+            if C3_symbol == V3_fSymbol:
+                # Type J1 = clockwise, J2 = anti-clockwise
+                # calc J1
+                J1_C1_C2_one_price = J1_V1_one_price
+                J1_C2_C3_one_price = 1 / J1_V2_one_price
+                J1_C3_C1_one_price = J1_V3_one_price
+                # calc J2
+                J2_C1_C2_one_price = J2_V1_one_price
+                J2_C2_C3_one_price = 1 / J2_V2_one_price
+                J2_C3_C1_one_price = 1 / J2_V3_one_price
+            else:
+                # Type J1 = anti-clockwise, J2 = clockwise
+                # calc J1
+                J1_C1_C2_one_price = J1_V1_one_price
+                J1_C2_C3_one_price = 1 / J1_V2_one_price
+                J1_C3_C1_one_price = 1 / J1_V3_one_price
+                # calc J2
+                J2_C1_C2_one_price = J2_V1_one_price
+                J2_C2_C3_one_price = 1 / J2_V2_one_price
+                J2_C3_C1_one_price = J2_V3_one_price
+            # calc tra result
+            if not J1_C1_C2_one_price * J1_C2_C3_one_price * J1_C3_C1_one_price > J2_C1_C2_one_price * J2_C2_C3_one_price * J2_C3_C1_one_price:
+                return orders
+            # calc symbol size
+            J1_V1_one_size = min(J1_V1_one_size,
+                                 J1_C1_symbol_balance / J1_V1_one_price)
+            J1_V2_one_size = min(J1_V2_one_size,
+                                 J1_C2_symbol_balance / J1_V2_one_price)
+            J1_V3_one_size = min(J1_V3_one_size,
+                                 J1_C3_symbol_balance / J1_V3_one_price)
+            J2_V1_one_size = min(J2_V1_one_size,
+                                 J2_C1_symbol_balance / J2_V1_one_price)
+            J2_V2_one_size = min(J2_V2_one_size,
+                                 J2_C2_symbol_balance / J2_V2_one_price)
+            J2_V3_one_size = min(J2_V3_one_size,
+                                 J2_C3_symbol_balance / J2_V3_one_price)
+            # Begin Calc Gain
+            if C3_symbol == V3_fSymbol:
+                # Type J1 = clockwise: sell->buy->sell, J2 = anti-clockwise: sell->buy->buy
+                # calc J1 symbol size
+                temp = min(J1_V3_one_size, J1_V1_one_size / J1_C3_C1_one_price)
+                temp_size = min(J1_V2_one_size, temp)
+                J1_V1_one_size = temp_size * J1_C3_C1_one_price
+                J1_V2_one_size = temp_size
+                J1_V3_one_size = temp_size
+                # calc J2 symbol size
+                temp = min(J2_V2_one_size, J2_V3_one_size / J2_C2_C3_one_price)
+                temp_size = min(J2_V1_one_size, temp)
+                J2_V1_one_size = temp_size
+                J2_V2_one_size = temp_size
+                J2_V3_one_size = temp_size * J2_C2_C3_one_price
+            else:
+                # Type J1 = anti-clockwise: sell->buy->buy, J2 = clockwise: sell->buy->sell
+                # calc J1 symbol size
+                temp = min(J1_V2_one_size, J1_V3_one_size / J1_C2_C3_one_price)
+                temp_size = min(J1_V1_one_size, temp)
+                J1_V1_one_size = temp_size
+                J1_V2_one_size = temp_size
+                J1_V3_one_size = temp_size * J1_C2_C3_one_price
+                # calc J2 symbol size
+                temp = min(J2_V3_one_size, J2_V1_one_size / J2_C3_C1_one_price)
+                temp_size = min(J2_V2_one_size, temp)
+                J2_V1_one_size = temp_size * J2_C3_C1_one_price
+                J2_V2_one_size = temp_size
+                J2_V3_one_size = temp_size
+            # calc symbol size
+            J1_V1_one_size = min(J1_V1_one_size, J2_V1_one_size)
+            J1_V2_one_size = min(J1_V2_one_size, J2_V2_one_size)
+            J1_V3_one_size = min(J1_V3_one_size, J2_V3_one_size)
+            J2_V1_one_size = min(J1_V1_one_size, J2_V1_one_size)
+            J2_V2_one_size = min(J1_V2_one_size, J2_V2_one_size)
+            J2_V3_one_size = min(J1_V3_one_size, J2_V3_one_size)
+            # Begin Calc Gain
+            C1_symbol_gain_ratio_up = (J1_V1_one_price - J2_V1_one_price -
+                                       J1_V1_one_price * J1_V1_fee_ratio -
+                                       J2_V1_one_price * J2_V1_fee_ratio) * (
+                                           J1_V1_one_size + J2_V1_one_size) / 2
+            C1_symbol_gain_ratio_dn = J2_V1_one_price * (
+                J1_V1_one_size + J2_V1_one_size) / 2
+            C2_symbol_gain_ratio_up = (J1_V2_one_price - J2_V2_one_price -
+                                       J1_V2_one_price * J1_V2_fee_ratio -
+                                       J2_V2_one_price * J2_V2_fee_ratio) * (
+                                           J1_V2_one_size + J2_V2_one_size) / 2
+            C2_symbol_gain_ratio_dn = J2_V2_one_price * (
+                J1_V2_one_size + J2_V2_one_size) / 2
+            C3_symbol_gain_ratio_up = (J1_V3_one_price - J2_V3_one_price -
+                                       J1_V3_one_price * J1_V3_fee_ratio -
+                                       J2_V3_one_price * J2_V3_fee_ratio) * (
+                                           J1_V3_one_size + J2_V3_one_size) / 2
+            C3_symbol_gain_ratio_dn = J2_V3_one_price * (
+                J1_V3_one_size + J2_V3_one_size) / 2
+            # calc gain_ratio
+            gain_ratio = (C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up +
+                          C3_symbol_gain_ratio_up) / (
+                              C1_symbol_gain_ratio_dn + C2_symbol_gain_ratio_dn
+                              + C3_symbol_gain_ratio_dn)
+            # forward
+            print('pair froward gain_ratio: %s' % gain_ratio)
+            if gain_ratio > forward_ratio:
+                if J1_V1_one_size > 0 and J1_V2_one_size > 0 and J1_V3_one_size > 0 and J2_V1_one_size > 0 and J2_V2_one_size > 0 and J2_V3_one_size > 0:
+                    if J1_V1_one_size >= J1_V1_size_min and J1_V2_one_size >= J1_V2_size_min and J1_V3_one_size >= J1_V3_size_min and J2_V1_one_size >= J2_V1_size_min and J2_V2_one_size >= J2_V2_size_min and J2_V3_one_size >= J2_V3_size_min:
+                        if J1_V1_one_price * J1_V1_one_size >= J1_V1_min_notional and J1_V2_one_price * J1_V2_one_size >= J1_V2_min_notional and J1_V3_one_price * J1_V3_one_size >= J1_V3_min_notional and J2_V1_one_price * J2_V1_one_size >= J2_V1_min_notional and J2_V2_one_price * J2_V2_one_size >= J2_V2_min_notional and J2_V3_one_price * J2_V3_one_size >= J2_V3_min_notional:
+                            price = num_to_precision(
+                                J1_V1_one_price,
+                                J1_V1_price_precision,
+                                rounding=ROUND_DOWN)
+                            quantity = num_to_precision(
+                                J1_V1_one_size,
+                                J1_V1_size_precision,
+                                rounding=ROUND_DOWN)
+                            orders.append({
+                                "server": J1_server,
+                                "fSymbol": V1_fSymbol,
+                                "tSymbol": V1_tSymbol,
+                                "ask_or_bid": J1_V1_one_side,
+                                "price": price,
+                                "quantity": quantity,
+                                "ratio": J1_V1_fee_ratio,
+                                "type": CCAT_ORDER_TYPE_LIMIT,
+                                "group_id": group_id
+                            })
+                            price = num_to_precision(
+                                J1_V2_one_price,
+                                J1_V2_price_precision,
+                                rounding=ROUND_DOWN)
+                            quantity = num_to_precision(
+                                J1_V2_one_size,
+                                J1_V2_size_precision,
+                                rounding=ROUND_DOWN)
+                            orders.append({
+                                "server": J1_server,
+                                "fSymbol": V2_fSymbol,
+                                "tSymbol": V2_tSymbol,
+                                "ask_or_bid": J1_V2_one_side,
+                                "price": price,
+                                "quantity": quantity,
+                                "ratio": J1_V2_fee_ratio,
+                                "type": CCAT_ORDER_TYPE_LIMIT,
+                                "group_id": group_id
+                            })
+                            price = num_to_precision(
+                                J1_V3_one_price,
+                                J1_V3_price_precision,
+                                rounding=ROUND_DOWN)
+                            quantity = num_to_precision(
+                                J1_V3_one_size,
+                                J1_V3_size_precision,
+                                rounding=ROUND_DOWN)
+                            orders.append({
+                                "server": J1_server,
+                                "fSymbol": V3_fSymbol,
+                                "tSymbol": V3_tSymbol,
+                                "ask_or_bid": J1_V3_one_side,
+                                "price": price,
+                                "quantity": quantity,
+                                "ratio": J1_V3_fee_ratio,
+                                "type": CCAT_ORDER_TYPE_LIMIT,
+                                "group_id": group_id
+                            })
+                            price = num_to_precision(
+                                J2_V1_one_price,
+                                J2_V1_price_precision,
+                                rounding=ROUND_DOWN)
+                            quantity = num_to_precision(
+                                J2_V1_one_size,
+                                J2_V1_size_precision,
+                                rounding=ROUND_DOWN)
+                            orders.append({
+                                "server": J2_server,
+                                "fSymbol": V1_fSymbol,
+                                "tSymbol": V1_tSymbol,
+                                "ask_or_bid": J2_V1_one_side,
+                                "price": price,
+                                "quantity": quantity,
+                                "ratio": J2_V1_fee_ratio,
+                                "type": CCAT_ORDER_TYPE_LIMIT,
+                                "group_id": group_id
+                            })
+                            price = num_to_precision(
+                                J2_V2_one_price,
+                                J2_V2_price_precision,
+                                rounding=ROUND_DOWN)
+                            quantity = num_to_precision(
+                                J2_V2_one_size,
+                                J2_V2_size_precision,
+                                rounding=ROUND_DOWN)
+                            orders.append({
+                                "server": J2_server,
+                                "fSymbol": V2_fSymbol,
+                                "tSymbol": V2_tSymbol,
+                                "ask_or_bid": J2_V2_one_side,
+                                "price": price,
+                                "quantity": quantity,
+                                "ratio": J2_V2_fee_ratio,
+                                "type": CCAT_ORDER_TYPE_LIMIT,
+                                "group_id": group_id
+                            })
+                            price = num_to_precision(
+                                J2_V3_one_price,
+                                J2_V3_price_precision,
+                                rounding=ROUND_DOWN)
+                            quantity = num_to_precision(
+                                J2_V3_one_size,
+                                J2_V3_size_precision,
+                                rounding=ROUND_DOWN)
+                            orders.append({
+                                "server": J2_server,
+                                "fSymbol": V3_fSymbol,
+                                "tSymbol": V3_tSymbol,
+                                "ask_or_bid": J2_V3_one_side,
+                                "price": price,
+                                "quantity": quantity,
+                                "ratio": J2_V3_fee_ratio,
+                                "type": CCAT_ORDER_TYPE_LIMIT,
+                                "group_id": group_id
+                            })
+            # return
+            return orders
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
             errStr = "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypePair: exception err=%s" % err

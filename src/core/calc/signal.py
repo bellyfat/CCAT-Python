@@ -29,38 +29,30 @@ class Signal(object):
                 id = id + 1
                 if signal['type'] == TYPE_DIS:
                     id_str = str(pid) + str(timeStamp) + str(id)
-                    signal['id'] = TYPE_DIS + str(uuid.uuid3(
-                        uuid.NAMESPACE_DNS, id_str))
+                    signal['id'] = TYPE_DIS + str(
+                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                     signal['status_done'] = False
-                    signal['status_assets'] = [{
-                        "server":
-                        signal['bid_server'],
-                        "asset":
-                        SIGNAL_BASECOIN,
-                        "balance":
-                        float(signal['base_start']) / 2,
-                        "free":
-                        float(signal['base_start']) / 2,
-                        "locked":
-                        0.0
-                    },
-                    {
-                        "server":
-                        signal['ask_server'],
-                        "asset":
-                        SIGNAL_BASECOIN,
-                        "balance":
-                        float(signal['base_start']) / 2,
-                        "free":
-                        float(signal['base_start']) / 2,
-                        "locked":
-                        0.0
-                    }]
+                    signal['status_assets'] = [
+                        {
+                            "server": signal['bid_server'],
+                            "asset": SIGNAL_BASECOIN,
+                            "balance": float(signal['base_start']) / 2,
+                            "free": float(signal['base_start']) / 2,
+                            "locked": 0.0
+                        },
+                        {
+                            "server": signal['ask_server'],
+                            "asset": SIGNAL_BASECOIN,
+                            "balance": float(signal['base_start']) / 2,
+                            "free": float(signal['base_start']) / 2,
+                            "locked": 0.0
+                        }
+                    ]
                     signal['status_gain'] = 0.0
                 if signal['type'] == TYPE_TRA:
                     id_str = str(pid) + str(timeStamp) + str(id)
-                    signal['id'] = TYPE_TRA + str(uuid.uuid3(
-                        uuid.NAMESPACE_DNS, id_str))
+                    signal['id'] = TYPE_TRA + str(
+                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                     signal['status_done'] = False
                     signal['status_assets'] = [{
                         "server":
@@ -77,33 +69,25 @@ class Signal(object):
                     signal['status_gain'] = 0.0
                 if signal['type'] == TYPE_PAIR:
                     id_str = str(pid) + str(timeStamp) + str(id)
-                    signal['id'] = TYPE_PAIR + str(uuid.uuid3(
-                        uuid.NAMESPACE_DNS, id_str))
+                    signal['id'] = TYPE_PAIR + str(
+                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                     signal['status_done'] = False
-                    signal['status_assets'] = [{
-                        "server":
-                        signal['J1_server'],
-                        "asset":
-                        SIGNAL_BASECOIN,
-                        "balance":
-                        float(signal['base_start']) / 2,
-                        "free":
-                        float(signal['base_start']) / 2,
-                        "locked":
-                        0.0
-                    },
-                    {
-                        "server":
-                        signal['J2_server'],
-                        "asset":
-                        SIGNAL_BASECOIN,
-                        "balance":
-                        float(signal['base_start']) / 2,
-                        "free":
-                        float(signal['base_start']) / 2,
-                        "locked":
-                        0.0
-                    }]
+                    signal['status_assets'] = [
+                        {
+                            "server": signal['J1_server'],
+                            "asset": SIGNAL_BASECOIN,
+                            "balance": float(signal['base_start']) / 2,
+                            "free": float(signal['base_start']) / 2,
+                            "locked": 0.0
+                        },
+                        {
+                            "server": signal['J2_server'],
+                            "asset": SIGNAL_BASECOIN,
+                            "balance": float(signal['base_start']) / 2,
+                            "free": float(signal['base_start']) / 2,
+                            "locked": 0.0
+                        }
+                    ]
                     signal['status_gain'] = 0.0
 
     def signals(self, exchange='all', types='all', auto=SIGNAL_AUTO):
@@ -150,8 +134,8 @@ class Signal(object):
                             (s['bid_server'] in exchange
                              and s['ask_server'] in exchange)):
                             id_str = str(pid) + str(timeStamp) + str(id)
-                            signal['id'] = TYPE_DIS + str(uuid.uuid3(
-                                uuid.NAMESPACE_DNS, id_str))
+                            signal['id'] = TYPE_DIS + str(
+                                uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                             signal['type'] = s['type']
                             signal['bid_server'] = s['bid_server']
                             signal['ask_server'] = s['ask_server']
@@ -187,8 +171,8 @@ class Signal(object):
                                 exchange == 'all' or s['server'] in exchange):
                             tuple = tuple_str_to_list(s['symbol_pair'])
                             id_str = str(pid) + str(timeStamp) + str(id)
-                            signal['id'] = TYPE_TRA + str(uuid.uuid3(
-                                uuid.NAMESPACE_DNS, id_str))
+                            signal['id'] = TYPE_TRA + str(
+                                uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                             signal['type'] = s['type']
                             signal['server'] = s['server']
                             signal['V1_fSymbol'] = tuple[0][0]
@@ -223,8 +207,8 @@ class Signal(object):
                              and s['J2_server'] in exchange)):
                             tuple = tuple_str_to_list(s['symbol_pair'])
                             id_str = str(pid) + str(timeStamp) + str(id)
-                            signal['id'] = TYPE_PAIR + str(uuid.uuid3(
-                                uuid.NAMESPACE_DNS, id_str))
+                            signal['id'] = TYPE_PAIR + str(
+                                uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                             signal['type'] = s['type']
                             signal['J1_server'] = s['J1_server']
                             signal['J2_server'] = s['J2_server']
@@ -271,7 +255,6 @@ class Signal(object):
     def backtestRollbackSignalsTradeByOrders(self, ):
         pass
 
-
     def backtestUpdateSignalStatusByOrders(self, infoOrders, resInfoSymbol):
         self._logger.debug(
             "src.core.calc.signal.Signal.backtestUpdateSignalStatusByOrders: {infoOrders=%s, resInfoSymbol=%s}"
@@ -292,9 +275,12 @@ class Signal(object):
                 for signal in self._signals:
                     for res in resStatus:
                         if signal['id'] == res['id']:
-                            signal['status_done'] = res['status']['status_done']
-                            signal['status_assets'] = res['status']['status_assets']
-                            signal['status_gain'] = res['status']['status_gain']
+                            signal['status_done'] = res['status'][
+                                'status_done']
+                            signal['status_assets'] = res['status'][
+                                'status_assets']
+                            signal['status_gain'] = res['status'][
+                                'status_gain']
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.backtestUpdateSignalStatusByOrders: {infoOrders=%s, resInfoSymbol=%s}, exception err=%s" % (
                 'infoOrders', 'resInfoSymbol', err)
@@ -333,9 +319,11 @@ class Signal(object):
             calc = Calc()
             res = []
             for signal in self._signals:
-                orders = calc.calcSignalRunTradeOrders(signal, resInfoSymbol)
-                if not orders == []:
-                    res.extend(orders)
+                if not signal['status_gain'] >= signal['base_gain']:
+                    orders = calc.calcSignalRunTradeOrders(
+                        signal, resInfoSymbol)
+                    if not orders == []:
+                        res.extend(orders)
             return res
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.backtestSignalsRunTrade: {resInfoSymbol=%s}, exception err=%s" % (
