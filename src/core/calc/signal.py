@@ -249,12 +249,6 @@ class Signal(object):
             errStr = "src.core.calc.signal.Signal.signals, exception err=%s" % err
             raise CalcException(errStr)
 
-    def backtestRollbackSignalStatusByOrders(self, ):
-        pass
-
-    def backtestRollbackSignalsTradeByOrders(self, ):
-        pass
-
     def backtestUpdateSignalStatusByOrders(self, infoOrders, resInfoSymbol):
         self._logger.debug(
             "src.core.calc.signal.Signal.backtestUpdateSignalStatusByOrders: {infoOrders=%s, resInfoSymbol=%s}"
@@ -319,9 +313,13 @@ class Signal(object):
             calc = Calc()
             res = []
             for signal in self._signals:
-                if not signal['status_gain'] >= signal['base_gain']:
+                if signal['status_gain'] < signal['base_gain']:
                     orders = calc.calcSignalRunTradeOrders(
                         signal, resInfoSymbol)
+                    if not orders == []:
+                        res.extend(orders)
+                if signal['status_gain'] >= signal['base_gain']:
+                    orders = calc.calcSignalRunTradeOrders()
                     if not orders == []:
                         res.extend(orders)
             return res
@@ -339,6 +337,9 @@ class Signal(object):
                 raise Exception("NO SIGNAL ERROR, signals empty.")
             calc = Calc()
             res = []
+            for signal in self._signals:
+                orders = calc.calcSignalRunTradeOrders()
+
             return res
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.backtestSignalsAfterTrade: {resInfoSymbol=%s}, exception err=%s" % (

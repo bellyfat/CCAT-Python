@@ -1637,11 +1637,16 @@ class Calc(object):
             errStr = "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypePair: exception err=%s" % err
             raise CalcException(errStr)
 
-    def _calcSymbolAfterTradeOrders(self):
+    def _calcSymbolAfterTradeOrders(self, server, fSymbol, tSymbol, fSymbol_to_base,
+                                  tSymbol_to_base, group_id, resInfoSymbol,
+                                  baseCoin):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolAfterTradeOrders:")
         try:
-            pass
+            orders = []
+            # type
+            # return
+            return orders
         except (BinanceException, HuobiException, OkexException,
                 Exception) as err:
             errStr = "src.core.calc.calc.Calc._calcSymbolAfterTradeOrders: exception err=%s" % err
@@ -1980,6 +1985,222 @@ class Calc(object):
             errStr = "src.core.calc.calc.Calc.calcSignalRunTradeOrders: {signal=%s, resInfoSymbol=%s}, exception err=%s" % (
                 signal, 'resInfoSymbol', err)
             raise CalcException(errStr)
+
+    def calcSignalAfterTradeOrders(self, signal, resInfoSymbol, baseCoin):
+        self._logger.debug(
+            "src.core.calc.calc.Calc.calcSignalAfterTradeOrders: {signal=%s, resInfoSymbol=%s, baseCoin=%s}"
+            % (signal, 'resInfoSymbol', baseCoin))
+        try:
+            res = []
+            # calc orders
+            if signal['type'] == TYPE_DIS:
+                for status in signal['status_assets']:
+                    if status['server'] == signal['bid_server']:
+                        bid_fSymbol_to_base = 0
+                        bid_tSymbol_to_base = 0
+                        if status['asset'] == signal['fSymbol']:
+                            bid_fSymbol_to_base = signal['balance']
+                        if status['asset'] == signal['tSymbol']:
+                            bid_tSymbol_to_base = signal['balance']
+                    if status['server'] == signal['ask_server']:
+                        ask_fSymbol_to_base = 0
+                        ask_tSymbol_to_base = 0
+                        if status['asset'] == signal['fSymbol']:
+                            ask_fSymbol_to_base = signal['balance']
+                        if status['asset'] == signal['tSymbol']:
+                            ask_tSymbol_to_base = signal['balance']
+                orders = self._calcSymbolAfterTradeOrders(signal['bid_server'], signal['fSymbol'], signal['tSymbol'], bid_fSymbol_to_base, bid_tSymbol_to_base, group_id, resInfoSymbol, baseCoin)
+                if not orders == []:
+                    res.extend(orders)
+                orders = self._calcSymbolAfterTradeOrders(signal['ask_server'], signal['fSymbol'], signal['tSymbol'], fSymbol_to_base, tSymbol_to_base, group_id, resInfoSymbol, baseCoin)
+                if not orders == []:
+                    res.extend(orders)
+            if signal['type'] == TYPE_TRA:
+                # find target unique tSymbol
+                C1_symbol = [
+                    i for i in [signal['V1_fSymbol'], signal['V1_tSymbol']]
+                    if i in [signal['V3_fSymbol'], signal['V3_tSymbol']]
+                ][0]
+                C2_symbol = [
+                    i for i in [signal['V1_fSymbol'], signal['V1_tSymbol']]
+                    if i in [signal['V2_fSymbol'], signal['V2_tSymbol']]
+                ][0]
+                C3_symbol = [
+                    i for i in [signal['V2_fSymbol'], signal['V2_tSymbol']]
+                    if i in [signal['V3_fSymbol'], signal['V3_tSymbol']]
+                ][0]
+                if C1_symbol == signal['V1_fSymbol']:
+                    for status in signal['status_assets']:
+                        if status['server'] == signal['server']:
+                            fSymbol_to_base = 0
+                            if status['asset'] == signal['V1_fSymbol']:
+                                fSymbol_to_base = signal['balance']
+                    orders = self._calcSymbolAfterTradeOrders(signal['server'], signal['V1_fSymbol'], signal['V1_tSymbol'], fSymbol_to_base, 0, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                else:
+                    for status in signal['status_assets']:
+                        if status['server'] == signal['server']:
+                            tSymbol_to_base = 0
+                            if status['asset'] == signal['V1_tSymbol']:
+                                tSymbol_to_base = signal['balance']
+                    orders = self._calcSymbolAfterTradeOrders(signal['server'], signal['V1_fSymbol'], signal['V1_tSymbol'], 0, tSymbol_to_base, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                if C2_symbol == signal['V2_fSymbol']:
+                    for status in signal['status_assets']:
+                        if status['server'] == signal['server']:
+                            fSymbol_to_base = 0
+                            if status['asset'] == signal['V2_fSymbol']:
+                                fSymbol_to_base = signal['balance']
+                    orders = self._calcSymbolAfterTradeOrders(signal['server'], signal['V2_fSymbol'], signal['V2_tSymbol'], fSymbol_to_base, 0, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                else:
+                    for status in signal['status_assets']:
+                        if status['server'] == signal['server']:
+                            tSymbol_to_base = 0
+                            if status['asset'] == signal['V2_tSymbol']:
+                                tSymbol_to_base = signal['balance']
+                    orders = self._calcSymbolAfterTradeOrders(signal['server'], signal['V2_fSymbol'], signal['V2_tSymbol'], 0, tSymbol_to_base, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                if C3_symbol == signal['V3_fSymbol']:
+                    for status in signal['status_assets']:
+                        if status['server'] == signal['server']:
+                            fSymbol_to_base = 0
+                            if status['asset'] == signal['V3_fSymbol']:
+                                fSymbol_to_base = signal['balance']
+                    orders = self._calcSymbolAfterTradeOrders(signal['server'], signal['V3_fSymbol'], signal['V3_tSymbol'], fSymbol_to_base, 0, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                else:
+                    for status in signal['status_assets']:
+                        if status['server'] == signal['server']:
+                            tSymbol_to_base = 0
+                            if status['asset'] == signal['V3_tSymbol']:
+                                tSymbol_to_base = signal['balance']
+                    orders = self._calcSymbolAfterTradeOrders(signal['server'], signal['V3_fSymbol'], signal['V3_tSymbol'], 0, tSymbol_to_base, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+            if signal['type'] == TYPE_PAIR:
+                # find target unique tSymbol
+                C1_symbol = [
+                    i for i in [signal['V1_fSymbol'], signal['V1_tSymbol']]
+                    if i in [signal['V3_fSymbol'], signal['V3_tSymbol']]
+                ][0]
+                C2_symbol = [
+                    i for i in [signal['V1_fSymbol'], signal['V1_tSymbol']]
+                    if i in [signal['V2_fSymbol'], signal['V2_tSymbol']]
+                ][0]
+                C3_symbol = [
+                    i for i in [signal['V2_fSymbol'], signal['V2_tSymbol']]
+                    if i in [signal['V3_fSymbol'], signal['V3_tSymbol']]
+                ][0]
+                if C1_symbol == signal['V1_fSymbol']:
+                    for status in signal['status_assets']:
+                        if status['server'] == signal['J1_server']:
+                            J1_fSymbol_to_base = 0
+                            if status['asset'] == signal['V1_fSymbol']:
+                                J1_fSymbol_to_base = signal['balance']
+                        if status['server'] == signal['J2_server']:
+                            J2_fSymbol_to_base = 0
+                            if status['asset'] == signal['V1_fSymbol']:
+                                J2_fSymbol_to_base = signal['balance']
+                    orders = self._calcSymbolAfterTradeOrders(signal['J1_server'], signal['V1_fSymbol'], signal['V1_tSymbol'], J1_fSymbol_to_base, 0, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                    orders = self._calcSymbolAfterTradeOrders(signal['J2_server'], signal['V1_fSymbol'], signal['V1_tSymbol'], J2_fSymbol_to_base, 0, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                else:
+                    for status in signal['status_assets']:
+                        if status['server'] == signal['J1_server']:
+                            J1_tSymbol_to_base = 0
+                            if status['asset'] == signal['V1_tSymbol']:
+                                J1_tSymbol_to_base = signal['balance']
+                        if status['server'] == signal['J2_server']:
+                            J2_tSymbol_to_base = 0
+                            if status['asset'] == signal['V1_tSymbol']:
+                                J2_tSymbol_to_base = signal['balance']
+                    orders = self._calcSymbolAfterTradeOrders(signal['J1_server'], signal['V1_fSymbol'], signal['V1_tSymbol'], 0, J1_tSymbol_to_base, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                    orders = self._calcSymbolAfterTradeOrders(signal['J2_server'], signal['V1_fSymbol'], signal['V1_tSymbol'], 0, J2_tSymbol_to_base, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                if C2_symbol == signal['V2_fSymbol']:
+                    for status in signal['status_assets']:
+                        if status['server'] == signal['J1_server']:
+                            J1_fSymbol_to_base = 0
+                            if status['asset'] == signal['V2_fSymbol']:
+                                J1_fSymbol_to_base = signal['balance']
+                        if status['server'] == signal['J2_server']:
+                            J2_fSymbol_to_base = 0
+                            if status['asset'] == signal['V2_fSymbol']:
+                                J2_fSymbol_to_base = signal['balance']
+                    orders = self._calcSymbolAfterTradeOrders(signal['J1_server'], signal['V2_fSymbol'], signal['V2_tSymbol'], J1_fSymbol_to_base, 0, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                    orders = self._calcSymbolAfterTradeOrders(signal['J2_server'], signal['V2_fSymbol'], signal['V2_tSymbol'], J2_fSymbol_to_base, 0, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                else:
+                    for status in signal['status_assets']:
+                        if status['server'] == signal['J1_server']:
+                            J1_tSymbol_to_base = 0
+                            if status['asset'] == signal['V2_tSymbol']:
+                                J1_tSymbol_to_base = signal['balance']
+                        if status['server'] == signal['J2_server']:
+                            J2_tSymbol_to_base = 0
+                            if status['asset'] == signal['V2_tSymbol']:
+                                J2_tSymbol_to_base = signal['balance']
+                    orders = self._calcSymbolAfterTradeOrders(signal['J1_server'], signal['V2_fSymbol'], signal['V2_tSymbol'], 0, J1_tSymbol_to_base, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                    orders = self._calcSymbolAfterTradeOrders(signal['J2_server'], signal['V2_fSymbol'], signal['V2_tSymbol'], 0, J2_tSymbol_to_base, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                if C3_symbol == signal['V3_fSymbol']:
+                    for status in signal['status_assets']:
+                        if status['server'] == signal['J1_server']:
+                            J1_fSymbol_to_base = 0
+                            if status['asset'] == signal['V3_fSymbol']:
+                                J1_fSymbol_to_base = signal['balance']
+                        if status['server'] == signal['J2_server']:
+                            J2_fSymbol_to_base = 0
+                            if status['asset'] == signal['V3_fSymbol']:
+                                J2_fSymbol_to_base = signal['balance']
+                    orders = self._calcSymbolAfterTradeOrders(signal['J1_server'], signal['V3_fSymbol'], signal['V3_tSymbol'], J1_fSymbol_to_base, 0, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                    orders = self._calcSymbolAfterTradeOrders(signal['J2_server'], signal['V3_fSymbol'], signal['V3_tSymbol'], J2_fSymbol_to_base, 0, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                else:
+                    for status in signal['status_assets']:
+                        if status['server'] == signal['J1_server']:
+                            J1_tSymbol_to_base = 0
+                            if status['asset'] == signal['V3_tSymbol']:
+                                J1_tSymbol_to_base = signal['balance']
+                        if status['server'] == signal['J2_server']:
+                            J2_tSymbol_to_base = 0
+                            if status['asset'] == signal['V3_tSymbol']:
+                                J2_tSymbol_to_base = signal['balance']
+                    orders = self._calcSymbolAfterTradeOrders(signal['J1_server'], signal['V3_fSymbol'], signal['V3_tSymbol'], 0, J1_tSymbol_to_base, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+                    orders = self._calcSymbolAfterTradeOrders(signal['J2_server'], signal['V3_fSymbol'], signal['V3_tSymbol'], 0, J2_tSymbol_to_base, group_id, resInfoSymbol, baseCoin)
+                    if not orders == []:
+                        res.extend(orders)
+            # return
+            return res
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc.calcSignalRunTradeOrders: {signal=%s, resInfoSymbol=%s}, exception err=%s" % (
+                signal, 'resInfoSymbol', err)
+            raise CalcException(errStr)
+
 
     def calcStatisticJudgeMarketTickerDis(self, exchange, timeWindow):
         self._logger.debug(

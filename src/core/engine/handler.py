@@ -278,7 +278,7 @@ class Handler(object):
             # 2.1 calc run orders
             isError = True
             while isError and (time.time() - startTime < timeout
-                                      or timeout == 0):
+                               or timeout == 0):
                 runOrders = []
                 isSubError = SIGNAL_MAX_NUM
                 while isSubError > 0 and (time.time() - startTime < timeout
@@ -292,14 +292,15 @@ class Handler(object):
                             err=err, here='2.1 calc run orders'))
                 if isSubError > 0:
                     # rollback:
-                    raise Exception(errStr.substitute(here='2.1 calc run orders'))
+                    raise Exception(
+                        errStr.substitute(here='2.1 calc run orders'))
                 # 2.2 calc runExecOrders
                 runExecOrders = []
                 if not runOrders == []:
                     for order in runOrders:
                         isSubError = SIGNAL_MAX_NUM
-                        while isSubError > 0 and (time.time() - startTime < timeout
-                                                  or timeout == 0):
+                        while isSubError > 0 and (time.time() - startTime <
+                                                  timeout or timeout == 0):
                             try:
                                 isSubError = isSubError - 1
                                 res = db.insertCreatTradeBacktestHistory(
@@ -323,8 +324,9 @@ class Handler(object):
                 if not runExecOrders == []:
                     runExecOrders = pd.DataFrame(runExecOrders)
                     for server in exchange:
-                        orderIDs = runExecOrders[(runExecOrders['server'] == server
-                                                  )]['order_id'].tolist()
+                        orderIDs = runExecOrders[(
+                            runExecOrders['server'] == server
+                        )]['order_id'].tolist()
                         res = db.getTradeBacktestHistoryServerOrder([server],
                                                                     orderIDs)
                         if not res == []:
@@ -348,15 +350,6 @@ class Handler(object):
                         raise Exception(
                             errStr.substitute(here='2.4 update signal status'))
                     print('2. run signals after update:\n%s' % sgn.signals())
-                # 2.5 stop finished signals
-                stopOrders = []
-                isSubError = SIGNAL_MAX_NUM
-                while isSubError > 0 and (time.time() - startTime < timeout
-                                          or timeout == 0):
-                    stopOrders =
-
-                except Exception as err:
-
             ########################################
             # 3. after trade
             # 3.1 calc after orders
