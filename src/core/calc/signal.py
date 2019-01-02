@@ -29,7 +29,7 @@ class Signal(object):
                 id = id + 1
                 if signal['type'] == TYPE_DIS:
                     id_str = str(pid) + str(timeStamp) + str(id)
-                    signal['id'] = TYPE_DIS + str(
+                    signal['id'] = '0x1c' + str(
                         uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                     signal['status_done'] = False
                     signal['status_assets'] = [
@@ -51,7 +51,7 @@ class Signal(object):
                     signal['status_gain'] = 0.0
                 if signal['type'] == TYPE_TRA:
                     id_str = str(pid) + str(timeStamp) + str(id)
-                    signal['id'] = TYPE_TRA + str(
+                    signal['id'] = '0x2c' + str(
                         uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                     signal['status_done'] = False
                     signal['status_assets'] = [{
@@ -69,7 +69,7 @@ class Signal(object):
                     signal['status_gain'] = 0.0
                 if signal['type'] == TYPE_PAIR:
                     id_str = str(pid) + str(timeStamp) + str(id)
-                    signal['id'] = TYPE_PAIR + str(
+                    signal['id'] = '0x3c' + str(
                         uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                     signal['status_done'] = False
                     signal['status_assets'] = [
@@ -327,6 +327,22 @@ class Signal(object):
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.backtestSignalsRunTrade: {resInfoSymbol=%s}, exception err=%s" % (
                 'resInfoSymbol', err)
+            raise CalcException(errStr)
+
+    def backtestSignalsIsRun(self):
+        self._logger.debug(
+            "src.core.calc.signal.Signal.backtestSignalsIsRun")
+        try:
+            if not self._signals:
+                raise Exception("NO SIGNAL ERROR, signals empty.")
+            isRun = False
+            for signal in self._signals:
+                if signal['status_gain'] < signal['base_gain']:
+                    isRun = True
+                    break
+            return isRun
+        except Exception as err:
+            errStr = "src.core.calc.signal.Signal.backtestSignalsIsRun" % err
             raise CalcException(errStr)
 
     def backtestSignalsAfterTrade(self, resInfoSymbol):

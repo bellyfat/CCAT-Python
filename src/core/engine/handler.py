@@ -4,7 +4,6 @@ from itertools import combinations
 from string import Template
 
 import pandas as pd
-
 from src.core.calc.calc import Calc
 from src.core.calc.enums import SIGNAL_MAX_NUM
 from src.core.calc.signal import Signal
@@ -197,6 +196,7 @@ class Handler(object):
             sgn = Signal(signals)
             resInfoSymbol = pd.DataFrame(db.getViewMarketSymbolPairs(exchange))
             # 0. start
+            identify = 0
             startTime = time.time()
             str = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }" % (
                 event.type, event.priority, event.args)
@@ -219,10 +219,12 @@ class Handler(object):
                         err=err, here='1.1 calc pre orders'))
             if isError > 0:
                 raise Exception(errStr.substitute(here='1.1 calc pre orders'))
+            print('1. pre signals preOrders:\n%s' % preOrders)
             # 1.2 calc preExecOrders
             preExecOrders = []
             if not preOrders == []:
                 for order in preOrders:
+                    identify = identify + 1
                     isError = SIGNAL_MAX_NUM
                     while isError > 0:
                         try:
@@ -232,7 +234,7 @@ class Handler(object):
                                 order['tSymbol'], order['ask_or_bid'],
                                 order['price'], order['quantity'],
                                 order['ratio'], order['type'],
-                                order['group_id'])
+                                order['group_id'], identify)
                             isError = 0
                         except Exception as err:
                             self._logger.warn(str + warnStr.substitute(
@@ -243,6 +245,7 @@ class Handler(object):
                     # rollback:
                     raise Exception(
                         errStr.substitute(here='1.2 excute preOrders'))
+            print('1. pre signals preExecOrders:\n%s' % preExecOrders)
             # 1.3 calc preInfoOrders
             preInfoOrders = []
             if not preExecOrders == []:
@@ -254,6 +257,7 @@ class Handler(object):
                                                                 orderIDs)
                     if not res == []:
                         preInfoOrders.extend(res)
+            print('1. pre signals preInfoOrders:\n%s' % preInfoOrders)
             # 1.4 update signals status
             if not preInfoOrders == []:
                 preInfoOrders = pd.DataFrame(preInfoOrders)
@@ -272,13 +276,13 @@ class Handler(object):
 
                     raise Exception(
                         errStr.substitute(here='1.4 update signal status'))
-                print('1. pre signals after update:\n%s' % sgn.signals())
+            print('1. pre signals after update:\n%s' % sgn.signals())
             ########################################
             # 2. run trade
-            # 2.1 calc run orders
             isError = True
             while isError and (time.time() - startTime < timeout
                                or timeout == 0):
+                # 2.1 calc run orders
                 runOrders = []
                 isSubError = SIGNAL_MAX_NUM
                 while isSubError > 0 and (time.time() - startTime < timeout
@@ -294,10 +298,12 @@ class Handler(object):
                     # rollback:
                     raise Exception(
                         errStr.substitute(here='2.1 calc run orders'))
+                print('2. run signals runOrders:\n%s' % runOrders)
                 # 2.2 calc runExecOrders
                 runExecOrders = []
                 if not runOrders == []:
                     for order in runOrders:
+                        identify = identify + 1
                         isSubError = SIGNAL_MAX_NUM
                         while isSubError > 0 and (time.time() - startTime <
                                                   timeout or timeout == 0):
@@ -308,7 +314,7 @@ class Handler(object):
                                     order['tSymbol'], order['ask_or_bid'],
                                     order['price'], order['quantity'],
                                     order['ratio'], order['type'],
-                                    order['group_id'])
+                                    order['group_id'], identify)
                                 isSubError = 0
                             except Exception as err:
                                 self._logger.warn(str + warnStr.substitute(
@@ -319,6 +325,7 @@ class Handler(object):
                         # rollback:
                         raise Exception(
                             errStr.substitute(here='2.2 execute runOrders'))
+                print('2. run signals runExecOrders:\n%s' % runExecOrders)
                 # 2.3 calc runInfoOrders
                 runInfoOrders = []
                 if not runExecOrders == []:
@@ -331,6 +338,7 @@ class Handler(object):
                                                                     orderIDs)
                         if not res == []:
                             runInfoOrders.extend(res)
+                print('2. run signals runInfoOrders:\n%s' % runInfoOrders)
                 # 2.4 update signals status
                 if not runInfoOrders == []:
                     runInfoOrders = pd.DataFrame(runInfoOrders)
@@ -349,7 +357,9 @@ class Handler(object):
                         # rollback:
                         raise Exception(
                             errStr.substitute(here='2.4 update signal status'))
-                    print('2. run signals after update:\n%s' % sgn.signals())
+                print('2. run signals after update:\n%s' % sgn.signals())
+                # 2.5 update isError
+                isError = sgn.backtestSignalsIsRun()
             ########################################
             # 3. after trade
             # 3.1 calc after orders
@@ -370,6 +380,7 @@ class Handler(object):
             afterExecOrders = []
             if not afterOrders == []:
                 for order in afterOrders:
+                    identify = identify + 1
                     isError = SIGNAL_MAX_NUM
                     while isError > 0:
                         try:
@@ -379,7 +390,7 @@ class Handler(object):
                                 order['tSymbol'], order['ask_or_bid'],
                                 order['price'], order['quantity'],
                                 order['ratio'], order['type'],
-                                order['group_id'])
+                                order['group_id'], identify)
                             isError = 0
                         except Exception as err:
                             self._logger.warn(str + warnStr.substitute(

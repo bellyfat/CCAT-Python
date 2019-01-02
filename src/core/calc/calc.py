@@ -5,7 +5,6 @@ from decimal import ROUND_DOWN
 from itertools import combinations
 
 import pandas as pd
-
 from src.core.calc.enums import CALC_ZERO_NUMBER
 from src.core.coin.binance import Binance
 from src.core.coin.enums import *
@@ -465,7 +464,11 @@ class Calc(object):
                         # print('in type I: tra, traTrade=%s' % traTrade)
                         sum_base = 0
                         for trade in traTrade:
-                            sum_base = sum_base + trade['size']
+                            quantity = num_to_precision(
+                                trade['size'],
+                                size_precision,
+                                rounding=ROUND_DOWN)
+                            sum_base = sum_base + float(quantity)
                         price_precision = 0
                         size_precision = 0
                         size_min = 0
@@ -752,6 +755,7 @@ class Calc(object):
             if ask_server == self._Huobi_exchange:
                 ask_res = self._Huobi.getMarketOrderbookTicker(
                     fSymbol, tSymbol, aggDepth)
+            # forward
             # calc type dis price and size
             bid_price = float(bid_res['bid_one_price'])
             bid_size = float(bid_res['bid_one_size'])
@@ -759,12 +763,22 @@ class Calc(object):
             ask_size = float(ask_res['ask_one_size'])
             gain_ratio = (bid_price - ask_price - bid_price * bid_fee_ratio -
                           ask_price * ask_fee_ratio) / ask_price
-            # forward
             print('dis forward gain_ratio: %s' % gain_ratio)
             if gain_ratio > forward_ratio:
-                bid_size = min(bid_fSymbol_free / bid_price, bid_size)
-                ask_size = min(ask_tSymbol_free / ask_price, ask_size)
+                bid_size = min(bid_fSymbol_free, bid_size)
+                ask_size = min(
+                    ask_tSymbol_free * (1 - ask_fee_ratio) / ask_price,
+                    ask_size)
                 order_size = min(bid_size, ask_size)
+                print('dis forward bid_fSymbol_free: %s' % bid_fSymbol_free)
+                print('dis forward ask_tSymbol_free: %s' % ask_tSymbol_free)
+                print('dis forward bid_price: %s' % bid_price)
+                print('dis forward ask_price: %s' % ask_price)
+                print('dis forward order_size: %s' % order_size)
+                print('dis forward bid_size_min: %s' % bid_size_min)
+                print('dis forward ask_size_min: %s' % ask_size_min)
+                print('dis forward bid_min_notional: %s' % bid_min_notional)
+                print('dis forward ask_min_notional: %s' % ask_min_notional)
                 if order_size > 0:
                     if order_size >= bid_size_min and order_size >= ask_size_min:
                         if bid_price * order_size > bid_min_notional and ask_price * order_size > ask_min_notional:
@@ -807,11 +821,29 @@ class Calc(object):
                                 "group_id": group_id
                             })
             # backward
+            # calc type dis price and size
+            bid_price = float(bid_res['ask_one_price'])
+            bid_size = float(bid_res['ask_one_size'])
+            ask_price = float(ask_res['bid_one_price'])
+            ask_size = float(ask_res['bid_one_size'])
+            gain_ratio = (ask_price - bid_price - bid_price * bid_fee_ratio -
+                          ask_price * ask_fee_ratio) / bid_price
             print('dis backward gain_ratio: %s' % gain_ratio)
             if gain_ratio < backward_ratio:
-                bid_size = min(bid_tSymbol_free / bid_price, bid_size)
-                ask_size = min(ask_fSymbol_free / ask_price, ask_size)
+                bid_size = min(
+                    bid_tSymbol_free * (1 - bid_fee_ratio) / bid_price,
+                    bid_size)
+                ask_size = min(ask_fSymbol_free, ask_size)
                 order_size = min(bid_size, ask_size)
+                print('dis backward bid_tSymbol_free: %s' % bid_tSymbol_free)
+                print('dis backward ask_fSymbol_free: %s' % ask_fSymbol_free)
+                print('dis backward bid_price: %s' % bid_price)
+                print('dis backward ask_price: %s' % ask_price)
+                print('dis backward order_size: %s' % order_size)
+                print('dis backward bid_size_min: %s' % bid_size_min)
+                print('dis backward ask_size_min: %s' % ask_size_min)
+                print('dis backward bid_min_notional: %s' % bid_min_notional)
+                print('dis backward ask_min_notional: %s' % ask_min_notional)
                 if order_size > 0:
                     if order_size >= bid_size_min and order_size >= ask_size_min:
                         if bid_price * order_size >= bid_min_notional and ask_price * order_size >= ask_min_notional:
@@ -1842,8 +1874,16 @@ class Calc(object):
                         # print('in type I: tra, traTrade=%s' % traTrade)
                         sum_base = 0
                         for trade in traTrade:
-                            sum_base = sum_base + trade['price'] * trade[
-                                'size'] * (1 - ratio)
+                            price = num_to_precision(
+                                trade['price'],
+                                price_precision,
+                                rounding=ROUND_DOWN)
+                            quantity = num_to_precision(
+                                trade['size'],
+                                size_precision,
+                                rounding=ROUND_DOWN)
+                            sum_base = sum_base + float(price) * float(
+                                quantity) * (1 - ratio)
                         price_precision = 0
                         size_precision = 0
                         size_min = 0
@@ -1974,7 +2014,8 @@ class Calc(object):
                     # calc orders
                     # print('in type II: de, tSymbol_to_base=%s, fee_ratio=%s' % (tSymbol_to_base, fee_ratio))
                     deTradeSize = tSymbol_to_base
-                    deTradeNotional = tSymbol_to_base * float(res['bid_price_size'][0][0])
+                    deTradeNotional = tSymbol_to_base * float(
+                        res['bid_price_size'][0][0])
                     # print('in type II: de, deTradeNotional=%s, min_notional=%s' % (deTradeNotional, min_notional))
                     # print('in type II: de, deTradeSize=%s, size_min=%s' % (deTradeSize, size_min))
                     if deTradeNotional < min_notional - CALC_ZERO_NUMBER or deTradeSize < size_min - CALC_ZERO_NUMBER:

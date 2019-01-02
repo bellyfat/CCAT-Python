@@ -1578,11 +1578,12 @@ class DB(object):
                                    quantity,
                                    ratio='',
                                    type=CCAT_ORDER_TYPE_LIMIT,
-                                   group_id='NULL'):
+                                   group_id='NULL',
+                                   identify=0):
         self._logger.debug(
-            "src.core.db.db.DB.insertCreatTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s, group_id=%s }"
+            "src.core.db.db.DB.insertCreatTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s, group_id=%s, identify=%s}"
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type,
-               group_id))
+               group_id, identify))
         try:
             result = []
             TEMP_SQL_TITLE = INSERT_TRADE_BACKTEST_HISTORY_SQL
@@ -1591,7 +1592,7 @@ class DB(object):
             # Okex
             if exchange == "all" or self._Okex_exchange in exchange:
                 timeStamp = utcnow_timestamp()
-                id_str = 'Okex' + str(pid) + str(timeStamp)
+                id_str = 'Okex' + str(pid) + str(timeStamp) + str(identify)
                 order_id = '0x1a-' + str(uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                 status = 'filled'
                 if ratio == '':
@@ -1606,7 +1607,7 @@ class DB(object):
             # Binance
             if exchange == "all" or self._Binance_exchange in exchange:
                 timeStamp = utcnow_timestamp()
-                id_str = 'Binance' + str(pid) + str(timeStamp)
+                id_str = 'Binance' + str(pid) + str(timeStamp) + str(identify)
                 order_id = '0x2a-' + str(uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                 status = 'filled'
                 if ratio == '':
@@ -1623,7 +1624,7 @@ class DB(object):
             # Huobi
             if exchange == "all" or self._Huobi_exchange in exchange:
                 timeStamp = utcnow_timestamp()
-                id_str = 'Huobi' + str(pid) + str(timeStamp)
+                id_str = 'Huobi' + str(pid) + str(timeStamp) + str(identify)
                 order_id = '0x3a-' + str(uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                 status = 'filled'
                 if ratio == '':
