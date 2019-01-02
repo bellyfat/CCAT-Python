@@ -319,7 +319,8 @@ class Signal(object):
                     if not orders == []:
                         res.extend(orders)
                 if signal['status_gain'] >= signal['base_gain']:
-                    orders = calc.calcSignalRunTradeOrders()
+                    orders = calc.calcSignalAfterTradeOrders(
+                        signal, resInfoSymbol, SIGNAL_BASECOIN)
                     if not orders == []:
                         res.extend(orders)
             return res
@@ -338,8 +339,10 @@ class Signal(object):
             calc = Calc()
             res = []
             for signal in self._signals:
-                orders = calc.calcSignalRunTradeOrders()
-
+                orders = calc.calcSignalAfterTradeOrders(signal, resInfoSymbol,
+                                                       SIGNAL_BASECOIN)
+                if not orders == []:
+                    res.extend(orders)
             return res
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.backtestSignalsAfterTrade: {resInfoSymbol=%s}, exception err=%s" % (
