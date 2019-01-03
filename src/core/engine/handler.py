@@ -376,6 +376,7 @@ class Handler(object):
             if isError > 0:
                 raise Exception(
                     errStr.substitute(here='3.1 calc after orders'))
+            print('3. after signals afterOrders:\n%s' % afterOrders)
             # 3.2 calc afterExecOrders
             afterExecOrders = []
             if not afterOrders == []:
@@ -401,6 +402,7 @@ class Handler(object):
                     # rollback:
                     raise Exception(
                         errStr.substitute(here='3.2 excute preOrders'))
+            print('3. after signals afterExecOrders:\n%s' % afterExecOrders)
             # 3.3 calc afterInfoOrders
             afterInfoOrders = []
             if not afterExecOrders == []:
@@ -412,6 +414,7 @@ class Handler(object):
                                                                 orderIDs)
                     if not res == []:
                         preInfoOrders.extend(res)
+            print('3. after signals afterInfoOrders:\n%s' % afterInfoOrders)
             # 3.4 update signals status
             if not afterInfoOrders == []:
                 afterInfoOrders = pd.DataFrame(afterInfoOrders)
@@ -429,8 +432,7 @@ class Handler(object):
                     # rollback:
                     raise Exception(
                         errStr.substitute(here='3.4 update signal status'))
-                print('3. after signals after update:\n%s' % sgn.signals())
-
+            print('3. after signals after update:\n%s' % sgn.signals())
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, err)

@@ -3,8 +3,8 @@
   "fSymbol": "BTC",
   "tSymbol": "USDT",
   "ask_or_bid": "bid",
-  "price": "3800.3704",
-  "quantity": "0.00394106",
+  "price": "3825.9993",
+  "quantity": "0.00391466",
   "ratio": 0.0015,
   "type": "limit",
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
@@ -13,112 +13,83 @@
   "fSymbol": "ICX",
   "tSymbol": "BTC",
   "ask_or_bid": "bid",
-  "price": "0.00006374",
-  "quantity": "4.4692",
+  "price": "0.00006597",
+  "quantity": "59.2509",
   "ratio": 0.0015,
   "type": "limit",
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
 }, {
-  "server": "okex",
-  "fSymbol": "ICX",
-  "tSymbol": "BTC",
-  "ask_or_bid": "bid",
-  "price": "0.00006393",
-  "quantity": "57.0981",
-  "ratio": 0.0015,
-  "type": "limit",
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
-}, {
-  "server": "binance",
+  "server": "huobi",
   "fSymbol": "BTC",
   "tSymbol": "USDT",
   "ask_or_bid": "bid",
-  "price": "3798.17",
-  "quantity": "0.003945",
-  "ratio": 0.001,
+  "price": "3825.79",
+  "quantity": "0.0039",
+  "ratio": 0.002,
   "type": "limit",
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
 }]
 1. pre signals preExecOrders: [{
   "server": "okex",
-  "order_id": "0x1a-40b23afc-aa54-3445-a343-453ed0ae886f",
+  "order_id": "0x1a-e96564ce-17b0-3bc4-b9b8-4dbe22fc0278",
   "status": "filled"
 }, {
   "server": "okex",
-  "order_id": "0x1a-609aa549-ec60-3856-af42-39f4ef3369ef",
+  "order_id": "0x1a-db898cbb-0bdb-327f-93b9-a62baf2e434a",
   "status": "filled"
 }, {
-  "server": "okex",
-  "order_id": "0x1a-3897ef07-a151-3ed0-8248-0cbfe31c79f3",
-  "status": "filled"
-}, {
-  "server": "binance",
-  "order_id": "0x2a-299c7dfd-634f-3167-9ff9-fbbe0bc1af1c",
+  "server": "huobi",
+  "order_id": "0x3a-477e73a0-dc92-3ba2-a28b-e32560f125ee",
   "status": "filled"
 }]
 1. pre signals preInfoOrders: [{
   "server": "okex",
-  "timeStamp": 1546473155808,
-  "order_id": "0x1a-3897ef07-a151-3ed0-8248-0cbfe31c79f3",
+  "timeStamp": 1546507444281,
+  "order_id": "0x1a-db898cbb-0bdb-327f-93b9-a62baf2e434a",
   "status": "filled",
   "type": "limit",
   "fSymbol": "ICX",
   "tSymbol": "BTC",
   "ask_or_bid": "bid",
-  "ask_bid_price": 6.393e-05,
-  "ask_bid_size": 57.0981,
-  "filled_price": 6.393e-05,
-  "filled_size": 57.0981,
-  "fee": 5.475422299500001e-06,
+  "ask_bid_price": 6.597e-05,
+  "ask_bid_size": 59.2509,
+  "filled_price": 6.597e-05,
+  "filled_size": 59.2509,
+  "fee": 5.863172809499999e-06,
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
 }, {
   "server": "okex",
-  "timeStamp": 1546473155807,
-  "order_id": "0x1a-40b23afc-aa54-3445-a343-453ed0ae886f",
+  "timeStamp": 1546507444228,
+  "order_id": "0x1a-e96564ce-17b0-3bc4-b9b8-4dbe22fc0278",
   "status": "filled",
   "type": "limit",
   "fSymbol": "BTC",
   "tSymbol": "USDT",
   "ask_or_bid": "bid",
-  "ask_bid_price": 3800.3704,
-  "ask_bid_size": 0.00394106,
-  "filled_price": 3800.3704,
-  "filled_size": 0.00394106,
-  "fee": 0.022466231652935997,
+  "ask_bid_price": 3825.9993,
+  "ask_bid_size": 0.00391466,
+  "filled_price": 3825.9993,
+  "filled_size": 0.00391466,
+  "fee": 0.022466229629607003,
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
 }, {
-  "server": "okex",
-  "timeStamp": 1546473155808,
-  "order_id": "0x1a-609aa549-ec60-3856-af42-39f4ef3369ef",
-  "status": "filled",
-  "type": "limit",
-  "fSymbol": "ICX",
-  "tSymbol": "BTC",
-  "ask_or_bid": "bid",
-  "ask_bid_price": 6.374e-05,
-  "ask_bid_size": 4.4692,
-  "filled_price": 6.374e-05,
-  "filled_size": 4.4692,
-  "fee": 4.2730021199999994e-07,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
-}, {
-  "server": "binance",
-  "timeStamp": 1546473155808,
-  "order_id": "0x2a-299c7dfd-634f-3167-9ff9-fbbe0bc1af1c",
+  "server": "huobi",
+  "timeStamp": 1546507444282,
+  "order_id": "0x3a-477e73a0-dc92-3ba2-a28b-e32560f125ee",
   "status": "filled",
   "type": "limit",
   "fSymbol": "BTC",
   "tSymbol": "USDT",
   "ask_or_bid": "bid",
-  "ask_bid_price": 3798.17,
-  "ask_bid_size": 0.003945,
-  "filled_price": 3798.17,
-  "filled_size": 0.003945,
-  "fee": 0.01498378065,
+  "ask_bid_price": 3825.79,
+  "ask_bid_size": 0.0039,
+  "filled_price": 3825.79,
+  "filled_size": 0.0039,
+  "fee": 0.029841161999999997,
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
 }]
 1. pre signals after update: [{
-  "ask_server": "binance",
+  "ask_server": "huobi",
   "backward_ratio": 0.1,
   "base_gain": 0.01,
   "base_start": 30.0,
@@ -127,126 +98,126 @@
   "fSymbol": "ICX",
   "forward_ratio": -0.1,
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
+  "id": "0x1cbeb745bd-8bfa-34f3-92ad-dc8ecacfe2fd",
   "status_assets": [{
-    "server": "binance",
+    "server": "huobi",
     "asset": "BTC",
-    "balance": 0.003945,
-    "free": 0.003945,
+    "balance": 0.0039,
+    "free": 0.0039,
     "locked": 0.0
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
+    "balance": 0.04957783800000115,
+    "free": 0.04957783800000115,
+    "locked": 3.122502256758253e-16
   }, {
     "server": "okex",
     "asset": "BTC",
-    "balance": 8.936488499720896e-09,
-    "free": 8.936488499720896e-09,
-    "locked": 7.591532789766667e-20
+    "balance": 1.4954190500487963e-08,
+    "free": 1.4954190500487963e-08,
+    "locked": 2.659683454378503e-19
   }, {
     "server": "okex",
     "asset": "ICX",
-    "balance": 61.5673,
-    "free": 61.5673,
+    "balance": 59.2509,
+    "free": 59.2509,
     "locked": 0.0
   }, {
     "server": "okex",
     "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
+    "balance": 4.735063239102999e-05,
+    "free": 4.735063239102999e-05,
+    "locked": 4.2327252813834093e-16
   }],
   "status_done": False,
-  "status_gain": -0.007393331209700686,
+  "status_gain": -0.006894997689872895,
   "tSymbol": "BTC",
   "type": "dis"
 }]
-dis forward gain_ratio: -0.008760188087774446
-dis forward bid_fSymbol_free: 61.5673
-dis forward ask_tSymbol_free: 0.003945
-dis forward bid_price: 6.34e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 61.5673
+dis forward gain_ratio: -0.027517371937639222
+dis forward bid_fSymbol_free: 59.2509
+dis forward ask_tSymbol_free: 0.0039
+dis forward bid_price: 6.573e-05
+dis forward ask_price: 6.735e-05
+dis forward order_size: 10.0
 dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
+dis forward ask_size_min: 0.1
 dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 8.936488499720896e-09
+dis forward ask_min_notional: 1e-12
+dis backward gain_ratio: 0.014956268000606416
+dis backward bid_tSymbol_free: 1.4954190500487963e-08
 dis backward ask_fSymbol_free: 0
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
+dis backward bid_price: 6.597e-05
+dis backward ask_price: 6.719e-05
 dis backward order_size: 0
 dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
+dis backward ask_size_min: 0.1
 dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
+dis backward ask_min_notional: 1e-12
 2. run signals runOrders: [{
   "server": "okex",
   "fSymbol": "ICX",
   "tSymbol": "BTC",
   "ask_or_bid": "ask",
-  "price": "0.00006340",
-  "quantity": "61.5673",
+  "price": "0.00006573",
+  "quantity": "10.0000",
   "ratio": 0.0015,
   "type": "limit",
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
 }, {
-  "server": "binance",
+  "server": "huobi",
   "fSymbol": "ICX",
   "tSymbol": "BTC",
   "ask_or_bid": "bid",
-  "price": "0.0000638",
-  "quantity": "61.56",
-  "ratio": 0.001,
+  "price": "0.00006735",
+  "quantity": "10.0000",
+  "ratio": 0.002,
   "type": "limit",
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
 }]
 2. run signals runExecOrders: [{
   "server": "okex",
-  "order_id": "0x1a-5287b501-ee8f-3b29-8b8f-7739bec7227f",
+  "order_id": "0x1a-c2b8ae94-e0d1-3628-ac0f-5a4997fc618c",
   "status": "filled"
 }, {
-  "server": "binance",
-  "order_id": "0x2a-16e6b937-872d-3264-881c-0532fcd6bf79",
+  "server": "huobi",
+  "order_id": "0x3a-6bdf63fa-f335-32e5-ae63-0e60e53b18ad",
   "status": "filled"
 }]
 2. run signals runInfoOrders: [{
   "server": "okex",
-  "timeStamp": 1546473163917,
-  "order_id": "0x1a-5287b501-ee8f-3b29-8b8f-7739bec7227f",
+  "timeStamp": 1546507448892,
+  "order_id": "0x1a-c2b8ae94-e0d1-3628-ac0f-5a4997fc618c",
   "status": "filled",
   "type": "limit",
   "fSymbol": "ICX",
   "tSymbol": "BTC",
   "ask_or_bid": "ask",
-  "ask_bid_price": 6.34e-05,
-  "ask_bid_size": 61.5673,
-  "filled_price": 6.34e-05,
-  "filled_size": 61.5673,
-  "fee": 5.85505023e-06,
+  "ask_bid_price": 6.573e-05,
+  "ask_bid_size": 10.0,
+  "filled_price": 6.573e-05,
+  "filled_size": 10.0,
+  "fee": 9.859499999999999e-07,
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
 }, {
-  "server": "binance",
-  "timeStamp": 1546473163918,
-  "order_id": "0x2a-16e6b937-872d-3264-881c-0532fcd6bf79",
+  "server": "huobi",
+  "timeStamp": 1546507448910,
+  "order_id": "0x3a-6bdf63fa-f335-32e5-ae63-0e60e53b18ad",
   "status": "filled",
   "type": "limit",
   "fSymbol": "ICX",
   "tSymbol": "BTC",
   "ask_or_bid": "bid",
-  "ask_bid_price": 6.38e-05,
-  "ask_bid_size": 61.56,
-  "filled_price": 6.38e-05,
-  "filled_size": 61.56,
-  "fee": 3.927528e-06,
+  "ask_bid_price": 6.735e-05,
+  "ask_bid_size": 10.0,
+  "filled_price": 6.735e-05,
+  "filled_size": 10.0,
+  "fee": 1.347e-06,
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
 }]
 2. run signals after update: [{
-  "ask_server": "binance",
+  "ask_server": "huobi",
   "backward_ratio": 0.1,
   "base_gain": 0.01,
   "base_start": 30.0,
@@ -255,74 +226,190 @@ dis backward ask_min_notional: 0.001
   "fSymbol": "ICX",
   "forward_ratio": -0.1,
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
+  "id": "0x1cbeb745bd-8bfa-34f3-92ad-dc8ecacfe2fd",
   "status_assets": [{
-    "server": "binance",
+    "server": "huobi",
     "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
+    "balance": 0.0032251529999999997,
+    "free": 0.0032251529999999997,
+    "locked": -4.1504614415460717e-20
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
+    "balance": 10.0,
+    "free": 10.0,
     "locked": 0.0
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
+    "balance": 0.04957783800000115,
+    "free": 0.04957783800000115,
+    "locked": 3.122502256758253e-16
   }, {
     "server": "okex",
     "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
+    "balance": 0.0006563290041905005,
+    "free": 0.0006563290041905005,
+    "locked": 2.659683454378503e-19
   }, {
     "server": "okex",
     "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
+    "balance": 49.2509,
+    "free": 49.2509,
     "locked": 0.0
   }, {
     "server": "okex",
     "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
+    "balance": 4.735063239102999e-05,
+    "free": 4.735063239102999e-05,
+    "locked": 4.2327252813834093e-16
   }],
   "status_done": False,
-  "status_gain": -0.01095910734147978,
+  "status_gain": -0.007459144045085253,
   "tSymbol": "BTC",
   "type": "dis"
 }]
-dis forward gain_ratio: -0.008760188087774446
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.34e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
+dis forward gain_ratio: -0.0269243504083147
+dis forward bid_fSymbol_free: 49.2509
+dis forward ask_tSymbol_free: 0.0032251529999999997
+dis forward bid_price: 6.577e-05
+dis forward ask_price: 6.735e-05
+dis forward order_size: 47.790685879732735
 dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
+dis forward ask_size_min: 0.1
 dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
-dis backward order_size: 4.4692
+dis forward ask_min_notional: 1e-12
+dis backward gain_ratio: 0.01634486945962355
+dis backward bid_tSymbol_free: 0.0006563290041905005
+dis backward ask_fSymbol_free: 10.0
+dis backward bid_price: 6.588e-05
+dis backward ask_price: 6.719e-05
+dis backward order_size: 9.947548735340236
 dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
+dis backward ask_size_min: 0.1
 dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
+dis backward ask_min_notional: 1e-12
+2. run signals runOrders: [{
+  "server": "okex",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "price": "0.00006577",
+  "quantity": "47.7906",
+  "ratio": 0.0015,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "price": "0.00006735",
+  "quantity": "47.7906",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "okex",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "price": "0.00006588",
+  "quantity": "9.9475",
+  "ratio": 0.0015,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "price": "0.00006719",
+  "quantity": "9.9475",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}]
+2. run signals runExecOrders: [{
+  "server": "okex",
+  "order_id": "0x1a-b22353f9-d00c-394d-92f5-230487deb842",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-81e05c60-5778-3253-b67b-86a03bf52e22",
+  "status": "filled"
+}, {
+  "server": "okex",
+  "order_id": "0x1a-93d353a7-e3c1-37ee-ab6c-eb07c0d8db4c",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-484102f1-a633-39d5-8f72-b89e855b3bee",
+  "status": "filled"
+}]
+2. run signals runInfoOrders: [{
+  "server": "okex",
+  "timeStamp": 1546507454728,
+  "order_id": "0x1a-93d353a7-e3c1-37ee-ab6c-eb07c0d8db4c",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "ask_bid_price": 6.588e-05,
+  "ask_bid_size": 9.9475,
+  "filled_price": 6.588e-05,
+  "filled_size": 9.9475,
+  "fee": 9.8301195e-07,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "okex",
+  "timeStamp": 1546507454710,
+  "order_id": "0x1a-b22353f9-d00c-394d-92f5-230487deb842",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "ask_bid_price": 6.577e-05,
+  "ask_bid_size": 47.7906,
+  "filled_price": 6.577e-05,
+  "filled_size": 47.7906,
+  "fee": 4.714781643e-06,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546507454738,
+  "order_id": "0x3a-484102f1-a633-39d5-8f72-b89e855b3bee",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "ask_bid_price": 6.719e-05,
+  "ask_bid_size": 9.9475,
+  "filled_price": 6.719e-05,
+  "filled_size": 9.9475,
+  "fee": 1.3367450499999998e-06,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546507454728,
+  "order_id": "0x3a-81e05c60-5778-3253-b67b-86a03bf52e22",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "ask_bid_price": 6.735e-05,
+  "ask_bid_size": 47.7906,
+  "filled_price": 6.735e-05,
+  "filled_size": 47.7906,
+  "fee": 6.4373938200000004e-06,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}]
 2. run signals after update: [{
-  "ask_server": "binance",
+  "ask_server": "huobi",
   "backward_ratio": 0.1,
   "base_gain": 0.01,
   "base_start": 30.0,
@@ -331,74 +418,190 @@ dis backward ask_min_notional: 0.001
   "fSymbol": "ICX",
   "forward_ratio": -0.1,
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
+  "id": "0x1cbeb745bd-8bfa-34f3-92ad-dc8ecacfe2fd",
   "status_assets": [{
-    "server": "binance",
+    "server": "huobi",
     "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
+    "balance": 0.0006670544761299998,
+    "free": 0.0006670544761299998,
+    "locked": -2.31239994600424e-19
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
+    "balance": 47.8431,
+    "free": 47.8431,
     "locked": 0.0
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
+    "balance": 0.04957783800000115,
+    "free": 0.04957783800000115,
+    "locked": 3.122502256758253e-16
   }, {
     "server": "okex",
     "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
+    "balance": 0.0031384776725975005,
+    "free": 0.0031384776725975005,
+    "locked": 2.56650983018053e-19
   }, {
     "server": "okex",
     "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
+    "balance": 11.407800000000002,
+    "free": 11.407800000000002,
     "locked": 0.0
   }, {
     "server": "okex",
     "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
+    "balance": 4.735063239102999e-05,
+    "free": 4.735063239102999e-05,
+    "locked": 4.2327252813834093e-16
   }],
   "status_done": False,
-  "status_gain": -0.01095910734147978,
+  "status_gain": -0.010271157963097011,
   "tSymbol": "BTC",
   "type": "dis"
 }]
-dis forward gain_ratio: -0.007195141065830834
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.35e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
+dis forward gain_ratio: -0.02737266112266122
+dis forward bid_fSymbol_free: 11.407800000000002
+dis forward ask_tSymbol_free: 0.0006670544761299998
+dis forward bid_price: 6.573e-05
+dis forward ask_price: 6.734e-05
+dis forward order_size: 9.885957338546774
 dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
+dis forward ask_size_min: 0.1
 dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
-dis backward order_size: 4.4692
+dis forward ask_min_notional: 1e-12
+dis backward gain_ratio: 0.016041894353369706
+dis backward bid_tSymbol_free: 0.0031384776725975005
+dis backward ask_fSymbol_free: 47.8431
+dis backward bid_price: 6.588e-05
+dis backward ask_price: 6.717e-05
+dis backward order_size: 47.56784997098671
 dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
+dis backward ask_size_min: 0.1
 dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
+dis backward ask_min_notional: 1e-12
+2. run signals runOrders: [{
+  "server": "okex",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "price": "0.00006573",
+  "quantity": "9.8859",
+  "ratio": 0.0015,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "price": "0.00006734",
+  "quantity": "9.8859",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "okex",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "price": "0.00006588",
+  "quantity": "47.5678",
+  "ratio": 0.0015,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "price": "0.00006717",
+  "quantity": "47.5678",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}]
+2. run signals runExecOrders: [{
+  "server": "okex",
+  "order_id": "0x1a-0a24cc9c-10a4-3441-9ab3-474230d37719",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-0f578169-403b-31b2-bf9f-7a7ae24a9466",
+  "status": "filled"
+}, {
+  "server": "okex",
+  "order_id": "0x1a-e8d6aabd-f210-3c7d-be6f-ae24e93a51e1",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-c1e7b674-07a8-3dd1-a657-d440a71f8a2f",
+  "status": "filled"
+}]
+2. run signals runInfoOrders: [{
+  "server": "okex",
+  "timeStamp": 1546507460478,
+  "order_id": "0x1a-0a24cc9c-10a4-3441-9ab3-474230d37719",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "ask_bid_price": 6.573e-05,
+  "ask_bid_size": 9.8859,
+  "filled_price": 6.573e-05,
+  "filled_size": 9.8859,
+  "fee": 9.747003104999998e-07,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "okex",
+  "timeStamp": 1546507460494,
+  "order_id": "0x1a-e8d6aabd-f210-3c7d-be6f-ae24e93a51e1",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "ask_bid_price": 6.588e-05,
+  "ask_bid_size": 47.5678,
+  "filled_price": 6.588e-05,
+  "filled_size": 47.5678,
+  "fee": 4.700649996e-06,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546507460488,
+  "order_id": "0x3a-0f578169-403b-31b2-bf9f-7a7ae24a9466",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "ask_bid_price": 6.734e-05,
+  "ask_bid_size": 9.8859,
+  "filled_price": 6.734e-05,
+  "filled_size": 9.8859,
+  "fee": 1.331433012e-06,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546507460494,
+  "order_id": "0x3a-c1e7b674-07a8-3dd1-a657-d440a71f8a2f",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "ask_bid_price": 6.717e-05,
+  "ask_bid_size": 47.5678,
+  "filled_price": 6.717e-05,
+  "filled_size": 47.5678,
+  "fee": 6.390258251999999e-06,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}]
 2. run signals after update: [{
-  "ask_server": "binance",
+  "ask_server": "huobi",
   "backward_ratio": 0.1,
   "base_gain": 0.01,
   "base_start": 30.0,
@@ -407,74 +610,190 @@ dis backward ask_min_notional: 0.001
   "fSymbol": "ICX",
   "forward_ratio": -0.1,
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
+  "id": "0x1cbeb745bd-8bfa-34f3-92ad-dc8ecacfe2fd",
   "status_assets": [{
-    "server": "binance",
+    "server": "huobi",
     "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
+    "balance": 0.0031887454048659994,
+    "free": 0.0031887454048659994,
+    "locked": -2.4521603823011995e-19
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
+    "balance": 10.161200000000001,
+    "free": 10.161200000000001,
     "locked": 0.0
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
+    "balance": 0.04957783800000115,
+    "free": 0.04957783800000115,
+    "locked": 3.122502256758253e-16
   }, {
     "server": "okex",
     "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
+    "balance": 0.0006488358652910003,
+    "free": 0.0006488358652910003,
+    "locked": 2.659683454378503e-19
   }, {
     "server": "okex",
     "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
+    "balance": 49.0897,
+    "free": 49.0897,
     "locked": 0.0
   }, {
     "server": "okex",
     "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
+    "balance": 4.735063239102999e-05,
+    "free": 4.735063239102999e-05,
+    "locked": 4.2327252813834093e-16
   }],
   "status_done": False,
-  "status_gain": -0.01095910734147978,
+  "status_gain": -0.012881662148485873,
   "tSymbol": "BTC",
   "type": "dis"
 }]
-dis forward gain_ratio: -0.008760188087774446
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.34e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
+dis forward gain_ratio: -0.02737266112266122
+dis forward bid_fSymbol_free: 49.0897
+dis forward ask_tSymbol_free: 0.0031887454048659994
+dis forward bid_price: 6.573e-05
+dis forward ask_price: 6.734e-05
+dis forward order_size: 10.0
 dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
+dis forward ask_size_min: 0.1
 dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
-dis backward order_size: 4.4692
+dis forward ask_min_notional: 1e-12
+dis backward gain_ratio: 0.016041894353369706
+dis backward bid_tSymbol_free: 0.0006488358652910003
+dis backward ask_fSymbol_free: 10.161200000000001
+dis backward bid_price: 6.588e-05
+dis backward ask_price: 6.717e-05
+dis backward order_size: 9.833980138024648
 dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
+dis backward ask_size_min: 0.1
 dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
+dis backward ask_min_notional: 1e-12
+2. run signals runOrders: [{
+  "server": "okex",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "price": "0.00006573",
+  "quantity": "10.0000",
+  "ratio": 0.0015,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "price": "0.00006734",
+  "quantity": "10.0000",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "okex",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "price": "0.00006588",
+  "quantity": "9.8339",
+  "ratio": 0.0015,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "price": "0.00006717",
+  "quantity": "9.8339",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}]
+2. run signals runExecOrders: [{
+  "server": "okex",
+  "order_id": "0x1a-126a8869-794b-312e-99b0-b7d8124aa27f",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-97b6e14d-113c-3e4f-a685-44db8ee8c136",
+  "status": "filled"
+}, {
+  "server": "okex",
+  "order_id": "0x1a-a25222e9-37fc-3f92-8391-85e6d261309e",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-dc6b7ebc-65c9-3e27-b010-ab2e29865c29",
+  "status": "filled"
+}]
+2. run signals runInfoOrders: [{
+  "server": "okex",
+  "timeStamp": 1546507465900,
+  "order_id": "0x1a-126a8869-794b-312e-99b0-b7d8124aa27f",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "ask_bid_price": 6.573e-05,
+  "ask_bid_size": 10.0,
+  "filled_price": 6.573e-05,
+  "filled_size": 10.0,
+  "fee": 9.859499999999999e-07,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "okex",
+  "timeStamp": 1546507465903,
+  "order_id": "0x1a-a25222e9-37fc-3f92-8391-85e6d261309e",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "ask_bid_price": 6.588e-05,
+  "ask_bid_size": 9.8339,
+  "filled_price": 6.588e-05,
+  "filled_size": 9.8339,
+  "fee": 9.71785998e-07,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546507465901,
+  "order_id": "0x3a-97b6e14d-113c-3e4f-a685-44db8ee8c136",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "ask_bid_price": 6.734e-05,
+  "ask_bid_size": 10.0,
+  "filled_price": 6.734e-05,
+  "filled_size": 10.0,
+  "fee": 1.3468000000000002e-06,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546507465904,
+  "order_id": "0x3a-dc6b7ebc-65c9-3e27-b010-ab2e29865c29",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "ask_bid_price": 6.717e-05,
+  "ask_bid_size": 9.8339,
+  "filled_price": 6.717e-05,
+  "filled_size": 9.8339,
+  "fee": 1.321086126e-06,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}]
 2. run signals after update: [{
-  "ask_server": "binance",
+  "ask_server": "huobi",
   "backward_ratio": 0.1,
   "base_gain": 0.01,
   "base_start": 30.0,
@@ -483,74 +802,190 @@ dis backward ask_min_notional: 0.001
   "fSymbol": "ICX",
   "forward_ratio": -0.1,
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
+  "id": "0x1cbeb745bd-8bfa-34f3-92ad-dc8ecacfe2fd",
   "status_assets": [{
-    "server": "binance",
+    "server": "huobi",
     "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
+    "balance": 0.0031732205817399995,
+    "free": 0.0031732205817399995,
+    "locked": -2.4669834588781497e-19
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
+    "balance": 10.327300000000001,
+    "free": 10.327300000000001,
     "locked": 0.0
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
+    "balance": 0.04957783800000115,
+    "free": 0.04957783800000115,
+    "locked": 3.122502256758253e-16
   }, {
     "server": "okex",
     "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
+    "balance": 0.0006563207972930002,
+    "free": 0.0006563207972930001,
+    "locked": 3.5151867311053464e-19
   }, {
     "server": "okex",
     "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
+    "balance": 48.9236,
+    "free": 48.9236,
     "locked": 0.0
   }, {
     "server": "okex",
     "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
+    "balance": 4.735063239102999e-05,
+    "free": 4.735063239102999e-05,
+    "locked": 4.2327252813834093e-16
   }],
   "status_done": False,
-  "status_gain": -0.01095910734147978,
+  "status_gain": -0.013934971219882897,
   "tSymbol": "BTC",
   "type": "dis"
 }]
-dis forward gain_ratio: -0.008760188087774446
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.34e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
+dis forward gain_ratio: -0.02737266112266122
+dis forward bid_fSymbol_free: 48.9236
+dis forward ask_tSymbol_free: 0.0031732205817399995
+dis forward bid_price: 6.573e-05
+dis forward ask_price: 6.734e-05
+dis forward order_size: 10.0
 dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
+dis forward ask_size_min: 0.1
 dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
-dis backward order_size: 4.4692
+dis forward ask_min_notional: 1e-12
+dis backward gain_ratio: 0.016041894353369706
+dis backward bid_tSymbol_free: 0.0006563207972930001
+dis backward ask_fSymbol_free: 10.327300000000001
+dis backward bid_price: 6.588e-05
+dis backward ask_price: 6.717e-05
+dis backward order_size: 9.947424348771413
 dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
+dis backward ask_size_min: 0.1
 dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
+dis backward ask_min_notional: 1e-12
+2. run signals runOrders: [{
+  "server": "okex",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "price": "0.00006573",
+  "quantity": "10.0000",
+  "ratio": 0.0015,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "price": "0.00006734",
+  "quantity": "10.0000",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "okex",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "price": "0.00006588",
+  "quantity": "9.9474",
+  "ratio": 0.0015,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "price": "0.00006717",
+  "quantity": "9.9474",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}]
+2. run signals runExecOrders: [{
+  "server": "okex",
+  "order_id": "0x1a-f619ff1c-b776-3f57-ae66-03b24cf76f8c",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-af0fed08-6af9-338c-a51d-99d74c74fea5",
+  "status": "filled"
+}, {
+  "server": "okex",
+  "order_id": "0x1a-41ea62fe-ec98-3fd7-b522-e663dde18025",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-8b294b81-a964-3d53-b412-f433a6c65f32",
+  "status": "filled"
+}]
+2. run signals runInfoOrders: [{
+  "server": "okex",
+  "timeStamp": 1546507471261,
+  "order_id": "0x1a-41ea62fe-ec98-3fd7-b522-e663dde18025",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "ask_bid_price": 6.588e-05,
+  "ask_bid_size": 9.9474,
+  "filled_price": 6.588e-05,
+  "filled_size": 9.9474,
+  "fee": 9.83002068e-07,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "okex",
+  "timeStamp": 1546507471260,
+  "order_id": "0x1a-f619ff1c-b776-3f57-ae66-03b24cf76f8c",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "ask_bid_price": 6.573e-05,
+  "ask_bid_size": 10.0,
+  "filled_price": 6.573e-05,
+  "filled_size": 10.0,
+  "fee": 9.859499999999999e-07,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546507471275,
+  "order_id": "0x3a-8b294b81-a964-3d53-b412-f433a6c65f32",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "ask",
+  "ask_bid_price": 6.717e-05,
+  "ask_bid_size": 9.9474,
+  "filled_price": 6.717e-05,
+  "filled_size": 9.9474,
+  "fee": 1.336333716e-06,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546507471260,
+  "order_id": "0x3a-af0fed08-6af9-338c-a51d-99d74c74fea5",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "ICX",
+  "tSymbol": "BTC",
+  "ask_or_bid": "bid",
+  "ask_bid_price": 6.734e-05,
+  "ask_bid_size": 10.0,
+  "filled_price": 6.734e-05,
+  "filled_size": 10.0,
+  "fee": 1.3468000000000002e-06,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}]
 2. run signals after update: [{
-  "ask_server": "binance",
+  "ask_server": "huobi",
   "backward_ratio": 0.1,
   "base_gain": 0.01,
   "base_start": 30.0,
@@ -559,683 +994,190 @@ dis backward ask_min_notional: 0.001
   "fSymbol": "ICX",
   "forward_ratio": -0.1,
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
+  "id": "0x1cbeb745bd-8bfa-34f3-92ad-dc8ecacfe2fd",
   "status_assets": [{
-    "server": "binance",
+    "server": "huobi",
     "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
+    "balance": 0.0031653043060239994,
+    "free": 0.0031653043060239994,
+    "locked": -2.4818065354551e-19
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
+    "balance": 10.379900000000001,
+    "free": 10.379900000000001,
     "locked": 0.0
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
+    "balance": 0.04957783800000115,
+    "free": 0.04957783800000115,
+    "locked": 3.122502256758253e-16
   }, {
     "server": "okex",
     "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
+    "balance": 0.0006563171332250002,
+    "free": 0.000656317133225,
+    "locked": 3.9302328752599536e-19
   }, {
     "server": "okex",
     "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
+    "balance": 48.871,
+    "free": 48.871,
     "locked": 0.0
   }, {
     "server": "okex",
     "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
+    "balance": 4.735063239102999e-05,
+    "free": 4.735063239102999e-05,
+    "locked": 4.2327252813834093e-16
   }],
   "status_done": False,
-  "status_gain": -0.01095910734147978,
+  "status_gain": -0.014934895840091637,
   "tSymbol": "BTC",
   "type": "dis"
 }]
-dis forward gain_ratio: -0.008760188087774446
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.34e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
+dis forward gain_ratio: -0.02737266112266122
+dis forward bid_fSymbol_free: 48.871
+dis forward ask_tSymbol_free: 0.0031653043060239994
+dis forward bid_price: 6.573e-05
+dis forward ask_price: 6.734e-05
+dis forward order_size: 10.0
 dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
+dis forward ask_size_min: 0.1
 dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
-dis backward order_size: 4.4692
+dis forward ask_min_notional: 1e-12
+dis backward gain_ratio: 0.014653706230104625
+dis backward bid_tSymbol_free: 0.000656317133225
+dis backward ask_fSymbol_free: 10.379900000000001
+dis backward bid_price: 6.597e-05
+dis backward ask_price: 6.717e-05
+dis backward order_size: 9.93379805252634
 dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
+dis backward ask_size_min: 0.1
 dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
+dis backward ask_min_notional: 1e-12
+2. run signals runOrders: [{
+  "server": "okex",
   "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
   "tSymbol": "BTC",
-  "type": "dis"
-}]
-dis forward gain_ratio: -0.008760188087774446
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.34e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.004065830721003172
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.37e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
+  "ask_or_bid": "ask",
+  "price": "0.00006573",
+  "quantity": "10.0000",
+  "ratio": 0.0015,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
   "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
   "tSymbol": "BTC",
-  "type": "dis"
-}]
-dis forward gain_ratio: -0.008760188087774446
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.34e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.004065830721003172
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.37e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
+  "ask_or_bid": "bid",
+  "price": "0.00006734",
+  "quantity": "10.0000",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "okex",
   "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
   "tSymbol": "BTC",
-  "type": "dis"
-}]
-dis forward gain_ratio: -0.007195141065830834
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.35e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.004065830721003172
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.37e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
+  "ask_or_bid": "bid",
+  "price": "0.00006597",
+  "quantity": "9.9337",
+  "ratio": 0.0015,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
   "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
   "tSymbol": "BTC",
-  "type": "dis"
+  "ask_or_bid": "ask",
+  "price": "0.00006717",
+  "quantity": "9.9337",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
 }]
-
-dis forward gain_ratio: -0.007195141065830834
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.35e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.004065830721003172
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.37e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
+2. run signals runExecOrders: [{
+  "server": "okex",
+  "order_id": "0x1a-d69b7303-6724-3200-8604-6b989f84aa29",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-f32da8aa-ec58-3188-9830-40aa01655e0a",
+  "status": "filled"
+}, {
+  "server": "okex",
+  "order_id": "0x1a-f5325b0e-5407-31e5-a024-6b8605eae7f2",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-64291d4d-8175-3a6a-b518-b2559ac346fb",
+  "status": "filled"
+}]
+2. run signals runInfoOrders: [{
+  "server": "okex",
+  "timeStamp": 1546507476836,
+  "order_id": "0x1a-d69b7303-6724-3200-8604-6b989f84aa29",
+  "status": "filled",
+  "type": "limit",
   "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
   "tSymbol": "BTC",
-  "type": "dis"
-}]
-dis forward gain_ratio: -0.007195141065830834
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.35e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.004065830721003172
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.37e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
+  "ask_or_bid": "ask",
+  "ask_bid_price": 6.573e-05,
+  "ask_bid_size": 10.0,
+  "filled_price": 6.573e-05,
+  "filled_size": 10.0,
+  "fee": 9.859499999999999e-07,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "okex",
+  "timeStamp": 1546507476838,
+  "order_id": "0x1a-f5325b0e-5407-31e5-a024-6b8605eae7f2",
+  "status": "filled",
+  "type": "limit",
   "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
   "tSymbol": "BTC",
-  "type": "dis"
-}]
-dis forward gain_ratio: -0.0040650470219436114
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.37e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.004065830721003172
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.37e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
+  "ask_or_bid": "bid",
+  "ask_bid_price": 6.597e-05,
+  "ask_bid_size": 9.9337,
+  "filled_price": 6.597e-05,
+  "filled_size": 9.9337,
+  "fee": 9.829892834999999e-07,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546507476838,
+  "order_id": "0x3a-64291d4d-8175-3a6a-b518-b2559ac346fb",
+  "status": "filled",
+  "type": "limit",
   "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
   "tSymbol": "BTC",
-  "type": "dis"
-}]
-dis forward gain_ratio: -0.007195141065830834
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.35e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.004065830721003172
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.37e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
+  "ask_or_bid": "ask",
+  "ask_bid_price": 6.717e-05,
+  "ask_bid_size": 9.9337,
+  "filled_price": 6.717e-05,
+  "filled_size": 9.9337,
+  "fee": 1.334493258e-06,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546507476837,
+  "order_id": "0x3a-f32da8aa-ec58-3188-9830-40aa01655e0a",
+  "status": "filled",
+  "type": "limit",
   "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
   "tSymbol": "BTC",
-  "type": "dis"
+  "ask_or_bid": "bid",
+  "ask_bid_price": 6.734e-05,
+  "ask_bid_size": 10.0,
+  "filled_price": 6.734e-05,
+  "filled_size": 10.0,
+  "fee": 1.3468000000000002e-06,
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5"
 }]
-dis forward gain_ratio: -0.007195141065830834
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.35e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
 2. run signals after update: [{
-  "ask_server": "binance",
+  "ask_server": "huobi",
   "backward_ratio": 0.1,
   "base_gain": 0.01,
   "base_start": 30.0,
@@ -1244,502 +1186,46 @@ dis backward ask_min_notional: 0.001
   "fSymbol": "ICX",
   "forward_ratio": -0.1,
   "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
+  "id": "0x1cbeb745bd-8bfa-34f3-92ad-dc8ecacfe2fd",
   "status_assets": [{
-    "server": "binance",
+    "server": "huobi",
     "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
+    "balance": 0.003156469641765999,
+    "free": 0.003156469641765999,
+    "locked": -2.4966296120320502e-19
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
+    "balance": 10.446200000000001,
+    "free": 10.446200000000001,
     "locked": 0.0
   }, {
-    "server": "binance",
+    "server": "huobi",
     "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
+    "balance": 0.04957783800000115,
+    "free": 0.04957783800000115,
+    "locked": 3.122502256758253e-16
   }, {
     "server": "okex",
     "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
+    "balance": 0.0006563220049415002,
+    "free": 0.0006563220049415001,
+    "locked": 4.1356383649691214e-19
   }, {
     "server": "okex",
     "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
+    "balance": 48.804700000000004,
+    "free": 48.804700000000004,
     "locked": 0.0
   }, {
     "server": "okex",
     "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
+    "balance": 4.735063239102999e-05,
+    "free": 4.735063239102999e-05,
+    "locked": 4.2327252813834093e-16
   }],
   "status_done": False,
-  "status_gain": -0.01095910734147978,
-  "tSymbol": "BTC",
-  "type": "dis"
-}]
-dis forward gain_ratio: -0.007195141065830834
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.35e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
-  "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
-  "tSymbol": "BTC",
-  "type": "dis"
-}]
-dis forward gain_ratio: -0.007195141065830834
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.35e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
-  "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
-  "tSymbol": "BTC",
-  "type": "dis"
-}]
-dis forward gain_ratio: -0.007195141065830834
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.35e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
-  "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
-  "tSymbol": "BTC",
-  "type": "dis"
-}]
-dis forward gain_ratio: -0.007195141065830834
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.35e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
-  "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
-  "tSymbol": "BTC",
-  "type": "dis"
-}]
-dis forward gain_ratio: -0.007195141065830834
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.35e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
-  "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
-  "tSymbol": "BTC",
-  "type": "dis"
-}]
-dis forward gain_ratio: -0.007195141065830834
-dis forward bid_fSymbol_free: 0.0
-dis forward ask_tSymbol_free: 1.3544471999999731e-05
-dis forward bid_price: 6.35e-05
-dis forward ask_price: 6.38e-05
-dis forward order_size: 0.0
-dis forward bid_size_min: 0.1
-dis forward ask_size_min: 0.01
-dis forward bid_min_notional: 1e-09
-dis forward ask_min_notional: 0.001
-dis backward gain_ratio: -0.005631661442006345
-dis backward bid_tSymbol_free: 0.0038975207062584994
-dis backward ask_fSymbol_free: 61.56
-dis backward bid_price: 6.38e-05
-dis backward ask_price: 6.36e-05
-dis backward order_size: 4.4692
-dis backward bid_size_min: 0.1
-dis backward ask_size_min: 0.01
-dis backward bid_min_notional: 1e-09
-dis backward ask_min_notional: 0.001
-2. run signals runOrders: []
-2. run signals runExecOrders: []
-2. run signals runInfoOrders: []
-2. run signals after update: [{
-  "ask_server": "binance",
-  "backward_ratio": 0.1,
-  "base_gain": 0.01,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "okex",
-  "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
-  "id": "0x1c3ea45e4c-5aad-3622-9caf-0d6586b8434e",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "BTC",
-    "balance": 1.3544471999998864e-05,
-    "free": 1.3544471999999731e-05,
-    "locked": -4.514685608865421e-19
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 61.56,
-    "free": 61.56,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.0012355693499994658,
-    "free": 0.0012355693500012421,
-    "locked": -1.1657341758564144e-15
-  }, {
-    "server": "okex",
-    "asset": "BTC",
-    "balance": 0.0038975207062584994,
-    "free": 0.0038975207062584994,
-    "locked": 7.591532789766667e-20
-  }, {
-    "server": "okex",
-    "asset": "ICX",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "okex",
-    "asset": "USDT",
-    "balance": 4.59997230652931e-05,
-    "free": 4.59997230652931e-05,
-    "locked": 4.891920202254596e-16
-  }],
-  "status_done": False,
-  "status_gain": -0.01095910734147978,
+  "status_gain": -0.016145475519140008,
   "tSymbol": "BTC",
   "type": "dis"
 }]
