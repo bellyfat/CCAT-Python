@@ -329,20 +329,22 @@ class Signal(object):
                 'resInfoSymbol', err)
             raise CalcException(errStr)
 
-    def backtestSignalsIsRun(self):
+    def backtestSignalsIsRunMore(self, resInfoSymbol):
         self._logger.debug(
-            "src.core.calc.signal.Signal.backtestSignalsIsRun")
+            "src.core.calc.signal.Signal.backtestSignalsIsRunMore: {resInfoSymbol=%s}"
+            % 'resInfoSymbol')
         try:
             if not self._signals:
                 raise Exception("NO SIGNAL ERROR, signals empty.")
-            isRun = False
+            isMore = False
             for signal in self._signals:
                 if signal['status_gain'] < signal['base_gain']:
-                    isRun = True
+                    isMore = True
                     break
-            return isRun
+            return isMore
         except Exception as err:
-            errStr = "src.core.calc.signal.Signal.backtestSignalsIsRun" % err
+            errStr = "src.core.calc.signal.Signal.backtestSignalsIsRunMore: {resInfoSymbol=%s}, exception err=%s" % (
+                'resInfoSymbol', err)
             raise CalcException(errStr)
 
     def backtestSignalsAfterTrade(self, resInfoSymbol):
@@ -355,12 +357,31 @@ class Signal(object):
             calc = Calc()
             res = []
             for signal in self._signals:
-                orders = calc.calcSignalAfterTradeOrders(signal, resInfoSymbol,
-                                                       SIGNAL_BASECOIN)
+                orders = calc.calcSignalAfterTradeOrders(
+                    signal, resInfoSymbol, SIGNAL_BASECOIN)
                 if not orders == []:
                     res.extend(orders)
             return res
         except Exception as err:
             errStr = "src.core.calc.signal.Signal.backtestSignalsAfterTrade: {resInfoSymbol=%s}, exception err=%s" % (
+                'resInfoSymbol', err)
+            raise CalcException(errStr)
+
+    def backtestSignalsIsAfterMore(self, resInfoSymbol):
+        self._logger.debug(
+            "src.core.calc.signal.Signal.backtestSignalsIsAfterMore: {resInfoSymbol=%s}"
+            % 'resInfoSymbol')
+        try:
+            if not self._signals:
+                raise Exception("NO SIGNAL ERROR, signals empty.")
+            calc = Calc()
+            isMore = False
+            for signal in self._signals:
+                isMore = calc.calcSignalIsAfterMore(signal, resInfoSymbol, SIGNAL_BASECOIN)
+                if isMore:
+                    break
+            return isMore
+        except Exception as err:
+            errStr = "src.core.calc.signal.Signal.backtestSignalsIsAfterMore: {resInfoSymbol=%s}, exception err=%s" % (
                 'resInfoSymbol', err)
             raise CalcException(errStr)

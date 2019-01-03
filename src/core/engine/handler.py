@@ -4,6 +4,7 @@ from itertools import combinations
 from string import Template
 
 import pandas as pd
+
 from src.core.calc.calc import Calc
 from src.core.calc.enums import SIGNAL_MAX_NUM
 from src.core.calc.signal import Signal
@@ -359,80 +360,89 @@ class Handler(object):
                             errStr.substitute(here='2.4 update signal status'))
                 print('2. run signals after update:\n%s' % sgn.signals())
                 # 2.5 update isError
-                isError = sgn.backtestSignalsIsRun()
+                isError = sgn.backtestSignalsIsRunMore(resInfoSymbol)
             ########################################
             # 3. after trade
-            # 3.1 calc after orders
-            afterOrders = []
             isError = SIGNAL_MAX_NUM
             while isError > 0:
-                try:
-                    isError = isError - 1
-                    afterOrders = sgn.backtestSignalsAfterTrade(resInfoSymbol)
-                    isError = 0
-                except Exception as err:
-                    self._logger.warn(str + warnStr.substitute(
-                        err=err, here='3.1 calc after orders'))
-            if isError > 0:
-                raise Exception(
-                    errStr.substitute(here='3.1 calc after orders'))
-            print('3. after signals afterOrders:\n%s' % afterOrders)
-            # 3.2 calc afterExecOrders
-            afterExecOrders = []
-            if not afterOrders == []:
-                for order in afterOrders:
-                    identify = identify + 1
-                    isError = SIGNAL_MAX_NUM
-                    while isError > 0:
-                        try:
-                            isError = isError - 1
-                            res = db.insertCreatTradeBacktestHistory(
-                                order['server'], order['fSymbol'],
-                                order['tSymbol'], order['ask_or_bid'],
-                                order['price'], order['quantity'],
-                                order['ratio'], order['type'],
-                                order['group_id'], identify)
-                            isError = 0
-                        except Exception as err:
-                            self._logger.warn(str + warnStr.substitute(
-                                err=err, here='3.2 excute preOrders'))
-                    if not res == []:
-                        preExecOrders.extend(res)
-                if isError > 0:
-                    # rollback:
-                    raise Exception(
-                        errStr.substitute(here='3.2 excute preOrders'))
-            print('3. after signals afterExecOrders:\n%s' % afterExecOrders)
-            # 3.3 calc afterInfoOrders
-            afterInfoOrders = []
-            if not afterExecOrders == []:
-                afterExecOrders = pd.DataFrame(afterExecOrders)
-                for server in exchange:
-                    orderIDs = preExecOrders[(preExecOrders['server'] == server
-                                              )]['order_id'].tolist()
-                    res = db.getTradeBacktestHistoryServerOrder([server],
-                                                                orderIDs)
-                    if not res == []:
-                        preInfoOrders.extend(res)
-            print('3. after signals afterInfoOrders:\n%s' % afterInfoOrders)
-            # 3.4 update signals status
-            if not afterInfoOrders == []:
-                afterInfoOrders = pd.DataFrame(afterInfoOrders)
-                isError = SIGNAL_MAX_NUM
-                while isError > 0:
+                isError = isError - 1
+                # 3.1 calc after orders
+                afterOrders = []
+                isSubError = SIGNAL_MAX_NUM
+                while isSubError > 0:
                     try:
-                        isError = isError - 1
-                        sgn.backtestUpdateSignalStatusByOrders(
-                            afterInfoOrders, resInfoSymbol)
-                        isError = 0
+                        isSubError = isSubError - 1
+                        afterOrders = sgn.backtestSignalsAfterTrade(
+                            resInfoSymbol)
+                        isSubError = 0
                     except Exception as err:
                         self._logger.warn(str + warnStr.substitute(
-                            err=err, here='3.4 update signal status'))
-                if isError > 0:
-                    # rollback:
+                            err=err, here='3.1 calc after orders'))
+                if isSubError > 0:
                     raise Exception(
-                        errStr.substitute(here='3.4 update signal status'))
-            print('3. after signals after update:\n%s' % sgn.signals())
+                        errStr.substitute(here='3.1 calc after orders'))
+                print('3. after signals afterOrders:\n%s' % afterOrders)
+                # 3.2 calc afterExecOrders
+                afterExecOrders = []
+                if not afterOrders == []:
+                    for order in afterOrders:
+                        identify = identify + 1
+                        isSubError = SIGNAL_MAX_NUM
+                        while isSubError > 0:
+                            try:
+                                isSubError = isSubError - 1
+                                res = db.insertCreatTradeBacktestHistory(
+                                    order['server'], order['fSymbol'],
+                                    order['tSymbol'], order['ask_or_bid'],
+                                    order['price'], order['quantity'],
+                                    order['ratio'], order['type'],
+                                    order['group_id'], identify)
+                                isSubError = 0
+                            except Exception as err:
+                                self._logger.warn(str + warnStr.substitute(
+                                    err=err, here='3.2 excute preOrders'))
+                        if not res == []:
+                            preExecOrders.extend(res)
+                    if isSubError > 0:
+                        # rollback:
+                        raise Exception(
+                            errStr.substitute(here='3.2 excute preOrders'))
+                print(
+                    '3. after signals afterExecOrders:\n%s' % afterExecOrders)
+                # 3.3 calc afterInfoOrders
+                afterInfoOrders = []
+                if not afterExecOrders == []:
+                    afterExecOrders = pd.DataFrame(afterExecOrders)
+                    for server in exchange:
+                        orderIDs = preExecOrders[(
+                            preExecOrders['server'] == server
+                        )]['order_id'].tolist()
+                        res = db.getTradeBacktestHistoryServerOrder([server],
+                                                                    orderIDs)
+                        if not res == []:
+                            preInfoOrders.extend(res)
+                print(
+                    '3. after signals afterInfoOrders:\n%s' % afterInfoOrders)
+                # 3.4 update signals status
+                if not afterInfoOrders == []:
+                    afterInfoOrders = pd.DataFrame(afterInfoOrders)
+                    isSubError = SIGNAL_MAX_NUM
+                    while isSubError > 0:
+                        try:
+                            isSubError = isSubError - 1
+                            sgn.backtestUpdateSignalStatusByOrders(
+                                afterInfoOrders, resInfoSymbol)
+                            isSubError = 0
+                        except Exception as err:
+                            self._logger.warn(str + warnStr.substitute(
+                                err=err, here='3.4 update signal status'))
+                    if isSubError > 0:
+                        # rollback:
+                        raise Exception(
+                            errStr.substitute(here='3.4 update signal status'))
+                print('3. after signals after update:\n%s' % sgn.signals())
+                # 3.5 update isError
+                isError = sgn.backtestSignalsIsRunMore(resInfoSymbol)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, err)
