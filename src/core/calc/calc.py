@@ -5,7 +5,6 @@ from decimal import ROUND_DOWN
 from itertools import combinations
 
 import pandas as pd
-
 from src.core.calc.enums import CALC_ZERO_NUMBER
 from src.core.coin.binance import Binance
 from src.core.coin.enums import *
@@ -912,6 +911,7 @@ class Calc(object):
                                   & (resInfoSymbol['fSymbol'] == V3_fSymbol) &
                                   (resInfoSymbol['tSymbol'] == V3_tSymbol)]
             if is_V1.empty or is_V2.empty or is_V3.empty:
+                print('is_V1, is_V2 or is_V3 is empty.')
                 return orders
             # server limit and fee
             V1_price_precision = 0
@@ -969,7 +969,9 @@ class Calc(object):
             if not is_V3['fee_taker'].values[0] == 'NULL':
                 V3_fee_ratio = is_V3['fee_taker'].values[0]
             # aggDepth
-            aggDepth = 0
+            V1_aggDepth = V1_price_step
+            V2_aggDepth = V2_price_step
+            V3_aggDepth = V3_price_step
             # calc common symbol
             C1_symbol = [
                 i for i in [V1_fSymbol, V1_tSymbol]
@@ -995,56 +997,80 @@ class Calc(object):
                         C2_symbol_balance = sa['free']
                     if sa['asset'] == C3_symbol:
                         C3_symbol_balance = sa['free']
+            print('C1_symbol=%s, C1_symbol_balance=%s' % (C1_symbol,
+                                                          C1_symbol_balance))
+            print('C2_symbol=%s, C2_symbol_balance=%s' % (C2_symbol,
+                                                          C2_symbol_balance))
+            print('C3_symbol=%s, C3_symbol_balance=%s' % (C3_symbol,
+                                                          C3_symbol_balance))
             # server market order book ticker
             if server == self._Okex_exchange:
                 V1_res = self._Okex.getMarketOrderbookTicker(
-                    V1_fSymbol, V1_tSymbol, aggDepth)
+                    V1_fSymbol, V1_tSymbol, V1_aggDepth)
                 V2_res = self._Okex.getMarketOrderbookTicker(
-                    V2_fSymbol, V2_tSymbol, aggDepth)
+                    V2_fSymbol, V2_tSymbol, V1_aggDepth)
                 V3_res = self._Okex.getMarketOrderbookTicker(
-                    V3_fSymbol, V3_tSymbol, aggDepth)
+                    V3_fSymbol, V3_tSymbol, V1_aggDepth)
             if server == self._Binance_exchange:
                 V1_res = self._Binance.getMarketOrderbookTicker(
-                    V1_fSymbol, V1_tSymbol, aggDepth)
+                    V1_fSymbol, V1_tSymbol, V2_aggDepth)
                 V2_res = self._Binance.getMarketOrderbookTicker(
-                    V2_fSymbol, V2_tSymbol, aggDepth)
+                    V2_fSymbol, V2_tSymbol, V2_aggDepth)
                 V3_res = self._Binance.getMarketOrderbookTicker(
-                    V3_fSymbol, V3_tSymbol, aggDepth)
+                    V3_fSymbol, V3_tSymbol, V2_aggDepth)
             if server == self._Huobi_exchange:
                 V1_res = self._Huobi.getMarketOrderbookTicker(
-                    V1_fSymbol, V1_tSymbol, aggDepth)
+                    V1_fSymbol, V1_tSymbol, V3_aggDepth)
                 V2_res = self._Huobi.getMarketOrderbookTicker(
-                    V2_fSymbol, V2_tSymbol, aggDepth)
+                    V2_fSymbol, V2_tSymbol, V3_aggDepth)
                 V3_res = self._Huobi.getMarketOrderbookTicker(
-                    V3_fSymbol, V3_tSymbol, aggDepth)
+                    V3_fSymbol, V3_tSymbol, V3_aggDepth)
+            print('V1_res=%s' % V1_res)
+            print('V2_res=%s' % V2_res)
+            print('V3_res=%s' % V3_res)
             # calc type tra price and size
             # calc V1
             if C1_symbol == V1_fSymbol:  # fSymbol -> tSymbol
                 V1_one_price = float(V1_res['bid_one_price'])
                 V1_one_side = CCAT_ORDER_SIDE_SELL
                 V1_one_size = float(V1_res['bid_one_size'])
+                V1_one_size = min(V1_one_size, C1_symbol_balance)
             else:  # tSymbol -> fSymbol
                 V1_one_price = float(V1_res['ask_one_price'])
                 V1_one_side = CCAT_ORDER_SIDE_BUY
                 V1_one_size = float(V1_res['ask_one_size'])
+                V1_one_size = min(V1_one_size,
+                                  C1_symbol_balance / V1_one_price)
             # calc V2
             if C2_symbol == V2_fSymbol:  # fSymbol -> tSymbol
                 V2_one_price = float(V2_res['bid_one_price'])
                 V2_one_side = CCAT_ORDER_SIDE_SELL
                 V2_one_size = float(V2_res['bid_one_size'])
+                V2_one_size = min(V2_one_size, C2_symbol_balance)
             else:  # tSymbol -> fSymbol
                 V2_one_price = float(V2_res['ask_one_price'])
                 V2_one_side = CCAT_ORDER_SIDE_BUY
                 V2_one_size = float(V2_res['ask_one_size'])
+                V2_one_size = min(V2_one_size,
+                                  C2_symbol_balance / V2_one_price)
             # calc V3
             if C3_symbol == V3_fSymbol:  # fSymbol -> tSymbol
                 V3_one_price = float(V3_res['bid_one_price'])
                 V3_one_side = CCAT_ORDER_SIDE_SELL
                 V3_one_size = float(V3_res['bid_one_size'])
+                V3_one_size = min(V3_one_size, C3_symbol_balance)
             else:  # tSymbol -> fSymbol
                 V3_one_price = float(V3_res['ask_one_price'])
                 V3_one_side = CCAT_ORDER_SIDE_BUY
                 V3_one_size = float(V3_res['ask_one_size'])
+                V3_one_size = min(V3_one_size,
+                                  C3_symbol_balance / V3_one_price)
+            print('V1_one_price=%s, V1_one_size=%s' % (V1_one_price,
+                                                       V1_one_size))
+            print('V2_one_price=%s, V2_one_size=%s' % (V2_one_price,
+                                                       V2_one_size))
+            print('V3_one_price=%s, V3_one_size=%s' % (V3_one_price,
+                                                       V3_one_size))
             # calc symbol one price ratio
             if C3_symbol == V3_fSymbol:
                 # Type clockwise
@@ -1056,13 +1082,12 @@ class Calc(object):
                 C1_C2_one_price = V1_one_price
                 C2_C3_one_price = 1 / V2_one_price
                 C3_C1_one_price = 1 / V3_one_price
+            print('C1_C2_one_price=%s' % C1_C2_one_price)
+            print('C2_C3_one_price=%s' % C2_C3_one_price)
+            print('C3_C1_one_price=%s' % C3_C1_one_price)
             # calc tra result
             if not C1_C2_one_price * C2_C3_one_price * C3_C1_one_price > 1:
                 return orders
-            # calc symbol size
-            V1_one_size = min(V1_one_size, C1_symbol_balance / V1_one_price)
-            V2_one_size = min(V2_one_size, C2_symbol_balance / V2_one_price)
-            V3_one_size = min(V3_one_size, C3_symbol_balance / V3_one_price)
             # Begin Calc Gain
             if C3_symbol == V3_fSymbol:
                 # Type clockwise: sell->buy->sell
@@ -1093,11 +1118,30 @@ class Calc(object):
                     (V2_fee_ratio + V3_fee_ratio - V2_fee_ratio * V3_fee_ratio)
                 ) / (1 / (C2_C3_one_price * C3_C1_one_price))
             # forward
-            print('tra froward gain_ratio: %s' % gain_ratio)
+            print('tra forward gain_ratio: %s' % gain_ratio)
             if gain_ratio > forward_ratio:
+                print('tra forward C1_symbol_balance: %s' % C1_symbol_balance)
+                print('tra forward C2_symbol_balance: %s' % C2_symbol_balance)
+                print('tra forward C3_symbol_balance: %s' % C3_symbol_balance)
+                print('tra forward V1_one_price: %s' % V1_one_price)
+                print('tra forward V2_one_price: %s' % V2_one_price)
+                print('tra forward V3_one_price: %s' % V3_one_price)
+                print('tra forward V1_one_size: %s' % V1_one_size)
+                print('tra forward V2_one_size: %s' % V2_one_size)
+                print('tra forward V3_one_size: %s' % V3_one_size)
+                print('tra forward V1_one_side: %s' % V1_one_side)
+                print('tra forward V2_one_side: %s' % V2_one_side)
+                print('tra forward V3_one_side: %s' % V3_one_side)
+                print('tra forward V1_size_min: %s' % V1_size_min)
+                print('tra forward V2_size_min: %s' % V2_size_min)
+                print('tra forward V3_size_min: %s' % V3_size_min)
+                print('tra forward V1_min_notional: %s' % V1_min_notional)
+                print('tra forward V2_min_notional: %s' % V2_min_notional)
+                print('tra forward V3_min_notional: %s' % V3_min_notional)
                 if V1_one_size > 0 and V2_one_size > 0 and V3_one_size > 0:
                     if V1_one_size >= V1_size_min and V2_one_size >= V2_size_min and V3_one_size >= V3_size_min:
                         if V1_one_price * V1_one_size >= V1_min_notional and V2_one_price * V2_one_size >= V2_min_notional and V3_one_price * V3_one_size >= V3_min_notional:
+                            print('debug here')
                             price = num_to_precision(
                                 V1_one_price,
                                 V1_price_precision,
@@ -1759,7 +1803,9 @@ class Calc(object):
                                 price_precision,
                                 rounding=ROUND_DOWN)
                             quantity = num_to_precision(
-                                trade['size'], size_precision, rounding=ROUND_DOWN)
+                                trade['size'],
+                                size_precision,
+                                rounding=ROUND_DOWN)
                             orders.append({
                                 "server": server,
                                 "fSymbol": fSymbol,
@@ -1854,7 +1900,8 @@ class Calc(object):
                                             })
                             print('in type I: tra, server=%s, res=%s' %
                                   (server, res['bid_price_size'][0:10]))
-                            print('in type I: tra, traTradeSize=%s' % traTradeSize)
+                            print('in type I: tra, traTradeSize=%s' %
+                                  traTradeSize)
                             print('in type I: tra, sum=%s' % sum)
                             if sum < traTradeSize - CALC_ZERO_NUMBER:
                                 raise Exception(
@@ -1870,15 +1917,24 @@ class Calc(object):
                                     size_precision,
                                     rounding=ROUND_DOWN)
                                 orders.append({
-                                    "server": server,
-                                    "fSymbol": fSymbol,
-                                    "tSymbol": tSymbol,
-                                    "ask_or_bid": CCAT_ORDER_SIDE_SELL,
-                                    "price": price,
-                                    "quantity": quantity,
-                                    "ratio": fee_ratio,
-                                    "type": CCAT_ORDER_TYPE_LIMIT,
-                                    "group_id": group_id
+                                    "server":
+                                    server,
+                                    "fSymbol":
+                                    fSymbol,
+                                    "tSymbol":
+                                    tSymbol,
+                                    "ask_or_bid":
+                                    CCAT_ORDER_SIDE_SELL,
+                                    "price":
+                                    price,
+                                    "quantity":
+                                    quantity,
+                                    "ratio":
+                                    fee_ratio,
+                                    "type":
+                                    CCAT_ORDER_TYPE_LIMIT,
+                                    "group_id":
+                                    group_id
                                 })
                             # tSymbol -> baseCoin
                             print('in type I: tra, traTrade=%s' % traTrade)
@@ -1903,13 +1959,16 @@ class Calc(object):
                                     0] == 'NULL':
                                 price_precision = isDe[
                                     'limit_price_precision'].values[0]
-                            if not isDe['limit_size_precision'].values[0] == 'NULL':
+                            if not isDe['limit_size_precision'].values[
+                                    0] == 'NULL':
                                 size_precision = isDe[
                                     'limit_size_precision'].values[0]
                             if not isDe['limit_size_min'].values[0] == 'NULL':
                                 size_min = isDe['limit_size_min'].values[0]
-                            if not isDe['limit_min_notional'].values[0] == 'NULL':
-                                min_notional = isDe['limit_min_notional'].values[0]
+                            if not isDe['limit_min_notional'].values[
+                                    0] == 'NULL':
+                                min_notional = isDe[
+                                    'limit_min_notional'].values[0]
                             if not isDe['fee_taker'].values[0] == 'NULL':
                                 fee_ratio = isDe['fee_taker'].values[0]
                             if server == self._Okex_exchange:
@@ -1928,8 +1987,8 @@ class Calc(object):
                             print(
                                 'in type I: tra, deTradeNotional=%s, min_notional=%s'
                                 % (deTradeNotional, min_notional))
-                            print('in type I: tra, deTradeSize=%s, size_min=%s' %
-                                  (deTradeSize, size_min))
+                            print('in type I: tra, deTradeSize=%s, size_min=%s'
+                                  % (deTradeSize, size_min))
                             if deTradeNotional < min_notional - CALC_ZERO_NUMBER or deTradeSize < size_min - CALC_ZERO_NUMBER:
                                 self._logger.warn(
                                     "TRANS TOO SMALL ERROR, amount is smaller than the min limit: {server=%s, trade=(%s -> %s), amount=%s}"
@@ -1951,17 +2010,21 @@ class Calc(object):
                                             sum = sum + deSize
                                             if sum <= deTradeSize + CALC_ZERO_NUMBER:
                                                 deTrade.append({
-                                                    'price': rPrice,
-                                                    'size': deSize
+                                                    'price':
+                                                    rPrice,
+                                                    'size':
+                                                    deSize
                                                 })
                                 print('in type I: tra, server=%s, res=%s' %
                                       (server, res['bid_price_size'][0:10]))
-                                print('in type I: tra, deTradeSize=%s' % deTradeSize)
+                                print('in type I: tra, deTradeSize=%s' %
+                                      deTradeSize)
                                 print('in type I: tra, sum=%s' % sum)
                                 if sum < deTradeSize - CALC_ZERO_NUMBER:
                                     raise Exception(
                                         "TRANS TOO MUCH ERROR，amount is not enough with bid 1 to bid 10: {server=%s, trade=(%s -> %s), amount=%s}"
-                                        % (server, tSymbol, baseCoin, deTradeSize))
+                                        % (server, tSymbol, baseCoin,
+                                           deTradeSize))
                                 for trade in deTrade:
                                     price = num_to_precision(
                                         trade['price'],
@@ -1972,15 +2035,24 @@ class Calc(object):
                                         size_precision,
                                         rounding=ROUND_DOWN)
                                     orders.append({
-                                        "server": server,
-                                        "fSymbol": tSymbol,
-                                        "tSymbol": baseCoin,
-                                        "ask_or_bid": CCAT_ORDER_SIDE_SELL,
-                                        "price": price,
-                                        "quantity": quantity,
-                                        "ratio": fee_ratio,
-                                        "type": CCAT_ORDER_TYPE_LIMIT,
-                                        "group_id": group_id
+                                        "server":
+                                        server,
+                                        "fSymbol":
+                                        tSymbol,
+                                        "tSymbol":
+                                        baseCoin,
+                                        "ask_or_bid":
+                                        CCAT_ORDER_SIDE_SELL,
+                                        "price":
+                                        price,
+                                        "quantity":
+                                        quantity,
+                                        "ratio":
+                                        fee_ratio,
+                                        "type":
+                                        CCAT_ORDER_TYPE_LIMIT,
+                                        "group_id":
+                                        group_id
                                     })
                         # done type I: tra
                         print('out type I: tra done')
@@ -2074,7 +2146,9 @@ class Calc(object):
                                 price_precision,
                                 rounding=ROUND_DOWN)
                             quantity = num_to_precision(
-                                trade['size'], size_precision, rounding=ROUND_DOWN)
+                                trade['size'],
+                                size_precision,
+                                rounding=ROUND_DOWN)
                             orders.append({
                                 "server": server,
                                 "fSymbol": tSymbol,
@@ -2713,24 +2787,30 @@ class Calc(object):
             isMore = False
             # calc res
             if signal['type'] == TYPE_DIS:
-                isDe_bid_fSymbol = resInfoSymbol[(resInfoSymbol['server'] == signal['bid_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isTra_bid_fSymbol = resInfoSymbol[(resInfoSymbol['server'] == signal['bid_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == signal['tSymbol'])]
-                isDe_bid_tSymbol = resInfoSymbol[(resInfoSymbol['server'] == signal['bid_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['tSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isDe_ask_fSymbol = resInfoSymbol[(resInfoSymbol['server'] == signal['ask_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isTra_ask_fSymbol = resInfoSymbol[(resInfoSymbol['server'] == signal['ask_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == signal['tSymbol'])]
-                isDe_ask_tSymbol = resInfoSymbol[(resInfoSymbol['server'] == signal['ask_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['tSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
+                isDe_bid_fSymbol = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['bid_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isTra_bid_fSymbol = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['bid_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == signal['tSymbol'])]
+                isDe_bid_tSymbol = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['bid_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['tSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isDe_ask_fSymbol = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['ask_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isTra_ask_fSymbol = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['ask_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == signal['tSymbol'])]
+                isDe_ask_tSymbol = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['ask_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['tSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
                 # calc assets
                 bid_fSymbol_assets = 0
                 bid_tSymbol_assets = 0
@@ -2750,77 +2830,98 @@ class Calc(object):
                 if bid_fSymbol_assets > 0:
                     if not isDe_bid_fSymbol.empty:
                         size_min = 0
-                        if not isDe_bid_fSymbol['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_bid_fSymbol['limit_size_min'].values[0]
+                        if not isDe_bid_fSymbol['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_bid_fSymbol[
+                                'limit_size_min'].values[0]
                         if bid_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                     if not isTra_bid_fSymbol.empty:
                         size_min = 0
-                        if not isTra_bid_fSymbol['limit_size_min'].values[0] == 'NULL':
-                            size_min = isTra_bid_fSymbol['limit_size_min'].values[0]
+                        if not isTra_bid_fSymbol['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isTra_bid_fSymbol[
+                                'limit_size_min'].values[0]
                         if bid_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if ask_fSymbol_assets > 0:
                     if not isDe_ask_fSymbol.empty:
                         size_min = 0
-                        if not isDe_ask_fSymbol['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_ask_fSymbol['limit_size_min'].values[0]
+                        if not isDe_ask_fSymbol['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_ask_fSymbol[
+                                'limit_size_min'].values[0]
                         if ask_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                     if not isTra_ask_fSymbol.empty:
                         size_min = 0
-                        if not isTra_ask_fSymbol['limit_size_min'].values[0] == 'NULL':
-                            size_min = isTra_ask_fSymbol['limit_size_min'].values[0]
+                        if not isTra_ask_fSymbol['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isTra_ask_fSymbol[
+                                'limit_size_min'].values[0]
                         if ask_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if bid_tSymbol_assets > 0:
                     if not isDe_tSymbol.empty:
                         size_min = 0
-                        if not isDe_bid_tSymbol['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_bid_tSymbol['limit_size_min'].values[0]
+                        if not isDe_bid_tSymbol['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_bid_tSymbol[
+                                'limit_size_min'].values[0]
                         if bid_tSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if ask_tSymbol_assets > 0:
                     if not isDe_tSymbol.empty:
                         size_min = 0
-                        if not isDe_ask_tSymbol['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_ask_tSymbol['limit_size_min'].values[0]
+                        if not isDe_ask_tSymbol['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_ask_tSymbol[
+                                'limit_size_min'].values[0]
                         if ask_tSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
             if signal['type'] == TYPE_TRA:
-                isDe_fSymbol_V1 = resInfoSymbol[(resInfoSymbol['server'] == signal['server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V1_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isTra_fSymbol_V1 = resInfoSymbol[(resInfoSymbol['server'] == signal['server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V1_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == signal['V1_tSymbol'])]
-                isDe_tSymbol_V1 = resInfoSymbol[(resInfoSymbol['server'] == signal['server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V1_tSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isDe_fSymbol_V2 = resInfoSymbol[(resInfoSymbol['server'] == signal['server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V2_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isTra_fSymbol_V2 = resInfoSymbol[(resInfoSymbol['server'] == signal['server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V2_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == signal['V2_tSymbol'])]
-                isDe_tSymbol_V2 = resInfoSymbol[(resInfoSymbol['server'] == signal['server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V2_tSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isDe_fSymbol_V3 = resInfoSymbol[(resInfoSymbol['server'] == signal['server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V3_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isTra_fSymbol_V3 = resInfoSymbol[(resInfoSymbol['server'] == signal['server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V3_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == signal['V3_tSymbol'])]
-                isDe_tSymbol_V3 = resInfoSymbol[(resInfoSymbol['server'] == signal['server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V3_tSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
+                isDe_fSymbol_V1 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V1_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isTra_fSymbol_V1 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V1_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == signal['V1_tSymbol'])]
+                isDe_tSymbol_V1 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V1_tSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isDe_fSymbol_V2 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V2_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isTra_fSymbol_V2 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V2_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == signal['V2_tSymbol'])]
+                isDe_tSymbol_V2 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V2_tSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isDe_fSymbol_V3 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V3_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isTra_fSymbol_V3 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V3_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == signal['V3_tSymbol'])]
+                isDe_tSymbol_V3 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V3_tSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
                 # calc assets
                 V1_fSymbol_assets = 0
                 V1_tSymbol_assets = 0
@@ -2845,127 +2946,163 @@ class Calc(object):
                 if V1_fSymbol_assets > 0:
                     if not isDe_fSymbol_V1.empty:
                         size_min = 0
-                        if not isDe_fSymbol_V1['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_fSymbol_V1['limit_size_min'].values[0]
+                        if not isDe_fSymbol_V1['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_fSymbol_V1[
+                                'limit_size_min'].values[0]
                         if V1_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                     if not isTra_fSymbol_V1.empty:
                         size_min = 0
-                        if not isTra_fSymbol_V1['limit_size_min'].values[0] == 'NULL':
-                            size_min = isTra_fSymbol_V1['limit_size_min'].values[0]
+                        if not isTra_fSymbol_V1['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isTra_fSymbol_V1[
+                                'limit_size_min'].values[0]
                         if V1_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if V1_tSymbol_assets > 0:
                     if not isDe_tSymbol_V1.empty:
                         size_min = 0
-                        if not isDe_tSymbol_V1['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_tSymbol_V1['limit_size_min'].values[0]
+                        if not isDe_tSymbol_V1['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_tSymbol_V1[
+                                'limit_size_min'].values[0]
                         if V1_tSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if V2_fSymbol_assets > 0:
                     if not isDe_fSymbol_V2.empty:
                         size_min = 0
-                        if not isDe_fSymbol_V2['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_fSymbol_V2['limit_size_min'].values[0]
+                        if not isDe_fSymbol_V2['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_fSymbol_V2[
+                                'limit_size_min'].values[0]
                         if V2_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                     if not isTra_fSymbol_V2.empty:
                         size_min = 0
-                        if not isTra_fSymbol_V2['limit_size_min'].values[0] == 'NULL':
-                            size_min = isTra_fSymbol_V2['limit_size_min'].values[0]
+                        if not isTra_fSymbol_V2['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isTra_fSymbol_V2[
+                                'limit_size_min'].values[0]
                         if V2_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if V2_tSymbol_assets > 0:
                     if not isDe_tSymbol_V2.empty:
                         size_min = 0
-                        if not isDe_tSymbol_V2['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_tSymbol_V2['limit_size_min'].values[0]
+                        if not isDe_tSymbol_V2['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_tSymbol_V2[
+                                'limit_size_min'].values[0]
                         if V2_tSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if V3_fSymbol_assets > 0:
                     if not isDe_fSymbol_V3.empty:
                         size_min = 0
-                        if not isDe_fSymbol_V3['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_fSymbol_V3['limit_size_min'].values[0]
+                        if not isDe_fSymbol_V3['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_fSymbol_V3[
+                                'limit_size_min'].values[0]
                         if V3_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                     if not isTra_fSymbol_V3.empty:
                         size_min = 0
-                        if not isTra_fSymbol_V3['limit_size_min'].values[0] == 'NULL':
-                            size_min = isTra_fSymbol_V3['limit_size_min'].values[0]
+                        if not isTra_fSymbol_V3['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isTra_fSymbol_V3[
+                                'limit_size_min'].values[0]
                         if V3_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if V3_tSymbol_assets > 0:
                     if not isDe_tSymbol_V3.empty:
                         size_min = 0
-                        if not isDe_tSymbol_V3['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_tSymbol_V3['limit_size_min'].values[0]
+                        if not isDe_tSymbol_V3['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_tSymbol_V3[
+                                'limit_size_min'].values[0]
                         if V3_tSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
             if signal['type'] == TYPE_PAIR:
-                isDe_J1_fSymbol_V1 = resInfoSymbol[(resInfoSymbol['server'] == signal['J1_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V1_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isTra_J1_fSymbol_V1 = resInfoSymbol[(resInfoSymbol['server'] == signal['J1_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V1_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == signal['V1_tSymbol'])]
-                isDe_J1_tSymbol_V1 = resInfoSymbol[(resInfoSymbol['server'] == signal['J1_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V1_tSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isDe_J1_fSymbol_V2 = resInfoSymbol[(resInfoSymbol['server'] == signal['J1_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V2_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isTra_J1_fSymbol_V2 = resInfoSymbol[(resInfoSymbol['server'] == signal['J1_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V2_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == signal['V2_tSymbol'])]
-                isDe_J1_tSymbol_V2 = resInfoSymbol[(resInfoSymbol['server'] == signal['J1_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V2_tSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isDe_J1_fSymbol_V3 = resInfoSymbol[(resInfoSymbol['server'] == signal['J1_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V3_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isTra_J1_fSymbol_V3 = resInfoSymbol[(resInfoSymbol['server'] == signal['J1_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V3_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == signal['V3_tSymbol'])]
-                isDe_J1_tSymbol_V3 = resInfoSymbol[(resInfoSymbol['server'] == signal['J1_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V3_tSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isDe_J2_fSymbol_V1 = resInfoSymbol[(resInfoSymbol['server'] == signal['J2_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V1_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isTra_J2_fSymbol_V1 = resInfoSymbol[(resInfoSymbol['server'] == signal['J2_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V1_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == signal['V1_tSymbol'])]
-                isDe_J2_tSymbol_V1 = resInfoSymbol[(resInfoSymbol['server'] == signal['J2_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V1_tSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isDe_J2_fSymbol_V2 = resInfoSymbol[(resInfoSymbol['server'] == signal['J2_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V2_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isTra_J2_fSymbol_V2 = resInfoSymbol[(resInfoSymbol['server'] == signal['J2_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V2_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == signal['V2_tSymbol'])]
-                isDe_J2_tSymbol_V2 = resInfoSymbol[(resInfoSymbol['server'] == signal['J2_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V2_tSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isDe_J2_fSymbol_V3 = resInfoSymbol[(resInfoSymbol['server'] == signal['J2_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V3_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
-                isTra_J2_fSymbol_V3 = resInfoSymbol[(resInfoSymbol['server'] == signal['J2_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V3_fSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == signal['V3_tSymbol'])]
-                isDe_J2_tSymbol_V3 = resInfoSymbol[(resInfoSymbol['server'] == signal['J2_server'])
-                                 & (resInfoSymbol['fSymbol'] == signal['V3_tSymbol']) &
-                                 (resInfoSymbol['tSymbol'] == baseCoin)]
+                isDe_J1_fSymbol_V1 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J1_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V1_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isTra_J1_fSymbol_V1 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J1_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V1_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == signal['V1_tSymbol'])]
+                isDe_J1_tSymbol_V1 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J1_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V1_tSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isDe_J1_fSymbol_V2 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J1_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V2_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isTra_J1_fSymbol_V2 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J1_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V2_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == signal['V2_tSymbol'])]
+                isDe_J1_tSymbol_V2 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J1_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V2_tSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isDe_J1_fSymbol_V3 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J1_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V3_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isTra_J1_fSymbol_V3 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J1_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V3_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == signal['V3_tSymbol'])]
+                isDe_J1_tSymbol_V3 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J1_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V3_tSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isDe_J2_fSymbol_V1 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J2_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V1_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isTra_J2_fSymbol_V1 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J2_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V1_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == signal['V1_tSymbol'])]
+                isDe_J2_tSymbol_V1 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J2_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V1_tSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isDe_J2_fSymbol_V2 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J2_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V2_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isTra_J2_fSymbol_V2 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J2_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V2_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == signal['V2_tSymbol'])]
+                isDe_J2_tSymbol_V2 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J2_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V2_tSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isDe_J2_fSymbol_V3 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J2_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V3_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
+                isTra_J2_fSymbol_V3 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J2_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V3_fSymbol']) &
+                    (resInfoSymbol['tSymbol'] == signal['V3_tSymbol'])]
+                isDe_J2_tSymbol_V3 = resInfoSymbol[
+                    (resInfoSymbol['server'] == signal['J2_server'])
+                    & (resInfoSymbol['fSymbol'] == signal['V3_tSymbol']) &
+                    (resInfoSymbol['tSymbol'] == baseCoin)]
                 # calc assets
                 J1_V1_fSymbol_assets = 0
                 J1_V1_tSymbol_assets = 0
@@ -3009,138 +3146,174 @@ class Calc(object):
                 if J1_V1_fSymbol_assets > 0:
                     if not isDe_J1_fSymbol_V1.empty:
                         size_min = 0
-                        if not isDe_J1_fSymbol_V1['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_J1_fSymbol_V1['limit_size_min'].values[0]
+                        if not isDe_J1_fSymbol_V1['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_J1_fSymbol_V1[
+                                'limit_size_min'].values[0]
                         if J1_V1_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                     if not isTra_J1_fSymbol_V1.empty:
                         size_min = 0
-                        if not isTra_J1_fSymbol_V1['limit_size_min'].values[0] == 'NULL':
-                            size_min = isTra_J1_fSymbol_V1['limit_size_min'].values[0]
+                        if not isTra_J1_fSymbol_V1['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isTra_J1_fSymbol_V1[
+                                'limit_size_min'].values[0]
                         if J1_V1_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if J1_V1_tSymbol_assets > 0:
                     if not isDe_J1_tSymbol_V1.empty:
                         size_min = 0
-                        if not isDe_J1_tSymbol_V1['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_J1_tSymbol_V1['limit_size_min'].values[0]
+                        if not isDe_J1_tSymbol_V1['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_J1_tSymbol_V1[
+                                'limit_size_min'].values[0]
                         if V1_tSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if J1_V2_fSymbol_assets > 0:
                     if not isDe_J1_fSymbol_V2.empty:
                         size_min = 0
-                        if not isDe_J1_fSymbol_V2['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_J1_fSymbol_V2['limit_size_min'].values[0]
+                        if not isDe_J1_fSymbol_V2['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_J1_fSymbol_V2[
+                                'limit_size_min'].values[0]
                         if J1_V2_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                     if not isTra_J1_fSymbol_V2.empty:
                         size_min = 0
-                        if not isTra_J1_fSymbol_V2['limit_size_min'].values[0] == 'NULL':
-                            size_min = isTra_J1_fSymbol_V2['limit_size_min'].values[0]
+                        if not isTra_J1_fSymbol_V2['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isTra_J1_fSymbol_V2[
+                                'limit_size_min'].values[0]
                         if J1_V2_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if J1_V2_tSymbol_assets > 0:
                     if not isDe_J1_tSymbol_V2.empty:
                         size_min = 0
-                        if not isDe_J1_tSymbol_V2['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_J1_tSymbol_V2['limit_size_min'].values[0]
+                        if not isDe_J1_tSymbol_V2['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_J1_tSymbol_V2[
+                                'limit_size_min'].values[0]
                         if J1_V2_tSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if J1_V3_fSymbol_assets > 0:
                     if not isDe_J1_fSymbol_V3.empty:
                         size_min = 0
-                        if not isDe_J1_fSymbol_V3['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_J1_fSymbol_V3['limit_size_min'].values[0]
+                        if not isDe_J1_fSymbol_V3['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_J1_fSymbol_V3[
+                                'limit_size_min'].values[0]
                         if J1_V3_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                     if not isTra_J1_fSymbol_V3.empty:
                         size_min = 0
-                        if not isTra_J1_fSymbol_V3['limit_size_min'].values[0] == 'NULL':
-                            size_min = isTra_J1_fSymbol_V3['limit_size_min'].values[0]
+                        if not isTra_J1_fSymbol_V3['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isTra_J1_fSymbol_V3[
+                                'limit_size_min'].values[0]
                         if J1_V3_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if J1_V3_tSymbol_assets > 0:
                     if not isDe_J1_tSymbol_V3.empty:
                         size_min = 0
-                        if not isDe_J1_tSymbol_V3['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_J1_tSymbol_V3['limit_size_min'].values[0]
+                        if not isDe_J1_tSymbol_V3['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_J1_tSymbol_V3[
+                                'limit_size_min'].values[0]
                         if J1_V3_tSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if J2_V1_fSymbol_assets > 0:
                     if not isDe_J2_fSymbol_V1.empty:
                         size_min = 0
-                        if not isDe_J2_fSymbol_V1['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_J2_fSymbol_V1['limit_size_min'].values[0]
+                        if not isDe_J2_fSymbol_V1['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_J2_fSymbol_V1[
+                                'limit_size_min'].values[0]
                         if J2_V1_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                     if not isTra_J2_fSymbol_V1.empty:
                         size_min = 0
-                        if not isTra_J2_fSymbol_V1['limit_size_min'].values[0] == 'NULL':
-                            size_min = isTra_J2_fSymbol_V1['limit_size_min'].values[0]
+                        if not isTra_J2_fSymbol_V1['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isTra_J2_fSymbol_V1[
+                                'limit_size_min'].values[0]
                         if J2_V1_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if J2_V1_tSymbol_assets > 0:
                     if not isDe_J2_tSymbol_V1.empty:
                         size_min = 0
-                        if not isDe_J2_tSymbol_V1['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_J2_tSymbol_V1['limit_size_min'].values[0]
+                        if not isDe_J2_tSymbol_V1['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_J2_tSymbol_V1[
+                                'limit_size_min'].values[0]
                         if V1_tSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if J2_V2_fSymbol_assets > 0:
                     if not isDe_J2_fSymbol_V2.empty:
                         size_min = 0
-                        if not isDe_J2_fSymbol_V2['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_J2_fSymbol_V2['limit_size_min'].values[0]
+                        if not isDe_J2_fSymbol_V2['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_J2_fSymbol_V2[
+                                'limit_size_min'].values[0]
                         if J2_V2_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                     if not isTra_J2_fSymbol_V2.empty:
                         size_min = 0
-                        if not isTra_J2_fSymbol_V2['limit_size_min'].values[0] == 'NULL':
-                            size_min = isTra_J2_fSymbol_V2['limit_size_min'].values[0]
+                        if not isTra_J2_fSymbol_V2['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isTra_J2_fSymbol_V2[
+                                'limit_size_min'].values[0]
                         if J2_V2_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if J2_V2_tSymbol_assets > 0:
                     if not isDe_J2_tSymbol_V2.empty:
                         size_min = 0
-                        if not isDe_J2_tSymbol_V2['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_J2_tSymbol_V2['limit_size_min'].values[0]
+                        if not isDe_J2_tSymbol_V2['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_J2_tSymbol_V2[
+                                'limit_size_min'].values[0]
                         if J2_V2_tSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if J2_V3_fSymbol_assets > 0:
                     if not isDe_J2_fSymbol_V3.empty:
                         size_min = 0
-                        if not isDe_J2_fSymbol_V3['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_J2_fSymbol_V3['limit_size_min'].values[0]
+                        if not isDe_J2_fSymbol_V3['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_J2_fSymbol_V3[
+                                'limit_size_min'].values[0]
                         if J2_V3_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                     if not isTra_J2_fSymbol_V3.empty:
                         size_min = 0
-                        if not isTra_J2_fSymbol_V3['limit_size_min'].values[0] == 'NULL':
-                            size_min = isTra_J2_fSymbol_V3['limit_size_min'].values[0]
+                        if not isTra_J2_fSymbol_V3['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isTra_J2_fSymbol_V3[
+                                'limit_size_min'].values[0]
                         if J2_V3_fSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore
                 if J2_V3_tSymbol_assets > 0:
                     if not isDe_J2_tSymbol_V3.empty:
                         size_min = 0
-                        if not isDe_J2_tSymbol_V3['limit_size_min'].values[0] == 'NULL':
-                            size_min = isDe_J2_tSymbol_V3['limit_size_min'].values[0]
+                        if not isDe_J2_tSymbol_V3['limit_size_min'].values[
+                                0] == 'NULL':
+                            size_min = isDe_J2_tSymbol_V3[
+                                'limit_size_min'].values[0]
                         if J2_V3_tSymbol_assets > size_min + CALC_ZERO_NUMBER:
                             isMore = True
                             return isMore

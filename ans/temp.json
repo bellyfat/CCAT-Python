@@ -1,353 +1,185 @@
 1. pre signals preOrders: [{
-  "server": "binance",
-  "fSymbol": "ETH",
-  "tSymbol": "USDT",
-  "ask_or_bid": "bid",
-  "price": "151.50",
-  "quantity": "0.09891",
-  "ratio": 0.001,
-  "type": "limit",
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
-}, {
-  "server": "binance",
-  "fSymbol": "ICX",
-  "tSymbol": "ETH",
-  "ask_or_bid": "bid",
-  "price": "0.001733",
-  "quantity": "57.01",
-  "ratio": 0.001,
-  "type": "limit",
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
-}, {
   "server": "huobi",
   "fSymbol": "ETH",
   "tSymbol": "USDT",
   "ask_or_bid": "bid",
-  "price": "151.57",
-  "quantity": "0.0987",
+  "price": "146.64",
+  "quantity": "0.1020",
   "ratio": 0.002,
   "type": "limit",
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65"
+}, {
+  "server": "huobi",
+  "fSymbol": "CTXC",
+  "tSymbol": "USDT",
+  "ask_or_bid": "bid",
+  "price": "0.1029",
+  "quantity": "0.1000",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65"
+}, {
+  "server": "huobi",
+  "fSymbol": "CTXC",
+  "tSymbol": "USDT",
+  "ask_or_bid": "bid",
+  "price": "0.1031",
+  "quantity": "0.1200",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65"
+}, {
+  "server": "huobi",
+  "fSymbol": "CTXC",
+  "tSymbol": "USDT",
+  "ask_or_bid": "bid",
+  "price": "0.1037",
+  "quantity": "0.4000",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65"
+}, {
+  "server": "huobi",
+  "fSymbol": "CTXC",
+  "tSymbol": "USDT",
+  "ask_or_bid": "bid",
+  "price": "0.1043",
+  "quantity": "142.9133",
+  "ratio": 0.002,
+  "type": "limit",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65"
 }]
 1. pre signals preExecOrders: [{
-  "server": "binance",
-  "order_id": "0x2a-a1b22774-a703-3f18-a697-b9134585a014",
-  "status": "filled"
-}, {
-  "server": "binance",
-  "order_id": "0x2a-4ed49567-2d85-3cc1-9743-249665ee4d06",
+  "server": "huobi",
+  "order_id": "0x3a-2fca09c6-fd48-3988-ba2d-3d6d99f26bbf",
   "status": "filled"
 }, {
   "server": "huobi",
-  "order_id": "0x3a-8f4995dc-de27-38c6-89c6-7ed69291daa2",
+  "order_id": "0x3a-9dff1c8b-a273-3ae5-bef4-1dd9969138fb",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-16147512-f510-3dde-aa0c-eaf8afb42130",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-eb99b10e-0897-3472-9109-3e771a708ee3",
+  "status": "filled"
+}, {
+  "server": "huobi",
+  "order_id": "0x3a-dcfa4b47-6f87-3a34-a0a9-8811b381ff40",
   "status": "filled"
 }]
 1. pre signals preInfoOrders: [{
-  "server": "binance",
-  "timeStamp": 1546523500085,
-  "order_id": "0x2a-4ed49567-2d85-3cc1-9743-249665ee4d06",
+  "server": "huobi",
+  "timeStamp": 1546545247429,
+  "order_id": "0x3a-16147512-f510-3dde-aa0c-eaf8afb42130",
   "status": "filled",
   "type": "limit",
-  "fSymbol": "ICX",
-  "tSymbol": "ETH",
-  "ask_or_bid": "bid",
-  "ask_bid_price": 0.001733,
-  "ask_bid_size": 57.01,
-  "filled_price": 0.001733,
-  "filled_size": 57.01,
-  "fee": 9.879833e-05,
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
-}, {
-  "server": "binance",
-  "timeStamp": 1546523500083,
-  "order_id": "0x2a-a1b22774-a703-3f18-a697-b9134585a014",
-  "status": "filled",
-  "type": "limit",
-  "fSymbol": "ETH",
+  "fSymbol": "CTXC",
   "tSymbol": "USDT",
   "ask_or_bid": "bid",
-  "ask_bid_price": 151.5,
-  "ask_bid_size": 0.09891,
-  "filled_price": 151.5,
-  "filled_size": 0.09891,
-  "fee": 0.014984865,
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
+  "ask_bid_price": 0.1031,
+  "ask_bid_size": 0.12,
+  "filled_price": 0.1031,
+  "filled_size": 0.12,
+  "fee": 2.4744e-05,
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65"
 }, {
   "server": "huobi",
-  "timeStamp": 1546523500087,
-  "order_id": "0x3a-8f4995dc-de27-38c6-89c6-7ed69291daa2",
+  "timeStamp": 1546545247416,
+  "order_id": "0x3a-2fca09c6-fd48-3988-ba2d-3d6d99f26bbf",
   "status": "filled",
   "type": "limit",
   "fSymbol": "ETH",
   "tSymbol": "USDT",
   "ask_or_bid": "bid",
-  "ask_bid_price": 151.57,
-  "ask_bid_size": 0.0987,
-  "filled_price": 151.57,
-  "filled_size": 0.0987,
-  "fee": 0.029919917999999997,
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
+  "ask_bid_price": 146.64,
+  "ask_bid_size": 0.102,
+  "filled_price": 146.64,
+  "filled_size": 0.102,
+  "fee": 0.029914559999999996,
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546545247426,
+  "order_id": "0x3a-9dff1c8b-a273-3ae5-bef4-1dd9969138fb",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "CTXC",
+  "tSymbol": "USDT",
+  "ask_or_bid": "bid",
+  "ask_bid_price": 0.1029,
+  "ask_bid_size": 0.1,
+  "filled_price": 0.1029,
+  "filled_size": 0.1,
+  "fee": 2.0580000000000003e-05,
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546545247431,
+  "order_id": "0x3a-dcfa4b47-6f87-3a34-a0a9-8811b381ff40",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "CTXC",
+  "tSymbol": "USDT",
+  "ask_or_bid": "bid",
+  "ask_bid_price": 0.1043,
+  "ask_bid_size": 142.9133,
+  "filled_price": 0.1043,
+  "filled_size": 142.9133,
+  "fee": 0.02981171438,
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65"
+}, {
+  "server": "huobi",
+  "timeStamp": 1546545247429,
+  "order_id": "0x3a-eb99b10e-0897-3472-9109-3e771a708ee3",
+  "status": "filled",
+  "type": "limit",
+  "fSymbol": "CTXC",
+  "tSymbol": "USDT",
+  "ask_or_bid": "bid",
+  "ask_bid_price": 0.1037,
+  "ask_bid_size": 0.4,
+  "filled_price": 0.1037,
+  "filled_size": 0.4,
+  "fee": 8.296e-05,
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65"
 }]
 1. pre signals after update: [{
-  "ask_server": "huobi",
-  "backward_ratio": 0.1,
-  "base_gain": -0.1,
-  "base_start": 30.0,
+  "V1_fSymbol": "CTXC",
+  "V1_tSymbol": "ETH",
+  "V2_fSymbol": "CTXC",
+  "V2_tSymbol": "USDT",
+  "V3_fSymbol": "ETH",
+  "V3_tSymbol": "USDT",
+  "base_gain": 0.01,
+  "base_start": 45.0,
   "base_timeout": 300.0,
-  "bid_server": "binance",
-  "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a",
-  "id": "0x1c4f61d901-ca08-3b2b-bf88-41ee88c11777",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "ETH",
-    "balance": 1.2871670000011437e-05,
-    "free": 1.2871670000025315e-05,
-    "locked": -1.7157499379583108e-17
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 57.01,
-    "free": 57.01,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 0.00015013500000016222,
-    "free": 0.00015013500000193858,
-    "locked": -1.1518563880486e-15
-  }, {
-    "server": "huobi",
-    "asset": "ETH",
-    "balance": 0.0987,
-    "free": 0.0987,
-    "locked": 0.0
-  }, {
-    "server": "huobi",
-    "asset": "USDT",
-    "balance": 0.01012108200000128,
-    "free": 0.01012108200000128,
-    "locked": -8.396061623727746e-16
-  }],
-  "status_done": True,
-  "status_gain": -0.00623655177649655,
-  "tSymbol": "ETH",
-  "type": "dis"
-}]
-2. run signals runOrders: [{
-  "server": "binance",
-  "fSymbol": "ICX",
-  "tSymbol": "ETH",
-  "ask_or_bid": "ask",
-  "price": "0.001727",
-  "quantity": "29.82",
-  "ratio": 0.001,
-  "type": "limit",
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
-}, {
-  "server": "binance",
-  "fSymbol": "ICX",
-  "tSymbol": "ETH",
-  "ask_or_bid": "ask",
-  "price": "0.001726",
-  "quantity": "27.18",
-  "ratio": 0.001,
-  "type": "limit",
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
-}, {
-  "server": "binance",
-  "fSymbol": "ETH",
-  "tSymbol": "USDT",
-  "ask_or_bid": "ask",
-  "price": "151.44",
-  "quantity": "0.09831",
-  "ratio": 0.001,
-  "type": "limit",
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
-}, {
+  "forward_ratio": 0.065338,
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65",
+  "id": "0x2cf3d67f1b-0664-36bb-8beb-3dca5b1309bf",
   "server": "huobi",
-  "fSymbol": "ETH",
-  "tSymbol": "USDT",
-  "ask_or_bid": "ask",
-  "price": "151.47",
-  "quantity": "0.0987",
-  "ratio": 0.002,
-  "type": "limit",
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
-}]
-2. run signals runExecOrders: [{
-  "server": "binance",
-  "order_id": "0x2a-a4fd5d83-d503-3de2-89a8-3f2cab07f926",
-  "status": "filled"
-}, {
-  "server": "binance",
-  "order_id": "0x2a-dc1657e9-f24e-3036-b529-a5e36131b2fe",
-  "status": "filled"
-}, {
-  "server": "binance",
-  "order_id": "0x2a-cf12bb41-c81e-32ff-808b-b03f115a4add",
-  "status": "filled"
-}, {
-  "server": "huobi",
-  "order_id": "0x3a-f67705f8-5525-3a75-8708-2d9d4fc80329",
-  "status": "filled"
-}]
-2. run signals runInfoOrders: [{
-  "server": "binance",
-  "timeStamp": 1546523509455,
-  "order_id": "0x2a-a4fd5d83-d503-3de2-89a8-3f2cab07f926",
-  "status": "filled",
-  "type": "limit",
-  "fSymbol": "ICX",
-  "tSymbol": "ETH",
-  "ask_or_bid": "ask",
-  "ask_bid_price": 0.001727,
-  "ask_bid_size": 29.82,
-  "filled_price": 0.001727,
-  "filled_size": 29.82,
-  "fee": 5.1499140000000006e-05,
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
-}, {
-  "server": "binance",
-  "timeStamp": 1546523509459,
-  "order_id": "0x2a-cf12bb41-c81e-32ff-808b-b03f115a4add",
-  "status": "filled",
-  "type": "limit",
-  "fSymbol": "ETH",
-  "tSymbol": "USDT",
-  "ask_or_bid": "ask",
-  "ask_bid_price": 151.44,
-  "ask_bid_size": 0.09831,
-  "filled_price": 151.44,
-  "filled_size": 0.09831,
-  "fee": 0.014888066399999999,
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
-}, {
-  "server": "binance",
-  "timeStamp": 1546523509457,
-  "order_id": "0x2a-dc1657e9-f24e-3036-b529-a5e36131b2fe",
-  "status": "filled",
-  "type": "limit",
-  "fSymbol": "ICX",
-  "tSymbol": "ETH",
-  "ask_or_bid": "ask",
-  "ask_bid_price": 0.001726,
-  "ask_bid_size": 27.18,
-  "filled_price": 0.001726,
-  "filled_size": 27.18,
-  "fee": 4.691268e-05,
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
-}, {
-  "server": "huobi",
-  "timeStamp": 1546523509461,
-  "order_id": "0x3a-f67705f8-5525-3a75-8708-2d9d4fc80329",
-  "status": "filled",
-  "type": "limit",
-  "fSymbol": "ETH",
-  "tSymbol": "USDT",
-  "ask_or_bid": "ask",
-  "ask_bid_price": 151.47,
-  "ask_bid_size": 0.0987,
-  "filled_price": 151.47,
-  "filled_size": 0.0987,
-  "fee": 0.029900177999999996,
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a"
-}]
-2. run signals after update: [{
-  "ask_server": "huobi",
-  "backward_ratio": 0.1,
-  "base_gain": -0.1,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "binance",
-  "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a",
-  "id": "0x1c4f61d901-ca08-3b2b-bf88-41ee88c11777",
   "status_assets": [{
-    "server": "binance",
-    "asset": "ETH",
-    "balance": 1.6279850000022744e-05,
-    "free": 1.6279850000036622e-05,
-    "locked": -1.7157499379583108e-17
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 0.00999999999999801,
-    "free": 0.00999999999999801,
+    "server": "huobi",
+    "asset": "CTXC",
+    "balance": 143.5333,
+    "free": 143.5333,
     "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 14.8733284686,
-    "free": 14.873328468600002,
-    "locked": -1.1518563880486e-15
   }, {
     "server": "huobi",
     "asset": "ETH",
-    "balance": 0.0,
-    "free": 0.0,
+    "balance": 0.102,
+    "free": 0.102,
     "locked": 0.0
   }, {
     "server": "huobi",
     "asset": "USDT",
-    "balance": 14.930309904,
-    "free": 14.930309904,
-    "locked": -8.396061623727746e-16
+    "balance": 15.012866251620006,
+    "free": 15.012866251620006,
+    "locked": -8.85373046578819e-16
   }],
-  "status_done": True,
-  "status_gain": -0.006376537622062747,
-  "tSymbol": "ETH",
-  "type": "dis"
-}]
-3. after signals afterOrders: []
-3. after signals afterExecOrders: []
-3. after signals afterInfoOrders: []
-3. after signals after update: [{
-  "ask_server": "huobi",
-  "backward_ratio": 0.1,
-  "base_gain": -0.1,
-  "base_start": 30.0,
-  "base_timeout": 300.0,
-  "bid_server": "binance",
-  "fSymbol": "ICX",
-  "forward_ratio": -0.1,
-  "group_id": "0x1b-268a9aca-6fe0-3dd9-b1ad-4c16d5db977a",
-  "id": "0x1c4f61d901-ca08-3b2b-bf88-41ee88c11777",
-  "status_assets": [{
-    "server": "binance",
-    "asset": "ETH",
-    "balance": 1.6279850000022744e-05,
-    "free": 1.6279850000036622e-05,
-    "locked": -1.7157499379583108e-17
-  }, {
-    "server": "binance",
-    "asset": "ICX",
-    "balance": 0.00999999999999801,
-    "free": 0.00999999999999801,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "USDT",
-    "balance": 14.8733284686,
-    "free": 14.873328468600002,
-    "locked": -1.1518563880486e-15
-  }, {
-    "server": "huobi",
-    "asset": "ETH",
-    "balance": 0.0,
-    "free": 0.0,
-    "locked": 0.0
-  }, {
-    "server": "huobi",
-    "asset": "USDT",
-    "balance": 14.930309904,
-    "free": 14.930309904,
-    "locked": -8.396061623727746e-16
-  }],
-  "status_done": True,
-  "status_gain": -0.006376537622062747,
-  "tSymbol": "ETH",
-  "type": "dis"
+  "status_done": False,
+  "status_gain": -0.008127969811999947,
+  "type": "tra"
 }]
