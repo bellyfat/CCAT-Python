@@ -276,7 +276,7 @@ class Handler(object):
 
                     raise Exception(
                         errStr.substitute(here='1.4 update signal status'))
-            # print('1. pre signals after update:\n%s' % sgn.signals())
+            print('1. pre signals after update:\n%s' % sgn.signals())
             ########################################
             # 2. run trade
             isError = True
@@ -357,7 +357,7 @@ class Handler(object):
                         # rollback:
                         raise Exception(
                             errStr.substitute(here='2.4 update signal status'))
-                # print('2. run signals after update:\n%s' % sgn.signals())
+                print('2. run signals after update:\n%s' % sgn.signals())
                 # 2.5 update isError
                 isError = sgn.backtestSignalsIsRunMore(resInfoSymbol)
             ########################################
@@ -437,7 +437,7 @@ class Handler(object):
                         # rollback:
                         raise Exception(
                             errStr.substitute(here='3.4 update signal status'))
-                # print('3. after signals after update:\n%s' % sgn.signals())
+                print('3. after signals after update:\n%s' % sgn.signals())
                 # 3.5 update isError
                 isError = sgn.backtestSignalsIsRunMore(resInfoSymbol)
         except (DBException, CalcException, EngineException, Exception) as err:
