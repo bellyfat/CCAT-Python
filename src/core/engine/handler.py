@@ -4,7 +4,6 @@ from itertools import combinations
 from string import Template
 
 import pandas as pd
-
 from src.core.calc.calc import Calc
 from src.core.calc.enums import SIGNAL_MAX_NUM
 from src.core.calc.signal import Signal
@@ -220,7 +219,7 @@ class Handler(object):
                         err=err, here='1.1 calc pre orders'))
             if isError > 0:
                 raise Exception(errStr.substitute(here='1.1 calc pre orders'))
-            print('1. pre signals preOrders:\n%s' % preOrders)
+            # print('1. pre signals preOrders:\n%s' % preOrders)
             # 1.2 calc preExecOrders
             preExecOrders = []
             if not preOrders == []:
@@ -246,7 +245,7 @@ class Handler(object):
                     # rollback:
                     raise Exception(
                         errStr.substitute(here='1.2 excute preOrders'))
-            print('1. pre signals preExecOrders:\n%s' % preExecOrders)
+            # print('1. pre signals preExecOrders:\n%s' % preExecOrders)
             # 1.3 calc preInfoOrders
             preInfoOrders = []
             if not preExecOrders == []:
@@ -258,7 +257,7 @@ class Handler(object):
                                                                 orderIDs)
                     if not res == []:
                         preInfoOrders.extend(res)
-            print('1. pre signals preInfoOrders:\n%s' % preInfoOrders)
+            # print('1. pre signals preInfoOrders:\n%s' % preInfoOrders)
             # 1.4 update signals status
             if not preInfoOrders == []:
                 preInfoOrders = pd.DataFrame(preInfoOrders)
@@ -277,7 +276,7 @@ class Handler(object):
 
                     raise Exception(
                         errStr.substitute(here='1.4 update signal status'))
-            print('1. pre signals after update:\n%s' % sgn.signals())
+            # print('1. pre signals after update:\n%s' % sgn.signals())
             ########################################
             # 2. run trade
             isError = True
@@ -299,7 +298,7 @@ class Handler(object):
                     # rollback:
                     raise Exception(
                         errStr.substitute(here='2.1 calc run orders'))
-                print('2. run signals runOrders:\n%s' % runOrders)
+                # print('2. run signals runOrders:\n%s' % runOrders)
                 # 2.2 calc runExecOrders
                 runExecOrders = []
                 if not runOrders == []:
@@ -326,7 +325,7 @@ class Handler(object):
                         # rollback:
                         raise Exception(
                             errStr.substitute(here='2.2 execute runOrders'))
-                print('2. run signals runExecOrders:\n%s' % runExecOrders)
+                # print('2. run signals runExecOrders:\n%s' % runExecOrders)
                 # 2.3 calc runInfoOrders
                 runInfoOrders = []
                 if not runExecOrders == []:
@@ -339,7 +338,7 @@ class Handler(object):
                                                                     orderIDs)
                         if not res == []:
                             runInfoOrders.extend(res)
-                print('2. run signals runInfoOrders:\n%s' % runInfoOrders)
+                # print('2. run signals runInfoOrders:\n%s' % runInfoOrders)
                 # 2.4 update signals status
                 if not runInfoOrders == []:
                     runInfoOrders = pd.DataFrame(runInfoOrders)
@@ -358,7 +357,7 @@ class Handler(object):
                         # rollback:
                         raise Exception(
                             errStr.substitute(here='2.4 update signal status'))
-                print('2. run signals after update:\n%s' % sgn.signals())
+                # print('2. run signals after update:\n%s' % sgn.signals())
                 # 2.5 update isError
                 isError = sgn.backtestSignalsIsRunMore(resInfoSymbol)
             ########################################
@@ -381,7 +380,7 @@ class Handler(object):
                 if isSubError > 0:
                     raise Exception(
                         errStr.substitute(here='3.1 calc after orders'))
-                print('3. after signals afterOrders:\n%s' % afterOrders)
+                # print('3. after signals afterOrders:\n%s' % afterOrders)
                 # 3.2 calc afterExecOrders
                 afterExecOrders = []
                 if not afterOrders == []:
@@ -407,8 +406,7 @@ class Handler(object):
                         # rollback:
                         raise Exception(
                             errStr.substitute(here='3.2 excute preOrders'))
-                print(
-                    '3. after signals afterExecOrders:\n%s' % afterExecOrders)
+                # print('3. after signals afterExecOrders:\n%s' % afterExecOrders)
                 # 3.3 calc afterInfoOrders
                 afterInfoOrders = []
                 if not afterExecOrders == []:
@@ -421,8 +419,7 @@ class Handler(object):
                                                                     orderIDs)
                         if not res == []:
                             preInfoOrders.extend(res)
-                print(
-                    '3. after signals afterInfoOrders:\n%s' % afterInfoOrders)
+                # print('3. after signals afterInfoOrders:\n%s' % afterInfoOrders)
                 # 3.4 update signals status
                 if not afterInfoOrders == []:
                     afterInfoOrders = pd.DataFrame(afterInfoOrders)
@@ -440,7 +437,7 @@ class Handler(object):
                         # rollback:
                         raise Exception(
                             errStr.substitute(here='3.4 update signal status'))
-                print('3. after signals after update:\n%s' % sgn.signals())
+                # print('3. after signals after update:\n%s' % sgn.signals())
                 # 3.5 update isError
                 isError = sgn.backtestSignalsIsRunMore(resInfoSymbol)
         except (DBException, CalcException, EngineException, Exception) as err:
