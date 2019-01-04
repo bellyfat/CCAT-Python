@@ -1088,35 +1088,38 @@ class Calc(object):
             # calc tra result
             if not C1_C2_one_price * C2_C3_one_price * C3_C1_one_price > 1:
                 return orders
-            # Begin Calc Gain
+            # Begin Calc Gain: Gain V2 tSymbol
             if C3_symbol == V3_fSymbol:
                 # Type clockwise: sell->buy->sell
                 # calc symbol size
-                temp = min(V3_one_size, V1_one_size / C3_C1_one_price)
-                temp_size = min(V2_one_size, temp)
-                V1_one_size = temp_size * C3_C1_one_price
-                V2_one_size = temp_size
-                V3_one_size = temp_size
-                # calc gain_ratio
-                gain_ratio = (
-                    C1_C2_one_price * C3_C1_one_price * (1 - V1_fee_ratio) *
-                    (1 - V3_fee_ratio) - 1 / C2_C3_one_price -
-                    1 / C2_C3_one_price * V2_fee_ratio) / (1 / C2_C3_one_price)
+                temp_C3 = min(
+                    V3_one_size,
+                    V2_one_size * C2_C3_one_price * (1 - V2_fee_ratio))
+                temp_C1 = min(V1_one_size,
+                              temp_C3 * C3_C1_one_price * (1 - V3_fee_ratio))
+                temp_C3 = temp_C1 / C3_C1_one_price / (1 - V3_fee_ratio)
+                temp_C2 = temp_C3 / C2_C3_one_price / (1 - V2_fee_ratio)
+                V2_one_size = temp_C2 * (1 - V2_fee_ratio) / V2_one_price
+                V3_one_size = V2_one_size
+                V1_one_size = V3_one_size * V3_one_price * (1 - V3_fee_ratio)
             else:
                 # Type anti-clockwise: sell->buy->buy
                 # calc symbol size
-                temp = min(V2_one_size, V3_one_size / C2_C3_one_price)
-                temp_size = min(V1_one_size, temp)
-                V1_one_size = temp_size
-                V2_one_size = temp_size
-                V3_one_size = temp_size * C2_C3_one_price
-                # calc gain_ratio
-                gain_ratio = (
-                    C1_C2_one_price * (1 - V1_fee_ratio) -
-                    (1 / (C2_C3_one_price * C3_C1_one_price)) -
-                    (1 / (C2_C3_one_price * C3_C1_one_price)) *
-                    (V2_fee_ratio + V3_fee_ratio - V2_fee_ratio * V3_fee_ratio)
-                ) / (1 / (C2_C3_one_price * C3_C1_one_price))
+                temp_C3 = min(
+                    V3_one_size,
+                    V2_one_size * C2_C3_one_price * (1 - V2_fee_ratio))
+                temp_C1 = min(V1_one_size,
+                              temp_C3 * C3_C1_one_price * (1 - V3_fee_ratio))
+                temp_C3 = temp_C1 / C3_C1_one_price / (1 - V3_fee_ratio)
+                temp_C2 = temp_C3 / C2_C3_one_price / (1 - V2_fee_ratio)
+                V2_one_size = temp_C2 * (1 - V2_fee_ratio) / V2_one_price
+                V3_one_size = V2_one_size * (1 - V3_fee_ratio) / V3_one_price
+                V1_one_size = V3_one_size
+            # calc gain_ratio
+            gain_ratio = (C1_C2_one_price * C3_C1_one_price *
+                          (1 - V1_fee_ratio) *
+                          (1 - V3_fee_ratio) - 1 / C2_C3_one_price -
+                          1 / C2_C3_one_price * V2_fee_ratio) / (1 / C2_C3_one_price)
             # forward
             print('tra forward gain_ratio: %s' % gain_ratio)
             if gain_ratio > forward_ratio:
@@ -3765,59 +3768,47 @@ class Calc(object):
                     if not V3_fee.values[0] == 'NULL':
                         r['V3_fee'] = V3_fee.values[0]
                 # calc symbol base
-                V1_tSymbol_base_price = (
-                    r['V1_bid_one_price_base'] / r['V1_bid_one_price'] +
-                    r['V1_ask_one_price_base'] / r['V1_ask_one_price']) / 2
                 V2_tSymbol_base_price = (
                     r['V2_bid_one_price_base'] / r['V2_bid_one_price'] +
                     r['V2_ask_one_price_base'] / r['V2_ask_one_price']) / 2
-                V3_tSymbol_base_price = (
-                    r['V3_bid_one_price_base'] / r['V3_bid_one_price'] +
-                    r['V3_ask_one_price_base'] / r['V3_ask_one_price']) / 2
-                # Begin Calc Gain
+                # Begin Calc Gain: Gain V2 tSymbol
                 if C3_symbol == r['V3_fSymbol']:
                     # Type clockwise: sell->buy->sell
                     # calc symbol size
-                    temp = min(r['V3_one_size'],
-                               r['V1_one_size'] / C3_C1_one_price)
-                    temp_size = min(r['V2_one_size'], temp)
-                    r['V1_one_size'] = temp_size * C3_C1_one_price
-                    r['V2_one_size'] = temp_size
-                    r['V3_one_size'] = temp_size
-                    # calc gain_base
-                    r['gain_base'] = (C1_C2_one_price * C3_C1_one_price *
-                                      (1 - r['V1_fee']) *
-                                      (1 - r['V3_fee']) - 1 / C2_C3_one_price -
-                                      1 / C2_C3_one_price * r['V2_fee']
-                                      ) * temp_size * V2_tSymbol_base_price
-                    # calc gain_ratio
-                    r['gain_ratio'] = (
-                        C1_C2_one_price * C3_C1_one_price * (1 - r['V1_fee']) *
-                        (1 - r['V3_fee']) - 1 / C2_C3_one_price - 1 /
-                        C2_C3_one_price * r['V2_fee']) / (1 / C2_C3_one_price)
+                    temp_C3 = min(
+                        r['V3_one_size'],
+                        r['V2_one_size'] * C2_C3_one_price * (1 - r['V2_fee']))
+                    temp_C1 = min(r['V1_one_size'],
+                                  temp_C3 * C3_C1_one_price * (1 - r['V3_fee']))
+                    temp_C3 = temp_C1 / C3_C1_one_price / (1 - r['V3_fee'])
+                    temp_C2 = temp_C3 / C2_C3_one_price / (1 - r['V2_fee'])
+                    r['V2_one_size'] = temp_C2 * (1 - r['V2_fee']) / r['V2_one_price']
+                    r['V3_one_size'] = r['V2_one_size']
+                    r['V1_one_size'] = r['V3_one_size']* r['V3_one_price'] * (1 - r['V3_fee'])
                 else:
                     # Type anti-clockwise: sell->buy->buy
                     # calc symbol size
-                    temp = min(r['V2_one_size'],
-                               r['V3_one_size'] / C2_C3_one_price)
-                    temp_size = min(r['V1_one_size'], temp)
-                    r['V1_one_size'] = temp_size
-                    r['V2_one_size'] = temp_size
-                    r['V3_one_size'] = temp_size * C2_C3_one_price
-                    # calc gain_base
-                    r['gain_base'] = (
-                        C1_C2_one_price * (1 - r['V1_fee']) -
-                        (1 / (C2_C3_one_price * C3_C1_one_price)) -
-                        (1 / (C2_C3_one_price * C3_C1_one_price)) *
-                        (r['V2_fee'] + r['V3_fee'] - r['V2_fee'] * r['V3_fee'])
-                    ) * temp_size * V1_tSymbol_base_price
-                    # calc gain_ratio
-                    r['gain_ratio'] = (
-                        C1_C2_one_price * (1 - r['V1_fee']) -
-                        (1 / (C2_C3_one_price * C3_C1_one_price)) -
-                        (1 / (C2_C3_one_price * C3_C1_one_price)) *
-                        (r['V2_fee'] + r['V3_fee'] - r['V2_fee'] * r['V3_fee'])
-                    ) / (1 / (C2_C3_one_price * C3_C1_one_price))
+                    temp_C3 = min(
+                        r['V3_one_size'],
+                        r['V2_one_size'] * C2_C3_one_price * (1 - r['V2_fee']))
+                    temp_C1 = min(r['V1_one_size'],
+                                  temp_C3 * C3_C1_one_price * (1 - r['V3_fee']))
+                    temp_C3 = temp_C1 / C3_C1_one_price / (1 - r['V3_fee'])
+                    temp_C2 = temp_C3 / C2_C3_one_price / (1 - r['V2_fee'])
+                    r['V2_one_size'] = temp_C2 * (1 - r['V2_fee']) / r['V2_one_price']
+                    r['V3_one_size'] = r['V2_one_size']* (1 - r['V3_fee'])/r['V3_one_price']
+                    r['V1_one_size'] = r['V3_one_size']
+                # calc gain_base
+                r['gain_base'] = (C1_C2_one_price * C3_C1_one_price *
+                                  (1 - r['V1_fee']) *
+                                  (1 - r['V3_fee']) - 1 / C2_C3_one_price -
+                                  1 / C2_C3_one_price * r['V2_fee']
+                                  ) / (1 / C2_C3_one_price) * temp_C2 * V2_tSymbol_base_price
+                # calc gain_ratio
+                r['gain_ratio'] = (
+                    C1_C2_one_price * C3_C1_one_price * (1 - r['V1_fee']) *
+                    (1 - r['V3_fee']) - 1 / C2_C3_one_price - 1 /
+                    C2_C3_one_price * r['V2_fee']) / (1 / C2_C3_one_price)
                 # calc signal
                 if r['gain_ratio'] > threshold:
                     signal.append(r)
