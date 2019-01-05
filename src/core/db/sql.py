@@ -381,13 +381,45 @@ GET_TABLES_SQL = '''
 # creat db tables sql
 CREATE_TABELS_SQL = '''
     BEGIN TRANSACTION;
+    CREATE TABLE IF NOT EXISTS `STATISTIC_TRADE_ORDER_HISTORY` (
+        `timeStamp` INTEGER,
+        `signal_id` TEXT NOT NULL,
+    	`timeStamp_start` INTEGER,
+    	`timeStamp_end`	INTEGER,
+        `base_start` REAL,
+        `base_end` REAL,
+        `status_gain` REAL,
+        `status_gain_max` REAL,
+        `status_gain_min` REAL,
+        `status_gain_diff_max` REAL,
+        `status_gain_diff_min` REAL,
+        `status_gain_diff_std` REAL,
+        `group_id` TEXT NOT NULL,
+        PRIMARY KEY (signal_id, group_id)
+    );
+    CREATE TABLE IF NOT EXISTS `STATISTIC_TRADE_BACKTEST_HISTORY` (
+        `timeStamp` INTEGER,
+        `signal_id` TEXT NOT NULL,
+    	`timeStamp_start` INTEGER,
+    	`timeStamp_end`	INTEGER,
+        `base_start` REAL,
+        `base_end` REAL,
+        `status_gain` REAL,
+        `status_gain_max` REAL,
+        `status_gain_min` REAL,
+        `status_gain_diff_max` REAL,
+        `status_gain_diff_min` REAL,
+        `status_gain_diff_std` REAL,
+        `group_id` TEXT NOT NULL,
+        PRIMARY KEY (signal_id, group_id)
+    );
     CREATE TABLE IF NOT EXISTS `STATISTIC_JUDGE_MARKET_TICKER_PAIR` (
     	`timeStamp`	INTEGER NOT NULL,
     	`J1_server`	TEXT NOT NULL,
     	`J2_server`	TEXT NOT NULL,
     	`symbol_pair`	TEXT NOT NULL,
-    	`timeStamp_start`	REAL,
-    	`timeStamp_end`	REAL,
+    	`timeStamp_start`	INTEGER,
+    	`timeStamp_end`	INTEGER,
     	`timeStamp_times`	REAL,
     	`timeStamp_period_times`	REAL,
     	`timeStamp_period_longest`	REAL,
@@ -402,15 +434,15 @@ CREATE_TABELS_SQL = '''
     	`gain_ratio_min`	REAL,
     	`gain_ratio_mean`	REAL,
     	`gain_ratio_std`	REAL,
-        `group_id`  TEXT,
+        `group_id`  TEXT NOT NULL,
         PRIMARY KEY (timeStamp, J1_server, J2_server, symbol_pair)
     );
     CREATE TABLE IF NOT EXISTS `STATISTIC_JUDGE_MARKET_TICKER_TRA` (
     	`timeStamp`	INTEGER NOT NULL,
     	`server`	TEXT NOT NULL,
     	`symbol_pair`	TEXT NOT NULL,
-    	`timeStamp_start`	REAL,
-    	`timeStamp_end`	REAL,
+    	`timeStamp_start`	INTEGER,
+    	`timeStamp_end`	INTEGER,
     	`timeStamp_times`	REAL,
     	`timeStamp_period_times`	REAL,
     	`timeStamp_period_longest`	REAL,
@@ -425,7 +457,7 @@ CREATE_TABELS_SQL = '''
     	`gain_ratio_min`	REAL,
     	`gain_ratio_mean`	REAL,
     	`gain_ratio_std`	REAL,
-        `group_id`  TEXT,
+        `group_id`  TEXT NOT NULL,
         PRIMARY KEY (timeStamp, server, symbol_pair)
     );
     CREATE TABLE IF NOT EXISTS `STATISTIC_JUDGE_MARKET_TICKER_DIS` (
@@ -434,8 +466,8 @@ CREATE_TABELS_SQL = '''
     	`ask_server`	TEXT NOT NULL,
     	`fSymbol`	TEXT NOT NULL,
     	`tSymbol`	TEXT NOT NULL,
-    	`timeStamp_start`	REAL,
-    	`timeStamp_end`	REAL,
+    	`timeStamp_start`	INTEGER,
+    	`timeStamp_end`	INTEGER,
     	`timeStamp_times`	REAL,
     	`timeStamp_period_times`	REAL,
     	`timeStamp_period_longest`	REAL,
@@ -450,7 +482,7 @@ CREATE_TABELS_SQL = '''
     	`gain_ratio_min`	REAL,
     	`gain_ratio_mean`	REAL,
     	`gain_ratio_std`	REAL,
-        `group_id`  TEXT,
+        `group_id`  TEXT NOT NULL,
         PRIMARY KEY (timeStamp, bid_server, ask_server, fSymbol, tSymbol)
     );
     CREATE TABLE IF NOT EXISTS `TRADE_ORDER_HISTORY` (
@@ -467,6 +499,7 @@ CREATE_TABELS_SQL = '''
     	`filled_price`	REAL,
     	`filled_size`	REAL,
     	`fee`	REAL,
+        `signal_id`  TEXT,
         `group_id`  TEXT,
         PRIMARY KEY (server, order_id)
     );
@@ -484,8 +517,68 @@ CREATE_TABELS_SQL = '''
     	`filled_price`	REAL,
     	`filled_size`	REAL,
     	`fee`	REAL,
+        `signal_id`  TEXT,
         `group_id`  TEXT,
         PRIMARY KEY (server, order_id)
+    );
+    CREATE TABLE IF NOT EXISTS `SIGNAL_TRADE_PAIR` (
+        `timeStamp` INTEGER NOT NULL,
+        `signal_id` TEXT NOT NULL,
+        `type` TEXT NOT NULL,
+        `J1_server` TEXT NOT NULL,
+        `J2_server` TEXT NOT NULL,
+        `V1_fSymbol` TEXT NOT NULL,
+        `V1_tSymbol` TEXT NOT NULL,
+        `V2_fSymbol` TEXT NOT NULL,
+        `V2_tSymbol` TEXT NOT NULL,
+        `V3_fSymbol` TEXT NOT NULL,
+        `V3_tSymbol` TEXT NOT NULL,
+        `forward_ratio` REAL NOT NULL,
+        `base_start` REAL NOT NULL,
+        `base_gain` REAL NOT NULL,
+        `group_id` TEXT NOT NULL,
+        `status_done` TEXT,
+        `status_assets` TEXT,
+        `status_gain` REAL,
+        PRIMARY KEY (timeStamp, signal_id)
+    );
+    CREATE TABLE IF NOT EXISTS `SIGNAL_TRADE_TRA` (
+        `timeStamp` INTEGER NOT NULL,
+        `signal_id` TEXT NOT NULL,
+        `type` TEXT NOT NULL,
+        `server` TEXT NOT NULL,
+        `V1_fSymbol` TEXT NOT NULL,
+        `V1_tSymbol` TEXT NOT NULL,
+        `V2_fSymbol` TEXT NOT NULL,
+        `V2_tSymbol` TEXT NOT NULL,
+        `V3_fSymbol` TEXT NOT NULL,
+        `V3_tSymbol` TEXT NOT NULL,
+        `forward_ratio` REAL NOT NULL,
+        `base_start` REAL NOT NULL,
+        `base_gain` REAL NOT NULL,
+        `group_id` TEXT NOT NULL,
+        `status_done` TEXT,
+        `status_assets` TEXT,
+        `status_gain` REAL,
+        PRIMARY KEY (timeStamp, signal_id)
+    );
+    CREATE TABLE IF NOT EXISTS `SIGNAL_TRADE_DIS` (
+        `timeStamp` INTEGER NOT NULL,
+        `signal_id` TEXT NOT NULL,
+        `type` TEXT NOT NULL,
+        `bid_server` TEXT NOT NULL,
+        `ask_server` TEXT NOT NULL,
+        `fSymbol` TEXT NOT NULL,
+        `tSymbol` TEXT NOT NULL,
+        `forward_ratio` REAL NOT NULL,
+        `backward_ratio` REAL NOT NULL,
+        `base_start` REAL NOT NULL,
+        `base_gain` REAL NOT NULL,
+        `group_id` TEXT NOT NULL,
+        `status_done` TEXT,
+        `status_assets` TEXT,
+        `status_gain` REAL,
+        PRIMARY KEY (timeStamp, signal_id)
     );
     CREATE TABLE IF NOT EXISTS `JUDGE_MARKET_TICKER_PAIR` (
     	`timeStamp`	INTEGER NOT NULL,
