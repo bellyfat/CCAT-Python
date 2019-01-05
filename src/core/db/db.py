@@ -32,6 +32,9 @@ class DB(object):
         self._judgeMarketTickerCycle = Config()._Main_judgeMarketTickerCycle
         self._statisticJudgeMarketTickerCycle = Config(
         )._Main_statisticJudgeMarketTickerCycle
+        self._tradeHistoryCycle = Config()._Main_tradeHistoryCycle
+        self._signalTradeCycle = Config()._Main_signalTradeCycle
+        self._statisticSignalTradeCycle = Config()._Main_statisticSignalTradeCycle
         # proxies
         self._proxies = Config()._Proxies_url if Config(
         )._Proxies_proxies else None
@@ -640,6 +643,58 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
+    def getStatisticTradeOrderHistory(self):
+        self._logger.debug("src.core.db.db.DB.getStatisticTradeOrderHistory")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_STATISTIC_TRADE_ORDER_HISTORY_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def delStatisticTradeOrderHistory(self):
+        self._logger.debug("src.core.db.db.DB.delStatisticTradeOrderHistory")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = DEL_STATISTIC_TRADE_ORDER_HISTORY_SQL.substitute(
+                period=self._statisticSignalTradeCycle)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getStatisticTradeBacktestHistory(self):
+        self._logger.debug("src.core.db.db.DB.getStatisticTradeBacktestHistory")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_STATISTIC_TRADE_BACKTEST_HISTORY_SQL
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def delStatisticTradeBacktestHistory(self):
+        self._logger.debug("src.core.db.db.DB.delStatisticTradeBacktestHistory")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = DEL_STATISTIC_TRADE_BACKTEST_HISTORY_SQL.substitute(
+                period=self._statisticSignalTradeCycle)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
     def getStatisticJudgeMarketTickerDis(self):
         self._logger.debug("src.core.db.db.DB.getStatisticJudgeMarketTickerDis")
         try:
@@ -656,9 +711,9 @@ class DB(object):
     def delStatisticJudgeMarketTickerDis(self):
         self._logger.debug("src.core.db.db.DB.delStatisticJudgeMarketTickerDis")
         try:
+            curs = self._conn.cursor()
             TEMP_SQL = DEL_STATISTIC_JUDGE_MARKET_TICKER_DIS_SQL.substitute(
                 period=self._statisticJudgeMarketTickerCycle)
-            curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             self._conn.commit()
@@ -682,9 +737,9 @@ class DB(object):
     def delStatisticJudgeMarketTickerTra(self):
         self._logger.debug("src.core.db.db.DB.delStatisticJudgeMarketTickerTra")
         try:
+            curs = self._conn.cursor()
             TEMP_SQL = DEL_STATISTIC_JUDGE_MARKET_TICKER_TRA_SQL.substitute(
                 period=self._statisticJudgeMarketTickerCycle)
-            curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             self._conn.commit()
@@ -708,9 +763,9 @@ class DB(object):
     def delStatisticJudgeMarketTickerPair(self):
         self._logger.debug("src.core.db.db.DB.delStatisticJudgeMarketTickerPair")
         try:
+            curs = self._conn.cursor()
             TEMP_SQL = DEL_STATISTIC_JUDGE_MARKET_TICKER_PAIR_SQL.substitute(
                 period=self._statisticJudgeMarketTickerCycle)
-            curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             self._conn.commit()
@@ -734,9 +789,9 @@ class DB(object):
     def delJudgeMarketTickerDis(self):
         self._logger.debug("src.core.db.db.DB.delJudgeMarketTickerDis")
         try:
+            curs = self._conn.cursor()
             TEMP_SQL = DEL_JUDGE_MARKET_TICKER_DIS_SQL.substitute(
                 period=self._judgeMarketTickerCycle)
-            curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             self._conn.commit()
@@ -760,9 +815,9 @@ class DB(object):
     def delJudgeMarketTickerTra(self):
         self._logger.debug("src.core.db.db.DB.delJudgeMarketTickerTra")
         try:
+            curs = self._conn.cursor()
             TEMP_SQL = DEL_JUDGE_MARKET_TICKER_TRA_SQL.substitute(
                 period=self._judgeMarketTickerCycle)
-            curs = self._conn.cursor()
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             self._conn.commit()
@@ -786,9 +841,90 @@ class DB(object):
     def delJudgeMarketTickerPair(self):
         self._logger.debug("src.core.db.db.DB.delJudgeMarketTickerPair")
         try:
+            curs = self._conn.cursor()
             TEMP_SQL = DEL_JUDGE_MARKET_TICKER_PAIR_SQL.substitute(
                 period=self._judgeMarketTickerCycle)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getSignalTradeDis(self, signal_id):
+        self._logger.debug("src.core.db.db.DB.getSignalTradeDis")
+        try:
             curs = self._conn.cursor()
+            TEMP_SQL = GET_SIGNAL_TRADE_DIS_SQL.substitute(
+                signal_id= signal_id)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def delSignalTradeDis(self):
+        self._logger.debug("src.core.db.db.DB.delSignalTradeDis")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = DEL_SIGNAL_TRADE_DIS_SQL.substitute(
+                period=self._signalTradeCycle)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getSignalTradeTra(self, signal_id):
+        self._logger.debug("src.core.db.db.DB.getSignalTradeTra")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_SIGNAL_TRADE_TRA_SQL.substitute(
+                signal_id= signal_id)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def delSignalTradeTra(self):
+        self._logger.debug("src.core.db.db.DB.delSignalTradeTra")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = DEL_SIGNAL_TRADE_TRA_SQL.substitute(
+                period=self._signalTradeCycle)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getSignalTradePair(self, signal_id):
+        self._logger.debug("src.core.db.db.DB.getSignalTradePair")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_SIGNAL_TRADE_PAIR_SQL.substitute(
+                signal_id= signal_id)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def delSignalTradePair(self):
+        self._logger.debug("src.core.db.db.DB.delSignalTradePair")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = DEL_SIGNAL_TRADE_PAIR_SQL.substitute(
+                period=self._signalTradeCycle)
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             self._conn.commit()
@@ -809,6 +945,19 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
+    def delTradeBacktestHistory(self):
+        self._logger.debug("src.core.db.db.DB.delTradeBacktestHistory")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = DEL_TRADE_BACKTEST_HISTORY_SQL.substitute(
+                period=self._tradeHistoryCycle)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
     def getTradeOrderHistory(self):
         self._logger.debug("src.core.db.db.DB.getTradeOrderHistory")
         try:
@@ -819,6 +968,19 @@ class DB(object):
             res = curs.fetchall()
             curs.close()
             return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def delTradeOrderHistory(self):
+        self._logger.debug("src.core.db.db.DB.delTradeOrderHistory")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = DEL_TRADE_ORDER_HISTORY_SQL.substitute(
+                period=self._tradeHistoryCycle)
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            self._conn.commit()
+            curs.close()
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
@@ -2071,6 +2233,70 @@ class DB(object):
                      float(s['gain_base_std']), float(s['gain_ratio_max']),
                      float(s['gain_ratio_min']), float(s['gain_ratio_mean']),
                      float(s['gain_ratio_std']), str(s['group_id'])))
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
+                self._conn.commit()
+                curs.close()
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
+
+    def insertStatisticTradeBacktestHistory(self, statistic):
+        self._logger.debug(
+            "src.core.db.db.DB.insertStatisticTradeBacktestHistory: {statistic=%s}"
+            % statistic)
+        try:
+            TEMP_SQL_TITLE = INSERT_STATISTIC_TRADE_BACKTEST_HISTORY
+            TEMP_SQL_VALUE = []
+            for s in statistic:
+                TEMP_SQL_VALUE.append((int(s['timeStamp']),
+                                       str(s['signal_id']),
+                                       int(s['timeStamp_start']),
+                                       int(s['timeStamp_end']),
+                                       float(s['base_start']),
+                                       float(s['base_end']),
+                                       float(s['status_gain']),
+                                       float(s['status_gain_max']),
+                                       float(s['status_gain_min']),
+                                       float(s['status_gain_diff_max']),
+                                       float(s['status_gain_diff_min']),
+                                       float(s['status_gain_diff_std']),
+                                       str(s['group_id'])))
+            if not TEMP_SQL_VALUE == []:
+                self._logger.debug(TEMP_SQL_TITLE)
+                self._logger.debug(TEMP_SQL_VALUE)
+                curs = self._conn.cursor()
+                curs.executemany(TEMP_SQL_TITLE, TEMP_SQL_VALUE)
+                self._conn.commit()
+                curs.close()
+        except (OkexException, BinanceException, HuobiException, sqlite3.Error,
+                Exception) as err:
+            raise DBException(err)
+
+    def insertStatisticTradeOrderHistory(self, statistic):
+        self._logger.debug(
+            "src.core.db.db.DB.insertStatisticTradeOrderHistory: {statistic=%s}"
+            % statistic)
+        try:
+            TEMP_SQL_TITLE = INSERT_STATISTIC_TRADE_BACKTEST_HISTORY
+            TEMP_SQL_VALUE = []
+            for s in statistic:
+                TEMP_SQL_VALUE.append((int(s['timeStamp']),
+                                       str(s['signal_id']),
+                                       int(s['timeStamp_start']),
+                                       int(s['timeStamp_end']),
+                                       float(s['base_start']),
+                                       float(s['base_end']),
+                                       float(s['status_gain']),
+                                       float(s['status_gain_max']),
+                                       float(s['status_gain_min']),
+                                       float(s['status_gain_diff_max']),
+                                       float(s['status_gain_diff_min']),
+                                       float(s['status_gain_diff_std']),
+                                       str(s['group_id'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)

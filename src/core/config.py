@@ -72,6 +72,12 @@ class Config(object):
                 'Main', 'judgeMarketTickerCycle')
             Config._Main_statisticJudgeMarketTickerCycle = cf.getint(
                 'Main', 'statisticJudgeMarketTickerCycle')
+            Config._Main_tradeHistoryCycle = cf.getint('Main',
+                                                      'tradeHistoryCycle')
+            Config._Main_signalTradeCycle = cf.getint('Main',
+                                                      'signalTradeCycle')
+            Config._Main_statisticSignalTradeCycle = cf.getint(
+                'Main', 'statisticSignalTradeCycle')
             Config._Main_asyncAccount = cf.getboolean(
                 'Main', 'asyncAccount', fallback=False)
             Config._Main_syncAccountTimeout = cf.getint(
@@ -118,7 +124,8 @@ class Config(object):
             Config._Main_typePairTimeWindow = cf.getfloat(
                 'Main', 'typePairTimeWindow')
             # Signal Settings
-            Config._Signal_auto = cf.getboolean('Signal', 'auto', fallback=False)
+            Config._Signal_auto = cf.getboolean(
+                'Signal', 'auto', fallback=False)
             Config._Signal_signals = cf['Signal']['signals']
             # Router Settings
             Config._Router_epoch = cf.getfloat('Router', 'epoch')

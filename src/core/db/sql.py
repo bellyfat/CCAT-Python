@@ -2,9 +2,8 @@
 
 from string import Template
 
-
 # get db statistic signal ticker pair current server sql
-GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_PAIR_CURRENT_SERVER_SQL =  Template('''
+GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_PAIR_CURRENT_SERVER_SQL = Template('''
         SELECT *
         FROM VIEW_STATISTIC_JUDGE_MARKET_TICKER_PAIR_CURRENT
         WHERE J1_server='$server' AND J2_server='$server_pair'
@@ -19,7 +18,7 @@ GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_PAIR_CURRENT_SQL = '''
 '''
 
 # get db statistic signal ticker tra current server sql
-GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_TRA_CURRENT_SERVER_SQL =  Template('''
+GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_TRA_CURRENT_SERVER_SQL = Template('''
     SELECT * FROM VIEW_STATISTIC_JUDGE_MARKET_TICKER_TRA_CURRENT WHERE server IN $server;
 ''')
 # get db statistic signal ticker tra current sql
@@ -28,7 +27,7 @@ GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_TRA_CURRENT_SQL = '''
 '''
 
 # get db statistic signal ticker dis current server sql
-GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_DIS_CURRENT_SERVER_SQL =  Template('''
+GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_DIS_CURRENT_SERVER_SQL = Template('''
         SELECT *
         FROM VIEW_STATISTIC_JUDGE_MARKET_TICKER_DIS_CURRENT
         WHERE bid_server='$server' AND ask_server='$server_pair'
@@ -43,7 +42,7 @@ GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_DIS_CURRENT_SQL = '''
 '''
 
 # get db judge signal ticker pair current server sql
-GET_VIEW_JUDGE_MARKET_TICKER_PAIR_CURRENT_SERVER_SQL =  Template('''
+GET_VIEW_JUDGE_MARKET_TICKER_PAIR_CURRENT_SERVER_SQL = Template('''
         SELECT *
         FROM VIEW_JUDGE_MARKET_TICKER_PAIR_CURRENT
         WHERE J1_server='$server' AND J2_server='$server_pair'
@@ -58,7 +57,7 @@ GET_VIEW_JUDGE_MARKET_TICKER_PAIR_CURRENT_SQL = '''
 '''
 
 # get db judge signal ticker tra current server sql
-GET_VIEW_JUDGE_MARKET_TICKER_TRA_CURRENT_SERVER_SQL =  Template('''
+GET_VIEW_JUDGE_MARKET_TICKER_TRA_CURRENT_SERVER_SQL = Template('''
     SELECT * FROM VIEW_JUDGE_MARKET_TICKER_TRA_CURRENT WHERE server IN $server;
 ''')
 # get db judge signal ticker tra current sql
@@ -67,7 +66,7 @@ GET_VIEW_JUDGE_MARKET_TICKER_TRA_CURRENT_SQL = '''
 '''
 
 # get db judge signal ticker dis current server sql
-GET_VIEW_JUDGE_MARKET_TICKER_DIS_CURRENT_SERVER_SQL =  Template('''
+GET_VIEW_JUDGE_MARKET_TICKER_DIS_CURRENT_SERVER_SQL = Template('''
         SELECT *
         FROM VIEW_JUDGE_MARKET_TICKER_DIS_CURRENT
         WHERE bid_server='$server' AND ask_server='$server_pair'
@@ -229,6 +228,30 @@ DEL_JUDGE_MARKET_TICKER_PAIR_SQL = Template('''
     DELETE FROM JUDGE_MARKET_TICKER_PAIR WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
 ''')
 
+# get db signal trade dis sql
+GET_SIGNAL_TRADE_DIS_SQL = Template('''
+    SELECT * FROM SIGNAL_TRADE_DIS WHERE signal_id IN $signal_id;
+''')
+# delete db signal trade dis sql
+DEL_SIGNAL_TRADE_DIS_SQL = Template('''
+    DELETE FROM SIGNAL_TRADE_DIS WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
+# get db signal trade tra sql
+GET_SIGNAL_TRADE_TRA_SQL = Template('''
+    SELECT * FROM SIGNAL_TRADE_TRA WHERE signal_id IN $signal_id;
+''')
+# delete db signal trade tra sql
+DEL_SIGNAL_TRADE_TRA_SQL = Template('''
+    DELETE FROM SIGNAL_TRADE_TRA WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
+# get db signal trade pair sql
+GET_SIGNAL_TRADE_PAIR_SQL = Template('''
+    SELECT * FROM SIGNAL_TRADE_PAIR WHERE signal_id IN $signal_id;
+''')
+# delete db signal trade pair sql
+DEL_SIGNAL_TRADE_PAIR_SQL = Template('''
+    DELETE FROM SIGNAL_TRADE_PAIR WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
 
 # get db trade backtest history server orders sql
 GET_TRADE_BACKTEST_HISTORY_SERVER_ORDER_SQL = Template('''
@@ -243,11 +266,18 @@ GET_TRADE_ORDER_HISTORY_SERVER_ORDER_SQL = Template('''
 GET_TRADE_BACKTEST_HISTORY_SQL = '''
     SELECT * FROM TRADE_BACKTEST_HISTORY;
 '''
+# delete db trade backtest history sql
+DEL_TRADE_BACKTEST_HISTORY_SQL = Template('''
+    DELETE FROM TRADE_BACKTEST_HISTORY WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
 # get db trade order history sql
 GET_TRADE_ORDER_HISTORY_SQL = '''
     SELECT * FROM TRADE_ORDER_HISTORY;
 '''
-
+# delete db trade order history sql
+DEL_TRADE_ORDER_HISTORY_SQL = Template('''
+    DELETE FROM TRADE_ORDER_HISTORY WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
 
 # get db statistic signal ticker dis sql
 GET_STATISTIC_JUDGE_MARKET_TICKER_DIS_SQL = '''
@@ -274,8 +304,22 @@ DEL_STATISTIC_JUDGE_MARKET_TICKER_PAIR_SQL = Template('''
     DELETE FROM STATISTIC_JUDGE_MARKET_TICKER_PAIR WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
 ''')
 
-
-
+# get db statistic trade order history sql
+GET_STATISTIC_TRADE_ORDER_HISTORY_SQL = '''
+    SELECT * FROM STATISTIC_TRADE_ORDER_HISTORY;
+'''
+# delete db statistic trade order history sql
+DEL_STATISTIC_TRADE_ORDER_HISTORY_SQL = Template('''
+    DELETE FROM STATISTIC_TRADE_ORDER_HISTORY WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
+# get db statistic trade backtest history sql
+GET_STATISTIC_TRADE_BACKTEST_HISTORY_SQL = '''
+    SELECT * FROM STATISTIC_TRADE_BACKTEST_HISTORY;
+'''
+# delete db statistic trade backtest history sql
+DEL_STATISTIC_TRADE_BACKTEST_HISTORY_SQL = Template('''
+    DELETE FROM STATISTIC_TRADE_BACKTEST_HISTORY WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
+''')
 
 # insert db account balance history sql
 INSERT_ACCOUNT_BALANCE_HISTORY_SQL = '''
@@ -332,6 +376,21 @@ INSERT_JUDGE_MARKET_TICKER_PAIR_SQL = '''
     INSERT OR REPLACE INTO JUDGE_MARKET_TICKER_PAIR (timeStamp, J1_server, J2_server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, J1_V1_bid_one_price, J1_V1_bid_one_size, J1_V1_bid_one_price_base, J1_V1_ask_one_price, J1_V1_ask_one_size, J1_V1_ask_one_price_base, J1_V2_bid_one_price, J1_V2_bid_one_size, J1_V2_bid_one_price_base, J1_V2_ask_one_price, J1_V2_ask_one_size, J1_V2_ask_one_price_base, J1_V3_bid_one_price, J1_V3_bid_one_size, J1_V3_bid_one_price_base, J1_V3_ask_one_price, J1_V3_ask_one_size, J1_V3_ask_one_price_base, J2_V1_bid_one_price, J2_V1_bid_one_size, J2_V1_bid_one_price_base, J2_V1_ask_one_price, J2_V1_ask_one_size, J2_V1_ask_one_price_base, J2_V2_bid_one_price, J2_V2_bid_one_size, J2_V2_bid_one_price_base, J2_V2_ask_one_price, J2_V2_ask_one_size, J2_V2_ask_one_price_base, J2_V3_bid_one_price, J2_V3_bid_one_size, J2_V3_bid_one_price_base, J2_V3_ask_one_price, J2_V3_ask_one_size, J2_V3_ask_one_price_base, J1_V1_fee, J1_V2_fee, J1_V3_fee, J2_V1_fee, J2_V2_fee, J2_V3_fee, J1_V1_one_price, J1_V1_one_side, J1_V1_one_size, J2_V1_one_price, J2_V1_one_side, J2_V1_one_size, J1_V2_one_price, J1_V2_one_side, J1_V2_one_size, J2_V2_one_price, J2_V2_one_side, J2_V2_one_size, J1_V3_one_price, J1_V3_one_side, J1_V3_one_size, J2_V3_one_price, J2_V3_one_side, J2_V3_one_size, gain_base, gain_ratio)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
+# insert db signal trade dis sql
+INSERT_SIGNAL_TRADE_DIS = '''
+    INSERT OR REPLACE INTO SIGNAL_TRADE_DIS(timeStamp, signal_id, type, bid_server, ask_server, fSymbol, tSymbol, forward_ratio, backward_ratio, base_start, base_gain, group_id, status_done, status_assets, status_gain)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
+# insert db signal trade tra sql
+INSERT_SIGNAL_TRADE_TRA = '''
+    INSERT OR REPLACE INTO SIGNAL_TRADE_TRA(timeStamp, signal_id, type, server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, forward_ratio, base_start, base_gain, group_id, status_done, status_assets, status_gain)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
+# insert db signal trade pair sql
+INSERT_SIGNAL_TRADE_PAIR = '''
+    INSERT OR REPLACE INTO SIGNAL_TRADE_PAIR(timeStamp, signal_id, type, J1_server, J2_server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol, V3_fSymbol, V3_tSymbol, forward_ratio, base_start, base_gain, group_id, status_done, status_assets, status_gain)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
 # insert db trade backtest history sql
 INSERT_TRADE_BACKTEST_HISTORY_SQL = '''
     INSERT OR REPLACE INTO TRADE_BACKTEST_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee, group_id)
@@ -371,6 +430,17 @@ INSERT_STATISTIC_JUDGE_MARKET_TICKER_TRA_SQL = '''
 INSERT_STATISTIC_JUDGE_MARKET_TICKER_PAIR_SQL = '''
     INSERT OR REPLACE INTO STATISTIC_JUDGE_MARKET_TICKER_PAIR (timeStamp, J1_server, J2_server, symbol_pair, timeStamp_start, timeStamp_end, timeStamp_times, timeStamp_period_times, timeStamp_period_longest, count_total, count_forward, count_backward, gain_base_max, gain_base_min, gain_base_mean, gain_base_std, gain_ratio_max, gain_ratio_min, gain_ratio_mean, gain_ratio_std, group_id)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
+# insert db statistic trade backtest history sql
+INSERT_STATISTIC_TRADE_BACKTEST_HISTORY = '''
+    INSERT OR REPLACE INTO STATISTIC_TRADE_BACKTEST_HISTORY (timeStamp, signal_id, timeStamp_start, timeStamp_end, base_start, base_end, status_gain, status_gain_max, status_gain_min, status_gain_diff_max, status_gain_diff_min, status_gain_diff_std, group_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
+# insert db statistic trade order history sql
+INSERT_STATISTIC_TRADE_ORDER_HISTORY = '''
+    INSERT OR REPLACE INTO STATISTIC_TRADE_ORDER_HISTORY (timeStamp, signal_id, timeStamp_start, timeStamp_end, base_start, base_end, status_gain, status_gain_max, status_gain_min, status_gain_diff_max, status_gain_diff_min, status_gain_diff_std, group_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+
 
 # get db talbes sql
 GET_TABLES_SQL = '''

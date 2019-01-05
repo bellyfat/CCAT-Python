@@ -209,7 +209,19 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_delTradeBacktestHistory(self):
+        db.delTradeBacktestHistory()
+        res = db.getTradeBacktestHistory()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
     def test_getTradeOrderHistory(self):
+        res = db.getTradeOrderHistory()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_delTradeOrderHistory(self):
+        db.delTradeOrderHistory()
         res = db.getTradeOrderHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
@@ -264,6 +276,28 @@ class TestDB(unittest.TestCase):
     def test_delJudgeMarketTickerPair(self):
         db.delJudgeMarketTickerPair()
         res = db.getJudgeMarketTickerPair()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getStatisticTradeOrderHistory(self):
+        res = db.getStatisticTradeOrderHistory()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_delStatisticTradeOrderHistory(self):
+        db.delStatisticTradeOrderHistory()
+        res = db.getStatisticTradeOrderHistory()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getStatisticTradeBacktestHistory(self):
+        res = db.getStatisticTradeBacktestHistory()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_delStatisticTradeBacktestHistory(self):
+        db.delStatisticTradeBacktestHistory()
+        res = db.getStatisticTradeBacktestHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -407,17 +441,37 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_insertStatisticJudgeMarketTickerDis(self):
-        res = calc.calcStatisticJudgeMarketTickerDis(["okex", "binance", "huobi"], 300)
+        statistic = calc.calcStatisticJudgeMarketTickerDis(["okex", "binance", "huobi"], 300)
+        db.insertStatisticJudgeMarketTickerDis(statistic)
+        res = db.getStatisticJudgeMarketTickerDis()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertStatisticJudgeMarketTickerTra(self):
-        res = calc.calcStatisticJudgeMarketTickerTra(["okex", "binance", "huobi"], 300)
+        statistic = calc.calcStatisticJudgeMarketTickerTra(["okex", "binance", "huobi"], 300)
+        db.insertStatisticJudgeMarketTickerTra(statistic)
+        res = db.getStatisticJudgeMarketTickerTra()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertStatisticJudgeMarketTickerPair(self):
-        res = calc.calcStatisticJudgeMarketTickerPair(["okex", "binance", "huobi"], 300)
+        statistic = calc.calcStatisticJudgeMarketTickerPair(["okex", "binance", "huobi"], 300)
+        db.insertStatisticJudgeMarketTickerPair(statistic)
+        res = db.getStatisticJudgeMarketTickerPair()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertStatisticTradeBacktestHistory(self):
+        statistic = []
+        db.insertStatisticTradeBacktestHistory(statistic)
+        res = db.getStatisticTradeBacktestHistory()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertStatisticTradeOrderHistory(self):
+        statistic = []
+        db.insertStatisticTradeOrderHistory(statistic)
+        res = db.getStatisticTradeOrderHistory()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -434,83 +488,91 @@ class TestDB(unittest.TestCase):
 # list of test_db
 # db test items
 test_db = [
-    TestDB("test_initDB"),
-    TestDB("test_creatTables"),
-    TestDB("test_creatViews"),
-    TestDB("test_insertAccountBalanceHistory"),
-    TestDB("test_insertAccountWithdrawHistory"),
-    TestDB("test_insertAccountWithdrawHistoryAsset"),
-    TestDB("test_insertInfoServer"),
-    TestDB("test_insertInfoSymbol"),
-    TestDB("test_insertInfoWithdraw"),
-    TestDB("test_insertMarketDepth"),
-    TestDB("test_insertMarketKline"),
-    TestDB("test_insertMarketTicker"),
-    TestDB("test_insertJudgeMarketTickerDis"),
-    TestDB("test_insertJudgeMarketTickerTra"),
-    TestDB("test_insertJudgeMarketTickerPair"),
-    TestDB("test_insertCreatTradeBacktestHistory"),
-    TestDB("test_insertSyncTradeOrderHistory"),
-    # # TestDB("test_insertCreatTradeOrderHistory"),
-    # # TestDB("test_insertCheckTradeOrderHistory"),
-    # # TestDB("test_insertCancleTradeOrderHistory"),
-    TestDB("test_insertStatisticJudgeMarketTickerDis"),
-    TestDB("test_insertStatisticJudgeMarketTickerTra"),
-    TestDB("test_insertStatisticJudgeMarketTickerPair"),
-    TestDB("test_oneClickCancleOrders"),
-    # # TestDB("test_oneClickTransToBaseCoin"),
-    TestDB("test_getTables"),
-    TestDB("test_getAccountBalanceHistory"),
-    TestDB("test_getAccountWithdrawHistory"),
-    TestDB("test_getMarketDepth"),
-    TestDB("test_getMarketKline"),
-    TestDB("test_getMarketTicker"),
-    TestDB("test_getInfoServer"),
-    TestDB("test_getInfoSymbol"),
-    TestDB("test_getInfoWithdraw"),
-    TestDB("test_getTradeBacktestHistory"),
-    TestDB("test_getTradeOrderHistory"),
-    TestDB("test_getTradeBacktestHistoryServerOrder"),
-    TestDB("test_getTradeOrderHistoryServerOrder"),
-    TestDB("test_getJudgeMarketTickerDis"),
-    TestDB("test_getJudgeMarketTickerTra"),
-    TestDB("test_getJudgeMarketTickerPair"),
-    TestDB("test_getStatisticJudgeMarketTickerDis"),
-    TestDB("test_getStatisticJudgeMarketTickerTra"),
-    TestDB("test_getStatisticJudgeMarketTickerPair"),
-    TestDB("test_getViews"),
-    TestDB("test_getViewStatisticJudgeMarketTickerPairCurrentServer"),
-    TestDB("test_getViewStatisticJudgeMarketTickerPairCurrent"),
-    TestDB("test_getViewStatisticJudgeMarketTickerTraCurrentServer"),
-    TestDB("test_getViewStatisticJudgeMarketTickerTraCurrent"),
-    TestDB("test_getViewStatisticJudgeMarketTickerDisCurrentServer"),
-    TestDB("test_getViewStatisticJudgeMarketTickerDisCurrent"),
-    TestDB("test_getViewJudgeMarketTickerPairCurrentServer"),
-    TestDB("test_getViewJudgeMarketTickerPairCurrent"),
-    TestDB("test_getViewJudgeMarketTickerTraCurrentServer"),
-    TestDB("test_getViewJudgeMarketTickerTraCurrent"),
-    TestDB("test_getViewJudgeMarketTickerDisCurrentServer"),
-    TestDB("test_getViewJudgeMarketTickerDisCurrent"),
-    TestDB("test_getViewMarketTickerCurrentPairServer"),
-    TestDB("test_getViewMarketTickerCurrentPair"),
-    TestDB("test_getViewMarketTickerCurrentTraServer"),
-    TestDB("test_getViewMarketTickerCurrentTra"),
-    TestDB("test_getViewMarketTickerCurrentDisServer"),
-    TestDB("test_getViewMarketTickerCurrentDis"),
-    TestDB("test_getViewMarketTickerCurrent"),
-    TestDB("test_getViewMarketKlineCurrent"),
-    TestDB("test_getViewAccountBalanceCurrent"),
-    TestDB("test_getViewMarketTickerSymbol"),
-    TestDB("test_getViewAccountWithdrawCurrent"),
-    TestDB("test_getViewMarketSymbolPairs"),
-    TestDB("test_getViewAccountBalanceCurrent"),
-    TestDB("test_getViewInfoSymbolPairs"),
-    TestDB("test_delJudgeMarketTickerDis"),
-    TestDB("test_delJudgeMarketTickerTra"),
-    TestDB("test_delJudgeMarketTickerPair"),
-    TestDB("test_delStatisticJudgeMarketTickerDis"),
-    TestDB("test_delStatisticJudgeMarketTickerTra"),
-    TestDB("test_delStatisticJudgeMarketTickerPair"),
+    # TestDB("test_initDB"),
+    # TestDB("test_creatTables"),
+    # TestDB("test_creatViews"),
+    # TestDB("test_insertAccountBalanceHistory"),
+    # TestDB("test_insertAccountWithdrawHistory"),
+    # TestDB("test_insertAccountWithdrawHistoryAsset"),
+    # TestDB("test_insertInfoServer"),
+    # TestDB("test_insertInfoSymbol"),
+    # TestDB("test_insertInfoWithdraw"),
+    # TestDB("test_insertMarketDepth"),
+    # TestDB("test_insertMarketKline"),
+    # TestDB("test_insertMarketTicker"),
+    # TestDB("test_insertJudgeMarketTickerDis"),
+    # TestDB("test_insertJudgeMarketTickerTra"),
+    # TestDB("test_insertJudgeMarketTickerPair"),
+    # TestDB("test_insertCreatTradeBacktestHistory"),
+    # TestDB("test_insertSyncTradeOrderHistory"),
+    # # # TestDB("test_insertCreatTradeOrderHistory"),
+    # # # TestDB("test_insertCheckTradeOrderHistory"),
+    # # # TestDB("test_insertCancleTradeOrderHistory"),
+    # TestDB("test_insertStatisticJudgeMarketTickerDis"),
+    # TestDB("test_insertStatisticJudgeMarketTickerTra"),
+    # TestDB("test_insertStatisticJudgeMarketTickerPair"),
+    TestDB("test_insertStatisticTradeBacktestHistory"),
+    TestDB("test_insertStatisticTradeOrderHistory"),
+    # TestDB("test_oneClickCancleOrders"),
+    # # # TestDB("test_oneClickTransToBaseCoin"),
+    # TestDB("test_getTables"),
+    # TestDB("test_getAccountBalanceHistory"),
+    # TestDB("test_getAccountWithdrawHistory"),
+    # TestDB("test_getMarketDepth"),
+    # TestDB("test_getMarketKline"),
+    # TestDB("test_getMarketTicker"),
+    # TestDB("test_getInfoServer"),
+    # TestDB("test_getInfoSymbol"),
+    # TestDB("test_getInfoWithdraw"),
+    # TestDB("test_getTradeBacktestHistory"),
+    # TestDB("test_getTradeOrderHistory"),
+    # TestDB("test_getTradeBacktestHistoryServerOrder"),
+    # TestDB("test_getTradeOrderHistoryServerOrder"),
+    # TestDB("test_getJudgeMarketTickerDis"),
+    # TestDB("test_getJudgeMarketTickerTra"),
+    # TestDB("test_getJudgeMarketTickerPair"),
+    # TestDB("test_getStatisticJudgeMarketTickerDis"),
+    # TestDB("test_getStatisticJudgeMarketTickerTra"),
+    # TestDB("test_getStatisticJudgeMarketTickerPair"),
+    TestDB("test_getStatisticTradeBacktestHistory"),
+    TestDB("test_getStatisticTradeOrderHistory"),
+    # TestDB("test_getViews"),
+    # TestDB("test_getViewStatisticJudgeMarketTickerPairCurrentServer"),
+    # TestDB("test_getViewStatisticJudgeMarketTickerPairCurrent"),
+    # TestDB("test_getViewStatisticJudgeMarketTickerTraCurrentServer"),
+    # TestDB("test_getViewStatisticJudgeMarketTickerTraCurrent"),
+    # TestDB("test_getViewStatisticJudgeMarketTickerDisCurrentServer"),
+    # TestDB("test_getViewStatisticJudgeMarketTickerDisCurrent"),
+    # TestDB("test_getViewJudgeMarketTickerPairCurrentServer"),
+    # TestDB("test_getViewJudgeMarketTickerPairCurrent"),
+    # TestDB("test_getViewJudgeMarketTickerTraCurrentServer"),
+    # TestDB("test_getViewJudgeMarketTickerTraCurrent"),
+    # TestDB("test_getViewJudgeMarketTickerDisCurrentServer"),
+    # TestDB("test_getViewJudgeMarketTickerDisCurrent"),
+    # TestDB("test_getViewMarketTickerCurrentPairServer"),
+    # TestDB("test_getViewMarketTickerCurrentPair"),
+    # TestDB("test_getViewMarketTickerCurrentTraServer"),
+    # TestDB("test_getViewMarketTickerCurrentTra"),
+    # TestDB("test_getViewMarketTickerCurrentDisServer"),
+    # TestDB("test_getViewMarketTickerCurrentDis"),
+    # TestDB("test_getViewMarketTickerCurrent"),
+    # TestDB("test_getViewMarketKlineCurrent"),
+    # TestDB("test_getViewAccountBalanceCurrent"),
+    # TestDB("test_getViewMarketTickerSymbol"),
+    # TestDB("test_getViewAccountWithdrawCurrent"),
+    # TestDB("test_getViewMarketSymbolPairs"),
+    # TestDB("test_getViewAccountBalanceCurrent"),
+    # TestDB("test_getViewInfoSymbolPairs"),
+    # TestDB("test_delJudgeMarketTickerDis"),
+    # TestDB("test_delJudgeMarketTickerTra"),
+    # TestDB("test_delJudgeMarketTickerPair"),
+    TestDB("test_delTradeBacktestHistory"),
+    TestDB("test_delTradeOrderHistory"),
+    # TestDB("test_delStatisticJudgeMarketTickerDis"),
+    # TestDB("test_delStatisticJudgeMarketTickerTra"),
+    # TestDB("test_delStatisticJudgeMarketTickerPair"),
+    TestDB("test_delStatisticTradeBacktestHistory"),
+    TestDB("test_delStatisticTradeOrderHistory"),
 ]
 
 if __name__ == "__main__":
