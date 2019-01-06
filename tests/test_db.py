@@ -423,20 +423,47 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_insertJudgeMarketTickerDis(self):
-        res = calc.calcJudgeMarketTickerDis(["okex", "binance", "huobi"], 0.001,
+        signal = calc.calcJudgeMarketTickerDis(["okex", "binance", "huobi"], 0.001,
                                        resInfoSymbol)
+        db.insertJudgeMarketTickerDis(signal)
+        res = db.getJudgeMarketTickerDis()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertJudgeMarketTickerTra(self):
         res = calc.calcJudgeMarketTickerTra(["okex", "binance", "huobi"], 0.001,
                                        resInfoSymbol)
+        db.insertJudgeMarketTickerTra(signal)
+        res = db.getJudgeMarketTickerTra()
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertJudgeMarketTickerPair(self):
-        res = calc.calcJudgeMarketTickerPair(["okex", "binance", "huobi"], 0.001,
+        signal = calc.calcJudgeMarketTickerPair(["okex", "binance", "huobi"], 0.001,
                                        resInfoSymbol)
+        db.insertJudgeMarketTickerPair(signal)
+        res = db.getJudgeMarketTickerPair()
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertSignalTradeDis(self):
+        signal = []
+        db.insertSignalTradeDis(signal)
+        res = db.getSignalTradeDis(['signal_id'])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertSignalTradeTra(self):
+        signal = []
+        db.insertSignalTradeTra(signal)
+        res = db.getSignalTradeTra(['signal_id'])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_insertSignalTradePair(self):
+        signal = []
+        db.insertSignalTradePair(signal)
+        res = db.getSignalTradePair(['signal_id'])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -503,6 +530,9 @@ test_db = [
     # TestDB("test_insertJudgeMarketTickerDis"),
     # TestDB("test_insertJudgeMarketTickerTra"),
     # TestDB("test_insertJudgeMarketTickerPair"),
+    TestDB("test_insertSignalTradeDis"),
+    TestDB("test_insertSignalTradeTra"),
+    TestDB("test_insertSignalTradePair"),
     # TestDB("test_insertCreatTradeBacktestHistory"),
     # TestDB("test_insertSyncTradeOrderHistory"),
     # # # TestDB("test_insertCreatTradeOrderHistory"),
