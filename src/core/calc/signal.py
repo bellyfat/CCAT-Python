@@ -20,75 +20,6 @@ class Signal(object):
         self._signals_str = SIGNAL_SIGNALS
         # logger
         self._logger = Logger()
-        # calc signals status
-        if not self._signals == []:
-            pid = os.getpid()
-            timeStamp = utcnow_timestamp()
-            id = 0
-            for signal in self._signals:
-                id = id + 1
-                if signal['type'] == TYPE_DIS:
-                    id_str = str(pid) + str(timeStamp) + str(id)
-                    signal['id'] = '0x1c' + str(
-                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
-                    signal['status_done'] = False
-                    signal['status_assets'] = [
-                        {
-                            "server": signal['bid_server'],
-                            "asset": SIGNAL_BASECOIN,
-                            "balance": float(signal['base_start']) / 2,
-                            "free": float(signal['base_start']) / 2,
-                            "locked": 0.0
-                        },
-                        {
-                            "server": signal['ask_server'],
-                            "asset": SIGNAL_BASECOIN,
-                            "balance": float(signal['base_start']) / 2,
-                            "free": float(signal['base_start']) / 2,
-                            "locked": 0.0
-                        }
-                    ]
-                    signal['status_gain'] = 0.0
-                if signal['type'] == TYPE_TRA:
-                    id_str = str(pid) + str(timeStamp) + str(id)
-                    signal['id'] = '0x2c' + str(
-                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
-                    signal['status_done'] = False
-                    signal['status_assets'] = [{
-                        "server":
-                        signal['server'],
-                        "asset":
-                        SIGNAL_BASECOIN,
-                        "balance":
-                        float(signal['base_start']),
-                        "free":
-                        float(signal['base_start']),
-                        "locked":
-                        0.0
-                    }]
-                    signal['status_gain'] = 0.0
-                if signal['type'] == TYPE_PAIR:
-                    id_str = str(pid) + str(timeStamp) + str(id)
-                    signal['id'] = '0x3c' + str(
-                        uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
-                    signal['status_done'] = False
-                    signal['status_assets'] = [
-                        {
-                            "server": signal['J1_server'],
-                            "asset": SIGNAL_BASECOIN,
-                            "balance": float(signal['base_start']) / 2,
-                            "free": float(signal['base_start']) / 2,
-                            "locked": 0.0
-                        },
-                        {
-                            "server": signal['J2_server'],
-                            "asset": SIGNAL_BASECOIN,
-                            "balance": float(signal['base_start']) / 2,
-                            "free": float(signal['base_start']) / 2,
-                            "locked": 0.0
-                        }
-                    ]
-                    signal['status_gain'] = 0.0
 
     def signals(self, exchange='all', types='all', auto=SIGNAL_AUTO):
         self._logger.debug(
@@ -134,7 +65,8 @@ class Signal(object):
                             (s['bid_server'] in exchange
                              and s['ask_server'] in exchange)):
                             id_str = str(pid) + str(timeStamp) + str(id)
-                            signal['id'] = TYPE_DIS + str(
+                            signal['timeStamp'] = timeStamp
+                            signal['signal_id'] = '0x1c-' + str(
                                 uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                             signal['type'] = s['type']
                             signal['bid_server'] = s['bid_server']
@@ -171,7 +103,8 @@ class Signal(object):
                                 exchange == 'all' or s['server'] in exchange):
                             tuple = tuple_str_to_list(s['symbol_pair'])
                             id_str = str(pid) + str(timeStamp) + str(id)
-                            signal['id'] = TYPE_TRA + str(
+                            signal['timeStamp'] = timeStamp
+                            signal['signal_id'] = '0x2c-' + str(
                                 uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                             signal['type'] = s['type']
                             signal['server'] = s['server']
@@ -207,7 +140,8 @@ class Signal(object):
                              and s['J2_server'] in exchange)):
                             tuple = tuple_str_to_list(s['symbol_pair'])
                             id_str = str(pid) + str(timeStamp) + str(id)
-                            signal['id'] = TYPE_PAIR + str(
+                            signal['timeStamp'] = timeStamp
+                            signal['signal_id'] = '0x3c-' + str(
                                 uuid.uuid3(uuid.NAMESPACE_DNS, id_str))
                             signal['type'] = s['type']
                             signal['J1_server'] = s['J1_server']
@@ -264,11 +198,11 @@ class Signal(object):
                 status = calc.calcSignalStatusByOrders(
                     signal, orders, resInfoSymbol, SIGNAL_BASECOIN)
                 if not status == []:
-                    resStatus.append({"id": signal['id'], "status": status})
+                    resStatus.append({"signal_id": signal['signal_id'], "status": status})
             if not resStatus == []:
                 for signal in self._signals:
                     for res in resStatus:
-                        if signal['id'] == res['id']:
+                        if signal['signal_id'] == res['signal_id']:
                             signal['status_done'] = res['status'][
                                 'status_done']
                             signal['status_assets'] = res['status'][

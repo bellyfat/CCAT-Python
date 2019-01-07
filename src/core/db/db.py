@@ -867,7 +867,8 @@ class DB(object):
         self._logger.debug("src.core.db.db.DB.getSignalTradeDis")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_SIGNAL_TRADE_DIS_SQL.substitute(signal_id=signal_id).replace('[', '(').replace(']', ')')
+            TEMP_SQL = GET_SIGNAL_TRADE_DIS_SQL.substitute(
+                signal_id=signal_id).replace('[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -893,7 +894,8 @@ class DB(object):
         self._logger.debug("src.core.db.db.DB.getSignalTradeTra")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_SIGNAL_TRADE_TRA_SQL.substitute(signal_id=signal_id).replace('[', '(').replace(']', ')')
+            TEMP_SQL = GET_SIGNAL_TRADE_TRA_SQL.substitute(
+                signal_id=signal_id).replace('[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -1746,17 +1748,17 @@ class DB(object):
         self._logger.debug(
             "src.core.db.db.DB.insertSignalTradeDis: {signal=%s}" % signal)
         try:
-            TEMP_SQL_TITLE = INSERT_JUDGE_MARKET_TICKER_PAIR_SQL
+            TEMP_SQL_TITLE = INSERT_SIGNAL_TRADE_DIS
             TEMP_SQL_VALUE = []
             for s in signal:
                 TEMP_SQL_VALUE.append(
-                    int(s['timeStamp']), str(s['signal_id']), str(s['type']),
-                    str(s['bid_server']), str(s['ask_server']),
-                    str(s['fSymbol']), str(s['tSymbol']),
-                    float(s['forward_ratio']), float(s['base_start']),
-                    float(s['base_gain']), str(s['group_id']),
-                    str(s['status_done']), str(s['status_assets']),
-                    float(s['status_gain']))
+                    (int(s['timeStamp']), str(s['signal_id']), str(s['type']),
+                     str(s['bid_server']), str(s['ask_server']),
+                     str(s['fSymbol']), str(s['tSymbol']),
+                     float(s['forward_ratio']), float(s['backward_ratio']),
+                     float(s['base_start']), float(s['base_gain']),
+                     str(s['group_id']), str(s['status_done']),
+                     str(s['status_assets']), float(s['status_gain'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
@@ -1772,18 +1774,18 @@ class DB(object):
         self._logger.debug(
             "src.core.db.db.DB.insertSignalTradeTra: {signal=%s}" % signal)
         try:
-            TEMP_SQL_TITLE = INSERT_JUDGE_MARKET_TICKER_PAIR_SQL
+            TEMP_SQL_TITLE = INSERT_SIGNAL_TRADE_TRA
             TEMP_SQL_VALUE = []
             for s in signal:
                 TEMP_SQL_VALUE.append(
-                    int(s['timeStamp']), str(s['signal_id']), str(s['type']),
-                    str(s['server']), str(s['V1_fSymbol']),
-                    str(s['V1_tSymbol']), str(s['V2_fSymbol']),
-                    str(s['V2_tSymbol']), str(s['V3_fSymbol']),
-                    str(s['V3_tSymbol']), float(s['forward_ratio']),
-                    float(s['base_start']), float(s['base_gain']),
-                    str(s['group_id']), str(s['status_done']),
-                    str(s['status_assets']), float(s['status_gain']))
+                    (int(s['timeStamp']), str(s['signal_id']), str(s['type']),
+                     str(s['server']), str(s['V1_fSymbol']),
+                     str(s['V1_tSymbol']), str(s['V2_fSymbol']),
+                     str(s['V2_tSymbol']), str(s['V3_fSymbol']),
+                     str(s['V3_tSymbol']), float(s['forward_ratio']),
+                     float(s['base_start']), float(s['base_gain']),
+                     str(s['group_id']), str(s['status_done']),
+                     str(s['status_assets']), float(s['status_gain'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
@@ -1799,18 +1801,19 @@ class DB(object):
         self._logger.debug(
             "src.core.db.db.DB.insertSignalTradePair: {signal=%s}" % signal)
         try:
-            TEMP_SQL_TITLE = INSERT_JUDGE_MARKET_TICKER_PAIR_SQL
+            TEMP_SQL_TITLE = INSERT_SIGNAL_TRADE_PAIR
             TEMP_SQL_VALUE = []
             for s in signal:
                 TEMP_SQL_VALUE.append(
-                    int(s['timeStamp']), str(s['signal_id']), str(s['type']),
-                    str(s['J1_server']), str(s['J2_server']), str(s['V1_fSymbol']),
-                    str(s['V1_tSymbol']), str(s['V2_fSymbol']),
-                    str(s['V2_tSymbol']), str(s['V3_fSymbol']),
-                    str(s['V3_tSymbol']), float(s['forward_ratio']),
-                    float(s['base_start']), float(s['base_gain']),
-                    str(s['group_id']), str(s['status_done']),
-                    str(s['status_assets']), float(s['status_gain']))
+                    (int(s['timeStamp']), str(s['signal_id']), str(s['type']),
+                     str(s['J1_server']), str(s['J2_server']),
+                     str(s['V1_fSymbol']), str(s['V1_tSymbol']),
+                     str(s['V2_fSymbol']), str(s['V2_tSymbol']),
+                     str(s['V3_fSymbol']), str(s['V3_tSymbol']),
+                     float(s['forward_ratio']), float(s['base_start']),
+                     float(s['base_gain']), str(s['group_id']),
+                     str(s['status_done']), str(s['status_assets']),
+                     float(s['status_gain'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)

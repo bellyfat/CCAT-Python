@@ -8,12 +8,14 @@ import pandas as pd
 sys.path.append(os.getcwd())
 
 from src.core.calc.calc import Calc
+from src.core.calc.signal import Signal
 from src.core.db.db import DB
 from src.core.util.log import Logger
 
 
 db = DB()
 calc = Calc()
+sgn = Signal()
 logger = Logger()
 resInfoSymbol = pd.DataFrame(db.getInfoSymbol(['okex','binance','huobi']))
 
@@ -279,6 +281,39 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_getSignalTradeDis(self):
+        res = db.getSignalTradeDis(['0x1c-2235ad9e-e25e-389e-8a5f-d2f9e35ce467'])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_delSignalTradeDis(self):
+        db.delSignalTradeDis()
+        res = db.getSignalTradeDis(['0x1c-2235ad9e-e25e-389e-8a5f-d2f9e35ce467'])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getSignalTradeTra(self):
+        res = db.getSignalTradeTra(['0x2c-2235ad9e-e25e-389e-8a5f-d2f9e35ce467'])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_delSignalTradeTra(self):
+        db.delSignalTradeTra()
+        res = db.getSignalTradeTra(['0x2c-2235ad9e-e25e-389e-8a5f-d2f9e35ce467'])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_getSignalTradePair(self):
+        res = db.getSignalTradePair(['0x3c-2235ad9e-e25e-389e-8a5f-d2f9e35ce467'])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
+    def test_delSignalTradePair(self):
+        db.delSignalTradePair()
+        res = db.getSignalTradePair(['0x3c-2235ad9e-e25e-389e-8a5f-d2f9e35ce467'])
+        logger.debug(res)
+        self.assertIsInstance(res, list)
+
     def test_getStatisticTradeOrderHistory(self):
         res = db.getStatisticTradeOrderHistory()
         logger.debug(res)
@@ -447,23 +482,23 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_insertSignalTradeDis(self):
-        signal = []
+        signal = sgn.signals(["okex", "binance", "huobi"], ['dis'])
         db.insertSignalTradeDis(signal)
-        res = db.getSignalTradeDis(['signal_id'])
+        res = db.getSignalTradeDis(['0x1c-2235ad9e-e25e-389e-8a5f-d2f9e35ce467'])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertSignalTradeTra(self):
-        signal = []
+        signal = sgn.signals(["okex", "binance", "huobi"], ['tra'])
         db.insertSignalTradeTra(signal)
-        res = db.getSignalTradeTra(['signal_id'])
+        res = db.getSignalTradeTra(['0x2c-2235ad9e-e25e-389e-8a5f-d2f9e35ce467'])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertSignalTradePair(self):
-        signal = []
+        signal = sgn.signals(["okex", "binance", "huobi"], ['pair'])
         db.insertSignalTradePair(signal)
-        res = db.getSignalTradePair(['signal_id'])
+        res = db.getSignalTradePair(['0x3c-2235ad9e-e25e-389e-8a5f-d2f9e35ce467'])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -561,6 +596,9 @@ test_db = [
     # TestDB("test_getJudgeMarketTickerDis"),
     # TestDB("test_getJudgeMarketTickerTra"),
     # TestDB("test_getJudgeMarketTickerPair"),
+    TestDB("test_getSignalTradeDis"),
+    TestDB("test_getSignalTradeTra"),
+    TestDB("test_getSignalTradePair"),
     # TestDB("test_getStatisticJudgeMarketTickerDis"),
     # TestDB("test_getStatisticJudgeMarketTickerTra"),
     # TestDB("test_getStatisticJudgeMarketTickerPair"),
@@ -596,6 +634,9 @@ test_db = [
     # TestDB("test_delJudgeMarketTickerDis"),
     # TestDB("test_delJudgeMarketTickerTra"),
     # TestDB("test_delJudgeMarketTickerPair"),
+    TestDB("test_delSignalTradeDis"),
+    TestDB("test_delSignalTradeTra"),
+    TestDB("test_delSignalTradePair"),
     TestDB("test_delTradeBacktestHistory"),
     TestDB("test_delTradeOrderHistory"),
     # TestDB("test_delStatisticJudgeMarketTickerDis"),

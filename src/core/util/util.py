@@ -534,6 +534,10 @@ class Util(object):
             "src.core.util.util.Util.updateDBBacktestHistoryCreat: {async: %s, timeout: %s}"
             % (async, timeout))
         try:
+            db = DB()
+            db.delSignalTradeDis()
+            db.delSignalTradeTra()
+            db.delSignalTradePair()
             ids = []
             sgn = Signal()
             startTime = time.time()
@@ -546,9 +550,11 @@ class Util(object):
                     break
                 # calc signals
                 signals = sgn.signals(self._exchanges, [type])
+                print(signals)
                 if not signals == []:
                     df = pd.DataFrame(signals)
                     if type == TYPE_DIS:
+                        db.insertSignalTradeDis(signals)
                         for group_key, group in df.groupby(
                             ['fSymbol', 'tSymbol']):
                             id = self._sender.sendBacktestHistoryCreatEvent(
@@ -556,6 +562,7 @@ class Util(object):
                                 timeout)
                             ids.append(id)
                     if type == TYPE_TRA:
+                        db.insertSignalTradeTra(signals)
                         for group_key, group in df.groupby([
                                 'V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol',
                                 'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol'
@@ -565,6 +572,7 @@ class Util(object):
                                 timeout)
                             ids.append(id)
                     if type == TYPE_PAIR:
+                        db.insertSignalTradePair(signals)
                         for group_key, group in df.groupby([
                                 'V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol',
                                 'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol'
