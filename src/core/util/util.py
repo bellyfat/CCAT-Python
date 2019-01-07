@@ -550,7 +550,6 @@ class Util(object):
                     break
                 # calc signals
                 signals = sgn.signals(self._exchanges, [type])
-                print(signals)
                 if not signals == []:
                     df = pd.DataFrame(signals)
                     if type == TYPE_DIS:

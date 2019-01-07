@@ -53,6 +53,9 @@
 # marketTickerAggStep: market ticker aggregate param
 # judgeMarketTickerCycle: judge signal ticker valid period
 # statisticJudgeMarketTickerCycle: statistic signal ticker valid period
+# tradeHistoryCycle: trade history valid period
+# signalTradeCycle: signal trade valid period
+# statisticSignalTradeCycle: statistic signal trade valid period
 # asyncAccount: async account switch
 # syncAccountTimeout: sync account timeout
 # asyncMarketKline: async market kline switch
@@ -100,6 +103,9 @@
   marketTickerAggStep = 1
   judgeMarketTickerCycle = 604800
   statisticJudgeMarketTickerCycle = 604800
+  tradeHistoryCycle = 604800
+  signalTradeCycle = 604800
+  statisticSignalTradeCycle = 604800
   asyncAccount = True
   syncAccountTimeout = 90
   asyncMarketKline = False

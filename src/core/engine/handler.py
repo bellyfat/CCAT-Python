@@ -270,12 +270,15 @@ class Handler(object):
                         isError = 0
                     except Exception as err:
                         self._logger.warn(str + warnStr.substitute(
-                            err=err, here='1.4 update signal status'))
+                            err=err, here='1.4 update signals status'))
                 if isError > 0:
                     # rollback:
-
                     raise Exception(
-                        errStr.substitute(here='1.4 update signal status'))
+                        errStr.substitute(here='1.4 update signals status'))
+                # insert db signals
+                db.insertSignalTradeDis(sgn.signals(exchange, [TYPE_DIS]))
+                db.insertSignalTradeTra(sgn.signals(exchange, [TYPE_TRA]))
+                db.insertSignalTradePair(sgn.signals(exchange, [TYPE_PAIR]))
             print('1. pre signals after update:\n%s' % sgn.signals())
             ########################################
             # 2. run trade
@@ -352,11 +355,16 @@ class Handler(object):
                             isSubError = 0
                         except Exception as err:
                             self._logger.warn(str + warnStr.substitute(
-                                err=err, here='2.4 update signal status'))
+                                err=err, here='2.4 update signals status'))
                     if isSubError > 0:
                         # rollback:
                         raise Exception(
-                            errStr.substitute(here='2.4 update signal status'))
+                            errStr.substitute(
+                                here='2.4 update signals status'))
+                    # insert db signals
+                    db.insertSignalTradeDis(sgn.signals(exchange, [TYPE_DIS]))
+                    db.insertSignalTradeTra(sgn.signals(exchange, [TYPE_TRA]))
+                    db.insertSignalTradePair(sgn.signals(exchange, [TYPE_PAIR]))
                 print('2. run signals after update:\n%s' % sgn.signals())
                 # 2.5 update isError
                 isError = sgn.backtestSignalsIsRunMore(resInfoSymbol)
@@ -432,11 +440,16 @@ class Handler(object):
                             isSubError = 0
                         except Exception as err:
                             self._logger.warn(str + warnStr.substitute(
-                                err=err, here='3.4 update signal status'))
+                                err=err, here='3.4 update signals status'))
                     if isSubError > 0:
                         # rollback:
                         raise Exception(
-                            errStr.substitute(here='3.4 update signal status'))
+                            errStr.substitute(
+                                here='3.4 update signals status'))
+                    # insert db signals
+                    db.insertSignalTradeDis(sgn.signals(exchange, [TYPE_DIS]))
+                    db.insertSignalTradeTra(sgn.signals(exchange, [TYPE_TRA]))
+                    db.insertSignalTradePair(sgn.signals(exchange, [TYPE_PAIR]))
                 print('3. after signals after update:\n%s' % sgn.signals())
                 # 3.5 update isError
                 isError = sgn.backtestSignalsIsRunMore(resInfoSymbol)

@@ -27,7 +27,25 @@ class Signal(object):
             % (exchange, types, auto))
         try:
             if not self._signals == []:
-                return self._signals
+                signals = []
+                for s in self._signals:
+                    if s['type'] == TYPE_DIS:
+                        if (types == 'all' or TYPE_DIS in types) and (
+                                exchange == 'all' or
+                            (s['bid_server'] in exchange
+                             and s['ask_server'] in exchange)):
+                            signals.append(s)
+                    if s['type'] == TYPE_TRA:
+                        if (types == 'all' or TYPE_TRA in types) and (
+                                exchange == 'all' or s['server'] in exchange):
+                            signals.append(s)
+                    if s['type'] == TYPE_PAIR:
+                        if (types == 'all' or TYPE_PAIR in types) and (
+                                exchange == 'all' or
+                            (s['J1_server'] in exchange
+                             and s['J2_server'] in exchange)):
+                            signals.append(s)
+                return signals
             if auto:
                 return self._autoSignals(exchange, types)
             if not auto:
@@ -192,6 +210,7 @@ class Signal(object):
                 raise Exception("NO SIGNAL ERROR, signals empty.")
             calc = Calc()
             resStatus = []
+            timeStamp = utcnow_timestamp()
             for signal in self._signals:
                 orders = infoOrders[(
                     infoOrders['group_id'] == signal['group_id'])]
@@ -203,6 +222,7 @@ class Signal(object):
                 for signal in self._signals:
                     for res in resStatus:
                         if signal['signal_id'] == res['signal_id']:
+                            signal['timeStamp'] = timeStamp
                             signal['status_done'] = res['status'][
                                 'status_done']
                             signal['status_assets'] = res['status'][
