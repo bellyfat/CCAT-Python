@@ -13,7 +13,8 @@ from src.core.config import Config
 from src.core.db.sql import *
 from src.core.util.exceptions import (BinanceException, DBException,
                                       HuobiException, OkexException)
-from src.core.util.helper import dict_factory, sqlite_escape, sqlite_reverse, utcnow_timestamp
+from src.core.util.helper import (dict_factory, sqlite_escape, sqlite_reverse,
+                                  utcnow_timestamp)
 from src.core.util.log import Logger
 
 
@@ -30,10 +31,13 @@ class DB(object):
         self._baseJudgeTimeout = Config()._Main_baseJudgeTimeout
         self._baseStatisticJudgeTimeout = Config(
         )._Main_baseStatisticJudgeTimeout
+        self._baseStatisticTradeTimeout = Config(
+        )._Main_baseStatisticTradeTimeout
         self._judgeMarketTickerCycle = Config()._Main_judgeMarketTickerCycle
         self._statisticJudgeMarketTickerCycle = Config(
         )._Main_statisticJudgeMarketTickerCycle
-        self._statisticTradeHistoryInterval = Config()._Main_statisticTradeHistoryInterval
+        self._statisticTradeHistoryInterval = Config(
+        )._Main_statisticTradeHistoryInterval
         self._tradeHistoryCycle = Config()._Main_tradeHistoryCycle
         self._signalTradeCycle = Config()._Main_signalTradeCycle
         self._statisticSignalTradeCycle = Config(
@@ -117,8 +121,9 @@ class DB(object):
                 basePriceVolume=self._basePriceVolume,
                 basePriceTimeout=self._basePriceTimeout,
                 baseJudgeTimeout=self._baseJudgeTimeout,
-                baseStatisticJudgeTimeout=self.
-                _baseStatisticJudgeTimeout).replace('[', '(').replace(
+                baseStatisticJudgeTimeout=self._baseStatisticJudgeTimeout,
+                baseStatisticTradeTimeout=self.
+                _baseStatisticTradeTimeout).replace('[', '(').replace(
                     ']', ')')
             self._logger.debug(TEMP_SQL)
             curs.executescript(TEMP_SQL)
@@ -126,13 +131,12 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getViewSignalTradeCurrent(self):
+    def getViewSignalTradeCurrent(self, type):
         self._logger.debug("src.core.db.db.DB.getViewSignalTradeCurrent")
         try:
             curs = self._conn.cursor()
             TEMP_SQL = GET_VIEW_SIGNAL_TRADE_CURRENT_SQL.substitute(
-                timeout = self._statisticTradeHistoryInterval
-            )
+                timeout=self._statisticTradeHistoryInterval, type=type)
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -1025,14 +1029,13 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getTradeBacktestHistoryServerOrder(self, exchange, orderIDs):
+    def getTradeBacktestHistorySignalOrder(self, signal_id):
         self._logger.debug(
             "src.core.db.db.DB.getTradeBacktestHistoryServerOrder")
         try:
             curs = self._conn.cursor()
-            TEMP_SQL = GET_TRADE_BACKTEST_HISTORY_SERVER_ORDER_SQL.substitute(
-                server=exchange, order_id=orderIDs).replace('[', '(').replace(
-                    ']', ')')
+            TEMP_SQL = GET_TRADE_BACKTEST_HISTORY_SIGNAL_ORDER_SQL.substitute(
+                signal_id=signal_id).replace('[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -1041,13 +1044,42 @@ class DB(object):
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
-    def getTradeOrderHistoryServerOrder(self, exchange, orderIDs):
+    def getTradeOrderHistorySignalOrder(self, signal_id):
+        self._logger.debug(
+            "src.core.db.db.DB.getTradeOrderHistorySignalOrder")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_TRADE_ORDER_HISTORY_SIGNAL_ORDER_SQL.substitute(
+                signal_id=signal_id).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getTradeBacktestHistoryServerOrder(self, server, order_id):
+        self._logger.debug(
+            "src.core.db.db.DB.getTradeBacktestHistoryServerOrder")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_TRADE_BACKTEST_HISTORY_SERVER_ORDER_SQL.substitute(
+                server=server, order_id=order_id).replace('[', '(').replace(']', ')')
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            return res
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getTradeOrderHistoryServerOrder(self, server, order_id):
         self._logger.debug("src.core.db.db.DB.getTradeOrderHistoryServerOrder")
         try:
             curs = self._conn.cursor()
             TEMP_SQL = GET_TRADE_ORDER_HISTORY_SERVER_ORDER_SQL.substitute(
-                server=exchange, order_id=orderIDs).replace('[', '(').replace(
-                    ']', ')')
+                server=server, order_id=order_id).replace('[', '(').replace(']', ')')
             self._logger.debug(TEMP_SQL)
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
@@ -1773,15 +1805,16 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertSignalTradeDis(self, signal):
+    def insertSignalTradeDis(self, signal, type):
         self._logger.debug(
-            "src.core.db.db.DB.insertSignalTradeDis: {signal=%s}" % signal)
+            "src.core.db.db.DB.insertSignalTradeDis: {signal=%s, type=%s}" %
+            (signal, type))
         try:
             TEMP_SQL_TITLE = INSERT_SIGNAL_TRADE_DIS
             TEMP_SQL_VALUE = []
             for s in signal:
                 TEMP_SQL_VALUE.append(
-                    (int(s['timeStamp']), str(s['signal_id']), str(s['type']),
+                    (int(s['timeStamp']), str(s['signal_id']), str(type),
                      str(s['bid_server']), str(s['ask_server']),
                      str(s['fSymbol']), str(s['tSymbol']),
                      float(s['forward_ratio']), float(s['backward_ratio']),
@@ -1800,15 +1833,16 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertSignalTradeTra(self, signal):
+    def insertSignalTradeTra(self, signal, type):
         self._logger.debug(
-            "src.core.db.db.DB.insertSignalTradeTra: {signal=%s}" % signal)
+            "src.core.db.db.DB.insertSignalTradeTra: {signal=%s, type=%s}" %
+            (signal, type))
         try:
             TEMP_SQL_TITLE = INSERT_SIGNAL_TRADE_TRA
             TEMP_SQL_VALUE = []
             for s in signal:
                 TEMP_SQL_VALUE.append(
-                    (int(s['timeStamp']), str(s['signal_id']), str(s['type']),
+                    (int(s['timeStamp']), str(s['signal_id']), str(type),
                      str(s['server']), str(s['V1_fSymbol']),
                      str(s['V1_tSymbol']), str(s['V2_fSymbol']),
                      str(s['V2_tSymbol']), str(s['V3_fSymbol']),
@@ -1828,15 +1862,16 @@ class DB(object):
                 Exception) as err:
             raise DBException(err)
 
-    def insertSignalTradePair(self, signal):
+    def insertSignalTradePair(self, signal, type):
         self._logger.debug(
-            "src.core.db.db.DB.insertSignalTradePair: {signal=%s}" % signal)
+            "src.core.db.db.DB.insertSignalTradePair: {signal=%s, type=%s}" %
+            (signal, type))
         try:
             TEMP_SQL_TITLE = INSERT_SIGNAL_TRADE_PAIR
             TEMP_SQL_VALUE = []
             for s in signal:
                 TEMP_SQL_VALUE.append(
-                    (int(s['timeStamp']), str(s['signal_id']), str(s['type']),
+                    (int(s['timeStamp']), str(s['signal_id']), str(type),
                      str(s['J1_server']), str(s['J2_server']),
                      str(s['V1_fSymbol']), str(s['V1_tSymbol']),
                      str(s['V2_fSymbol']), str(s['V2_tSymbol']),
@@ -1866,12 +1901,13 @@ class DB(object):
                                         quantity,
                                         ratio='',
                                         type=CCAT_ORDER_TYPE_LIMIT,
+                                        signal_id='NULL',
                                         group_id='NULL',
                                         identify=0):
         self._logger.debug(
-            "src.core.db.db.DB.insertCreatTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s, group_id=%s, identify=%s}"
+            "src.core.db.db.DB.insertCreatTradeBacktestHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s, signal_id=%s, group_id=%s, identify=%s}"
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type,
-               group_id, identify))
+               signal_id, group_id, identify))
         try:
             result = []
             TEMP_SQL_TITLE = INSERT_TRADE_BACKTEST_HISTORY_SQL
@@ -1891,7 +1927,8 @@ class DB(object):
                     (str(self._Okex_exchange), int(timeStamp), str(order_id),
                      str(status), str(type), str(fSymbol), str(tSymbol),
                      str(ask_or_bid), float(price), float(quantity),
-                     float(price), float(quantity), float(fee), str(group_id)))
+                     float(price), float(quantity), float(fee), str(signal_id),
+                     str(group_id)))
                 result.append({
                     "server": str(self._Okex_exchange),
                     "order_id": str(order_id),
@@ -1912,8 +1949,9 @@ class DB(object):
                                        str(status), str(type), str(fSymbol),
                                        str(tSymbol), str(ask_or_bid),
                                        float(price), float(quantity),
-                                       float(price), float(quantity),
-                                       float(fee), str(group_id)))
+                                       float(price),
+                                       float(quantity), float(fee),
+                                       str(signal_id), str(group_id)))
                 result.append({
                     "server": str(self._Binance_exchange),
                     "order_id": str(order_id),
@@ -1933,7 +1971,8 @@ class DB(object):
                     (str(self._Huobi_exchange), int(timeStamp), str(order_id),
                      str(status), str(type), str(fSymbol), str(tSymbol),
                      str(ask_or_bid), float(price), float(quantity),
-                     float(price), float(quantity), float(fee), str(group_id)))
+                     float(price), float(quantity), float(fee), str(signal_id),
+                     str(group_id)))
                 result.append({
                     "server": str(self._Huobi_exchange),
                     "order_id": str(order_id),
@@ -1960,10 +1999,11 @@ class DB(object):
                                     tSymbol,
                                     limit='100',
                                     ratio='',
+                                    signal_id='NULL',
                                     group_id='NULL'):
         self._logger.debug(
-            "src.core.db.db.DB.insertSyncTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s, group_id=%s }"
-            % (exchange, fSymbol, tSymbol, limit, ratio, group_id))
+            "src.core.db.db.DB.insertSyncTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, limit=%s, ratio=%s, signal_id=%s, group_id=%s }"
+            % (exchange, fSymbol, tSymbol, limit, ratio, signal_id, group_id))
         try:
             result = []
             TEMP_SQL_TITLE = INSERT_TRADE_ORDER_HISTORY_SQL
@@ -1987,7 +2027,7 @@ class DB(object):
                                                float(base["filled_price"]),
                                                float(base["filled_size"]),
                                                float(base["fee"]),
-                                               str(group_id)))
+                                               str(signal_id), str(group_id)))
                         result.append({
                             "server": str(self._Okex_exchange),
                             "order_id": str(base["order_id"]),
@@ -2012,7 +2052,7 @@ class DB(object):
                                                float(base["filled_price"]),
                                                float(base["filled_size"]),
                                                float(base["fee"]),
-                                               str(group_id)))
+                                               str(signal_id), str(group_id)))
                         result.append({
                             "server": str(self._Binance_exchange),
                             "order_id": str(base["order_id"]),
@@ -2037,7 +2077,7 @@ class DB(object):
                                                float(base["filled_price"]),
                                                float(base["filled_size"]),
                                                float(base["fee"]),
-                                               str(group_id)))
+                                               str(signal_id), str(group_id)))
                         result.append({
                             "server": str(self._Huobi_exchange),
                             "order_id": str(base["order_id"]),
@@ -2067,11 +2107,12 @@ class DB(object):
                                      quantity,
                                      ratio='',
                                      type=CCAT_ORDER_TYPE_LIMIT,
+                                     signal_id='NULL',
                                      group_id='NULL'):
         self._logger.debug(
-            "src.core.db.db.DB.insertCreatTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s, group_id=%s }"
+            "src.core.db.db.DB.insertCreatTradeOrderHistory: { exchange=%s, fSymbol=%s, tSymbol=%s, ask_or_bid=%s, price=%s, ratio=%s, type=%s, signal_id=%s, group_id=%s }"
             % (exchange, fSymbol, tSymbol, ask_or_bid, price, ratio, type,
-               group_id))
+               signal_id, group_id))
         try:
             result = []
             TEMP_SQL_TITLE = UPDATE_CREAT_TRADE_ORDER_HISTORY_SQL
@@ -2091,7 +2132,8 @@ class DB(object):
                                        float(base["ask_bid_size"]),
                                        float(base["filled_price"]),
                                        float(base["filled_size"]),
-                                       float(base["fee"]), str(group_id)))
+                                       float(base["fee"]), str(signal_id),
+                                       str(group_id)))
                 result.append({
                     "server": str(self._Okex_exchange),
                     "order_id": str(base["order_id"]),
@@ -2112,7 +2154,8 @@ class DB(object):
                                        float(base["ask_bid_size"]),
                                        float(base["filled_price"]),
                                        float(base["filled_size"]),
-                                       float(base["fee"]), str(group_id)))
+                                       float(base["fee"]), str(signal_id),
+                                       str(group_id)))
                 result.append({
                     "server": str(self._Binance_exchange),
                     "order_id": str(base["order_id"]),
@@ -2133,7 +2176,8 @@ class DB(object):
                                        float(base["ask_bid_size"]),
                                        float(base["filled_price"]),
                                        float(base["filled_size"]),
-                                       float(base["fee"]), str(group_id)))
+                                       float(base["fee"]), str(signal_id),
+                                       str(group_id)))
                 result.append({
                     "server": str(self._Huobi_exchange),
                     "order_id": str(base["order_id"]),
@@ -2159,7 +2203,10 @@ class DB(object):
                                      orderIDs,
                                      fSymbol,
                                      tSymbol,
-                                     ratio=''):
+                                     ratio='',
+                                     type=CCAT_ORDER_TYPE_LIMIT,
+                                     signal_id='NULL',
+                                     group_id='NULL'):
         self._logger.debug("src.core.db.db.DB.insertCheckTradeOrderHistory")
         try:
             result = []
@@ -2182,7 +2229,8 @@ class DB(object):
                                            float(base["ask_bid_size"]),
                                            float(base["filled_price"]),
                                            float(base["filled_size"]),
-                                           float(base["fee"])))
+                                           float(base["fee"]), str(signal_id),
+                                           str(group_id)))
                     result.append({
                         "server": str(self._Okex_exchange),
                         "order_id": str(base["order_id"]),
@@ -2205,7 +2253,8 @@ class DB(object):
                                            float(base["ask_bid_size"]),
                                            float(base["filled_price"]),
                                            float(base["filled_size"]),
-                                           float(base["fee"])))
+                                           float(base["fee"]), str(signal_id),
+                                           str(group_id)))
                     result.append({
                         "server": str(self._Binance_exchange),
                         "order_id": str(base["order_id"]),
@@ -2228,7 +2277,8 @@ class DB(object):
                                            float(base["ask_bid_size"]),
                                            float(base["filled_price"]),
                                            float(base["filled_size"]),
-                                           float(base["fee"])))
+                                           float(base["fee"]), str(signal_id),
+                                           str(group_id)))
                     result.append({
                         "server": str(self._Huobi_exchange),
                         "order_id": str(base["order_id"]),
@@ -2442,17 +2492,20 @@ class DB(object):
             TEMP_SQL_VALUE = []
             for s in statistic:
                 TEMP_SQL_VALUE.append((int(s['timeStamp']),
-                                       str(s['signal_id']), str(s['group_id']),
+                                       str(s['signal_id']), str(s['type']),
                                        int(s['timeStamp_start']),
                                        int(s['timeStamp_end']),
+                                       int(s['timeStamp_times']),
                                        float(s['base_start']),
                                        float(s['base_end']),
+                                       float(s['base_gain']),
                                        float(s['status_gain']),
                                        float(s['status_gain_max']),
                                        float(s['status_gain_min']),
                                        float(s['status_gain_diff_max']),
                                        float(s['status_gain_diff_min']),
-                                       float(s['status_gain_diff_std'])))
+                                       float(s['status_gain_diff_std']),
+                                       str(s['group_id'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
@@ -2469,21 +2522,24 @@ class DB(object):
             "src.core.db.db.DB.insertStatisticTradeOrderHistory: {statistic=%s}"
             % statistic)
         try:
-            TEMP_SQL_TITLE = INSERT_STATISTIC_TRADE_BACKTEST_HISTORY
+            TEMP_SQL_TITLE = INSERT_STATISTIC_TRADE_ORDER_HISTORY
             TEMP_SQL_VALUE = []
             for s in statistic:
                 TEMP_SQL_VALUE.append((int(s['timeStamp']),
-                                       str(s['signal_id']), str(s['group_id']),
+                                       str(s['signal_id']), str(s['type']),
                                        int(s['timeStamp_start']),
                                        int(s['timeStamp_end']),
+                                       int(s['timeStamp_times']),
                                        float(s['base_start']),
                                        float(s['base_end']),
+                                       float(s['base_gain']),
                                        float(s['status_gain']),
                                        float(s['status_gain_max']),
                                        float(s['status_gain_min']),
                                        float(s['status_gain_diff_max']),
                                        float(s['status_gain_diff_min']),
-                                       float(s['status_gain_diff_std'])))
+                                       float(s['status_gain_diff_std']),
+                                       str(s['group_id'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)

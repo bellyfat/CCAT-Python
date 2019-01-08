@@ -54,6 +54,8 @@ class Config(object):
                 'Main', 'baseJudgeTimeout')
             Config._Main_baseStatisticJudgeTimeout = cf.getfloat(
                 'Main', 'baseStatisticJudgeTimeout')
+            Config._Main_baseStatisticTradeTimeout = cf.getfloat(
+                'Main', 'baseStatisticTradeTimeout')
             # plug and play
             Config._Main_apiEpochSaveBound = cf.getfloat(
                 'Main', 'apiEpochSaveBound')

@@ -38,6 +38,10 @@ class TestDB(unittest.TestCase):
         logger.debug(res)
         self.assertIsInstance(res, list)
 
+    def test_getViewSignalTradeCurrent(self):
+        res = db.getViewSignalTradeCurrent('backtest')
+        logger.debug(res)
+        self.assertIsInstance(res, list)
 
     def test_getViewStatisticJudgeMarketTickerPairCurrentServer(self):
         res = db.getViewStatisticJudgeMarketTickerPairCurrentServer('huobi', 'binance')
@@ -229,12 +233,12 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_getTradeBacktestHistoryServerOrder(self):
-        res = db.getTradeBacktestHistoryServerOrder(['okex'],[1974405445330944, 1974402275218432])
+        res = db.getTradeBacktestHistoryServerOrder(["okex", "binance", "huobi"], [1974405445330944, 1974402275218432])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_getTradeOrderHistoryServerOrder(self):
-        res = db.getTradeOrderHistoryServerOrder(['okex'],[1974405445330944, 1974402275218432])
+        res = db.getTradeOrderHistoryServerOrder(["okex", "binance", "huobi"], [1974405445330944, 1974402275218432])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
@@ -466,7 +470,7 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_insertJudgeMarketTickerTra(self):
-        res = calc.calcJudgeMarketTickerTra(["okex", "binance", "huobi"], 0.001,
+        signal = calc.calcJudgeMarketTickerTra(["okex", "binance", "huobi"], 0.001,
                                        resInfoSymbol)
         db.insertJudgeMarketTickerTra(signal)
         res = db.getJudgeMarketTickerTra()
@@ -482,22 +486,25 @@ class TestDB(unittest.TestCase):
         self.assertIsInstance(res, list)
 
     def test_insertSignalTradeDis(self):
-        signal = sgn.signals(["okex", "binance", "huobi"], ['dis'])
-        db.insertSignalTradeDis(signal)
+        signal = sgn.signals(["okex", "binance", "huobi"], ['dis'], False)
+        if not signal == []:
+            db.insertSignalTradeDis(signal, 'backtest')
         res = db.getSignalTradeDis(['0x1c-2235ad9e-e25e-389e-8a5f-d2f9e35ce467'])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertSignalTradeTra(self):
-        signal = sgn.signals(["okex", "binance", "huobi"], ['tra'])
-        db.insertSignalTradeTra(signal)
+        signal = sgn.signals(["okex", "binance", "huobi"], ['tra'], False)
+        if not signal == []:
+            db.insertSignalTradeTra(signal, 'backtest')
         res = db.getSignalTradeTra(['0x2c-2235ad9e-e25e-389e-8a5f-d2f9e35ce467'])
         logger.debug(res)
         self.assertIsInstance(res, list)
 
     def test_insertSignalTradePair(self):
-        signal = sgn.signals(["okex", "binance", "huobi"], ['pair'])
-        db.insertSignalTradePair(signal)
+        signal = sgn.signals(["okex", "binance", "huobi"], ['pair'], False)
+        if not signal == []:
+            db.insertSignalTradePair(signal, 'backtest')
         res = db.getSignalTradePair(['0x3c-2235ad9e-e25e-389e-8a5f-d2f9e35ce467'])
         logger.debug(res)
         self.assertIsInstance(res, list)
@@ -605,6 +612,7 @@ test_db = [
     TestDB("test_getStatisticTradeBacktestHistory"),
     TestDB("test_getStatisticTradeOrderHistory"),
     TestDB("test_getViews"),
+    TestDB("test_getViewSignalTradeCurrent"),
     TestDB("test_getViewStatisticJudgeMarketTickerPairCurrentServer"),
     TestDB("test_getViewStatisticJudgeMarketTickerPairCurrent"),
     TestDB("test_getViewStatisticJudgeMarketTickerTraCurrentServer"),

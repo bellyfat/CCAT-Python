@@ -217,7 +217,10 @@ class Signal(object):
                 status = calc.calcSignalStatusByOrders(
                     signal, orders, resInfoSymbol, SIGNAL_BASECOIN)
                 if not status == []:
-                    resStatus.append({"signal_id": signal['signal_id'], "status": status})
+                    resStatus.append({
+                        "signal_id": signal['signal_id'],
+                        "status": status
+                    })
             if not resStatus == []:
                 for signal in self._signals:
                     for res in resStatus:
@@ -233,9 +236,6 @@ class Signal(object):
             errStr = "src.core.calc.signal.Signal.backtestUpdateSignalStatusByOrders: {infoOrders=%s, resInfoSymbol=%s}, exception err=%s" % (
                 'infoOrders', 'resInfoSymbol', err)
             raise CalcException(errStr)
-
-    def backtestRollbackTrade(self, ):
-        pass
 
     def backtestSignalsPreTrade(self, resInfoSymbol):
         self._logger.debug(
@@ -331,7 +331,8 @@ class Signal(object):
             calc = Calc()
             isMore = False
             for signal in self._signals:
-                isMore = calc.calcSignalIsAfterMore(signal, resInfoSymbol, SIGNAL_BASECOIN)
+                isMore = calc.calcSignalIsAfterMore(signal, resInfoSymbol,
+                                                    SIGNAL_BASECOIN)
                 if isMore:
                     break
             return isMore

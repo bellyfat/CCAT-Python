@@ -40,13 +40,9 @@ if __name__ == '__main__':
 
     # util.oneClickTransToBaseCoin()
 
-    # util.updateDBOrderHistoryInsert()
+    # util.updateDBOrderHistorySync()
 
     util.updateDBOrderHistoryCreat()
-
-    # util.updateDBOrderHistoryCheck()
-
-    # util.updateDBOrderHistoryCancle()
 
 
     # # stop engine

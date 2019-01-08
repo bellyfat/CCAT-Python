@@ -43,7 +43,7 @@ if __name__ == '__main__':
 
     util.updateDBAccountWithdraw(async=True, timeout=90)
 
-    util.updateDBOrderHistoryInsert(async=True, timeout=90)
+    util.updateDBOrderHistorySync(async=True, timeout=90)
 
     util.updateDBMarketKline(async=False, timeout=180)
 

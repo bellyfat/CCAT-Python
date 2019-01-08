@@ -86,8 +86,8 @@ class Calc(object):
                 # tra: trangle trans: asset -> tSymbol -> baseCoin
                 if isDe.empty:
                     isTra = resInfoSymbol[
-                        (resInfoSymbol['server'] == asset['server']) &
-                        (resInfoSymbol['fSymbol'] == asset['asset'])]
+                        (resInfoSymbol['server'] == asset['server'])
+                        & (resInfoSymbol['fSymbol'] == asset['asset'])]
                     if not isTra.empty:
                         candy = False
                         for i in range(isTra.shape[0]):
@@ -150,10 +150,10 @@ class Calc(object):
                 for index, order in orders.iterrows():
                     orders.loc[index, 'fee_ratio'] = 0
                     fee_ratio = resInfoSymbol[
-                        (resInfoSymbol['server'] == order['server']) &
-                        (resInfoSymbol['fSymbol'] == order['fSymbol']) &
+                        (resInfoSymbol['server'] == order['server'])
+                        & (resInfoSymbol['fSymbol'] == order['fSymbol']) &
                         (resInfoSymbol['tSymbol'] == order['tSymbol']
-                           )]['fee_taker']
+                         )]['fee_taker']
                     if not fee_ratio.empty:
                         if not fee_ratio.values[0] == 'NULL':
                             orders.loc[index, 'fee_ratio'] = fee_ratio.values[
@@ -162,7 +162,7 @@ class Calc(object):
                 fSymbol_assets = []
                 tSymbol_assets = []
                 for (server, fSymbol, tSymbol), group in orders.groupby(
-                        ['server', 'fSymbol', 'tSymbol']):
+                    ['server', 'fSymbol', 'tSymbol']):
                     fBalance = 0
                     fFree = 0
                     fLocked = 0
@@ -170,8 +170,8 @@ class Calc(object):
                     tFree = 0
                     tLocked = 0
                     # type: buy
-                    g = group[(group['server'] == server) &
-                              (group['ask_or_bid'] == CCAT_ORDER_SIDE_BUY)]
+                    g = group[(group['server'] == server)
+                              & (group['ask_or_bid'] == CCAT_ORDER_SIDE_BUY)]
                     if not g.empty:
                         # fSymbol
                         fBalance = fBalance + g['filled_size'].sum()
@@ -181,18 +181,16 @@ class Calc(object):
                             lambda x: x['filled_price'] * x['filled_size'],
                             axis=1).sum() - g['fee'].sum()
                         tLocked = tLocked + g.apply(
-                            lambda x: x['ask_bid_price'] * x['ask_bid_size'] * (
-                                1 + x['fee_ratio']) - x['filled_price'] * x['filled_size'] - x['fee'],
+                            lambda x: x['ask_bid_price'] * x['ask_bid_size'] * (1 + x['fee_ratio']) - x['filled_price'] * x['filled_size'] - x['fee'],
                             axis=1).sum()
                         tFree = tFree - g.apply(
-                            lambda x: x['ask_bid_price'] * x['ask_bid_size'] * (
-                                1 + x['fee_ratio']) - x['filled_price'] * x['filled_size'] - x['fee'],
+                            lambda x: x['ask_bid_price'] * x['ask_bid_size'] * (1 + x['fee_ratio']) - x['filled_price'] * x['filled_size'] - x['fee'],
                             axis=1).sum() - g.apply(
                                 lambda x: x['filled_price'] * x['filled_size'],
                                 axis=1).sum() - g['fee'].sum()
                     # type sell
-                    g = group[(group['server'] == server) &
-                              (group['ask_or_bid'] == CCAT_ORDER_SIDE_SELL)]
+                    g = group[(group['server'] == server)
+                              & (group['ask_or_bid'] == CCAT_ORDER_SIDE_SELL)]
                     if not g.empty:
                         # fSymbol
                         fBalance = fBalance - g['filled_size'].sum()
@@ -242,8 +240,8 @@ class Calc(object):
                 # update status_gain
                 status_assets_base = self._calcStatusAssetByBaseCoin(
                     status_assets, resInfoSymbol, baseCoin)
-                status_gain = (status_assets_base
-                               - signal['base_start']) / signal['base_start']
+                status_gain = (status_assets_base -
+                               signal['base_start']) / signal['base_start']
                 # udpate status_done
                 status_done = status_gain >= signal['base_gain']
                 status = {
@@ -260,8 +258,8 @@ class Calc(object):
             raise CalcException(errStr)
 
     def _calcSymbolPreTradeOrders(self, server, fSymbol, tSymbol, fSymbol_base,
-                                  tSymbol_base, group_id, resInfoSymbol,
-                                  baseCoin):
+                                  tSymbol_base, signal_id, group_id,
+                                  resInfoSymbol, baseCoin):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolPreTradeOrders:")
         try:
@@ -355,6 +353,7 @@ class Calc(object):
                             "quantity": quantity,
                             "ratio": fee_ratio,
                             "type": CCAT_ORDER_TYPE_LIMIT,
+                            "signal_id": signal_id,
                             "group_id": group_id
                         })
                     # type I: de done
@@ -362,10 +361,10 @@ class Calc(object):
                 # tra: trangle trans
                 if isDe.empty:
                     # print('in type I: tra')
-                    isDe = resInfoSymbol[(resInfoSymbol['server'] == server)
-                                         & (resInfoSymbol['fSymbol'] == fSymbol)
-
-                                         & (resInfoSymbol['tSymbol'] == tSymbol)]
+                    isDe = resInfoSymbol[
+                        (resInfoSymbol['server'] == server)
+                        & (resInfoSymbol['fSymbol'] == fSymbol)
+                        & (resInfoSymbol['tSymbol'] == tSymbol)]
                     isTra = resInfoSymbol[
                         (resInfoSymbol['server'] == server)
                         & (resInfoSymbol['fSymbol'] == tSymbol)
@@ -460,6 +459,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                         # tSymbol -> fSymbol
@@ -553,6 +553,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                         # done type I: tra
@@ -653,6 +654,7 @@ class Calc(object):
                             "quantity": quantity,
                             "ratio": fee_ratio,
                             "type": CCAT_ORDER_TYPE_LIMIT,
+                            "signal_id": signal_id,
                             "group_id": group_id
                         })
                     # done type II: de
@@ -667,7 +669,7 @@ class Calc(object):
 
     def _calcSymbolRunTradeOrdersTypeDis(
             self, bid_server, ask_server, fSymbol, tSymbol, status_assets,
-            forward_ratio, backward_ratio, group_id, resInfoSymbol):
+            forward_ratio, backward_ratio, signal_id, group_id, resInfoSymbol):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeDis:")
         try:
@@ -763,8 +765,8 @@ class Calc(object):
             bid_size = float(bid_res['bid_one_size'])
             ask_price = float(ask_res['ask_one_price'])
             ask_size = float(ask_res['ask_one_size'])
-            gain_ratio = (bid_price - ask_price - bid_price * bid_fee_ratio
-                          - ask_price * ask_fee_ratio) / ask_price
+            gain_ratio = (bid_price - ask_price - bid_price * bid_fee_ratio -
+                          ask_price * ask_fee_ratio) / ask_price
             # print('dis forward gain_ratio: %s' % gain_ratio)
             if gain_ratio > forward_ratio:
                 bid_size = min(bid_fSymbol_free, bid_size)
@@ -801,6 +803,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": bid_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                             price = num_to_precision(
@@ -820,6 +823,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": ask_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
             # backward
@@ -828,8 +832,8 @@ class Calc(object):
             bid_size = float(bid_res['ask_one_size'])
             ask_price = float(ask_res['bid_one_price'])
             ask_size = float(ask_res['bid_one_size'])
-            gain_ratio = (ask_price - bid_price - bid_price * bid_fee_ratio
-                          - ask_price * ask_fee_ratio) / bid_price
+            gain_ratio = (ask_price - bid_price - bid_price * bid_fee_ratio -
+                          ask_price * ask_fee_ratio) / bid_price
             # print('dis backward gain_ratio: %s' % gain_ratio)
             if gain_ratio < backward_ratio:
                 bid_size = min(
@@ -866,6 +870,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": bid_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                             price = num_to_precision(
@@ -885,6 +890,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": ask_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
             # return
@@ -896,8 +902,8 @@ class Calc(object):
 
     def _calcSymbolRunTradeOrdersTypeTra(
             self, server, V1_fSymbol, V1_tSymbol, V2_fSymbol, V2_tSymbol,
-            V3_fSymbol, V3_tSymbol, status_assets, forward_ratio, group_id,
-            resInfoSymbol):
+            V3_fSymbol, V3_tSymbol, status_assets, forward_ratio, signal_id,
+            group_id, resInfoSymbol):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypeTra:")
         try:
@@ -1114,9 +1120,9 @@ class Calc(object):
                 V1_one_size = V3_one_size
             # calc gain_ratio
             gain_ratio = (
-                C1_C2_one_price * C3_C1_one_price * (1 - V1_fee_ratio)
-                * (1 - V3_fee_ratio) - 1 / C2_C3_one_price
-                - 1 / C2_C3_one_price * V2_fee_ratio) / (1 / C2_C3_one_price)
+                C1_C2_one_price * C3_C1_one_price * (1 - V1_fee_ratio) *
+                (1 - V3_fee_ratio) - 1 / C2_C3_one_price -
+                1 / C2_C3_one_price * V2_fee_ratio) / (1 / C2_C3_one_price)
             # forward
             # print('tra forward gain_ratio: %s' % gain_ratio)
             if gain_ratio > forward_ratio:
@@ -1159,6 +1165,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": V1_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                             price = num_to_precision(
@@ -1178,6 +1185,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": V2_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                             price = num_to_precision(
@@ -1197,6 +1205,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": V3_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
             # return
@@ -1209,36 +1218,36 @@ class Calc(object):
     def _calcSymbolRunTradeOrdersTypePair(
             self, J1_server, J2_server, V1_fSymbol, V1_tSymbol, V2_fSymbol,
             V2_tSymbol, V3_fSymbol, V3_tSymbol, status_assets, forward_ratio,
-            group_id, resInfoSymbol):
+            signal_id, group_id, resInfoSymbol):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypePair:")
         try:
             orders = []
             # calc symbol pair info
-            is_J1_V1 = resInfoSymbol[(resInfoSymbol['server'] == J1_server) &
-                                     (resInfoSymbol['fSymbol'] == V1_fSymbol)
-
-                                     & (resInfoSymbol['tSymbol'] == V1_tSymbol)]
-            is_J1_V2 = resInfoSymbol[(resInfoSymbol['server'] == J1_server) &
-                                     (resInfoSymbol['fSymbol'] == V2_fSymbol)
-
-                                     & (resInfoSymbol['tSymbol'] == V2_tSymbol)]
-            is_J1_V3 = resInfoSymbol[(resInfoSymbol['server'] == J1_server) &
-                                     (resInfoSymbol['fSymbol'] == V3_fSymbol)
-
-                                     & (resInfoSymbol['tSymbol'] == V3_tSymbol)]
-            is_J2_V1 = resInfoSymbol[(resInfoSymbol['server'] == J2_server) &
-                                     (resInfoSymbol['fSymbol'] == V1_fSymbol)
-
-                                     & (resInfoSymbol['tSymbol'] == V1_tSymbol)]
-            is_J2_V2 = resInfoSymbol[(resInfoSymbol['server'] == J2_server) &
-                                     (resInfoSymbol['fSymbol'] == V2_fSymbol)
-
-                                     & (resInfoSymbol['tSymbol'] == V2_tSymbol)]
-            is_J2_V3 = resInfoSymbol[(resInfoSymbol['server'] == J2_server) &
-                                     (resInfoSymbol['fSymbol'] == V3_fSymbol)
-
-                                     & (resInfoSymbol['tSymbol'] == V3_tSymbol)]
+            is_J1_V1 = resInfoSymbol[(resInfoSymbol['server'] == J1_server)
+                                     & (resInfoSymbol['fSymbol'] == V1_fSymbol)
+                                     &
+                                     (resInfoSymbol['tSymbol'] == V1_tSymbol)]
+            is_J1_V2 = resInfoSymbol[(resInfoSymbol['server'] == J1_server)
+                                     & (resInfoSymbol['fSymbol'] == V2_fSymbol)
+                                     &
+                                     (resInfoSymbol['tSymbol'] == V2_tSymbol)]
+            is_J1_V3 = resInfoSymbol[(resInfoSymbol['server'] == J1_server)
+                                     & (resInfoSymbol['fSymbol'] == V3_fSymbol)
+                                     &
+                                     (resInfoSymbol['tSymbol'] == V3_tSymbol)]
+            is_J2_V1 = resInfoSymbol[(resInfoSymbol['server'] == J2_server)
+                                     & (resInfoSymbol['fSymbol'] == V1_fSymbol)
+                                     &
+                                     (resInfoSymbol['tSymbol'] == V1_tSymbol)]
+            is_J2_V2 = resInfoSymbol[(resInfoSymbol['server'] == J2_server)
+                                     & (resInfoSymbol['fSymbol'] == V2_fSymbol)
+                                     &
+                                     (resInfoSymbol['tSymbol'] == V2_tSymbol)]
+            is_J2_V3 = resInfoSymbol[(resInfoSymbol['server'] == J2_server)
+                                     & (resInfoSymbol['fSymbol'] == V3_fSymbol)
+                                     &
+                                     (resInfoSymbol['tSymbol'] == V3_tSymbol)]
             if is_J1_V1.empty or is_J1_V2.empty or is_J1_V3.empty or is_J2_V1.empty or is_J2_V2.empty or is_J2_V3.empty:
                 # print('is_J1_V1, is_J1_V2, is_J1_V3, is_J1_V1, is_J1_V2, is_J1_V3 is empty.')
                 return orders
@@ -1564,8 +1573,8 @@ class Calc(object):
                 # calc J1 symbol size
                 temp_J1_C3 = min(
                     J1_V3_one_size,
-                    J1_V2_one_size * J1_C2_C3_one_price
-                    * (1 - J1_V2_fee_ratio))
+                    J1_V2_one_size * J1_C2_C3_one_price *
+                    (1 - J1_V2_fee_ratio))
                 temp_J1_C1 = min(
                     J1_V1_one_size,
                     temp_J1_C3 * J1_C3_C1_one_price * (1 - J1_V3_fee_ratio))
@@ -1581,8 +1590,8 @@ class Calc(object):
                 # calc J2 symbol size
                 temp_J2_C3 = min(
                     J2_V3_one_size,
-                    J2_V2_one_size * J2_C2_C3_one_price
-                    * (1 - J2_V2_fee_ratio))
+                    J2_V2_one_size * J2_C2_C3_one_price *
+                    (1 - J2_V2_fee_ratio))
                 temp_J2_C1 = min(
                     J2_V1_one_size,
                     temp_J2_C3 * J2_C3_C1_one_price * (1 - J2_V3_fee_ratio))
@@ -1600,8 +1609,8 @@ class Calc(object):
                 # calc J1 symbol size
                 temp_J1_C3 = min(
                     J1_V3_one_size,
-                    J1_V2_one_size * J1_C2_C3_one_price
-                    * (1 - J1_V2_fee_ratio))
+                    J1_V2_one_size * J1_C2_C3_one_price *
+                    (1 - J1_V2_fee_ratio))
                 temp_J1_C1 = min(
                     J1_V1_one_size,
                     temp_J1_C3 * J1_C3_C1_one_price * (1 - J1_V3_fee_ratio))
@@ -1617,8 +1626,8 @@ class Calc(object):
                 # calc J2 symbol size
                 temp_J2_C3 = min(
                     J2_V3_one_size,
-                    J2_V2_one_size * J2_C2_C3_one_price
-                    * (1 - J2_V2_fee_ratio))
+                    J2_V2_one_size * J2_C2_C3_one_price *
+                    (1 - J2_V2_fee_ratio))
                 temp_J2_C1 = min(
                     J2_V1_one_size,
                     temp_J2_C3 * J2_C3_C1_one_price * (1 - J2_V3_fee_ratio))
@@ -1639,29 +1648,29 @@ class Calc(object):
             J2_V2_one_size = min(J1_V2_one_size, J2_V2_one_size)
             J2_V3_one_size = min(J1_V3_one_size, J2_V3_one_size)
             # Begin Calc Gain
-            C1_symbol_gain_ratio_up = (J1_V1_one_price - J2_V1_one_price
-                                       - J1_V1_one_price * J1_V1_fee_ratio
-                                       - J2_V1_one_price * J2_V1_fee_ratio) * (
+            C1_symbol_gain_ratio_up = (J1_V1_one_price - J2_V1_one_price -
+                                       J1_V1_one_price * J1_V1_fee_ratio -
+                                       J2_V1_one_price * J2_V1_fee_ratio) * (
                                            J1_V1_one_size + J2_V1_one_size) / 2
             C1_symbol_gain_ratio_dn = J2_V1_one_price * (
                 J1_V1_one_size + J2_V1_one_size) / 2
-            C2_symbol_gain_ratio_up = (J1_V2_one_price - J2_V2_one_price
-                                       - J1_V2_one_price * J1_V2_fee_ratio
-                                       - J2_V2_one_price * J2_V2_fee_ratio) * (
+            C2_symbol_gain_ratio_up = (J1_V2_one_price - J2_V2_one_price -
+                                       J1_V2_one_price * J1_V2_fee_ratio -
+                                       J2_V2_one_price * J2_V2_fee_ratio) * (
                                            J1_V2_one_size + J2_V2_one_size) / 2
             C2_symbol_gain_ratio_dn = J2_V2_one_price * (
                 J1_V2_one_size + J2_V2_one_size) / 2
-            C3_symbol_gain_ratio_up = (J1_V3_one_price - J2_V3_one_price
-                                       - J1_V3_one_price * J1_V3_fee_ratio
-                                       - J2_V3_one_price * J2_V3_fee_ratio) * (
+            C3_symbol_gain_ratio_up = (J1_V3_one_price - J2_V3_one_price -
+                                       J1_V3_one_price * J1_V3_fee_ratio -
+                                       J2_V3_one_price * J2_V3_fee_ratio) * (
                                            J1_V3_one_size + J2_V3_one_size) / 2
             C3_symbol_gain_ratio_dn = J2_V3_one_price * (
                 J1_V3_one_size + J2_V3_one_size) / 2
             # calc gain_ratio
-            gain_ratio = (C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up
-                          + C3_symbol_gain_ratio_up) / (
-                              C1_symbol_gain_ratio_dn + C2_symbol_gain_ratio_dn +
-                              C3_symbol_gain_ratio_dn)
+            gain_ratio = (C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up +
+                          C3_symbol_gain_ratio_up) / (
+                              C1_symbol_gain_ratio_dn + C2_symbol_gain_ratio_dn
+                              + C3_symbol_gain_ratio_dn)
             # forward
             # print('pair froward gain_ratio: %s' % gain_ratio)
             if gain_ratio > forward_ratio:
@@ -1722,6 +1731,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": J1_V1_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                             price = num_to_precision(
@@ -1741,6 +1751,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": J1_V2_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                             price = num_to_precision(
@@ -1760,6 +1771,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": J1_V3_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                             price = num_to_precision(
@@ -1779,6 +1791,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": J2_V1_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                             price = num_to_precision(
@@ -1798,6 +1811,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": J2_V2_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                             price = num_to_precision(
@@ -1817,6 +1831,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": J2_V3_fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
             # return
@@ -1826,9 +1841,9 @@ class Calc(object):
             errStr = "src.core.calc.calc.Calc._calcSymbolRunTradeOrdersTypePair: exception err=%s" % err
             raise CalcException(errStr)
 
-    def _calcSymbolAfterTradeOrders(self, server, fSymbol, tSymbol,
-                                    fSymbol_to_base, tSymbol_to_base, group_id,
-                                    resInfoSymbol, baseCoin):
+    def _calcSymbolAfterTradeOrders(
+            self, server, fSymbol, tSymbol, fSymbol_to_base, tSymbol_to_base,
+            signal_id, group_id, resInfoSymbol, baseCoin):
         self._logger.debug(
             "src.core.calc.calc.Calc._calcSymbolAfterTradeOrders:")
         try:
@@ -1924,6 +1939,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                     # type I: de done
@@ -1932,8 +1948,8 @@ class Calc(object):
                 if isDe.empty:
                     # print('in type I: tra')
                     isDe = resInfoSymbol[
-                        (resInfoSymbol['server'] == server) &
-                        (resInfoSymbol['fSymbol'] == tSymbol) &
+                        (resInfoSymbol['server'] == server)
+                        & (resInfoSymbol['fSymbol'] == tSymbol) &
                         (resInfoSymbol['tSymbol'] == baseCoin)]
                     isTra = resInfoSymbol[
                         (resInfoSymbol['server'] == server)
@@ -2037,6 +2053,8 @@ class Calc(object):
                                     fee_ratio,
                                     "type":
                                     CCAT_ORDER_TYPE_LIMIT,
+                                    "signal_id":
+                                    signal_id,
                                     "group_id":
                                     group_id
                                 })
@@ -2150,6 +2168,8 @@ class Calc(object):
                                         fee_ratio,
                                         "type":
                                         CCAT_ORDER_TYPE_LIMIT,
+                                        "signal_id":
+                                        signal_id,
                                         "group_id":
                                         group_id
                                     })
@@ -2253,6 +2273,7 @@ class Calc(object):
                                 "quantity": quantity,
                                 "ratio": fee_ratio,
                                 "type": CCAT_ORDER_TYPE_LIMIT,
+                                "signal_id": signal_id,
                                 "group_id": group_id
                             })
                     # done type II: de
@@ -2277,14 +2298,14 @@ class Calc(object):
             if signal['type'] == TYPE_DIS:
                 orders = self._calcSymbolPreTradeOrders(
                     signal['bid_server'], signal['fSymbol'], signal['tSymbol'],
-                    signal['base_start'] / 2, 0, signal['group_id'],
-                    resInfoSymbol, baseCoin)
+                    signal['base_start'] / 2, 0, signal['signal_id'],
+                    signal['group_id'], resInfoSymbol, baseCoin)
                 if not orders == []:
                     res.extend(orders)
                 orders = self._calcSymbolPreTradeOrders(
                     signal['ask_server'], signal['fSymbol'], signal['tSymbol'],
-                    0, signal['base_start'] / 2, signal['group_id'],
-                    resInfoSymbol, baseCoin)
+                    0, signal['base_start'] / 2, signal['signal_id'],
+                    signal['group_id'], resInfoSymbol, baseCoin)
                 if not orders == []:
                     res.extend(orders)
             if signal['type'] == TYPE_TRA:
@@ -2305,42 +2326,48 @@ class Calc(object):
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], signal['base_start'] / 3, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 else:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], 0, signal['base_start'] / 3,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 if C2_symbol == signal['V2_fSymbol']:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], signal['base_start'] / 3, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 else:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], 0, signal['base_start'] / 3,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 if C3_symbol == signal['V3_fSymbol']:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], signal['base_start'] / 3, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 else:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], 0, signal['base_start'] / 3,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
             if signal['type'] == TYPE_PAIR:
@@ -2361,78 +2388,90 @@ class Calc(object):
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], signal['base_start'] / 6, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], signal['base_start'] / 6, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 else:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], 0, signal['base_start'] / 6,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], 0, signal['base_start'] / 6,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 if C2_symbol == signal['V2_fSymbol']:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], signal['base_start'] / 6, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], signal['base_start'] / 6, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 else:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], 0, signal['base_start'] / 6,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], 0, signal['base_start'] / 6,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 if C3_symbol == signal['V3_fSymbol']:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], signal['base_start'] / 6, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], signal['base_start'] / 6, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 else:
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J1_server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], 0, signal['base_start'] / 6,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolPreTradeOrders(
                         signal['J2_server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], 0, signal['base_start'] / 6,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
             # return
@@ -2455,18 +2494,18 @@ class Calc(object):
                     signal['bid_server'], signal['ask_server'],
                     signal['fSymbol'], signal['tSymbol'],
                     signal['status_assets'], signal['forward_ratio'],
-                    signal['backward_ratio'], signal['group_id'],
-                    resInfoSymbol)
+                    signal['backward_ratio'], signal['signal_id'],
+                    signal['group_id'], resInfoSymbol)
                 if not orders == []:
                     res.extend(orders)
             if signal['type'] == TYPE_TRA:
                 # find target unique tSymbol
-                isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol'] and
-                        signal['V1_tSymbol'] != signal['V3_tSymbol'])
-                isV2 = (signal['V2_tSymbol'] != signal['V1_tSymbol'] and
-                        signal['V2_tSymbol'] != signal['V3_tSymbol'])
-                isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol'] and
-                        signal['V3_tSymbol'] != signal['V2_tSymbol'])
+                isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol']
+                        and signal['V1_tSymbol'] != signal['V3_tSymbol'])
+                isV2 = (signal['V2_tSymbol'] != signal['V1_tSymbol']
+                        and signal['V2_tSymbol'] != signal['V3_tSymbol'])
+                isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol']
+                        and signal['V3_tSymbol'] != signal['V2_tSymbol'])
                 # print(isV1, isV2, isV3)
                 if isV1:
                     orders = self._calcSymbolRunTradeOrdersTypeTra(
@@ -2474,8 +2513,8 @@ class Calc(object):
                         signal['V2_tSymbol'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], signal['status_assets'],
-                        signal['forward_ratio'], signal['group_id'],
-                        resInfoSymbol)
+                        signal['forward_ratio'], signal['signal_id'],
+                        signal['group_id'], resInfoSymbol)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolRunTradeOrdersTypeTra(
@@ -2483,8 +2522,8 @@ class Calc(object):
                         signal['V3_tSymbol'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], signal['status_assets'],
-                        signal['forward_ratio'], signal['group_id'],
-                        resInfoSymbol)
+                        signal['forward_ratio'], signal['signal_id'],
+                        signal['group_id'], resInfoSymbol)
                     if not orders == []:
                         res.extend(orders)
                 if isV2:
@@ -2493,8 +2532,8 @@ class Calc(object):
                         signal['V1_tSymbol'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], signal['status_assets'],
-                        signal['forward_ratio'], signal['group_id'],
-                        resInfoSymbol)
+                        signal['forward_ratio'], signal['signal_id'],
+                        signal['group_id'], resInfoSymbol)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolRunTradeOrdersTypeTra(
@@ -2502,8 +2541,8 @@ class Calc(object):
                         signal['V3_tSymbol'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], signal['status_assets'],
-                        signal['forward_ratio'], signal['group_id'],
-                        resInfoSymbol)
+                        signal['forward_ratio'], signal['signal_id'],
+                        signal['group_id'], resInfoSymbol)
                     if not orders == []:
                         res.extend(orders)
                 if isV3:
@@ -2512,8 +2551,8 @@ class Calc(object):
                         signal['V1_tSymbol'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], signal['status_assets'],
-                        signal['forward_ratio'], signal['group_id'],
-                        resInfoSymbol)
+                        signal['forward_ratio'], signal['signal_id'],
+                        signal['group_id'], resInfoSymbol)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolRunTradeOrdersTypeTra(
@@ -2521,18 +2560,18 @@ class Calc(object):
                         signal['V2_tSymbol'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], signal['status_assets'],
-                        signal['forward_ratio'], signal['group_id'],
-                        resInfoSymbol)
+                        signal['forward_ratio'], signal['signal_id'],
+                        signal['group_id'], resInfoSymbol)
                     if not orders == []:
                         res.extend(orders)
             if signal['type'] == TYPE_PAIR:
                 # find target unique tSymbol
-                isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol'] and
-                        signal['V1_tSymbol'] != signal['V3_tSymbol'])
-                isV2 = (signal['V2_tSymbol'] != signal['V1_tSymbol'] and
-                        signal['V2_tSymbol'] != signal['V3_tSymbol'])
-                isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol'] and
-                        signal['V3_tSymbol'] != signal['V2_tSymbol'])
+                isV1 = (signal['V1_tSymbol'] != signal['V2_tSymbol']
+                        and signal['V1_tSymbol'] != signal['V3_tSymbol'])
+                isV2 = (signal['V2_tSymbol'] != signal['V1_tSymbol']
+                        and signal['V2_tSymbol'] != signal['V3_tSymbol'])
+                isV3 = (signal['V3_tSymbol'] != signal['V1_tSymbol']
+                        and signal['V3_tSymbol'] != signal['V2_tSymbol'])
                 # print(isV1, isV2, isV3)
                 if isV1:
                     orders = self._calcSymbolRunTradeOrdersTypePair(
@@ -2541,7 +2580,7 @@ class Calc(object):
                         signal['V3_fSymbol'], signal['V3_tSymbol'],
                         signal['V1_fSymbol'], signal['V1_tSymbol'],
                         signal['status_assets'], signal['forward_ratio'],
-                        signal['group_id'], resInfoSymbol)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolRunTradeOrdersTypePair(
@@ -2550,7 +2589,7 @@ class Calc(object):
                         signal['V2_fSymbol'], signal['V2_tSymbol'],
                         signal['V1_fSymbol'], signal['V1_tSymbol'],
                         signal['status_assets'], signal['forward_ratio'],
-                        signal['group_id'], resInfoSymbol)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol)
                     if not orders == []:
                         res.extend(orders)
                 if isV2:
@@ -2560,7 +2599,7 @@ class Calc(object):
                         signal['V3_fSymbol'], signal['V3_tSymbol'],
                         signal['V2_fSymbol'], signal['V2_tSymbol'],
                         signal['status_assets'], signal['forward_ratio'],
-                        signal['group_id'], resInfoSymbol)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolRunTradeOrdersTypePair(
@@ -2569,7 +2608,7 @@ class Calc(object):
                         signal['V1_fSymbol'], signal['V1_tSymbol'],
                         signal['V2_fSymbol'], signal['V2_tSymbol'],
                         signal['status_assets'], signal['forward_ratio'],
-                        signal['group_id'], resInfoSymbol)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol)
                     if not orders == []:
                         res.extend(orders)
                 if isV3:
@@ -2579,7 +2618,7 @@ class Calc(object):
                         signal['V2_fSymbol'], signal['V2_tSymbol'],
                         signal['V3_fSymbol'], signal['V3_tSymbol'],
                         signal['status_assets'], signal['forward_ratio'],
-                        signal['group_id'], resInfoSymbol)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolRunTradeOrdersTypePair(
@@ -2588,7 +2627,7 @@ class Calc(object):
                         signal['V1_fSymbol'], signal['V1_tSymbol'],
                         signal['V3_fSymbol'], signal['V3_tSymbol'],
                         signal['status_assets'], signal['forward_ratio'],
-                        signal['group_id'], resInfoSymbol)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol)
                     if not orders == []:
                         res.extend(orders)
             # return
@@ -2625,13 +2664,15 @@ class Calc(object):
                 orders = self._calcSymbolAfterTradeOrders(
                     signal['bid_server'], signal['fSymbol'], signal['tSymbol'],
                     bid_fSymbol_to_base, bid_tSymbol_to_base,
-                    signal['group_id'], resInfoSymbol, baseCoin)
+                    signal['signal_id'], signal['group_id'], resInfoSymbol,
+                    baseCoin)
                 if not orders == []:
                     res.extend(orders)
                 orders = self._calcSymbolAfterTradeOrders(
                     signal['ask_server'], signal['fSymbol'], signal['tSymbol'],
                     ask_fSymbol_to_base, ask_tSymbol_to_base,
-                    signal['group_id'], resInfoSymbol, baseCoin)
+                    signal['signal_id'], signal['group_id'], resInfoSymbol,
+                    baseCoin)
                 if not orders == []:
                     res.extend(orders)
             if signal['type'] == TYPE_TRA:
@@ -2657,7 +2698,8 @@ class Calc(object):
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], fSymbol_to_base, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 else:
@@ -2669,7 +2711,8 @@ class Calc(object):
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], 0, tSymbol_to_base,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 if C2_symbol == signal['V2_fSymbol']:
@@ -2681,7 +2724,8 @@ class Calc(object):
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], fSymbol_to_base, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 else:
@@ -2693,7 +2737,8 @@ class Calc(object):
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], 0, tSymbol_to_base,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 if C3_symbol == signal['V3_fSymbol']:
@@ -2705,7 +2750,8 @@ class Calc(object):
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], fSymbol_to_base, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 else:
@@ -2717,7 +2763,8 @@ class Calc(object):
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], 0, tSymbol_to_base,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
             if signal['type'] == TYPE_PAIR:
@@ -2747,13 +2794,15 @@ class Calc(object):
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['J1_server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], J1_fSymbol_to_base, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['J2_server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], J2_fSymbol_to_base, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 else:
@@ -2769,13 +2818,15 @@ class Calc(object):
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['J1_server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], 0, J1_tSymbol_to_base,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['J2_server'], signal['V1_fSymbol'],
                         signal['V1_tSymbol'], 0, J2_tSymbol_to_base,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 if C2_symbol == signal['V2_fSymbol']:
@@ -2791,13 +2842,15 @@ class Calc(object):
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['J1_server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], J1_fSymbol_to_base, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['J2_server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], J2_fSymbol_to_base, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 else:
@@ -2813,13 +2866,15 @@ class Calc(object):
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['J1_server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], 0, J1_tSymbol_to_base,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['J2_server'], signal['V2_fSymbol'],
                         signal['V2_tSymbol'], 0, J2_tSymbol_to_base,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 if C3_symbol == signal['V3_fSymbol']:
@@ -2835,13 +2890,15 @@ class Calc(object):
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['J1_server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], J1_fSymbol_to_base, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['J2_server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], J2_fSymbol_to_base, 0,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                 else:
@@ -2857,13 +2914,15 @@ class Calc(object):
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['J1_server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], 0, J1_tSymbol_to_base,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
                     orders = self._calcSymbolAfterTradeOrders(
                         signal['J2_server'], signal['V3_fSymbol'],
                         signal['V3_tSymbol'], 0, J2_tSymbol_to_base,
-                        signal['group_id'], resInfoSymbol, baseCoin)
+                        signal['signal_id'], signal['group_id'], resInfoSymbol,
+                        baseCoin)
                     if not orders == []:
                         res.extend(orders)
             # return
@@ -3421,6 +3480,146 @@ class Calc(object):
                 signal, 'resInfoSymbol', baseCoin, err)
             raise CalcException(errStr)
 
+    def calcStatisticTradeOrderHistory(self, signals):
+        self._logger.debug(
+            "src.core.calc.calc.Calc.calcStatisticTradeOrderHistory: {signals=%s}"
+            % signals)
+        try:
+            statistic = []
+            db = DB()
+            # statistic backtest type
+            df = pd.DataFrame(signals)
+            for (signal_id, group_id,
+                 type), group in df.groupby(['signal_id', 'group_id', 'type']):
+                # calc trade
+                trade = db.getTradeOrderHistorySignalOrder([signal_id])
+                # calc sta
+                timeStamp = group['timeStamp'].max()
+                timeStamp_start = group['timeStamp'].min()
+                timeStamp_end = group['timeStamp'].max()
+                base_start = 0
+                base_gain = 0
+                base = group[(group['timeStamp'] == timeStamp_start)]
+                if not base.empty:
+                    if not base['base_start'].values[0] == 'NULL':
+                        base_start = base['base_start'].values[0]
+                    if not base['base_gain'].values[0] == 'NULL':
+                        base_gain = base['base_gain'].values[0]
+                base_end = 0
+                status_gain = 0
+                base = group[(group['timeStamp'] == timeStamp_end)]
+                if not base.empty:
+                    if not base['status_gain'].values[0] == 'NULL':
+                        status_gain = base['status_gain'].values[0]
+                base_end = base_start * (1 + status_gain)
+                status_gain_diff = 0
+                status_gain_diff_max = 0
+                status_gain_diff_min = 0
+                status_gain_diff_std = 0
+                if group.shape[0] > 1:
+                    status_gain_diff = group['status_gain'].diff().dropna()
+                    if not status_gain_diff.empty:
+                        status_gain_diff_max = status_gain_diff.max()
+                        status_gain_diff_min = status_gain_diff.min()
+                        status_gain_diff_std = status_gain_diff.values.std()
+                sta = {
+                    "timeStamp": timeStamp,
+                    "signal_id": signal_id,
+                    "group_id": group_id,
+                    "type": type,
+                    "timeStamp_start": timeStamp_start,
+                    "timeStamp_end": timeStamp_end,
+                    "timeStamp_times": len(trade),
+                    "base_start": base_start,
+                    "base_end": base_end,
+                    "base_gain": base_gain,
+                    "status_gain": status_gain,
+                    "status_gain_max": group['status_gain'].max(),
+                    "status_gain_min": group['status_gain'].min(),
+                    "status_gain_diff_max": status_gain_diff_max,
+                    "status_gain_diff_min": status_gain_diff_min,
+                    "status_gain_diff_std": status_gain_diff_std
+                }
+                # add sta
+                statistic.append(sta)
+            # return
+            return statistic
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc.calcStatisticTradeOrderHistory: {signals=%s}, exception err=%s" % (
+                signals, err)
+            raise CalcException(errStr)
+
+    def calcStatisticTradeBacktestHistory(self, signals):
+        self._logger.debug(
+            "src.core.calc.calc.Calc.calcStatisticTradeBacktestHistory: {signals=%s}"
+            % signals)
+        try:
+            statistic = []
+            db = DB()
+            # statistic backtest type
+            df = pd.DataFrame(signals)
+            for (signal_id, group_id,
+                 type), group in df.groupby(['signal_id', 'group_id', 'type']):
+                # calc trade
+                trade = db.getTradeBacktestHistorySignalOrder([signal_id])
+                # calc sta
+                timeStamp = group['timeStamp'].max()
+                timeStamp_start = group['timeStamp'].min()
+                timeStamp_end = group['timeStamp'].max()
+                base_start = 0
+                base_gain = 0
+                base = group[(group['timeStamp'] == timeStamp_start)]
+                if not base.empty:
+                    if not base['base_start'].values[0] == 'NULL':
+                        base_start = base['base_start'].values[0]
+                    if not base['base_gain'].values[0] == 'NULL':
+                        base_gain = base['base_gain'].values[0]
+                base_end = 0
+                status_gain = 0
+                base = group[(group['timeStamp'] == timeStamp_end)]
+                if not base.empty:
+                    if not base['status_gain'].values[0] == 'NULL':
+                        status_gain = base['status_gain'].values[0]
+                base_end = base_start * (1 + status_gain)
+                status_gain_diff = 0
+                status_gain_diff_max = 0
+                status_gain_diff_min = 0
+                status_gain_diff_std = 0
+                if group.shape[0] > 1:
+                    status_gain_diff = group['status_gain'].diff().dropna()
+                    if not status_gain_diff.empty:
+                        status_gain_diff_max = status_gain_diff.max()
+                        status_gain_diff_min = status_gain_diff.min()
+                        status_gain_diff_std = status_gain_diff.values.std()
+                sta = {
+                    "timeStamp": timeStamp,
+                    "signal_id": signal_id,
+                    "group_id": group_id,
+                    "type": type,
+                    "timeStamp_start": timeStamp_start,
+                    "timeStamp_end": timeStamp_end,
+                    "timeStamp_times": len(trade),
+                    "base_start": base_start,
+                    "base_end": base_end,
+                    "base_gain": base_gain,
+                    "status_gain": status_gain,
+                    "status_gain_max": group['status_gain'].max(),
+                    "status_gain_min": group['status_gain'].min(),
+                    "status_gain_diff_max": status_gain_diff_max,
+                    "status_gain_diff_min": status_gain_diff_min,
+                    "status_gain_diff_std": status_gain_diff_std
+                }
+                # add sta
+                statistic.append(sta)
+            # return
+            return statistic
+        except (BinanceException, HuobiException, OkexException,
+                Exception) as err:
+            errStr = "src.core.calc.calc.Calc.calcStatisticTradeBacktestHistory: {signals=%s}, exception err=%s" % (
+                signals, err)
+            raise CalcException(errStr)
+
     def calcStatisticJudgeMarketTickerDis(self, exchange, timeWindow):
         self._logger.debug(
             "src.core.calc.calc.Calc.calcStatisticJudgeMarketTickerDis: {exchange=%s, timeWindow=%s}"
@@ -3533,7 +3732,7 @@ class Calc(object):
                 df = pd.DataFrame(signal)
                 # calc
                 for (server, symbol_pair), group in df.groupby(
-                        ['server', 'symbol_pair']):
+                    ['server', 'symbol_pair']):
                     # calc group_id
                     id_str = TYPE_TRA + str(server) + str(symbol_pair)
                     group_id = '0x2b-' + str(
@@ -3721,16 +3920,16 @@ class Calc(object):
                     # calc fees
                     r['bid_fee'] = 0
                     bid_fee = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['bid_server']) &
-                        (resInfoSymbol['fSymbol'] == r['fSymbol']) &
+                        (resInfoSymbol['server'] == r['bid_server'])
+                        & (resInfoSymbol['fSymbol'] == r['fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['tSymbol']
-                           )]['fee_taker']
+                         )]['fee_taker']
                     r['ask_fee'] = 0
                     ask_fee = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['ask_server']) &
-                        (resInfoSymbol['fSymbol'] == r['fSymbol']) &
+                        (resInfoSymbol['server'] == r['ask_server'])
+                        & (resInfoSymbol['fSymbol'] == r['fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['tSymbol']
-                           )]['fee_taker']
+                         )]['fee_taker']
                     if not bid_fee.empty:
                         if not bid_fee.values[0] == 'NULL':
                             r['bid_fee'] = bid_fee.values[0]
@@ -3742,19 +3941,19 @@ class Calc(object):
                     r['ask_size'] = min(r['bid_size'], r['ask_size'])
                     # calc base price
                     tSymbol_base_price = (
-                        r['bid_price_base'] / r['bid_price']
-                        + r['ask_price_base'] / r['ask_price']) / 2
+                        r['bid_price_base'] / r['bid_price'] +
+                        r['ask_price_base'] / r['ask_price']) / 2
                     # calc gain_base
                     r['gain_base'] = (
-                        r['bid_price'] * r['bid_size']
-                        - r['ask_price'] * r['ask_size'] - r['bid_price']
-                        * r['bid_size'] * r['bid_fee'] - r['ask_price']
-                        * r['ask_size'] * r['ask_fee']) * tSymbol_base_price
+                        r['bid_price'] * r['bid_size'] -
+                        r['ask_price'] * r['ask_size'] - r['bid_price'] *
+                        r['bid_size'] * r['bid_fee'] - r['ask_price'] *
+                        r['ask_size'] * r['ask_fee']) * tSymbol_base_price
                     # calc gain_ratio
                     r['gain_ratio'] = (
-                        r['bid_price'] - r['ask_price']
-                        - r['bid_price'] * r['bid_fee']
-                        - r['ask_price'] * r['ask_fee']) / r['ask_price']
+                        r['bid_price'] - r['ask_price'] -
+                        r['bid_price'] * r['bid_fee'] -
+                        r['ask_price'] * r['ask_fee']) / r['ask_price']
                     # calc signal
                     if r['gain_ratio'] > threshold:
                         signal.append(r)
@@ -3834,22 +4033,22 @@ class Calc(object):
                 # calc fees
                 r['V1_fee'] = 0
                 V1_fee = resInfoSymbol[
-                    (resInfoSymbol['server'] == r['server']) &
-                    (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
-
-                    & (resInfoSymbol['tSymbol'] == r['V1_tSymbol'])]['fee_taker']
+                    (resInfoSymbol['server'] == r['server'])
+                    & (resInfoSymbol['fSymbol'] == r['V1_fSymbol'])
+                    &
+                    (resInfoSymbol['tSymbol'] == r['V1_tSymbol'])]['fee_taker']
                 r['V2_fee'] = 0
                 V2_fee = resInfoSymbol[
-                    (resInfoSymbol['server'] == r['server']) &
-                    (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
-
-                    & (resInfoSymbol['tSymbol'] == r['V2_tSymbol'])]['fee_taker']
+                    (resInfoSymbol['server'] == r['server'])
+                    & (resInfoSymbol['fSymbol'] == r['V2_fSymbol'])
+                    &
+                    (resInfoSymbol['tSymbol'] == r['V2_tSymbol'])]['fee_taker']
                 r['V3_fee'] = 0
                 V3_fee = resInfoSymbol[
-                    (resInfoSymbol['server'] == r['server']) &
-                    (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
-
-                    & (resInfoSymbol['tSymbol'] == r['V3_tSymbol'])]['fee_taker']
+                    (resInfoSymbol['server'] == r['server'])
+                    & (resInfoSymbol['fSymbol'] == r['V3_fSymbol'])
+                    &
+                    (resInfoSymbol['tSymbol'] == r['V3_tSymbol'])]['fee_taker']
                 if not V1_fee.empty:
                     if not V1_fee.values[0] == 'NULL':
                         r['V1_fee'] = V1_fee.values[0]
@@ -3861,8 +4060,8 @@ class Calc(object):
                         r['V3_fee'] = V3_fee.values[0]
                 # calc symbol base
                 V2_tSymbol_base_price = (
-                    r['V2_bid_one_price_base'] / r['V2_bid_one_price']
-                    + r['V2_ask_one_price_base'] / r['V2_ask_one_price']) / 2
+                    r['V2_bid_one_price_base'] / r['V2_bid_one_price'] +
+                    r['V2_ask_one_price_base'] / r['V2_ask_one_price']) / 2
                 # Begin Calc Gain: Gain V2 tSymbol
                 if C3_symbol == r['V3_fSymbol']:
                     # Type clockwise: sell->buy->sell
@@ -3898,15 +4097,15 @@ class Calc(object):
                     r['V1_one_size'] = r['V3_one_size']
                 # calc gain_base
                 r['gain_base'] = (
-                    C1_C2_one_price * C3_C1_one_price * (1 - r['V1_fee'])
-                    * (1 - r['V3_fee']) - 1 / C2_C3_one_price
-                    - 1 / C2_C3_one_price * r['V2_fee']) / (
+                    C1_C2_one_price * C3_C1_one_price * (1 - r['V1_fee']) *
+                    (1 - r['V3_fee']) - 1 / C2_C3_one_price -
+                    1 / C2_C3_one_price * r['V2_fee']) / (
                         1 / C2_C3_one_price) * temp_C2 * V2_tSymbol_base_price
                 # calc gain_ratio
                 r['gain_ratio'] = (
-                    C1_C2_one_price * C3_C1_one_price * (1 - r['V1_fee'])
-                    * (1 - r['V3_fee']) - 1 / C2_C3_one_price
-                    - 1 / C2_C3_one_price * r['V2_fee']) / (1 / C2_C3_one_price)
+                    C1_C2_one_price * C3_C1_one_price * (1 - r['V1_fee']) *
+                    (1 - r['V3_fee']) - 1 / C2_C3_one_price -
+                    1 / C2_C3_one_price * r['V2_fee']) / (1 / C2_C3_one_price)
                 # calc signal
                 if r['gain_ratio'] > threshold:
                     signal.append(r)
@@ -4016,40 +4215,40 @@ class Calc(object):
                     # calc fees
                     r['J1_V1_fee'] = 0
                     J1_V1_fee = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J1_server']) &
-                        (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
+                        (resInfoSymbol['server'] == r['J1_server'])
+                        & (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                           )]['fee_taker']
+                         )]['fee_taker']
                     r['J1_V2_fee'] = 0
                     J1_V2_fee = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J1_server']) &
-                        (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
+                        (resInfoSymbol['server'] == r['J1_server'])
+                        & (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                           )]['fee_taker']
+                         )]['fee_taker']
                     r['J1_V3_fee'] = 0
                     J1_V3_fee = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J1_server']) &
-                        (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
+                        (resInfoSymbol['server'] == r['J1_server'])
+                        & (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                           )]['fee_taker']
+                         )]['fee_taker']
                     r['J2_V1_fee'] = 0
                     J2_V1_fee = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J2_server']) &
-                        (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
+                        (resInfoSymbol['server'] == r['J2_server'])
+                        & (resInfoSymbol['fSymbol'] == r['V1_fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['V1_tSymbol']
-                           )]['fee_taker']
+                         )]['fee_taker']
                     r['J2_V2_fee'] = 0
                     J2_V2_fee = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J2_server']) &
-                        (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
+                        (resInfoSymbol['server'] == r['J2_server'])
+                        & (resInfoSymbol['fSymbol'] == r['V2_fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['V2_tSymbol']
-                           )]['fee_taker']
+                         )]['fee_taker']
                     r['J2_V3_fee'] = 0
                     J2_V3_fee = resInfoSymbol[
-                        (resInfoSymbol['server'] == r['J2_server']) &
-                        (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
+                        (resInfoSymbol['server'] == r['J2_server'])
+                        & (resInfoSymbol['fSymbol'] == r['V3_fSymbol']) &
                         (resInfoSymbol['tSymbol'] == r['V3_tSymbol']
-                           )]['fee_taker']
+                         )]['fee_taker']
                     if not J1_V1_fee.empty:
                         if not J1_V1_fee.values[0] == 'NULL':
                             r['J1_V1_fee'] = J1_V1_fee.values[0]
@@ -4073,12 +4272,12 @@ class Calc(object):
                         # Type J1 = clockwise: sell->buy->sell, J2 = anti-clockwise: sell->buy->buy
                         # calc J1 symbol size
                         temp_J1_C3 = min(
-                            r['J1_V3_one_size'],
-                            r['J1_V2_one_size'] * J1_C2_C3_one_price
-                            * (1 - r['J1_V2_fee']))
+                            r['J1_V3_one_size'], r['J1_V2_one_size'] *
+                            J1_C2_C3_one_price * (1 - r['J1_V2_fee']))
                         temp_J1_C1 = min(
                             r['J1_V1_one_size'],
-                            temp_J1_C3 * J1_C3_C1_one_price * (1 - r['J1_V3_fee']))
+                            temp_J1_C3 * J1_C3_C1_one_price *
+                            (1 - r['J1_V3_fee']))
                         temp_J1_C3 = temp_J1_C1 / J1_C3_C1_one_price / (
                             1 - r['J1_V3_fee'])
                         temp_J1_C2 = temp_J1_C3 / J1_C2_C3_one_price / (
@@ -4086,16 +4285,16 @@ class Calc(object):
                         r['J1_V2_one_size'] = temp_J1_C2 * (
                             1 - r['J1_V2_fee']) / r['J1_V2_one_price']
                         r['J1_V3_one_size'] = r['J1_V2_one_size']
-                        r['J1_V1_one_size'] = r['J1_V3_one_size'] * r['J1_V3_one_price'] * (
-                            1 - r['J1_V3_fee'])
+                        r['J1_V1_one_size'] = r['J1_V3_one_size'] * r[
+                            'J1_V3_one_price'] * (1 - r['J1_V3_fee'])
                         # calc J2 symbol size
                         temp_J2_C3 = min(
-                            r['J2_V3_one_size'],
-                            r['J2_V2_one_size'] * J2_C2_C3_one_price
-                            * (1 - r['J2_V2_fee']))
+                            r['J2_V3_one_size'], r['J2_V2_one_size'] *
+                            J2_C2_C3_one_price * (1 - r['J2_V2_fee']))
                         temp_J2_C1 = min(
                             r['J2_V1_one_size'],
-                            temp_J2_C3 * J2_C3_C1_one_price * (1 - r['J2_V3_fee']))
+                            temp_J2_C3 * J2_C3_C1_one_price *
+                            (1 - r['J2_V3_fee']))
                         temp_J2_C3 = temp_J2_C1 / J2_C3_C1_one_price / (
                             1 - r['J2_V3_fee'])
                         temp_J2_C2 = temp_J2_C3 / J2_C2_C3_one_price / (
@@ -4109,12 +4308,12 @@ class Calc(object):
                         # Type J1 = anti-clockwise: sell->buy->buy, J2 = clockwise: sell->buy->sell
                         # calc J1 symbol size
                         temp_J1_C3 = min(
-                            r['J1_V3_one_size'],
-                            r['J1_V2_one_size'] * J1_C2_C3_one_price
-                            * (1 - r['J1_V2_fee']))
+                            r['J1_V3_one_size'], r['J1_V2_one_size'] *
+                            J1_C2_C3_one_price * (1 - r['J1_V2_fee']))
                         temp_J1_C1 = min(
                             r['J1_V1_one_size'],
-                            temp_J1_C3 * J1_C3_C1_one_price * (1 - r['J1_V3_fee']))
+                            temp_J1_C3 * J1_C3_C1_one_price *
+                            (1 - r['J1_V3_fee']))
                         temp_J1_C3 = temp_J1_C1 / J1_C3_C1_one_price / (
                             1 - r['J1_V3_fee'])
                         temp_J1_C2 = temp_J1_C3 / J1_C2_C3_one_price / (
@@ -4126,12 +4325,12 @@ class Calc(object):
                         r['J1_V1_one_size'] = r['J1_V3_one_size']
                         # calc J2 symbol size
                         temp_J2_C3 = min(
-                            r['J2_V3_one_size'],
-                            r['J2_V2_one_size'] * J2_C2_C3_one_price
-                            * (1 - r['J2_V2_fee']))
+                            r['J2_V3_one_size'], r['J2_V2_one_size'] *
+                            J2_C2_C3_one_price * (1 - r['J2_V2_fee']))
                         temp_J2_C1 = min(
                             r['J2_V1_one_size'],
-                            temp_J2_C3 * J2_C3_C1_one_price * (1 - r['J2_V3_fee']))
+                            temp_J2_C3 * J2_C3_C1_one_price *
+                            (1 - r['J2_V3_fee']))
                         temp_J2_C3 = temp_J2_C1 / J2_C3_C1_one_price / (
                             1 - r['J2_V3_fee'])
                         temp_J2_C2 = temp_J2_C3 / J2_C2_C3_one_price / (
@@ -4139,8 +4338,8 @@ class Calc(object):
                         r['J2_V2_one_size'] = temp_J2_C2 * (
                             1 - r['J2_V2_fee']) / r['J2_V2_one_price']
                         r['J2_V3_one_size'] = r['J2_V2_one_size']
-                        r['J2_V1_one_size'] = r['J2_V3_one_size'] * r['J2_V3_one_price'] * (
-                            1 - r['J2_V3_fee'])
+                        r['J2_V1_one_size'] = r['J2_V3_one_size'] * r[
+                            'J2_V3_one_price'] * (1 - r['J2_V3_fee'])
                     # calc symbol size
                     r['J1_V1_one_size'] = min(r['J1_V1_one_size'],
                                               r['J2_V1_one_size'])
@@ -4156,73 +4355,73 @@ class Calc(object):
                                               r['J2_V3_one_size'])
                     # calc base price
                     # calc J1
-                    J1_V1_tSymbol_base_price = (r['J1_V1_bid_one_price_base']
-                                                / r['J1_V1_bid_one_price']
-                                                + r['J1_V1_ask_one_price_base']
-                                                / r['J1_V1_ask_one_price']) / 2
-                    J1_V2_tSymbol_base_price = (r['J1_V2_bid_one_price_base']
-                                                / r['J1_V2_bid_one_price']
-                                                + r['J1_V2_ask_one_price_base']
-                                                / r['J1_V2_ask_one_price']) / 2
-                    J1_V3_tSymbol_base_price = (r['J1_V3_bid_one_price_base']
-                                                / r['J1_V3_bid_one_price']
-                                                + r['J1_V3_ask_one_price_base']
-                                                / r['J1_V3_ask_one_price']) / 2
+                    J1_V1_tSymbol_base_price = (r['J1_V1_bid_one_price_base'] /
+                                                r['J1_V1_bid_one_price'] +
+                                                r['J1_V1_ask_one_price_base'] /
+                                                r['J1_V1_ask_one_price']) / 2
+                    J1_V2_tSymbol_base_price = (r['J1_V2_bid_one_price_base'] /
+                                                r['J1_V2_bid_one_price'] +
+                                                r['J1_V2_ask_one_price_base'] /
+                                                r['J1_V2_ask_one_price']) / 2
+                    J1_V3_tSymbol_base_price = (r['J1_V3_bid_one_price_base'] /
+                                                r['J1_V3_bid_one_price'] +
+                                                r['J1_V3_ask_one_price_base'] /
+                                                r['J1_V3_ask_one_price']) / 2
                     # calc J2
-                    J2_V1_tSymbol_base_price = (r['J2_V1_bid_one_price_base']
-                                                / r['J2_V1_bid_one_price']
-                                                + r['J2_V1_ask_one_price_base']
-                                                / r['J2_V1_ask_one_price']) / 2
-                    J2_V2_tSymbol_base_price = (r['J2_V2_bid_one_price_base']
-                                                / r['J2_V2_bid_one_price']
-                                                + r['J2_V2_ask_one_price_base']
-                                                / r['J2_V2_ask_one_price']) / 2
-                    J2_V3_tSymbol_base_price = (r['J2_V3_bid_one_price_base']
-                                                / r['J2_V3_bid_one_price']
-                                                + r['J2_V3_ask_one_price_base']
-                                                / r['J2_V3_ask_one_price']) / 2
+                    J2_V1_tSymbol_base_price = (r['J2_V1_bid_one_price_base'] /
+                                                r['J2_V1_bid_one_price'] +
+                                                r['J2_V1_ask_one_price_base'] /
+                                                r['J2_V1_ask_one_price']) / 2
+                    J2_V2_tSymbol_base_price = (r['J2_V2_bid_one_price_base'] /
+                                                r['J2_V2_bid_one_price'] +
+                                                r['J2_V2_ask_one_price_base'] /
+                                                r['J2_V2_ask_one_price']) / 2
+                    J2_V3_tSymbol_base_price = (r['J2_V3_bid_one_price_base'] /
+                                                r['J2_V3_bid_one_price'] +
+                                                r['J2_V3_ask_one_price_base'] /
+                                                r['J2_V3_ask_one_price']) / 2
                     tSymbol_base_price = (
-                        (J1_V1_tSymbol_base_price + J2_V1_tSymbol_base_price)
-                        * (r['J1_V1_one_size'] + r['J2_V1_one_size'])
-                        + (J1_V2_tSymbol_base_price + J2_V2_tSymbol_base_price)
-                        * (r['J1_V2_one_size'] + r['J2_V2_one_size'])
-                        + (J1_V3_tSymbol_base_price + J2_V3_tSymbol_base_price)
-                        * (r['J1_V3_one_size'] + r['J2_V3_one_size'])) / (
-                            r['J1_V1_one_size'] + r['J2_V1_one_size']
-                            + r['J1_V2_one_size'] + r['J2_V2_one_size']
-                            + r['J1_V3_one_size'] + r['J2_V3_one_size'])
+                        (J1_V1_tSymbol_base_price + J2_V1_tSymbol_base_price) *
+                        (r['J1_V1_one_size'] + r['J2_V1_one_size']) +
+                        (J1_V2_tSymbol_base_price + J2_V2_tSymbol_base_price) *
+                        (r['J1_V2_one_size'] + r['J2_V2_one_size']) +
+                        (J1_V3_tSymbol_base_price + J2_V3_tSymbol_base_price) *
+                        (r['J1_V3_one_size'] + r['J2_V3_one_size'])) / (
+                            r['J1_V1_one_size'] + r['J2_V1_one_size'] +
+                            r['J1_V2_one_size'] + r['J2_V2_one_size'] +
+                            r['J1_V3_one_size'] + r['J2_V3_one_size'])
                     # Begin Calc Gain
                     C1_symbol_gain_ratio_up = (
-                        r['J1_V1_one_price'] - r['J2_V1_one_price']
-                        - r['J1_V1_one_price'] * r['J1_V1_fee']
-                        - r['J2_V1_one_price'] * r['J2_V1_fee']) * (
+                        r['J1_V1_one_price'] - r['J2_V1_one_price'] -
+                        r['J1_V1_one_price'] * r['J1_V1_fee'] -
+                        r['J2_V1_one_price'] * r['J2_V1_fee']) * (
                             r['J1_V1_one_size'] + r['J2_V1_one_size']) / 2
                     C1_symbol_gain_ratio_dn = r['J2_V1_one_price'] * (
                         r['J1_V1_one_size'] + r['J2_V1_one_size']) / 2
                     C2_symbol_gain_ratio_up = (
-                        r['J1_V2_one_price'] - r['J2_V2_one_price']
-                        - r['J1_V2_one_price'] * r['J1_V2_fee']
-                        - r['J2_V2_one_price'] * r['J2_V2_fee']) * (
+                        r['J1_V2_one_price'] - r['J2_V2_one_price'] -
+                        r['J1_V2_one_price'] * r['J1_V2_fee'] -
+                        r['J2_V2_one_price'] * r['J2_V2_fee']) * (
                             r['J1_V2_one_size'] + r['J2_V2_one_size']) / 2
                     C2_symbol_gain_ratio_dn = r['J2_V2_one_price'] * (
                         r['J1_V2_one_size'] + r['J2_V2_one_size']) / 2
                     C3_symbol_gain_ratio_up = (
-                        r['J1_V3_one_price'] - r['J2_V3_one_price']
-                        - r['J1_V3_one_price'] * r['J1_V3_fee']
-                        - r['J2_V3_one_price'] * r['J2_V3_fee']) * (
+                        r['J1_V3_one_price'] - r['J2_V3_one_price'] -
+                        r['J1_V3_one_price'] * r['J1_V3_fee'] -
+                        r['J2_V3_one_price'] * r['J2_V3_fee']) * (
                             r['J1_V3_one_size'] + r['J2_V3_one_size']) / 2
                     C3_symbol_gain_ratio_dn = r['J2_V3_one_price'] * (
                         r['J1_V3_one_size'] + r['J2_V3_one_size']) / 2
                     # calc gain_base
                     r['gain_base'] = (
-                        C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up
-                        + C3_symbol_gain_ratio_up) * tSymbol_base_price
+                        C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up +
+                        C3_symbol_gain_ratio_up) * tSymbol_base_price
                     # calc gain_ratio
                     r['gain_ratio'] = (
-                        C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up
-                        + C3_symbol_gain_ratio_up) / (
-                            C1_symbol_gain_ratio_dn + C2_symbol_gain_ratio_dn
-                            + C3_symbol_gain_ratio_dn)
+                        C1_symbol_gain_ratio_up + C2_symbol_gain_ratio_up +
+                        C3_symbol_gain_ratio_up) / (
+                            C1_symbol_gain_ratio_dn + C2_symbol_gain_ratio_dn +
+                            C3_symbol_gain_ratio_dn)
                     # calc signal
                     if r['gain_ratio'] > threshold:
                         signal.append(r)

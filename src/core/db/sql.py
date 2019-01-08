@@ -6,7 +6,7 @@ from string import Template
 GET_VIEW_SIGNAL_TRADE_CURRENT_SQL = Template('''
     SELECT *
     FROM VIEW_SIGNAL_TRADE_CURRENT
-    WHERE timeStamp>(strftime('%s', 'now')-$timeout)*1000;
+    WHERE timeStamp>(strftime('%s', 'now')-$timeout)*1000 AND type='$type';
 ''')
 
 # get db statistic judge market ticker pair current server sql
@@ -140,7 +140,7 @@ GET_VIEW_MARKET_KLINE_CURRENT_SQL = '''
 GET_VIEW_MARKET_SYMBOL_SERVER_AGGDEPTH_SQL = Template('''
     SELECT max(limit_price_step) as aggDepth
     FROM INFO_SYMBOL
-    WHERE server IN $server and fSymbol='$fSymbol' and tSymbol='$tSymbol';
+    WHERE server IN $server AND fSymbol='$fSymbol' AND tSymbol='$tSymbol';
 ''')
 
 # get db view market symbol server sql
@@ -260,13 +260,22 @@ DEL_SIGNAL_TRADE_PAIR_SQL = Template('''
     DELETE FROM SIGNAL_TRADE_PAIR WHERE timeStamp < (strftime('%s', 'now')-$period)*1000;
 ''')
 
+# get db trade backtest history signal orders sql
+GET_TRADE_BACKTEST_HISTORY_SIGNAL_ORDER_SQL = Template('''
+    SELECT * FROM TRADE_BACKTEST_HISTORY WHERE signal_id in $signal_id;
+''')
+# get db trade order history signal orders sql
+GET_TRADE_ORDER_HISTORY_SIGNAL_ORDER_SQL = Template('''
+    SELECT * FROM TRADE_ORDER_HISTORY WHERE signal_id in $signal_id;
+''')
+
 # get db trade backtest history server orders sql
 GET_TRADE_BACKTEST_HISTORY_SERVER_ORDER_SQL = Template('''
-    SELECT * FROM TRADE_BACKTEST_HISTORY WHERE server in $server and order_id in $order_id;
+    SELECT * FROM TRADE_BACKTEST_HISTORY WHERE server IN $server AND order_id in $order_id;
 ''')
-# get db trade order history sql
+# get db trade order history server orders sql
 GET_TRADE_ORDER_HISTORY_SERVER_ORDER_SQL = Template('''
-    SELECT * FROM TRADE_ORDER_HISTORY WHERE server in $server and order_id in $order_id;
+    SELECT * FROM TRADE_ORDER_HISTORY WHERE server IN $server AND order_id in $order_id;
 ''')
 
 # get db trade backtest history sql
@@ -400,23 +409,23 @@ INSERT_SIGNAL_TRADE_PAIR = '''
 
 # insert db trade backtest history sql
 INSERT_TRADE_BACKTEST_HISTORY_SQL = '''
-    INSERT OR REPLACE INTO TRADE_BACKTEST_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee, group_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+    INSERT OR REPLACE INTO TRADE_BACKTEST_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee, signal_id, group_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # insert db trade order history sql
 INSERT_TRADE_ORDER_HISTORY_SQL = '''
-    INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee, group_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+    INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee, signal_id, group_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # update db creat trade order history sql
 UPDATE_CREAT_TRADE_ORDER_HISTORY_SQL = '''
-    INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+    INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, feesignal_id, group_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # update db check trade order history sql
 UPDATE_CHECK_TRADE_ORDER_HISTORY_SQL = '''
-    INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, fee)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+    INSERT OR REPLACE INTO TRADE_ORDER_HISTORY (server, timeStamp, order_id, status, type, fSymbol, tSymbol, ask_or_bid, ask_bid_price, ask_bid_size, filled_price, filled_size, feesignal_id, group_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # update db cancle trade order history sql
 UPDATE_CANCLE_TRADE_ORDER_HISTORY_SQL = Template('''
@@ -440,13 +449,13 @@ INSERT_STATISTIC_JUDGE_MARKET_TICKER_PAIR_SQL = '''
 
 # insert db statistic trade backtest history sql
 INSERT_STATISTIC_TRADE_BACKTEST_HISTORY = '''
-    INSERT OR REPLACE INTO STATISTIC_TRADE_BACKTEST_HISTORY (timeStamp, signal_id, group_id, timeStamp_start, timeStamp_end, base_start, base_end, status_gain, status_gain_max, status_gain_min, status_gain_diff_max, status_gain_diff_min, status_gain_diff_std)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+    INSERT OR REPLACE INTO STATISTIC_TRADE_BACKTEST_HISTORY (timeStamp, signal_id, type, timeStamp_start, timeStamp_end, timeStamp_times, base_start, base_end, base_gain, status_gain, status_gain_max, status_gain_min, status_gain_diff_max, status_gain_diff_min, status_gain_diff_std, group_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # insert db statistic trade order history sql
 INSERT_STATISTIC_TRADE_ORDER_HISTORY = '''
-    INSERT OR REPLACE INTO STATISTIC_TRADE_ORDER_HISTORY (timeStamp, signal_id, group_id, timeStamp_start, timeStamp_end, base_start, base_end, status_gain, status_gain_max, status_gain_min, status_gain_diff_max, status_gain_diff_min, status_gain_diff_std)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
+    INSERT OR REPLACE INTO STATISTIC_TRADE_ORDER_HISTORY (timeStamp, signal_id, type, timeStamp_start, timeStamp_end, timeStamp_times, base_start, base_end, base_gain, status_gain, status_gain_max, status_gain_min, status_gain_diff_max, status_gain_diff_min, status_gain_diff_std, group_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 
 # get db talbes sql
@@ -461,9 +470,10 @@ CREATE_TABELS_SQL = '''
     CREATE TABLE IF NOT EXISTS `STATISTIC_TRADE_ORDER_HISTORY` (
         `timeStamp` INTEGER,
         `signal_id` TEXT NOT NULL,
-        `group_id` TEXT NOT NULL,
+        `type` TEXT NOT NULL,
     	`timeStamp_start` INTEGER,
     	`timeStamp_end`	INTEGER,
+    	`timeStamp_times`	INTEGER,
         `base_start` REAL,
         `base_end` REAL,
         `base_gain` REAL,
@@ -473,14 +483,16 @@ CREATE_TABELS_SQL = '''
         `status_gain_diff_max` REAL,
         `status_gain_diff_min` REAL,
         `status_gain_diff_std` REAL,
-        PRIMARY KEY (signal_id, group_id)
+        `group_id` TEXT NOT NULL,
+        PRIMARY KEY (signal_id, type)
     );
     CREATE TABLE IF NOT EXISTS `STATISTIC_TRADE_BACKTEST_HISTORY` (
         `timeStamp` INTEGER,
         `signal_id` TEXT NOT NULL,
-        `group_id` TEXT NOT NULL,
+        `type` TEXT NOT NULL,
     	`timeStamp_start` INTEGER,
     	`timeStamp_end`	INTEGER,
+    	`timeStamp_times`	INTEGER,
         `base_start` REAL,
         `base_end` REAL,
         `base_gain` REAL,
@@ -490,7 +502,8 @@ CREATE_TABELS_SQL = '''
         `status_gain_diff_max` REAL,
         `status_gain_diff_min` REAL,
         `status_gain_diff_std` REAL,
-        PRIMARY KEY (signal_id, group_id)
+        `group_id` TEXT NOT NULL,
+        PRIMARY KEY (signal_id, type)
     );
     CREATE TABLE IF NOT EXISTS `STATISTIC_JUDGE_MARKET_TICKER_PAIR` (
     	`timeStamp`	INTEGER NOT NULL,
@@ -619,7 +632,7 @@ CREATE_TABELS_SQL = '''
         `status_done` TEXT,
         `status_assets` TEXT,
         `status_gain` REAL,
-        PRIMARY KEY (timeStamp, signal_id)
+        PRIMARY KEY (timeStamp, signal_id, type)
     );
     CREATE TABLE IF NOT EXISTS `SIGNAL_TRADE_TRA` (
         `timeStamp` INTEGER NOT NULL,
@@ -639,7 +652,7 @@ CREATE_TABELS_SQL = '''
         `status_done` TEXT,
         `status_assets` TEXT,
         `status_gain` REAL,
-        PRIMARY KEY (timeStamp, signal_id)
+        PRIMARY KEY (timeStamp, signal_id, type)
     );
     CREATE TABLE IF NOT EXISTS `SIGNAL_TRADE_DIS` (
         `timeStamp` INTEGER NOT NULL,
@@ -657,7 +670,7 @@ CREATE_TABELS_SQL = '''
         `status_done` TEXT,
         `status_assets` TEXT,
         `status_gain` REAL,
-        PRIMARY KEY (timeStamp, signal_id)
+        PRIMARY KEY (timeStamp, signal_id, type)
     );
     CREATE TABLE IF NOT EXISTS `JUDGE_MARKET_TICKER_PAIR` (
     	`timeStamp`	INTEGER NOT NULL,
@@ -1113,15 +1126,15 @@ CREATE_VIEWS_SQL = Template('''
 			WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticJudgeTimeout)*1000;
     CREATE VIEW IF NOT EXISTS VIEW_SIGNAL_TRADE_CURRENT
         AS
-				SELECT timeStamp, signal_id, group_id, base_start, base_gain, status_assets, status_gain
+				SELECT timeStamp, signal_id, group_id, type, base_start, base_gain, status_assets, status_gain
 				FROM SIGNAL_TRADE_DIS
 				WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticTradeTimeout)*1000
 			UNION
-				SELECT timeStamp, signal_id, group_id, base_start, base_gain, status_assets, status_gain
+				SELECT timeStamp, signal_id, group_id, type, base_start, base_gain, status_assets, status_gain
 				FROM SIGNAL_TRADE_TRA
 				WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticTradeTimeout)*1000
 			UNION
-				SELECT timeStamp, signal_id, group_id, base_start, base_gain, status_assets, status_gain
+				SELECT timeStamp, signal_id, group_id, type, base_start, base_gain, status_assets, status_gain
 				FROM SIGNAL_TRADE_PAIR
 				WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticTradeTimeout)*1000;
     COMMIT;

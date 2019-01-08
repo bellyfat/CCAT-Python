@@ -12,7 +12,7 @@ from src.core.db.db import DB
 from src.core.engine.enums import *
 from src.core.util.exceptions import (CalcException, DBException,
                                       EngineException)
-from src.core.util.helper import str_to_list, utcnow_timestamp, json_reverse
+from src.core.util.helper import json_reverse, str_to_list, utcnow_timestamp
 from src.core.util.log import Logger
 
 
@@ -181,6 +181,123 @@ class Handler(object):
         callback(event.id)
 
     # Backtest 事件
+    def rollbackHandleBacktestHistoryCreatEvent(self, sgn, pdOrders, exchange, resInfoSymbol):
+        self._logger.debug("src.core.engine.handler.Handler.rollbackHandleBacktestHistoryCreatEvent")
+        try:
+            db = DB()
+            # update orders sgn status
+            infoOrders = []
+            if not pdOrders.empty:
+                for server in exchange:
+                    res = []
+                    orderIDs = pdOrders[(pdOrders['server'] == server
+                                              )]['order_id'].tolist()
+                    res = db.getTradeBacktestHistoryServerOrder([server],
+                                                                orderIDs)
+                    if not res == []:
+                        infoOrders.extend(res)
+            if not infoOrders == []:
+                infoOrders = pd.DataFrame(infoOrders)
+                isError = SIGNAL_MAX_NUM
+                while isError > 0:
+                    try:
+                        isError = isError - 1
+                        sgn.backtestUpdateSignalStatusByOrders(
+                            infoOrders, resInfoSymbol)
+                        isError = 0
+                    except Exception as err:
+                        self._logger.warn('rollback failed, will try again...')
+                if isError > 0:
+                    raise Exception('rollback error, start_base assets may loss control.')
+                # insert db signals
+                db.insertSignalTradeDis(
+                    sgn.signals(exchange, [TYPE_DIS]), SIGNAL_BACKTEST)
+                db.insertSignalTradeTra(
+                    sgn.signals(exchange, [TYPE_TRA]), SIGNAL_BACKTEST)
+                db.insertSignalTradePair(
+                    sgn.signals(exchange, [TYPE_PAIR]), SIGNAL_BACKTEST)
+            # rollback assets
+            isError = SIGNAL_MAX_NUM
+            while isError > 0:
+                isError = isError - 1
+                # calc after orders
+                afterOrders = []
+                isSubError = SIGNAL_MAX_NUM
+                while isSubError > 0:
+                    try:
+                        isSubError = isSubError - 1
+                        afterOrders = sgn.backtestSignalsAfterTrade(
+                            resInfoSymbol)
+                        isSubError = 0
+                    except Exception as err:
+                        self._logger.warn('rollback failed, will try again...')
+                if isSubError > 0:
+                    raise Exception('rollback error, start_base assets may loss control.')
+                # calc afterExecOrders
+                afterExecOrders = []
+                if not afterOrders == []:
+                    for order in afterOrders:
+                        identify = identify + 1
+                        isSubError = SIGNAL_MAX_NUM
+                        res = []
+                        while isSubError > 0:
+                            try:
+                                isSubError = isSubError - 1
+                                res = db.insertCreatTradeBacktestHistory(
+                                    order['server'], order['fSymbol'],
+                                    order['tSymbol'], order['ask_or_bid'],
+                                    order['price'], order['quantity'],
+                                    order['ratio'], order['type'],
+                                    order['signal_id'], order['group_id'], identify)
+                                isSubError = 0
+                            except Exception as err:
+                                self._logger.warn('rollback failed, will try again...')
+                        if not res == []:
+                            afterExecOrders.extend(res)
+                    if isSubError > 0:
+                        raise Exception('rollback error, start_base assets may loss control.')
+                # calc afterInfoOrders
+                afterInfoOrders = []
+                if not afterExecOrders == []:
+                    afterExecOrders = pd.DataFrame(afterExecOrders)
+                    for server in exchange:
+                        res = []
+                        orderIDs = preExecOrders[(
+                            preExecOrders['server'] == server
+                        )]['order_id'].tolist()
+                        res = db.getTradeBacktestHistoryServerOrder([server],
+                                                                    orderIDs)
+                        if not res == []:
+                            afterInfoOrders.extend(res)
+                # update signals status
+                if not afterInfoOrders == []:
+                    afterInfoOrders = pd.DataFrame(afterInfoOrders)
+                    isSubError = SIGNAL_MAX_NUM
+                    while isSubError > 0:
+                        try:
+                            isSubError = isSubError - 1
+                            sgn.backtestUpdateSignalStatusByOrders(
+                                afterInfoOrders, resInfoSymbol)
+                            isSubError = 0
+                        except Exception as err:
+                            self._logger.warn('rollback failed, will try again...')
+                    if isSubError > 0:
+                        raise Exception('rollback error, start_base assets may loss control.')
+                    # insert db signals
+                    db.insertSignalTradeDis(
+                        sgn.signals(exchange, [TYPE_DIS]), SIGNAL_BACKTEST)
+                    db.insertSignalTradeTra(
+                        sgn.signals(exchange, [TYPE_TRA]), SIGNAL_BACKTEST)
+                    db.insertSignalTradePair(
+                        sgn.signals(exchange, [TYPE_PAIR]), SIGNAL_BACKTEST)
+                # update isError
+                isMore = sgn.backtestSignalsIsRunMore(resInfoSymbol)
+                if not isMore:
+                    isError = 0
+        except Exception as err:
+            errStr = "src.core.engine.handler.Handler.rollbackHandleBacktestHistoryCreatEvent, err=%s" % err
+            self._logger.critical(errStr)
+
     def handleBacktestHistoryCreatEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
@@ -227,6 +344,7 @@ class Handler(object):
                 for order in preOrders:
                     identify = identify + 1
                     isError = SIGNAL_MAX_NUM
+                    res = []
                     while isError > 0:
                         try:
                             isError = isError - 1
@@ -235,7 +353,7 @@ class Handler(object):
                                 order['tSymbol'], order['ask_or_bid'],
                                 order['price'], order['quantity'],
                                 order['ratio'], order['type'],
-                                order['group_id'], identify)
+                                order['signal_id'], order['group_id'], identify)
                             isError = 0
                         except Exception as err:
                             self._logger.warn(str + warnStr.substitute(
@@ -244,6 +362,8 @@ class Handler(object):
                         preExecOrders.extend(res)
                 if isError > 0:
                     # rollback:
+                    pdOrders = pd.DataFrame(preExecOrders)
+                    self.rollbackHandleBacktestHistoryCreatEvent(sgn, pdOrders, exchange, resInfoSymbol)
                     raise Exception(
                         errStr.substitute(here='1.2 excute preOrders'))
             # print('1. pre signals preExecOrders:\n%s' % preExecOrders)
@@ -252,6 +372,7 @@ class Handler(object):
             if not preExecOrders == []:
                 preExecOrders = pd.DataFrame(preExecOrders)
                 for server in exchange:
+                    res = []
                     orderIDs = preExecOrders[(preExecOrders['server'] == server
                                               )]['order_id'].tolist()
                     res = db.getTradeBacktestHistoryServerOrder([server],
@@ -274,12 +395,17 @@ class Handler(object):
                             err=err, here='1.4 update signals status'))
                 if isError > 0:
                     # rollback:
+                    pdOrders = preExecOrders
+                    self.rollbackHandleBacktestHistoryCreatEvent(sgn, pdOrders, exchange, resInfoSymbol)
                     raise Exception(
                         errStr.substitute(here='1.4 update signals status'))
                 # insert db signals
-                db.insertSignalTradeDis(sgn.signals(exchange, [TYPE_DIS]))
-                db.insertSignalTradeTra(sgn.signals(exchange, [TYPE_TRA]))
-                db.insertSignalTradePair(sgn.signals(exchange, [TYPE_PAIR]))
+                db.insertSignalTradeDis(
+                    sgn.signals(exchange, [TYPE_DIS]), SIGNAL_BACKTEST)
+                db.insertSignalTradeTra(
+                    sgn.signals(exchange, [TYPE_TRA]), SIGNAL_BACKTEST)
+                db.insertSignalTradePair(
+                    sgn.signals(exchange, [TYPE_PAIR]), SIGNAL_BACKTEST)
             print('1. pre signals after update:\n%s' % sgn.signals())
             ########################################
             # 2. run trade
@@ -300,6 +426,8 @@ class Handler(object):
                             err=err, here='2.1 calc run orders'))
                 if isSubError > 0:
                     # rollback:
+                    pdOrders = []
+                    self.rollbackHandleBacktestHistoryCreatEvent(sgn, pdOrders, exchange, resInfoSymbol)
                     raise Exception(
                         errStr.substitute(here='2.1 calc run orders'))
                 # print('2. run signals runOrders:\n%s' % runOrders)
@@ -309,6 +437,7 @@ class Handler(object):
                     for order in runOrders:
                         identify = identify + 1
                         isSubError = SIGNAL_MAX_NUM
+                        res = []
                         while isSubError > 0 and (time.time() - startTime <
                                                   timeout or timeout == 0):
                             try:
@@ -318,7 +447,7 @@ class Handler(object):
                                     order['tSymbol'], order['ask_or_bid'],
                                     order['price'], order['quantity'],
                                     order['ratio'], order['type'],
-                                    order['group_id'], identify)
+                                    order['signal_id'], order['group_id'], identify)
                                 isSubError = 0
                             except Exception as err:
                                 self._logger.warn(str + warnStr.substitute(
@@ -327,6 +456,8 @@ class Handler(object):
                             runExecOrders.extend(res)
                     if isSubError > 0:
                         # rollback:
+                        pdOrders = pd.DataFrame(runExecOrders)
+                        self.rollbackHandleBacktestHistoryCreatEvent(sgn, pdOrders, exchange, resInfoSymbol)
                         raise Exception(
                             errStr.substitute(here='2.2 execute runOrders'))
                 # print('2. run signals runExecOrders:\n%s' % runExecOrders)
@@ -335,6 +466,7 @@ class Handler(object):
                 if not runExecOrders == []:
                     runExecOrders = pd.DataFrame(runExecOrders)
                     for server in exchange:
+                        res = []
                         orderIDs = runExecOrders[(
                             runExecOrders['server'] == server
                         )]['order_id'].tolist()
@@ -359,16 +491,23 @@ class Handler(object):
                                 err=err, here='2.4 update signals status'))
                     if isSubError > 0:
                         # rollback:
+                        pdOrders = runExecOrders
+                        self.rollbackHandleBacktestHistoryCreatEvent(sgn, pdOrders, exchange, resInfoSymbol)
                         raise Exception(
                             errStr.substitute(
                                 here='2.4 update signals status'))
                     # insert db signals
-                    db.insertSignalTradeDis(sgn.signals(exchange, [TYPE_DIS]))
-                    db.insertSignalTradeTra(sgn.signals(exchange, [TYPE_TRA]))
-                    db.insertSignalTradePair(sgn.signals(exchange, [TYPE_PAIR]))
+                    db.insertSignalTradeDis(
+                        sgn.signals(exchange, [TYPE_DIS]), SIGNAL_BACKTEST)
+                    db.insertSignalTradeTra(
+                        sgn.signals(exchange, [TYPE_TRA]), SIGNAL_BACKTEST)
+                    db.insertSignalTradePair(
+                        sgn.signals(exchange, [TYPE_PAIR]), SIGNAL_BACKTEST)
                 print('2. run signals after update:\n%s' % sgn.signals())
                 # 2.5 update isError
-                isError = sgn.backtestSignalsIsRunMore(resInfoSymbol)
+                isMore = sgn.backtestSignalsIsRunMore(resInfoSymbol)
+                if not isMore:
+                    isError = False
             ########################################
             # 3. after trade
             isError = SIGNAL_MAX_NUM
@@ -387,6 +526,9 @@ class Handler(object):
                         self._logger.warn(str + warnStr.substitute(
                             err=err, here='3.1 calc after orders'))
                 if isSubError > 0:
+                    # rollback
+                    pdOrders = []
+                    self.rollbackHandleBacktestHistoryCreatEvent(sgn, pdOrders, exchange, resInfoSymbol)
                     raise Exception(
                         errStr.substitute(here='3.1 calc after orders'))
                 # print('3. after signals afterOrders:\n%s' % afterOrders)
@@ -396,6 +538,7 @@ class Handler(object):
                     for order in afterOrders:
                         identify = identify + 1
                         isSubError = SIGNAL_MAX_NUM
+                        res = []
                         while isSubError > 0:
                             try:
                                 isSubError = isSubError - 1
@@ -404,7 +547,7 @@ class Handler(object):
                                     order['tSymbol'], order['ask_or_bid'],
                                     order['price'], order['quantity'],
                                     order['ratio'], order['type'],
-                                    order['group_id'], identify)
+                                    order['signal_id'], order['group_id'], identify)
                                 isSubError = 0
                             except Exception as err:
                                 self._logger.warn(str + warnStr.substitute(
@@ -413,6 +556,8 @@ class Handler(object):
                             afterExecOrders.extend(res)
                     if isSubError > 0:
                         # rollback:
+                        pdOrders = pd.DataFrame(afterExecOrders)
+                        self.rollbackHandleBacktestHistoryCreatEvent(sgn, pdOrders, exchange, resInfoSymbol)
                         raise Exception(
                             errStr.substitute(here='3.2 excute preOrders'))
                 # print('3. after signals afterExecOrders:\n%s' % afterExecOrders)
@@ -421,6 +566,7 @@ class Handler(object):
                 if not afterExecOrders == []:
                     afterExecOrders = pd.DataFrame(afterExecOrders)
                     for server in exchange:
+                        res = []
                         orderIDs = preExecOrders[(
                             preExecOrders['server'] == server
                         )]['order_id'].tolist()
@@ -444,16 +590,23 @@ class Handler(object):
                                 err=err, here='3.4 update signals status'))
                     if isSubError > 0:
                         # rollback:
+                        pdOrders = afterExecOrders
+                        self.rollbackHandleBacktestHistoryCreatEvent(sgn, pdOrders, exchange, resInfoSymbol)
                         raise Exception(
                             errStr.substitute(
                                 here='3.4 update signals status'))
                     # insert db signals
-                    db.insertSignalTradeDis(sgn.signals(exchange, [TYPE_DIS]))
-                    db.insertSignalTradeTra(sgn.signals(exchange, [TYPE_TRA]))
-                    db.insertSignalTradePair(sgn.signals(exchange, [TYPE_PAIR]))
+                    db.insertSignalTradeDis(
+                        sgn.signals(exchange, [TYPE_DIS]), SIGNAL_BACKTEST)
+                    db.insertSignalTradeTra(
+                        sgn.signals(exchange, [TYPE_TRA]), SIGNAL_BACKTEST)
+                    db.insertSignalTradePair(
+                        sgn.signals(exchange, [TYPE_PAIR]), SIGNAL_BACKTEST)
                 print('3. after signals after update:\n%s' % sgn.signals())
                 # 3.5 update isError
-                isError = sgn.backtestSignalsIsRunMore(resInfoSymbol)
+                isMore = sgn.backtestSignalsIsRunMore(resInfoSymbol)
+                if not isMore:
+                    isError = 0
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleBacktestHistoryCreatEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, err)
@@ -482,22 +635,6 @@ class Handler(object):
     def handleOrderHistoryCreatEvent(self, event, callback):
         self._logger.debug(
             "src.core.engine.handler.Handler.handleOrderHistoryCreatEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp,
-               event.args))
-        # 接收事件
-        pass
-
-    def handleOrderHistoryCheckEvent(self, event, callback):
-        self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderHistoryCheckEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
-            % (event.id, event.type, event.priority, event.timeStamp,
-               event.args))
-        # 接收事件
-        pass
-
-    def handleOrderHistoryCancelEvent(self, event, callback):
-        self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderHistoryCancelEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
             % (event.id, event.type, event.priority, event.timeStamp,
                event.args))
         # 接收事件
@@ -549,11 +686,13 @@ class Handler(object):
         [signals] = event.args
         signals = str_to_list(signals)
         for signal in signals:
-            signal['status_assets'] = json.loads(json_reverse(signal['status_assets']))
-        print(signals)
+            signal['status_assets'] = json.loads(
+                json_reverse(signal['status_assets']))
         try:
             db = DB()
             calc = Calc()
+            statistic = calc.calcStatisticTradeBacktestHistory(signals)
+            db.insertStatisticTradeBacktestHistory(statistic)
         except (DBException, CalcException, EngineException, Exception) as err:
             errStr = "src.core.engine.handler.Handler.handleStatisticBacktestEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, err)
@@ -566,4 +705,18 @@ class Handler(object):
             % (event.id, event.type, event.priority, event.timeStamp,
                event.args))
         # 接收事件
-        pass
+        [signals] = event.args
+        signals = str_to_list(signals)
+        for signal in signals:
+            signal['status_assets'] = json.loads(
+                json_reverse(signal['status_assets']))
+        try:
+            db = DB()
+            calc = Calc()
+            statistic = calc.calcStatisticTradeOrderHistory(signals)
+            db.insertStatisticTradeOrderHistory(statistic)
+        except (DBException, CalcException, EngineException, Exception) as err:
+            errStr = "src.core.engine.handler.Handler.handleStatisticOrderEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
+                event.type, event.priority, event.args, err)
+            self._logger.error(errStr)
+        callback(event.id)

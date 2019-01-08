@@ -38,6 +38,7 @@ if __name__ == '__main__':
     # app update
     # util.updateDBStatisticJudge(async=False)
     util.updateDBStatisticBacktest(async=False)
+    # util.updateDBStatisticOrder(async=False)
 
 
     # # stop engine

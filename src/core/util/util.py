@@ -10,7 +10,7 @@ from src.core.config import Config
 from src.core.db.db import DB
 from src.core.engine.enums import (ACTIVE_STATUS_EVENT, DONE_STATUS_EVENT,
                                    QUEUE_STATUS_EVENT, TYPE_DIS, TYPE_PAIR,
-                                   TYPE_TRA)
+                                   TYPE_TRA, SIGNAL_BACKTEST, SIGNAL_ORDER)
 from src.core.util.exceptions import (DBException, EngineException,
                                       UtilException)
 from src.core.util.helper import timestamp_to_isoformat, utcnow_timestamp
@@ -554,7 +554,7 @@ class Util(object):
                 if not signals == []:
                     df = pd.DataFrame(signals)
                     if type == TYPE_DIS:
-                        db.insertSignalTradeDis(signals)
+                        db.insertSignalTradeDis(signals, SIGNAL_BACKTEST)
                         for group_key, group in df.groupby(
                             ['fSymbol', 'tSymbol']):
                             id = self._sender.sendBacktestHistoryCreatEvent(
@@ -562,7 +562,7 @@ class Util(object):
                                 timeout)
                             ids.append(id)
                     if type == TYPE_TRA:
-                        db.insertSignalTradeTra(signals)
+                        db.insertSignalTradeTra(signals, SIGNAL_BACKTEST)
                         for group_key, group in df.groupby([
                                 'V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol',
                                 'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol'
@@ -572,7 +572,7 @@ class Util(object):
                                 timeout)
                             ids.append(id)
                     if type == TYPE_PAIR:
-                        db.insertSignalTradePair(signals)
+                        db.insertSignalTradePair(signals, SIGNAL_BACKTEST)
                         for group_key, group in df.groupby([
                                 'V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol',
                                 'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol'
@@ -604,9 +604,9 @@ class Util(object):
             raise UtilException(errStr)
 
     # Order 事件
-    def threadSendInsertDBOrderHistory(self, res, epoch, async, timeout):
+    def threadSendSyncDBOrderHistory(self, res, epoch, async, timeout):
         self._logger.debug(
-            "src.core.util.util.Util.threadSendInsertDBOrderHistory: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}"
+            "src.core.util.util.Util.threadSendSyncDBOrderHistory: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}"
             % (current_thread().name, 'res', epoch, async, timeout))
         ids = []
         startTime = time.time()
@@ -614,7 +614,7 @@ class Util(object):
             if not time.time(
             ) - startTime < timeout and not timeout == 0 and not async:
                 self._logger.error(
-                    "src.core.util.util.Util.threadSendInsertDBOrderHistory: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                    "src.core.util.util.Util.threadSendSyncDBOrderHistory: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
                     % (current_thread().name, 'res', epoch, async, timeout))
                 break
             time.sleep(epoch)
@@ -632,18 +632,18 @@ class Util(object):
                     time.sleep(self._apiResultEpoch)
             if st != DONE_STATUS_EVENT:
                 self._logger.error(
-                    "src.core.util.util.Util.threadSendInsertDBOrderHistory: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=TIMEOUT ERROR, waiting result from event handler timeout."
+                    "src.core.util.util.Util.threadSendSyncDBOrderHistory: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=TIMEOUT ERROR, waiting result from event handler timeout."
                     % (current_thread().name, 'res', epoch, async, timeout))
                 for id in ids:
                     if not self._engine.killEvent(id):
                         self._logger.error(
-                            "src.core.util.util.Util.threadSendInsertDBOrderHistory: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error."
+                            "src.core.util.util.Util.threadSendSyncDBOrderHistory: {thread: %s, res: %s, epoch: %s, async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error."
                             % (current_thread().name, 'res', epoch, async,
                                timeout))
 
-    def updateDBOrderHistoryInsert(self, async=True, timeout=30):
+    def updateDBOrderHistorySync(self, async=True, timeout=30):
         self._logger.debug(
-            "src.core.util.util.Util.updateDBOrderHistoryInsert: {async: %s, timeout: %s}"
+            "src.core.util.util.Util.updateDBOrderHistorySync: {async: %s, timeout: %s}"
             % (async, timeout))
         try:
             db = DB()
@@ -653,14 +653,14 @@ class Util(object):
                 if not time.time(
                 ) - startTime < timeout and not timeout == 0 and not async:
                     self._logger.error(
-                        "src.core.util.util.Util.updateDBOrderHistoryInsert: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                        "src.core.util.util.Util.updateDBOrderHistorySync: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
                         % (async, timeout))
                     break
                 epoch = float(self._apiEpochSaveBound) / float(
                     self._serverLimits.at[server, "info_second"])
                 res = db.getViewMarketSymbolPairs([server])
                 td = Thread(
-                    target=self.threadSendInsertDBOrderHistory,
+                    target=self.threadSendSyncDBOrderHistory,
                     name="%s-thread" % server,
                     args=(res, epoch, async, timeout))
                 tds.append(td)
@@ -668,12 +668,83 @@ class Util(object):
             for td in tds:
                 td.join()
         except (DBException, EngineException, Exception) as err:
-            errStr = "src.core.util.util.Util.updateDBOrderHistoryInsert: {async: %s, timeout: %s}, exception err=%s" % (
+            errStr = "src.core.util.util.Util.updateDBOrderHistorySync: {async: %s, timeout: %s}, exception err=%s" % (
                 async, timeout, UtilException(err))
             raise UtilException(errStr)
 
-    def updateDBOrderHistoryCreat(self):
-        pass
+    def updateDBOrderHistoryCreat(self, async=True, timeout=30):
+        self._logger.debug(
+            "src.core.util.util.Util.updateDBOrderHistoryCreat: {async: %s, timeout: %s}"
+            % (async, timeout))
+        try:
+            db = DB()
+            db.delSignalTradeDis()
+            db.delSignalTradeTra()
+            db.delSignalTradePair()
+            db.delTradeOrderHistory()
+            ids = []
+            sgn = Signal()
+            startTime = time.time()
+            for type in self._types:
+                if not time.time(
+                ) - startTime < timeout and not timeout == 0 and not async:
+                    self._logger.error(
+                        "src.core.util.util.Util.updateDBOrderHistoryCreat: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                        % (async, timeout))
+                    break
+                # calc signals
+                signals = sgn.signals(self._exchanges, [type])
+                if not signals == []:
+                    df = pd.DataFrame(signals)
+                    if type == TYPE_DIS:
+                        db.insertSignalTradeDis(signals, SIGNAL_ORDER)
+                        for group_key, group in df.groupby(
+                            ['fSymbol', 'tSymbol']):
+                            id = self._sender.sendBacktestHistoryCreatEvent(
+                                self._exchanges, group.to_dict('records'),
+                                timeout)
+                            ids.append(id)
+                    if type == TYPE_TRA:
+                        db.insertSignalTradeTra(signals, SIGNAL_ORDER)
+                        for group_key, group in df.groupby([
+                                'V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol',
+                                'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol'
+                        ]):
+                            id = self._sender.sendBacktestHistoryCreatEvent(
+                                self._exchanges, group.to_dict('records'),
+                                timeout)
+                            ids.append(id)
+                    if type == TYPE_PAIR:
+                        db.insertSignalTradePair(signals, SIGNAL_ORDER)
+                        for group_key, group in df.groupby([
+                                'V1_fSymbol', 'V1_tSymbol', 'V2_fSymbol',
+                                'V2_tSymbol', 'V3_fSymbol', 'V3_tSymbol'
+                        ]):
+                            id = self._sender.sendBacktestHistoryCreatEvent(
+                                self._exchanges, group.to_dict('records'),
+                                timeout)
+                            ids.append(id)
+            if not async:
+                st = QUEUE_STATUS_EVENT
+                for id in ids:
+                    st = self._engine.getEventStatus(id)
+                    while st != DONE_STATUS_EVENT and (
+                            time.time() - startTime < timeout or timeout == 0):
+                        st = self._engine.getEventStatus(id)
+                        time.sleep(self._apiResultEpoch)
+                if st != DONE_STATUS_EVENT:
+                    self._logger.error(
+                        "src.core.util.util.Util.updateDBOrderHistoryCreat: {async: %s, timeout: %s}, err=TIMEOUT ERROR, waiting result from event handler timeout."
+                        % (async, timeout))
+                    for id in ids:
+                        if not self._engine.killEvent(id):
+                            self._logger.error(
+                                "src.core.util.util.Util.updateDBOrderHistoryCreat: {async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error."
+                                % (async, timeout))
+        except (DBException, EngineException, Exception) as err:
+            errStr = "src.core.util.util.Util.updateDBOrderHistoryCreat: {async: %s, timeout: %s}, exception err=%s" % (
+                async, timeout, UtilException(err))
+            raise UtilException(errStr)
 
     # Statistic 事件
     def updateDBStatisticJudge(self, async=True, timeout=30):
@@ -729,16 +800,15 @@ class Util(object):
             db = DB()
             db.delStatisticTradeBacktestHistory()
             startTime = time.time()
-            for type in self._types:
-                if not time.time(
-                ) - startTime < timeout and not timeout == 0 and not async:
-                    self._logger.error(
-                        "src.core.util.util.Util.updateDBStatisticBacktest: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
-                        % (async, timeout))
-                    break
-                signals = db.getViewSignalTradeCurrent()
-                id = self._sender.sendStatiscBacktestEvent(signals)
-                ids.append(id)
+            if not time.time(
+            ) - startTime < timeout and not timeout == 0 and not async:
+                self._logger.error(
+                    "src.core.util.util.Util.updateDBStatisticBacktest: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                    % (async, timeout))
+                return
+            signals = db.getViewSignalTradeCurrent(SIGNAL_BACKTEST)
+            id = self._sender.sendStatiscBacktestEvent(signals)
+            ids.append(id)
             if not async:
                 st = QUEUE_STATUS_EVENT
                 for id in ids:
@@ -762,8 +832,46 @@ class Util(object):
                 async, timeout, UtilException(err))
             raise UtilException(errStr)
 
-    def updateDBStatisticOrder(self):
-        pass
+    def updateDBStatisticOrder(self, async=True, timeout=30):
+        self._logger.debug(
+            "src.core.util.util.Util.updateDBStatisticOrder: {async: %s, timeout: %s}"
+            % (async, timeout))
+        try:
+            ids = []
+            db = DB()
+            db.delStatisticTradeBacktestHistory()
+            startTime = time.time()
+            if not time.time(
+            ) - startTime < timeout and not timeout == 0 and not async:
+                self._logger.error(
+                    "src.core.util.util.Util.updateDBStatisticOrder: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                    % (async, timeout))
+                return
+            signals = db.getViewSignalTradeCurrent(SIGNAL_ORDER)
+            id = self._sender.sendStatiscOrderEvent(signals)
+            ids.append(id)
+            if not async:
+                st = QUEUE_STATUS_EVENT
+                for id in ids:
+                    st = self._engine.getEventStatus(id)
+                    while st != DONE_STATUS_EVENT and (
+                            time.time() - startTime < timeout or timeout == 0):
+                        st = self._engine.getEventStatus(id)
+                        time.sleep(self._apiResultEpoch)
+                if st != DONE_STATUS_EVENT:
+                    self._logger.error(
+                        "src.core.util.util.Util.updateDBStatisticOrder: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, waiting result from event handler timeout."
+                        % (async, timeout))
+                    for id in ids:
+                        if not self._engine.killEvent(id):
+                            self._logger.error(
+                                "src.core.util.util.Util.updateDBStatisticOrder: {async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error."
+                                % (current_thread().name, 'res', epoch, async,
+                                   timeout))
+        except (DBException, EngineException, Exception) as err:
+            errStr = "src.core.util.util.Util.updateDBStatisticOrder: {async: %s, timeout: %s}, exception err=%s" % (
+                async, timeout, UtilException(err))
+            raise UtilException(errStr)
 
     # Util 紧急功能
     # 一键 cancle 撤销所有订单

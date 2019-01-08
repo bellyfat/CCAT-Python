@@ -323,6 +323,8 @@ class Sender(object):
 
     def sendStatiscOrderEvent(self, signals):
         try:
+            for signal in signals:
+                signal['status_assets'] = json_escape(signal['status_assets'])
             # 构造事件对象
             TEMP_EVENT = json.loads(
                 STATISTIC_ORDER_EVENT.substitute(

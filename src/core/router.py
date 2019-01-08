@@ -94,7 +94,7 @@ class Router(object):
             self._util.updateDBAccountWithdraw(
                 async=self._asyncAccount, timeout=self._syncAccountTimeout)
             # 暂时不同步历史交易 耗时约 2min
-            # util.updateDBOrderHistoryInsert(
+            # util.updateDBOrderHistorySync(
             #     async=self._asyncAccount, timeout=self._syncAccountTimeout)
         except (UtilException, EngineException, Exception) as err:
             errStr = "src.core.router.Router.initAPP: %s" % RouterException(
