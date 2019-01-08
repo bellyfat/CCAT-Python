@@ -22,9 +22,9 @@ if __name__ == '__main__':
     logger.info("3.3 sub testing... python3 tests/engine/test_backtest.py")
     os.system("python3 tests/engine/test_backtest.py")
 
-    # 4. integration test for test_execute
-    logger.info("3.4 sub testing... python3 tests/engine/test_execute.py")
-    os.system("python3 tests/engine/test_execute.py")
+    # 4. integration test for test_order
+    logger.info("3.4 sub testing... python3 tests/engine/test_order.py")
+    os.system("python3 tests/engine/test_order.py")
 
     # 5. integration test for test_statistic
     logger.info("3.5 sub testing... python3 tests/engine/test_statistic.py")
