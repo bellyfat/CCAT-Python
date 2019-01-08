@@ -128,10 +128,10 @@ BACKTEST_HISTORY_CREAT_EVENT = MyTemplate("""
 """)
 
 # order event list
-ORDER_HISTORY_INSERT_EVENT = MyTemplate("""
+ORDER_HISTORY_SYNC_EVENT = MyTemplate("""
 {
     "id": "$id",
-    "type": "ORDER_HISTORY_INSERT_EVENT",
+    "type": "ORDER_HISTORY_SYNC_EVENT",
     "priority": "low",
     "timeStamp": "$timeStamp",
     "args": ["$exchange", "$fSymbol", "$tSymbol", "$limit", "$ratio"]
@@ -144,7 +144,7 @@ ORDER_HISTORY_CREAT_EVENT = MyTemplate("""
     "type": "ORDER_HISTORY_CREAT_EVENT",
     "priority": "high",
     "timeStamp": "$timeStamp",
-    "args": ["$signals"]
+    "args": ["$exchange", "$signals", "$timeout"]
 }
 """)
 
@@ -152,7 +152,7 @@ ORDER_HISTORY_CREAT_EVENT = MyTemplate("""
 STATISTIC_JUDGE_EVENT = MyTemplate("""
 {
     "id": "$id",
-    "type": "STATISTIC_BACKTEST_EVENT",
+    "type": "STATISTIC_JUDGE_EVENT",
     "priority": "medium",
     "timeStamp": "$timeStamp",
     "args": ["$exchange", "$types"]
@@ -165,7 +165,7 @@ STATISTIC_BACKTEST_EVENT = MyTemplate("""
     "type": "STATISTIC_BACKTEST_EVENT",
     "priority": "medium",
     "timeStamp": "$timeStamp",
-    "args": []
+    "args": ["$signals"]
 }
 """)
 
@@ -175,6 +175,6 @@ STATISTIC_ORDER_EVENT = MyTemplate("""
     "type": "STATISTIC_ORDER_EVENT",
     "priority": "medium",
     "timeStamp": "$timeStamp",
-    "args": []
+    "args": ["$signals"]
 }
 """)

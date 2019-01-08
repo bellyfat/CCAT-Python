@@ -1,86 +1,542 @@
-1. pre signals after update: [{
-  "J1_server": "okex",
-  "J2_server": "binance",
-  "V1_fSymbol": "EOS",
-  "V1_tSymbol": "BTC",
-  "V2_fSymbol": "EOS",
-  "V2_tSymbol": "ETH",
-  "V3_fSymbol": "ETH",
-  "V3_tSymbol": "BTC",
+[{
+  "timeStamp": 1546956172445,
+  "signal_id": "0x1c-028b8e3a-de17-30d1-986f-e842052bc1e8",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
+  "base_start": 40.0,
   "base_gain": -0.1,
-  "base_start": 90.0,
-  "base_timeout": 300.0,
-  "forward_ratio": 0.065338,
+  "status_assets": [{
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 20.0,
+    "free": 20.0,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 20.0,
+    "free": 20.0,
+    "locked": 0.0
+  }],
+  "status_gain": 0.0
+}, {
+  "timeStamp": 1546956172451,
+  "signal_id": "0x2c-aa6b0007-2266-36df-87ab-7f3e1cd498af",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65",
+  "base_start": 60.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 60.0,
+    "free": 60.0,
+    "locked": 0.0
+  }],
+  "status_gain": 0.0
+}, {
+  "timeStamp": 1546956172456,
+  "signal_id": "0x3c-06487986-4112-3205-9669-11cbc48bd255",
   "group_id": "0x3b-b15eaa6a-3bac-3422-b54a-9391b639465b",
-  "id": "0x3c3ac451c2-dcf9-3fbb-9297-4b06ec435f2e",
+  "base_start": 120.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "okex",
+    "asset": "USDT",
+    "balance": 60.0,
+    "free": 60.0,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 60.0,
+    "free": 60.0,
+    "locked": 0.0
+  }],
+  "status_gain": 0.0
+}, {
+  "timeStamp": 1546956174118,
+  "signal_id": "0x2c-aa6b0007-2266-36df-87ab-7f3e1cd498af",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65",
+  "base_start": 60.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "huobi",
+    "asset": "CTXC",
+    "balance": 162.2764,
+    "free": 162.2764,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "ETH",
+    "balance": 0.1363,
+    "free": 0.1363,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 20.012682795600004,
+    "free": 20.012682795600004,
+    "locked": 3.3306690738754696e-16
+  }],
+  "status_gain": -0.00493321427599985
+}, {
+  "timeStamp": 1546956174672,
+  "signal_id": "0x1c-028b8e3a-de17-30d1-986f-e842052bc1e8",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
+  "base_start": 40.0,
+  "base_gain": -0.1,
   "status_assets": [{
     "server": "binance",
     "asset": "BTC",
-    "balance": 0.003996,
-    "free": 0.003996,
-    "locked": 0.0
+    "balance": 1.4320000000025979e-07,
+    "free": 1.4320000000112715e-07,
+    "locked": -7.835054762102278e-19
   }, {
     "server": "binance",
-    "asset": "EOS",
-    "balance": 5.7,
-    "free": 5.7,
-    "locked": 0.0
-  }, {
-    "server": "binance",
-    "asset": "ETH",
-    "balance": 0.10018,
-    "free": 0.10018,
+    "asset": "ICX",
+    "balance": 75.25,
+    "free": 75.25,
     "locked": 0.0
   }, {
     "server": "binance",
     "asset": "USDT",
-    "balance": 0.01872690323999393,
-    "free": 0.018726903240001036,
-    "locked": -6.028164079019405e-15
+    "balance": 0.0002049447600036558,
+    "free": 0.0002049447600036558,
+    "locked": -7.4593109467002705e-16
+  }, {
+    "server": "huobi",
+    "asset": "BTC",
+    "balance": 0.005,
+    "free": 0.005,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 0.22723339999999936,
+    "free": 0.22723339999999936,
+    "locked": 7.91033905045424e-16
+  }],
+  "status_gain": -0.0055038008690786455
+}, {
+  "timeStamp": 1546956176540,
+  "signal_id": "0x3c-06487986-4112-3205-9669-11cbc48bd255",
+  "group_id": "0x3b-b15eaa6a-3bac-3422-b54a-9391b639465b",
+  "base_start": 120.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "binance",
+    "asset": "BTC",
+    "balance": 0.005062,
+    "free": 0.005062,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "EOS",
+    "balance": 7.39,
+    "free": 7.39,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "ETH",
+    "balance": 0.1365,
+    "free": 0.1365,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 0.008534225760001846,
+    "free": 0.008534225760001846,
+    "locked": -3.1363800445660672e-15
   }, {
     "server": "okex",
     "asset": "BTC",
-    "balance": 0.00399691,
-    "free": 0.00399691,
+    "balance": 0.00506204,
+    "free": 0.00506204,
     "locked": 0.0
   }, {
     "server": "okex",
     "asset": "EOS",
-    "balance": 5.7031,
-    "free": 5.7031,
+    "balance": 7.3905,
+    "free": 7.3905,
     "locked": 0.0
   }, {
     "server": "okex",
     "asset": "ETH",
-    "balance": 0.100116,
-    "free": 0.100116,
+    "balance": 0.13651,
+    "free": 0.13651,
     "locked": 0.0
   }, {
     "server": "okex",
     "asset": "USDT",
-    "balance": 0.00022797034081456502,
-    "free": 0.00022797034081278866,
-    "locked": 2.1671033023640263e-15
+    "balance": 0.00044386508772475963,
+    "free": 0.00044386508772475963,
+    "locked": 2.3089169465251302e-15
   }],
-  "status_done": True,
-  "status_gain": -0.0027349376800344773,
-  "type": "pair"
+  "status_gain": -0.002656022220479315
+}, {
+  "timeStamp": 1546956177037,
+  "signal_id": "0x2c-aa6b0007-2266-36df-87ab-7f3e1cd498af",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65",
+  "base_start": 60.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "huobi",
+    "asset": "CTXC",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "ETH",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 59.70536741744,
+    "free": 59.70536741744,
+    "locked": 3.3306690738754696e-16
+  }],
+  "status_gain": -0.004910543042666641
+}, {
+  "timeStamp": 1546956179223,
+  "signal_id": "0x1c-028b8e3a-de17-30d1-986f-e842052bc1e8",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
+  "base_start": 40.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "binance",
+    "asset": "BTC",
+    "balance": 8.514500000004338e-07,
+    "free": 8.514500000013012e-07,
+    "locked": -7.835054762102278e-19
+  }, {
+    "server": "binance",
+    "asset": "ICX",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 19.85741985276,
+    "free": 19.85741985276,
+    "locked": -7.4593109467002705e-16
+  }, {
+    "server": "huobi",
+    "asset": "BTC",
+    "balance": 8.673617379884035e-19,
+    "free": 8.673617379884035e-19,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 19.917015918,
+    "free": 19.917015918,
+    "locked": 7.91033905045424e-16
+  }],
+  "status_gain": -0.0055551831262611985
+}, {
+  "timeStamp": 1546956183792,
+  "signal_id": "0x3c-06487986-4112-3205-9669-11cbc48bd255",
+  "group_id": "0x3b-b15eaa6a-3bac-3422-b54a-9391b639465b",
+  "base_start": 120.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "binance",
+    "asset": "BTC",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "EOS",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "ETH",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 59.87056451352,
+    "free": 59.87056451352,
+    "locked": -3.1363800445660672e-15
+  }, {
+    "server": "okex",
+    "asset": "BTC",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "okex",
+    "asset": "EOS",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "okex",
+    "asset": "ETH",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "okex",
+    "asset": "USDT",
+    "balance": 59.806837944863574,
+    "free": 59.806837944863574,
+    "locked": 2.3089169465251302e-15
+  }],
+  "status_gain": -0.0026883128468035977
 }]
-2. run signals after update: [{
-  "J1_server": "okex",
-  "J2_server": "binance",
-  "V1_fSymbol": "EOS",
-  "V1_tSymbol": "BTC",
-  "V2_fSymbol": "EOS",
-  "V2_tSymbol": "ETH",
-  "V3_fSymbol": "ETH",
-  "V3_tSymbol": "BTC",
+[{
+  "timeStamp": 1546956172445,
+  "signal_id": "0x1c-028b8e3a-de17-30d1-986f-e842052bc1e8",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
+  "base_start": 40.0,
   "base_gain": -0.1,
-  "base_start": 90.0,
-  "base_timeout": 300.0,
-  "forward_ratio": 0.065338,
+  "status_assets": [{
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 20.0,
+    "free": 20.0,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 20.0,
+    "free": 20.0,
+    "locked": 0.0
+  }],
+  "status_gain": 0.0
+}, {
+  "timeStamp": 1546956172451,
+  "signal_id": "0x2c-aa6b0007-2266-36df-87ab-7f3e1cd498af",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65",
+  "base_start": 60.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 60.0,
+    "free": 60.0,
+    "locked": 0.0
+  }],
+  "status_gain": 0.0
+}, {
+  "timeStamp": 1546956172456,
+  "signal_id": "0x3c-06487986-4112-3205-9669-11cbc48bd255",
   "group_id": "0x3b-b15eaa6a-3bac-3422-b54a-9391b639465b",
-  "id": "0x3c3ac451c2-dcf9-3fbb-9297-4b06ec435f2e",
+  "base_start": 120.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "okex",
+    "asset": "USDT",
+    "balance": 60.0,
+    "free": 60.0,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 60.0,
+    "free": 60.0,
+    "locked": 0.0
+  }],
+  "status_gain": 0.0
+}, {
+  "timeStamp": 1546956174118,
+  "signal_id": "0x2c-aa6b0007-2266-36df-87ab-7f3e1cd498af",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65",
+  "base_start": 60.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "huobi",
+    "asset": "CTXC",
+    "balance": 162.2764,
+    "free": 162.2764,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "ETH",
+    "balance": 0.1363,
+    "free": 0.1363,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 20.012682795600004,
+    "free": 20.012682795600004,
+    "locked": 3.3306690738754696e-16
+  }],
+  "status_gain": -0.00493321427599985
+}, {
+  "timeStamp": 1546956174672,
+  "signal_id": "0x1c-028b8e3a-de17-30d1-986f-e842052bc1e8",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
+  "base_start": 40.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "binance",
+    "asset": "BTC",
+    "balance": 1.4320000000025979e-07,
+    "free": 1.4320000000112715e-07,
+    "locked": -7.835054762102278e-19
+  }, {
+    "server": "binance",
+    "asset": "ICX",
+    "balance": 75.25,
+    "free": 75.25,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 0.0002049447600036558,
+    "free": 0.0002049447600036558,
+    "locked": -7.4593109467002705e-16
+  }, {
+    "server": "huobi",
+    "asset": "BTC",
+    "balance": 0.005,
+    "free": 0.005,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 0.22723339999999936,
+    "free": 0.22723339999999936,
+    "locked": 7.91033905045424e-16
+  }],
+  "status_gain": -0.0055038008690786455
+}, {
+  "timeStamp": 1546956176540,
+  "signal_id": "0x3c-06487986-4112-3205-9669-11cbc48bd255",
+  "group_id": "0x3b-b15eaa6a-3bac-3422-b54a-9391b639465b",
+  "base_start": 120.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "binance",
+    "asset": "BTC",
+    "balance": 0.005062,
+    "free": 0.005062,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "EOS",
+    "balance": 7.39,
+    "free": 7.39,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "ETH",
+    "balance": 0.1365,
+    "free": 0.1365,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 0.008534225760001846,
+    "free": 0.008534225760001846,
+    "locked": -3.1363800445660672e-15
+  }, {
+    "server": "okex",
+    "asset": "BTC",
+    "balance": 0.00506204,
+    "free": 0.00506204,
+    "locked": 0.0
+  }, {
+    "server": "okex",
+    "asset": "EOS",
+    "balance": 7.3905,
+    "free": 7.3905,
+    "locked": 0.0
+  }, {
+    "server": "okex",
+    "asset": "ETH",
+    "balance": 0.13651,
+    "free": 0.13651,
+    "locked": 0.0
+  }, {
+    "server": "okex",
+    "asset": "USDT",
+    "balance": 0.00044386508772475963,
+    "free": 0.00044386508772475963,
+    "locked": 2.3089169465251302e-15
+  }],
+  "status_gain": -0.002656022220479315
+}, {
+  "timeStamp": 1546956177037,
+  "signal_id": "0x2c-aa6b0007-2266-36df-87ab-7f3e1cd498af",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65",
+  "base_start": 60.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "huobi",
+    "asset": "CTXC",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "ETH",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 59.70536741744,
+    "free": 59.70536741744,
+    "locked": 3.3306690738754696e-16
+  }],
+  "status_gain": -0.004910543042666641
+}, {
+  "timeStamp": 1546956179223,
+  "signal_id": "0x1c-028b8e3a-de17-30d1-986f-e842052bc1e8",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
+  "base_start": 40.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "binance",
+    "asset": "BTC",
+    "balance": 8.514500000004338e-07,
+    "free": 8.514500000013012e-07,
+    "locked": -7.835054762102278e-19
+  }, {
+    "server": "binance",
+    "asset": "ICX",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 19.85741985276,
+    "free": 19.85741985276,
+    "locked": -7.4593109467002705e-16
+  }, {
+    "server": "huobi",
+    "asset": "BTC",
+    "balance": 8.673617379884035e-19,
+    "free": 8.673617379884035e-19,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 19.917015918,
+    "free": 19.917015918,
+    "locked": 7.91033905045424e-16
+  }],
+  "status_gain": -0.0055551831262611985
+}, {
+  "timeStamp": 1546956183792,
+  "signal_id": "0x3c-06487986-4112-3205-9669-11cbc48bd255",
+  "group_id": "0x3b-b15eaa6a-3bac-3422-b54a-9391b639465b",
+  "base_start": 120.0,
+  "base_gain": -0.1,
   "status_assets": [{
     "server": "binance",
     "asset": "BTC",
@@ -102,9 +558,9 @@
   }, {
     "server": "binance",
     "asset": "USDT",
-    "balance": 44.89451671272,
-    "free": 44.894516712720005,
-    "locked": -6.028164079019405e-15
+    "balance": 59.87056451352,
+    "free": 59.87056451352,
+    "locked": -3.1363800445660672e-15
   }, {
     "server": "okex",
     "asset": "BTC",
@@ -126,32 +582,256 @@
   }, {
     "server": "okex",
     "asset": "USDT",
-    "balance": 44.85514218002756,
-    "free": 44.855142180027556,
-    "locked": 2.1671033023640263e-15
+    "balance": 59.806837944863574,
+    "free": 59.806837944863574,
+    "locked": 2.3089169465251302e-15
   }],
-  "status_done": True,
-  "status_gain": -0.002781567858360429,
-  "type": "pair"
+  "status_gain": -0.0026883128468035977
 }]
-3. after signals afterOrders: []
-3. after signals afterExecOrders: []
-3. after signals afterInfoOrders: []
-3. after signals after update: [{
-  "J1_server": "okex",
-  "J2_server": "binance",
-  "V1_fSymbol": "EOS",
-  "V1_tSymbol": "BTC",
-  "V2_fSymbol": "EOS",
-  "V2_tSymbol": "ETH",
-  "V3_fSymbol": "ETH",
-  "V3_tSymbol": "BTC",
+[{
+  "timeStamp": 1546956172445,
+  "signal_id": "0x1c-028b8e3a-de17-30d1-986f-e842052bc1e8",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
+  "base_start": 40.0,
   "base_gain": -0.1,
-  "base_start": 90.0,
-  "base_timeout": 300.0,
-  "forward_ratio": 0.065338,
+  "status_assets": [{
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 20.0,
+    "free": 20.0,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 20.0,
+    "free": 20.0,
+    "locked": 0.0
+  }],
+  "status_gain": 0.0
+}, {
+  "timeStamp": 1546956172451,
+  "signal_id": "0x2c-aa6b0007-2266-36df-87ab-7f3e1cd498af",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65",
+  "base_start": 60.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 60.0,
+    "free": 60.0,
+    "locked": 0.0
+  }],
+  "status_gain": 0.0
+}, {
+  "timeStamp": 1546956172456,
+  "signal_id": "0x3c-06487986-4112-3205-9669-11cbc48bd255",
   "group_id": "0x3b-b15eaa6a-3bac-3422-b54a-9391b639465b",
-  "id": "0x3c3ac451c2-dcf9-3fbb-9297-4b06ec435f2e",
+  "base_start": 120.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "okex",
+    "asset": "USDT",
+    "balance": 60.0,
+    "free": 60.0,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 60.0,
+    "free": 60.0,
+    "locked": 0.0
+  }],
+  "status_gain": 0.0
+}, {
+  "timeStamp": 1546956174118,
+  "signal_id": "0x2c-aa6b0007-2266-36df-87ab-7f3e1cd498af",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65",
+  "base_start": 60.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "huobi",
+    "asset": "CTXC",
+    "balance": 162.2764,
+    "free": 162.2764,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "ETH",
+    "balance": 0.1363,
+    "free": 0.1363,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 20.012682795600004,
+    "free": 20.012682795600004,
+    "locked": 3.3306690738754696e-16
+  }],
+  "status_gain": -0.00493321427599985
+}, {
+  "timeStamp": 1546956174672,
+  "signal_id": "0x1c-028b8e3a-de17-30d1-986f-e842052bc1e8",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
+  "base_start": 40.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "binance",
+    "asset": "BTC",
+    "balance": 1.4320000000025979e-07,
+    "free": 1.4320000000112715e-07,
+    "locked": -7.835054762102278e-19
+  }, {
+    "server": "binance",
+    "asset": "ICX",
+    "balance": 75.25,
+    "free": 75.25,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 0.0002049447600036558,
+    "free": 0.0002049447600036558,
+    "locked": -7.4593109467002705e-16
+  }, {
+    "server": "huobi",
+    "asset": "BTC",
+    "balance": 0.005,
+    "free": 0.005,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 0.22723339999999936,
+    "free": 0.22723339999999936,
+    "locked": 7.91033905045424e-16
+  }],
+  "status_gain": -0.0055038008690786455
+}, {
+  "timeStamp": 1546956176540,
+  "signal_id": "0x3c-06487986-4112-3205-9669-11cbc48bd255",
+  "group_id": "0x3b-b15eaa6a-3bac-3422-b54a-9391b639465b",
+  "base_start": 120.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "binance",
+    "asset": "BTC",
+    "balance": 0.005062,
+    "free": 0.005062,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "EOS",
+    "balance": 7.39,
+    "free": 7.39,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "ETH",
+    "balance": 0.1365,
+    "free": 0.1365,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 0.008534225760001846,
+    "free": 0.008534225760001846,
+    "locked": -3.1363800445660672e-15
+  }, {
+    "server": "okex",
+    "asset": "BTC",
+    "balance": 0.00506204,
+    "free": 0.00506204,
+    "locked": 0.0
+  }, {
+    "server": "okex",
+    "asset": "EOS",
+    "balance": 7.3905,
+    "free": 7.3905,
+    "locked": 0.0
+  }, {
+    "server": "okex",
+    "asset": "ETH",
+    "balance": 0.13651,
+    "free": 0.13651,
+    "locked": 0.0
+  }, {
+    "server": "okex",
+    "asset": "USDT",
+    "balance": 0.00044386508772475963,
+    "free": 0.00044386508772475963,
+    "locked": 2.3089169465251302e-15
+  }],
+  "status_gain": -0.002656022220479315
+}, {
+  "timeStamp": 1546956177037,
+  "signal_id": "0x2c-aa6b0007-2266-36df-87ab-7f3e1cd498af",
+  "group_id": "0x2b-21fe1b0c-8105-399c-af74-b6ad725dac65",
+  "base_start": 60.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "huobi",
+    "asset": "CTXC",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "ETH",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 59.70536741744,
+    "free": 59.70536741744,
+    "locked": 3.3306690738754696e-16
+  }],
+  "status_gain": -0.004910543042666641
+}, {
+  "timeStamp": 1546956179223,
+  "signal_id": "0x1c-028b8e3a-de17-30d1-986f-e842052bc1e8",
+  "group_id": "0x1b-789f899f-837c-3be9-84ac-61fae4ef46e5",
+  "base_start": 40.0,
+  "base_gain": -0.1,
+  "status_assets": [{
+    "server": "binance",
+    "asset": "BTC",
+    "balance": 8.514500000004338e-07,
+    "free": 8.514500000013012e-07,
+    "locked": -7.835054762102278e-19
+  }, {
+    "server": "binance",
+    "asset": "ICX",
+    "balance": 0.0,
+    "free": 0.0,
+    "locked": 0.0
+  }, {
+    "server": "binance",
+    "asset": "USDT",
+    "balance": 19.85741985276,
+    "free": 19.85741985276,
+    "locked": -7.4593109467002705e-16
+  }, {
+    "server": "huobi",
+    "asset": "BTC",
+    "balance": 8.673617379884035e-19,
+    "free": 8.673617379884035e-19,
+    "locked": 0.0
+  }, {
+    "server": "huobi",
+    "asset": "USDT",
+    "balance": 19.917015918,
+    "free": 19.917015918,
+    "locked": 7.91033905045424e-16
+  }],
+  "status_gain": -0.0055551831262611985
+}, {
+  "timeStamp": 1546956183792,
+  "signal_id": "0x3c-06487986-4112-3205-9669-11cbc48bd255",
+  "group_id": "0x3b-b15eaa6a-3bac-3422-b54a-9391b639465b",
+  "base_start": 120.0,
+  "base_gain": -0.1,
   "status_assets": [{
     "server": "binance",
     "asset": "BTC",
@@ -173,9 +853,9 @@
   }, {
     "server": "binance",
     "asset": "USDT",
-    "balance": 44.89451671272,
-    "free": 44.894516712720005,
-    "locked": -6.028164079019405e-15
+    "balance": 59.87056451352,
+    "free": 59.87056451352,
+    "locked": -3.1363800445660672e-15
   }, {
     "server": "okex",
     "asset": "BTC",
@@ -197,11 +877,9 @@
   }, {
     "server": "okex",
     "asset": "USDT",
-    "balance": 44.85514218002756,
-    "free": 44.855142180027556,
-    "locked": 2.1671033023640263e-15
+    "balance": 59.806837944863574,
+    "free": 59.806837944863574,
+    "locked": 2.3089169465251302e-15
   }],
-  "status_done": True,
-  "status_gain": -0.002781567858360429,
-  "type": "pair"
+  "status_gain": -0.0026883128468035977
 }]

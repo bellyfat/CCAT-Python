@@ -43,12 +43,14 @@
 # basePriceVolume: min price volume turnover
 # basePriceTimeout: price valid period
 # baseJudgeTimeout: judge valid period
-# baseStatisticTimeout: statistic valid period
+# baseStatisticJudgeTimeout: statistic judge valid period
+# baseStatisticTradeTimeout: statistic trade valid period
 # apiEpochSaveBound: control api requests frequency
 # apiResultEpoch: control api event async=False timeout
 # marketKlineInterval: market kline interval param
 # marketTickerInterval: market ticker interval param
 # statisticJudgeMarketTickerInterval: statistic judge interval param
+# statisticTradeHistoryInterval: statistic trade interval param
 # marketDepthLimit: market depth limit param
 # marketTickerAggStep: market ticker aggregate param
 # judgeMarketTickerCycle: judge signal ticker valid period
@@ -90,7 +92,8 @@
   basePriceVolume = 10000
   basePriceTimeout = 60
   baseJudgeTimeout = 300
-  baseStatisticTimeout = 3600
+  baseStatisticJudgeTimeout = 3600
+  baseStatisticTradeTimeout = 86400
   ###########################################
   # plug and play param, change as you need #
   ###########################################
@@ -99,6 +102,7 @@
   marketKlineInterval = 86400
   marketTickerInterval = 60
   statisticJudgeMarketTickerInterval = 300
+  statisticTradeHistoryInterval = 3600
   marketDepthLimit = 20
   marketTickerAggStep = 1
   judgeMarketTickerCycle = 604800

@@ -36,7 +36,8 @@ if __name__ == '__main__':
     __eventEngine.start()
 
     # app update
-    util.updateDBStatisticJudge(async=False)
+    # util.updateDBStatisticJudge(async=False)
+    util.updateDBStatisticBacktest(async=False)
 
 
     # # stop engine

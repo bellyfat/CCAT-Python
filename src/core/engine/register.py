@@ -35,8 +35,8 @@ class Register(object):
         self.BACKTEST_HISTORY_CREAT_EVENT_TYPE = json.loads(
             BACKTEST_HISTORY_CREAT_EVENT.substitute())["type"]
         # order event
-        self.ORDER_HISTORY_INSERT_EVENT_TYPE = json.loads(
-            ORDER_HISTORY_INSERT_EVENT.substitute())["type"]
+        self.ORDER_HISTORY_SYNC_EVENT_TYPE = json.loads(
+            ORDER_HISTORY_SYNC_EVENT.substitute())["type"]
         self.ORDER_HISTORY_CREAT_EVENT_TYPE = json.loads(
             ORDER_HISTORY_CREAT_EVENT.substitute())["type"]
         # statistic event
@@ -60,7 +60,7 @@ class Register(object):
         # backtest handler
         self.BACKTEST_HISTORY_CREAT_EVENT_HANDLER = self._handler.handleBacktestHistoryCreatEvent
         # order handler
-        self.ORDER_HISTORY_INSERT_EVENT_HANDLER = self._handler.handleOrderHistoryInsertEvent
+        self.ORDER_HISTORY_SYNC_EVENT_HANDLER = self._handler.handleOrderHistorySyncEvent
         self.ORDER_HISTORY_CREAT_EVENT_HANDLER = self._handler.handleOrderHistoryCreatEvent
         # statistic handler
         self.STATISTIC_JUDGE_EVENT_HANDLER = self._handler.handleStatisticJudgeEvent
@@ -92,8 +92,8 @@ class Register(object):
             self._eventEngine.register(
                 self.BACKTEST_HISTORY_CREAT_EVENT_TYPE,
                 self.BACKTEST_HISTORY_CREAT_EVENT_HANDLER)
-            self._eventEngine.register(self.ORDER_HISTORY_INSERT_EVENT_TYPE,
-                                       self.ORDER_HISTORY_INSERT_EVENT_HANDLER)
+            self._eventEngine.register(self.ORDER_HISTORY_SYNC_EVENT_TYPE,
+                                       self.ORDER_HISTORY_SYNC_EVENT_HANDLER)
             self._eventEngine.register(self.ORDER_HISTORY_CREAT_EVENT_TYPE,
                                        self.ORDER_HISTORY_CREAT_EVENT_HANDLER)
             self._eventEngine.register(self.STATISTIC_JUDGE_EVENT_TYPE,
@@ -133,8 +133,8 @@ class Register(object):
                 self.BACKTEST_HISTORY_CREAT_EVENT_TYPE,
                 self.BACKTEST_HISTORY_CREAT_EVENT_HANDLER)
             self._eventEngine.unregister(
-                self.ORDER_HISTORY_INSERT_EVENT_TYPE,
-                self.ORDER_HISTORY_INSERT_EVENT_HANDLER)
+                self.ORDER_HISTORY_SYNC_EVENT_TYPE,
+                self.ORDER_HISTORY_SYNC_EVENT_HANDLER)
             self._eventEngine.unregister(
                 self.ORDER_HISTORY_CREAT_EVENT_TYPE,
                 self.ORDER_HISTORY_CREAT_EVENT_HANDLER)

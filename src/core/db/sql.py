@@ -2,7 +2,14 @@
 
 from string import Template
 
-# get db statistic signal ticker pair current server sql
+# get db signal trade current sql
+GET_VIEW_SIGNAL_TRADE_CURRENT_SQL = Template('''
+    SELECT *
+    FROM VIEW_SIGNAL_TRADE_CURRENT
+    WHERE timeStamp>(strftime('%s', 'now')-$timeout)*1000;
+''')
+
+# get db statistic judge market ticker pair current server sql
 GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_PAIR_CURRENT_SERVER_SQL = Template('''
         SELECT *
         FROM VIEW_STATISTIC_JUDGE_MARKET_TICKER_PAIR_CURRENT
@@ -12,21 +19,21 @@ GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_PAIR_CURRENT_SERVER_SQL = Template('''
         FROM VIEW_STATISTIC_JUDGE_MARKET_TICKER_PAIR_CURRENT
         WHERE J1_server='$server_pair' AND J2_server='$server';
 ''')
-# get db statistic signal ticker pair current sql
+# get db statistic judge market ticker pair current sql
 GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_PAIR_CURRENT_SQL = '''
     SELECT * FROM VIEW_STATISTIC_JUDGE_MARKET_TICKER_PAIR_CURRENT;
 '''
 
-# get db statistic signal ticker tra current server sql
+# get db statistic judge market ticker tra current server sql
 GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_TRA_CURRENT_SERVER_SQL = Template('''
     SELECT * FROM VIEW_STATISTIC_JUDGE_MARKET_TICKER_TRA_CURRENT WHERE server IN $server;
 ''')
-# get db statistic signal ticker tra current sql
+# get db statistic judge market ticker tra current sql
 GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_TRA_CURRENT_SQL = '''
     SELECT * FROM VIEW_STATISTIC_JUDGE_MARKET_TICKER_TRA_CURRENT;
 '''
 
-# get db statistic signal ticker dis current server sql
+# get db statistic judge market ticker dis current server sql
 GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_DIS_CURRENT_SERVER_SQL = Template('''
         SELECT *
         FROM VIEW_STATISTIC_JUDGE_MARKET_TICKER_DIS_CURRENT
@@ -36,12 +43,12 @@ GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_DIS_CURRENT_SERVER_SQL = Template('''
         FROM VIEW_STATISTIC_JUDGE_MARKET_TICKER_DIS_CURRENT
         WHERE bid_server='$server_pair' AND ask_server='$server';
 ''')
-# get db statistic signal ticker dis current sql
+# get db statistic judge market ticker dis current sql
 GET_VIEW_STATISTIC_JUDGE_MARKET_TICKER_DIS_CURRENT_SQL = '''
     SELECT * FROM VIEW_STATISTIC_JUDGE_MARKET_TICKER_DIS_CURRENT;
 '''
 
-# get db judge signal ticker pair current server sql
+# get db judge market ticker pair current server sql
 GET_VIEW_JUDGE_MARKET_TICKER_PAIR_CURRENT_SERVER_SQL = Template('''
         SELECT *
         FROM VIEW_JUDGE_MARKET_TICKER_PAIR_CURRENT
@@ -51,12 +58,12 @@ GET_VIEW_JUDGE_MARKET_TICKER_PAIR_CURRENT_SERVER_SQL = Template('''
         FROM VIEW_JUDGE_MARKET_TICKER_PAIR_CURRENT
         WHERE J1_server='$server_pair' AND J2_server='$server';
 ''')
-# get db judge signal ticker pair current sql
+# get db judge market ticker pair current sql
 GET_VIEW_JUDGE_MARKET_TICKER_PAIR_CURRENT_SQL = '''
     SELECT * FROM VIEW_JUDGE_MARKET_TICKER_PAIR_CURRENT;
 '''
 
-# get db judge signal ticker tra current server sql
+# get db judge market ticker tra current server sql
 GET_VIEW_JUDGE_MARKET_TICKER_TRA_CURRENT_SERVER_SQL = Template('''
     SELECT * FROM VIEW_JUDGE_MARKET_TICKER_TRA_CURRENT WHERE server IN $server;
 ''')
@@ -65,7 +72,7 @@ GET_VIEW_JUDGE_MARKET_TICKER_TRA_CURRENT_SQL = '''
     SELECT * FROM VIEW_JUDGE_MARKET_TICKER_TRA_CURRENT;
 '''
 
-# get db judge signal ticker dis current server sql
+# get db judge market ticker dis current server sql
 GET_VIEW_JUDGE_MARKET_TICKER_DIS_CURRENT_SERVER_SQL = Template('''
         SELECT *
         FROM VIEW_JUDGE_MARKET_TICKER_DIS_CURRENT
@@ -75,7 +82,7 @@ GET_VIEW_JUDGE_MARKET_TICKER_DIS_CURRENT_SERVER_SQL = Template('''
         FROM VIEW_JUDGE_MARKET_TICKER_DIS_CURRENT
         WHERE bid_server='$server_pair' AND ask_server='$server';
 ''')
-# get db judge signal ticker dis current sql
+# get db judge market ticker dis current sql
 GET_VIEW_JUDGE_MARKET_TICKER_DIS_CURRENT_SQL = '''
     SELECT * FROM VIEW_JUDGE_MARKET_TICKER_DIS_CURRENT;
 '''
@@ -433,12 +440,12 @@ INSERT_STATISTIC_JUDGE_MARKET_TICKER_PAIR_SQL = '''
 
 # insert db statistic trade backtest history sql
 INSERT_STATISTIC_TRADE_BACKTEST_HISTORY = '''
-    INSERT OR REPLACE INTO STATISTIC_TRADE_BACKTEST_HISTORY (timeStamp, signal_id, timeStamp_start, timeStamp_end, base_start, base_end, status_gain, status_gain_max, status_gain_min, status_gain_diff_max, status_gain_diff_min, status_gain_diff_std, group_id)
+    INSERT OR REPLACE INTO STATISTIC_TRADE_BACKTEST_HISTORY (timeStamp, signal_id, group_id, timeStamp_start, timeStamp_end, base_start, base_end, status_gain, status_gain_max, status_gain_min, status_gain_diff_max, status_gain_diff_min, status_gain_diff_std)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 # insert db statistic trade order history sql
 INSERT_STATISTIC_TRADE_ORDER_HISTORY = '''
-    INSERT OR REPLACE INTO STATISTIC_TRADE_ORDER_HISTORY (timeStamp, signal_id, timeStamp_start, timeStamp_end, base_start, base_end, status_gain, status_gain_max, status_gain_min, status_gain_diff_max, status_gain_diff_min, status_gain_diff_std, group_id)
+    INSERT OR REPLACE INTO STATISTIC_TRADE_ORDER_HISTORY (timeStamp, signal_id, group_id, timeStamp_start, timeStamp_end, base_start, base_end, status_gain, status_gain_max, status_gain_min, status_gain_diff_max, status_gain_diff_min, status_gain_diff_std)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
 
 
@@ -454,33 +461,35 @@ CREATE_TABELS_SQL = '''
     CREATE TABLE IF NOT EXISTS `STATISTIC_TRADE_ORDER_HISTORY` (
         `timeStamp` INTEGER,
         `signal_id` TEXT NOT NULL,
+        `group_id` TEXT NOT NULL,
     	`timeStamp_start` INTEGER,
     	`timeStamp_end`	INTEGER,
         `base_start` REAL,
         `base_end` REAL,
+        `base_gain` REAL,
         `status_gain` REAL,
         `status_gain_max` REAL,
         `status_gain_min` REAL,
         `status_gain_diff_max` REAL,
         `status_gain_diff_min` REAL,
         `status_gain_diff_std` REAL,
-        `group_id` TEXT NOT NULL,
         PRIMARY KEY (signal_id, group_id)
     );
     CREATE TABLE IF NOT EXISTS `STATISTIC_TRADE_BACKTEST_HISTORY` (
         `timeStamp` INTEGER,
         `signal_id` TEXT NOT NULL,
+        `group_id` TEXT NOT NULL,
     	`timeStamp_start` INTEGER,
     	`timeStamp_end`	INTEGER,
         `base_start` REAL,
         `base_end` REAL,
+        `base_gain` REAL,
         `status_gain` REAL,
         `status_gain_max` REAL,
         `status_gain_min` REAL,
         `status_gain_diff_max` REAL,
         `status_gain_diff_min` REAL,
         `status_gain_diff_std` REAL,
-        `group_id` TEXT NOT NULL,
         PRIMARY KEY (signal_id, group_id)
     );
     CREATE TABLE IF NOT EXISTS `STATISTIC_JUDGE_MARKET_TICKER_PAIR` (
@@ -1091,16 +1100,29 @@ CREATE_VIEWS_SQL = Template('''
         AS
 			SELECT *
 			FROM STATISTIC_JUDGE_MARKET_TICKER_DIS
-			WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticTimeout)*1000;
+			WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticJudgeTimeout)*1000;
     CREATE VIEW IF NOT EXISTS VIEW_STATISTIC_JUDGE_MARKET_TICKER_TRA_CURRENT
         AS
 			SELECT *
 			FROM STATISTIC_JUDGE_MARKET_TICKER_TRA
-			WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticTimeout)*1000;
+			WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticJudgeTimeout)*1000;
     CREATE VIEW IF NOT EXISTS VIEW_STATISTIC_JUDGE_MARKET_TICKER_PAIR_CURRENT
         AS
 			SELECT *
 			FROM STATISTIC_JUDGE_MARKET_TICKER_PAIR
-			WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticTimeout)*1000;
+			WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticJudgeTimeout)*1000;
+    CREATE VIEW IF NOT EXISTS VIEW_SIGNAL_TRADE_CURRENT
+        AS
+				SELECT timeStamp, signal_id, group_id, base_start, base_gain, status_assets, status_gain
+				FROM SIGNAL_TRADE_DIS
+				WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticTradeTimeout)*1000
+			UNION
+				SELECT timeStamp, signal_id, group_id, base_start, base_gain, status_assets, status_gain
+				FROM SIGNAL_TRADE_TRA
+				WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticTradeTimeout)*1000
+			UNION
+				SELECT timeStamp, signal_id, group_id, base_start, base_gain, status_assets, status_gain
+				FROM SIGNAL_TRADE_PAIR
+				WHERE timeStamp > (strftime('%s', 'now')-$baseStatisticTradeTimeout)*1000;
     COMMIT;
 ''')

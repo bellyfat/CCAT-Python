@@ -79,6 +79,34 @@ def sqlite_escape(sqlStr):
     return sqlStr
 
 
+def sqlite_reverse(sqlStr):
+    sqlStr = sqlStr.replace("/", "")
+    return sqlStr
+
+
+def json_escape(jsonStr):
+    jsonStr = jsonStr.replace("'", "u0022")
+    jsonStr = jsonStr.replace('"', "u0022")
+    jsonStr = jsonStr.replace(":", "u003a")
+    jsonStr = jsonStr.replace("\\", "u005c")
+    jsonStr = jsonStr.replace("{", "u007b")
+    jsonStr = jsonStr.replace("}", "u007d")
+    jsonStr = jsonStr.replace("[", "u005b")
+    jsonStr = jsonStr.replace("]", "u005d")
+    return jsonStr
+
+
+def json_reverse(jsonStr):
+    jsonStr = jsonStr.replace("u0022", '"')
+    jsonStr = jsonStr.replace("u003a", ":")
+    jsonStr = jsonStr.replace("u005c", "\\")
+    jsonStr = jsonStr.replace("u007b", "{")
+    jsonStr = jsonStr.replace("u007d", "}")
+    jsonStr = jsonStr.replace("u005b", "[")
+    jsonStr = jsonStr.replace("u005d", "]")
+    return jsonStr
+
+
 def date_to_milliseconds(date_str):
     """Convert UTC date to milliseconds
 

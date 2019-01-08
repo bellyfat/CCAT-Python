@@ -52,8 +52,8 @@ class Config(object):
                 'Main', 'basePriceTimeout')
             Config._Main_baseJudgeTimeout = cf.getfloat(
                 'Main', 'baseJudgeTimeout')
-            Config._Main_baseStatisticTimeout = cf.getfloat(
-                'Main', 'baseStatisticTimeout')
+            Config._Main_baseStatisticJudgeTimeout = cf.getfloat(
+                'Main', 'baseStatisticJudgeTimeout')
             # plug and play
             Config._Main_apiEpochSaveBound = cf.getfloat(
                 'Main', 'apiEpochSaveBound')
@@ -64,6 +64,8 @@ class Config(object):
                 'Main', 'marketTickerInterval')
             Config._Main_statisticJudgeMarketTickerInterval = cf.getint(
                 'Main', 'statisticJudgeMarketTickerInterval')
+            Config._Main_statisticTradeHistoryInterval = cf.getint(
+                'Main', 'statisticTradeHistoryInterval')
             Config._Main_marketDepthLimit = cf.getint('Main',
                                                       'marketDepthLimit')
             Config._Main_marketTickerAggStep = cf.getint(

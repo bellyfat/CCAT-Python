@@ -13,7 +13,7 @@ from src.core.config import Config
 from src.core.db.sql import *
 from src.core.util.exceptions import (BinanceException, DBException,
                                       HuobiException, OkexException)
-from src.core.util.helper import dict_factory, sqlite_escape, utcnow_timestamp
+from src.core.util.helper import dict_factory, sqlite_escape, sqlite_reverse, utcnow_timestamp
 from src.core.util.log import Logger
 
 
@@ -28,10 +28,12 @@ class DB(object):
         self._basePriceVolume = Config()._Main_basePriceVolume
         self._basePriceTimeout = Config()._Main_basePriceTimeout
         self._baseJudgeTimeout = Config()._Main_baseJudgeTimeout
-        self._baseStatisticTimeout = Config()._Main_baseStatisticTimeout
+        self._baseStatisticJudgeTimeout = Config(
+        )._Main_baseStatisticJudgeTimeout
         self._judgeMarketTickerCycle = Config()._Main_judgeMarketTickerCycle
         self._statisticJudgeMarketTickerCycle = Config(
         )._Main_statisticJudgeMarketTickerCycle
+        self._statisticTradeHistoryInterval = Config()._Main_statisticTradeHistoryInterval
         self._tradeHistoryCycle = Config()._Main_tradeHistoryCycle
         self._signalTradeCycle = Config()._Main_signalTradeCycle
         self._statisticSignalTradeCycle = Config(
@@ -115,11 +117,29 @@ class DB(object):
                 basePriceVolume=self._basePriceVolume,
                 basePriceTimeout=self._basePriceTimeout,
                 baseJudgeTimeout=self._baseJudgeTimeout,
-                baseStatisticTimeout=self._baseStatisticTimeout).replace(
-                    '[', '(').replace(']', ')')
+                baseStatisticJudgeTimeout=self.
+                _baseStatisticJudgeTimeout).replace('[', '(').replace(
+                    ']', ')')
             self._logger.debug(TEMP_SQL)
             curs.executescript(TEMP_SQL)
             curs.close()
+        except (sqlite3.Error, Exception) as err:
+            raise DBException(err)
+
+    def getViewSignalTradeCurrent(self):
+        self._logger.debug("src.core.db.db.DB.getViewSignalTradeCurrent")
+        try:
+            curs = self._conn.cursor()
+            TEMP_SQL = GET_VIEW_SIGNAL_TRADE_CURRENT_SQL.substitute(
+                timeout = self._statisticTradeHistoryInterval
+            )
+            self._logger.debug(TEMP_SQL)
+            curs.execute(TEMP_SQL)
+            res = curs.fetchall()
+            curs.close()
+            for r in res:
+                r['status_assets'] = sqlite_reverse(r['status_assets'])
+            return res
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
 
@@ -581,6 +601,9 @@ class DB(object):
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
+            for r in res:
+                r['bid_price_size'] = sqlite_reverse(r['bid_price_size'])
+                r['ask_price_size'] = sqlite_reverse(r['ask_price_size'])
             return res
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
@@ -873,6 +896,8 @@ class DB(object):
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
+            for r in res:
+                r['status_assets'] = sqlite_reverse(r['status_assets'])
             return res
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
@@ -900,6 +925,8 @@ class DB(object):
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
+            for r in res:
+                r['status_assets'] = sqlite_reverse(r['status_assets'])
             return res
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
@@ -927,6 +954,8 @@ class DB(object):
             curs.execute(TEMP_SQL)
             res = curs.fetchall()
             curs.close()
+            for r in res:
+                r['status_assets'] = sqlite_reverse(r['status_assets'])
             return res
         except (sqlite3.Error, Exception) as err:
             raise DBException(err)
@@ -1758,7 +1787,8 @@ class DB(object):
                      float(s['forward_ratio']), float(s['backward_ratio']),
                      float(s['base_start']), float(s['base_gain']),
                      str(s['group_id']), str(s['status_done']),
-                     str(s['status_assets']), float(s['status_gain'])))
+                     str(sqlite_escape(json.dumps(s['status_assets']))),
+                     float(s['status_gain'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
@@ -1785,7 +1815,8 @@ class DB(object):
                      str(s['V3_tSymbol']), float(s['forward_ratio']),
                      float(s['base_start']), float(s['base_gain']),
                      str(s['group_id']), str(s['status_done']),
-                     str(s['status_assets']), float(s['status_gain'])))
+                     str(sqlite_escape(json.dumps(s['status_assets']))),
+                     float(s['status_gain'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
@@ -1812,7 +1843,8 @@ class DB(object):
                      str(s['V3_fSymbol']), str(s['V3_tSymbol']),
                      float(s['forward_ratio']), float(s['base_start']),
                      float(s['base_gain']), str(s['group_id']),
-                     str(s['status_done']), str(s['status_assets']),
+                     str(s['status_done']),
+                     str(sqlite_escape(json.dumps(s['status_assets']))),
                      float(s['status_gain'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
@@ -2410,7 +2442,7 @@ class DB(object):
             TEMP_SQL_VALUE = []
             for s in statistic:
                 TEMP_SQL_VALUE.append((int(s['timeStamp']),
-                                       str(s['signal_id']),
+                                       str(s['signal_id']), str(s['group_id']),
                                        int(s['timeStamp_start']),
                                        int(s['timeStamp_end']),
                                        float(s['base_start']),
@@ -2420,8 +2452,7 @@ class DB(object):
                                        float(s['status_gain_min']),
                                        float(s['status_gain_diff_max']),
                                        float(s['status_gain_diff_min']),
-                                       float(s['status_gain_diff_std']),
-                                       str(s['group_id'])))
+                                       float(s['status_gain_diff_std'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)
@@ -2442,7 +2473,7 @@ class DB(object):
             TEMP_SQL_VALUE = []
             for s in statistic:
                 TEMP_SQL_VALUE.append((int(s['timeStamp']),
-                                       str(s['signal_id']),
+                                       str(s['signal_id']), str(s['group_id']),
                                        int(s['timeStamp_start']),
                                        int(s['timeStamp_end']),
                                        float(s['base_start']),
@@ -2452,8 +2483,7 @@ class DB(object):
                                        float(s['status_gain_min']),
                                        float(s['status_gain_diff_max']),
                                        float(s['status_gain_diff_min']),
-                                       float(s['status_gain_diff_std']),
-                                       str(s['group_id'])))
+                                       float(s['status_gain_diff_std'])))
             if not TEMP_SQL_VALUE == []:
                 self._logger.debug(TEMP_SQL_TITLE)
                 self._logger.debug(TEMP_SQL_VALUE)

@@ -538,6 +538,7 @@ class Util(object):
             db.delSignalTradeDis()
             db.delSignalTradeTra()
             db.delSignalTradePair()
+            db.delTradeBacktestHistory()
             ids = []
             sgn = Signal()
             startTime = time.time()
@@ -617,7 +618,7 @@ class Util(object):
                     % (current_thread().name, 'res', epoch, async, timeout))
                 break
             time.sleep(epoch)
-            id = self._sender.sendOrderHistoryInsertEvent(
+            id = self._sender.sendOrderHistorySyncEvent(
                 [r["server"]], r["fSymbol"], r["tSymbol"], '100',
                 r["fee_taker"])
             ids.append(id)
@@ -719,8 +720,47 @@ class Util(object):
                 async, timeout, UtilException(err))
             raise UtilException(errStr)
 
-    def updateDBStatisticBacktest(self):
-        pass
+    def updateDBStatisticBacktest(self, async=True, timeout=30):
+        self._logger.debug(
+            "src.core.util.util.Util.updateDBStatisticBacktest: {async: %s, timeout: %s}"
+            % (async, timeout))
+        try:
+            ids = []
+            db = DB()
+            db.delStatisticTradeBacktestHistory()
+            startTime = time.time()
+            for type in self._types:
+                if not time.time(
+                ) - startTime < timeout and not timeout == 0 and not async:
+                    self._logger.error(
+                        "src.core.util.util.Util.updateDBStatisticBacktest: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, sending event to event handler timeout."
+                        % (async, timeout))
+                    break
+                signals = db.getViewSignalTradeCurrent()
+                id = self._sender.sendStatiscBacktestEvent(signals)
+                ids.append(id)
+            if not async:
+                st = QUEUE_STATUS_EVENT
+                for id in ids:
+                    st = self._engine.getEventStatus(id)
+                    while st != DONE_STATUS_EVENT and (
+                            time.time() - startTime < timeout or timeout == 0):
+                        st = self._engine.getEventStatus(id)
+                        time.sleep(self._apiResultEpoch)
+                if st != DONE_STATUS_EVENT:
+                    self._logger.error(
+                        "src.core.util.util.Util.updateDBStatisticBacktest: {async: %s, timeout: %s}, exception err=TIMEOUT ERROR, waiting result from event handler timeout."
+                        % (async, timeout))
+                    for id in ids:
+                        if not self._engine.killEvent(id):
+                            self._logger.error(
+                                "src.core.util.util.Util.updateDBStatisticBacktest: {async: %s, timeout: %s}, exception err=KILL EVENT ERROR, kill timeout event handler error."
+                                % (current_thread().name, 'res', epoch, async,
+                                   timeout))
+        except (DBException, EngineException, Exception) as err:
+            errStr = "src.core.util.util.Util.updateDBStatisticBacktest: {async: %s, timeout: %s}, exception err=%s" % (
+                async, timeout, UtilException(err))
+            raise UtilException(errStr)
 
     def updateDBStatisticOrder(self):
         pass

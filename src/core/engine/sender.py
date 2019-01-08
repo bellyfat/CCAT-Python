@@ -6,7 +6,7 @@ from src.core.db.db import DB
 from src.core.engine.engine import Event
 from src.core.engine.enums import *
 from src.core.util.exceptions import EngineException
-from src.core.util.helper import utcnow_timestamp
+from src.core.util.helper import utcnow_timestamp, json_escape
 from src.core.util.log import Logger
 
 
@@ -226,12 +226,12 @@ class Sender(object):
             raise EngineException(errStr)
 
     # Order 事件
-    def sendOrderHistoryInsertEvent(self, exchange, fSymbol, tSymbol, limit,
+    def sendOrderHistorySyncEvent(self, exchange, fSymbol, tSymbol, limit,
                                     ratio):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
-                ORDER_HISTORY_INSERT_EVENT.substitute(
+                ORDER_HISTORY_SYNC_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
                     exchange=exchange,
@@ -241,25 +241,27 @@ class Sender(object):
                     ratio=ratio))
             event = Event(TEMP_EVENT)
             self._logger.debug(
-                "src.core.engine.sender.Sender.sendOrderHistoryInsertEvent: " +
+                "src.core.engine.sender.Sender.sendOrderHistorySyncEvent: " +
                 json.dumps(TEMP_EVENT))
             # 发送事件
             self._engine.sendEvent(event)
             # 返回参数
             return event.id
         except Exception as err:
-            errStr = "src.core.engine.sender.Sender.sendOrderHistoryInsertEvent: %s" % EngineException(
+            errStr = "src.core.engine.sender.Sender.sendOrderHistorySyncEvent: %s" % EngineException(
                 err)
             raise EngineException(errStr)
 
-    def sendOrderHistoryCreatEvent(self, signals):
+    def sendOrderHistoryCreatEvent(self, exchange, signals, timeout):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
-                ORDER_HISTORY_CREAT_EVENT.substitute(
+                BACKTEST_HISTORY_CREAT_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
-                    signals=signals))
+                    exchange=exchange,
+                    signals=signals,
+                    timeout=timeout))
             event = Event(TEMP_EVENT)
             self._logger.debug(
                 "src.core.engine.sender.Sender.sendOrderHistoryCreatEvent: " +
@@ -296,14 +298,16 @@ class Sender(object):
                 err)
             raise EngineException(errStr)
 
-    def sendStatiscBacktestEvent(self, args):
+    def sendStatiscBacktestEvent(self, signals):
         try:
+            for signal in signals:
+                signal['status_assets'] = json_escape(signal['status_assets'])
             # 构造事件对象
             TEMP_EVENT = json.loads(
                 STATISTIC_BACKTEST_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
-                    args=""))
+                    signals=signals))
             event = Event(TEMP_EVENT)
             self._logger.debug(
                 "src.core.engine.sender.Sender.sendStatiscBacktestEvent: " +
@@ -317,14 +321,14 @@ class Sender(object):
                 err)
             raise EngineException(errStr)
 
-    def sendStatiscOrderEvent(self, args):
+    def sendStatiscOrderEvent(self, signals):
         try:
             # 构造事件对象
             TEMP_EVENT = json.loads(
                 STATISTIC_ORDER_EVENT.substitute(
                     id=self._engine.getEventID(),
                     timeStamp=utcnow_timestamp(),
-                    args=""))
+                    signals=signals))
             event = Event(TEMP_EVENT)
             self._logger.debug(
                 "src.core.engine.sender.Sender.sendStatiscOrderEvent: " +

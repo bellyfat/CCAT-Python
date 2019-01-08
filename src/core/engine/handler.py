@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import time
 from itertools import combinations
 from string import Template
@@ -11,7 +12,7 @@ from src.core.db.db import DB
 from src.core.engine.enums import *
 from src.core.util.exceptions import (CalcException, DBException,
                                       EngineException)
-from src.core.util.helper import str_to_list, utcnow_timestamp
+from src.core.util.helper import str_to_list, utcnow_timestamp, json_reverse
 from src.core.util.log import Logger
 
 
@@ -409,7 +410,7 @@ class Handler(object):
                                 self._logger.warn(str + warnStr.substitute(
                                     err=err, here='3.2 excute preOrders'))
                         if not res == []:
-                            preExecOrders.extend(res)
+                            afterExecOrders.extend(res)
                     if isSubError > 0:
                         # rollback:
                         raise Exception(
@@ -426,7 +427,7 @@ class Handler(object):
                         res = db.getTradeBacktestHistoryServerOrder([server],
                                                                     orderIDs)
                         if not res == []:
-                            preInfoOrders.extend(res)
+                            afterInfoOrders.extend(res)
                 # print('3. after signals afterInfoOrders:\n%s' % afterInfoOrders)
                 # 3.4 update signals status
                 if not afterInfoOrders == []:
@@ -460,9 +461,9 @@ class Handler(object):
         callback(event.id)
 
     # Order 事件
-    def handleOrderHistoryInsertEvent(self, event, callback):
+    def handleOrderHistorySyncEvent(self, event, callback):
         self._logger.debug(
-            "src.core.engine.handler.Handler.handleOrderHistoryInsertEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
+            "src.core.engine.handler.Handler.handleOrderHistorySyncEvent: {id=%s, type=%s, priority=%s, timeStamp=%s, args=%s}"
             % (event.id, event.type, event.priority, event.timeStamp,
                event.args))
         # 接收事件
@@ -473,7 +474,7 @@ class Handler(object):
             db.insertSyncTradeOrderHistory(exchange, fSymbol, tSymbol, limit,
                                            ratio)
         except (DBException, CalcException, EngineException, Exception) as err:
-            errStr = "src.core.engine.handler.Handler.handleOrderHistoryInsertEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
+            errStr = "src.core.engine.handler.Handler.handleOrderHistorySyncEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
                 event.type, event.priority, event.args, err)
             self._logger.error(errStr)
         callback(event.id)
@@ -515,7 +516,6 @@ class Handler(object):
         try:
             db = DB()
             calc = Calc()
-            prs = []
             # calc dis type
             if TYPE_DIS in types:
                 statisticDis = calc.calcStatisticJudgeMarketTickerDis(
@@ -546,7 +546,19 @@ class Handler(object):
             % (event.id, event.type, event.priority, event.timeStamp,
                event.args))
         # 接收事件
-        pass
+        [signals] = event.args
+        signals = str_to_list(signals)
+        for signal in signals:
+            signal['status_assets'] = json.loads(json_reverse(signal['status_assets']))
+        print(signals)
+        try:
+            db = DB()
+            calc = Calc()
+        except (DBException, CalcException, EngineException, Exception) as err:
+            errStr = "src.core.engine.handler.Handler.handleStatisticBacktestEvent: { type=%s, priority=%s, args=%s }, err=%s" % (
+                event.type, event.priority, event.args, err)
+            self._logger.error(errStr)
+        callback(event.id)
 
     def handleStatisticOrderEvent(self, event, callback):
         self._logger.debug(
