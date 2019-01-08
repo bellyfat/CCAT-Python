@@ -406,7 +406,7 @@ class Handler(object):
                     sgn.signals(exchange, [TYPE_TRA]), SIGNAL_BACKTEST)
                 db.insertSignalTradePair(
                     sgn.signals(exchange, [TYPE_PAIR]), SIGNAL_BACKTEST)
-            print('1. pre signals after update:\n%s' % sgn.signals())
+            # print('1. pre signals after update:\n%s' % sgn.signals())
             ########################################
             # 2. run trade
             isError = True
@@ -503,7 +503,7 @@ class Handler(object):
                         sgn.signals(exchange, [TYPE_TRA]), SIGNAL_BACKTEST)
                     db.insertSignalTradePair(
                         sgn.signals(exchange, [TYPE_PAIR]), SIGNAL_BACKTEST)
-                print('2. run signals after update:\n%s' % sgn.signals())
+                # print('2. run signals after update:\n%s' % sgn.signals())
                 # 2.5 update isError
                 isMore = sgn.backtestSignalsIsRunMore(resInfoSymbol)
                 if not isMore:
@@ -602,7 +602,7 @@ class Handler(object):
                         sgn.signals(exchange, [TYPE_TRA]), SIGNAL_BACKTEST)
                     db.insertSignalTradePair(
                         sgn.signals(exchange, [TYPE_PAIR]), SIGNAL_BACKTEST)
-                print('3. after signals after update:\n%s' % sgn.signals())
+                # print('3. after signals after update:\n%s' % sgn.signals())
                 # 3.5 update isError
                 isMore = sgn.backtestSignalsIsRunMore(resInfoSymbol)
                 if not isMore:
