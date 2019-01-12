@@ -7,6 +7,8 @@
 
 [![Build Status](http://pipline.club:8080/buildStatus/icon?job=CCAT-Python&style=plastic)](http://pipline.club:8080/job/CCAT-Python)
 [![codecov](https://codecov.io/gh/OpenInfoCrypto/CCAT-Python/branch/master/graph/badge.svg?style=plastic)](https://codecov.io/gh/OpenInfoCrypto/CCAT-Python)
+![python](https://img.shields.io/badge/Python3-%3E%3D3.6.5-orange.svg?style=plastic)
+![pip3](https://img.shields.io/badge/Pip3-%3E%3D18.1.0-orange.svg?style=plastic)
 
 > OpenInfoCrypto Implemetation. Online and BackTest of Crypto Currency Arbitrage Trading
 [CCAT-Python](https://github.com/OpenInfoCrypto/CCAT-Python) specification
@@ -36,11 +38,20 @@
 [![Throughput Graph](https://graphs.waffle.io/OpenInfoCrypto/CCAT-Python/throughput.svg)](https://waffle.io/OpenInfoCrypto/CCAT-Python/metrics/throughput)
 
 ## 1. Abstract
-一款轻量级数字货币高频套利的在线交易产品， 基于多进程异步事件引擎， 支持回测,支持模拟， 支持
-交易， 支持定制策略。
+
+一款轻量级数字货币高频套利的在线交易产品，基于多进程异步事件引擎，支持回测，支持模拟，支持交易，支持定制策略。
+
 ## 2. Install
 
+```
+pip3 install -r requirements.txt
+```
+
 ## 3. Usage
+
+```
+python3 main.py
+```
 
 ## 4. Contribute
 
