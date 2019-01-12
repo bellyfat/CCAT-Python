@@ -1,14 +1,12 @@
 # CCAT-Python
 ## ( Crypto Currency Arbitrage Trading )
 
-![npm](https://img.shields.io/badge/Project-CCAT%20Python-blue.svg?style=plastic)
-![npm](https://img.shields.io/badge/Status-Devloping-blue.svg?style=plastic)
-![npm](https://img.shields.io/badge/Made%20by-OpenInfoCrypto-blue.svg?style=plastic)
+![python](https://img.shields.io/badge/Project-CCAT%20Python-blue.svg?style=plastic)
+![python](https://img.shields.io/badge/Status-Devloping-blue.svg?style=plastic)
+![python](https://img.shields.io/badge/Made%20by-OpenInfoCrypto-blue.svg?style=plastic)
 
-[![Build Status](http://45.76.208.48:8080/buildStatus/icon?job=CCAT-Python&style=plastic)](http://45.76.208.48:8080/job/CCAT-Python)
+[![Build Status](http://pipline.club:8080/buildStatus/icon?job=CCAT-Python&style=plastic)](http://pipline.club:8080/job/CCAT-Python)
 [![codecov](https://codecov.io/gh/OpenInfoCrypto/CCAT-Python/branch/master/graph/badge.svg?style=plastic)](https://codecov.io/gh/OpenInfoCrypto/CCAT-Python)
-![Nodejs](https://img.shields.io/badge/Node.js-%3E%3D8.11.0-orange.svg?style=plastic)
-![npm](https://img.shields.io/badge/npm-%3E%3D6.0.0-orange.svg?style=plastic)
 
 > OpenInfoCrypto Implemetation. Online and BackTest of Crypto Currency Arbitrage Trading
 [CCAT-Python](https://github.com/OpenInfoCrypto/CCAT-Python) specification
@@ -38,7 +36,8 @@
 [![Throughput Graph](https://graphs.waffle.io/OpenInfoCrypto/CCAT-Python/throughput.svg)](https://waffle.io/OpenInfoCrypto/CCAT-Python/metrics/throughput)
 
 ## 1. Abstract
-
+一款轻量级数字货币高频套利的在线交易产品， 基于多进程异步事件引擎， 支持回测,支持模拟， 支持
+交易， 支持定制策略。
 ## 2. Install
 
 ## 3. Usage
